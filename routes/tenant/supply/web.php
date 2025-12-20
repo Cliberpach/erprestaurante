@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Tenant\Cash\ExitMoneyController;
+use App\Http\Controllers\Tenant\Supply\DishController;
 use App\Http\Controllers\Tenant\Supply\TableController;
 use App\Http\Controllers\Tenant\Supply\TypeDishController;
 use Illuminate\Support\Facades\Route;
@@ -26,14 +27,14 @@ Route::group(["prefix" => "abastecimiento"], function () {
     });
 
     Route::group(["prefix" => "platos"], function () {
-        Route::get('index', [ExitMoneyController::class, 'index'])->name('tenant.abastecimiento.platos.index');
-        Route::get('create', [ExitMoneyController::class, 'create'])->name('tenant.egreso.create');
-        Route::get('getEgresos', [ExitMoneyController::class, 'getExitMoneys'])->name('tenant.egreso.getExitMoneys');
-        Route::post('store', [ExitMoneyController::class, 'store'])->name('tenant.egreso.store');
-        Route::get('pdf-one/{id}', [ExitMoneyController::class, 'showPDF'])->name('tenant.egreso.pdf');
-        Route::put('update/{id}', [ExitMoneyController::class, 'updateExit'])->name('tenant.egreso.update');
-        Route::get('edit/{id}', [ExitMoneyController::class, 'editExit'])->name('tenant.egreso.edit');
-        Route::delete('destroy/{id}', [ExitMoneyController::class, 'destroy'])->name('tenant.egreso.destroy');
+        Route::get('index', [DishController::class, 'index'])->name('tenant.abastecimiento.platos.index');
+        Route::get('getList', [DishController::class, 'getList'])->name('tenant.abastecimiento.platos.getList');
+        Route::get('create', [DishController::class, 'create'])->name('tenant.abastecimiento.platos.create');
+        Route::get('getOne/{id}', [DishController::class, 'getOne'])->name('tenant.abastecimiento.platos.getOne');
+        Route::post('store', [DishController::class, 'store'])->name('tenant.abastecimiento.platos.store');
+        Route::get('edit/{id}', [DishController::class, 'edit'])->name('tenant.abastecimiento.platos.edit');
+        Route::put('update/{id}', [DishController::class, 'update'])->name('tenant.abastecimiento.platos.update');
+        Route::delete('destroy/{id}', [DishController::class, 'destroy'])->name('tenant.abastecimiento.platos.destroy');
     });
 
     Route::group(["prefix" => "categorias"], function () {

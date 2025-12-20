@@ -41,9 +41,9 @@ class TableController extends Controller
     {
         try {
 
-            $modelo  =   $this->s_table->getTable($id);
+            $item  =   $this->s_table->getTable($id);
 
-            return response()->json(['success' => true, 'message' => 'MESA OBTENIDA', 'data' => $modelo]);
+            return response()->json(['success' => true, 'message' => 'MESA OBTENIDA', 'data' => $item]);
         } catch (Throwable $th) {
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
@@ -63,7 +63,7 @@ array:4 [ // app\Http\Controllers\Tenant\WorkShop\ModelController.php:79
 
         try {
 
-            $modelo  =   $this->s_table->store($request->toArray());
+            $item  =   $this->s_table->store($request->toArray());
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'MESA REGISTRADA CON ÉXITO']);
@@ -72,13 +72,6 @@ array:4 [ // app\Http\Controllers\Tenant\WorkShop\ModelController.php:79
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
 
-
-        if ($request->has('fetch') && $request->input('fetch') == 'SI') {
-            return response()->json(['message' => 'success',    'data' => $color]);
-        }
-
-        Session::flash('success', 'Color creado.');
-        return redirect()->route('almacenes.colores.index')->with('guardar', 'success');
     }
 
     /*

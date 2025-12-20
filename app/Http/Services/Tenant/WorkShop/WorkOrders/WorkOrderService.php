@@ -80,7 +80,6 @@ class WorkOrderService
             }
         }
 
-
         $this->s_repository->deleteDetailProduct($id);
         $this->s_repository->deleteDetailService($id);
         $this->s_repository->insertWorkOrderDetail($data['lst_products'], $data['lst_services'], $work_order);

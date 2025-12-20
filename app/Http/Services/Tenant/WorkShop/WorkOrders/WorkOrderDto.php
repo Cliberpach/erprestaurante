@@ -8,7 +8,6 @@ use App\Models\Company;
 use App\Models\Landlord\Customer;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Product;
-use App\Models\Tenant\Configuration;
 use App\Models\Tenant\Warehouse;
 use App\Models\Tenant\WorkShop\Service;
 use App\Models\Tenant\WorkShop\Vehicle;
