@@ -23,6 +23,19 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 
+
+            $table->string('petty_cash_name');
+
+            $table->enum('status', ['ANULADO', 'ABIERTO', 'CERRADO'])->default('CERRADO');
+            $table->enum('type', ['CAJA', 'FICTICIO'])->default('CAJA');
+
+            $table->decimal('initial_amount', 10, 2);
+            $table->decimal('closing_amount', 10, 2)->nullable();
+            $table->datetime('initial_date');
+            $table->datetime('final_date')->nullable();
+            $table->decimal('sale_day', 10, 2)->nullable();
+
+
             $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->string('creator_user_name')->nullable();
             $table->unsignedBigInteger('editor_user_id')->nullable();
@@ -30,13 +43,6 @@ return new class extends Migration
             $table->unsignedBigInteger('delete_user_id')->nullable();
             $table->string('delete_user_name')->nullable();
 
-            $table->string('name');
-            $table->enum('status', ['ANULADO', 'ABIERTO', 'CERRADO'])->default('CERRADO');
-            $table->decimal('initial_amount', 10, 2);
-            $table->decimal('closing_amount', 10, 2)->nullable();
-            $table->datetime('initial_date');
-            $table->datetime('final_date')->nullable();
-            $table->decimal('sale_day', 10, 2)->nullable();
 
             $table->timestamps();
         });

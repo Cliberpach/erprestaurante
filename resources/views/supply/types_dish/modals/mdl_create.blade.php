@@ -1,58 +1,61 @@
-<div class="modal fade" id="mdlOpenCash" tabindex="-1" aria-labelledby="mdlOpenCashLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="mdl_create" tabindex="-1" aria-labelledby="mdl_create_label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Aperturar Caja </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <i class="fa fa-cogs text-primary me-2"></i>
+                <div>
+                    <h5 class="modal-title mb-0" id="mdl_create_label">Tipo de Plato</h5>
+                    <small class="text-muted">Crear nuevo tipo de plato.</small>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
+
             <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12 colCaja">
-                            @include('cash.petty-cash-book.forms.form_open_cash')
-                        </div>
-                    </div>
+                @include('supply.types_dish.forms.form_create')
+            </div>
+
+            <div class="modal-footer d-flex justify-content-between align-items-center flex-wrap">
+                <div class="text-warning small">
+                    <i class="fa fa-exclamation-circle"></i>
+                    Los campos marcados con asterisco (<label class="required"></label>) son obligatorios.
+                </div>
+                <div class="mt-sm-0 mt-2 text-end">
+                    <button type="submit" form="form_create" class="btn btn-primary btn-sm">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
+                        <i class="fa fa-times"></i> Cancelar
+                    </button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <div class="row footer-row">
 
-                    <div class="col-12 text-end">
-                        <button type="button" class="btn btn-secondary btnCancelar" data-bs-dismiss="modal">
-                            <i class="fas fa-ban"></i> Cancelar
-                        </button>
-                        <button form="form-open-cash" type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Guardar
-                        </button>
-                    </div>
-                    <div class="col-12 col-info">
-                        <i class="fas fa-info-circle"></i>
-                        <p>Los campos marcados con asterisco (*) son obligatorios.</p>
-                    </div>
-
-                </div>
-            </div>
         </div>
     </div>
 </div>
 
+<style>
+    .swal2-container {
+        z-index: 9999999;
+    }
+</style>
 
 <script>
-    function openMdlOpenCash() {
-        $('#mdlOpenCash').modal('show');
+    function openMdlCreate() {
+        const modal = new bootstrap.Modal(document.getElementById('mdl_create'));
+        modal.show();
     }
 
-    function eventsMdlOpenCash() {
-        document.querySelector('#form-open-cash').addEventListener('submit', (e) => {
+    function eventsMdlCreate() {
+        document.querySelector('#form_create').addEventListener('submit', (e) => {
             e.preventDefault();
-            openPettyCash(e.target);
+            store(e.target);
         })
     }
 
-    function openPettyCash(formOpenCash) {
-        const id = cashesAvailableSelect.getValue();
-        const item = cashesAvailableSelect.options[id];
+    function store(formCreateColor) {
 
+        const name = document.querySelector('#name').value;
 
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
@@ -61,16 +64,15 @@
             },
             buttonsStyling: false
         });
-        
         swalWithBootstrapButtons.fire({
-            title: "Desea aperturar la caja?",
+            title: "Desea registrar el tipo de plato?",
             html: `
-                <div style="text-align: center; margin-top: 10px;">
-                    <p style="font-size: 16px; margin-bottom: 10px;">
-                        <strong>Nombre:</strong> ${item.name}
-                    </p>
-                </div>
-            `,
+            <div style="text-align: center; margin-top: 10px;">
+                <p style="font-size: 16px; margin-bottom: 10px;">
+                    <strong>Nombre:</strong> ${name}
+                </p>
+            </div>
+        `,
             icon: "warning",
             showCancelButton: true,
             confirmButtonText: "Sí!",
@@ -80,7 +82,7 @@
             if (result.isConfirmed) {
 
                 Swal.fire({
-                    title: "Aperturando caja...",
+                    title: "Registrando tipo de plato...",
                     text: "Por favor, espere",
                     icon: "info",
                     allowOutsideClick: false,
@@ -94,13 +96,13 @@
                 try {
                     toastr.clear();
 
-                    const formData = new FormData(formOpenCash);
-                    const res = await axios.post(route('tenant.movimientos_caja.abrirCaja'), formData);
+                    const formData = new FormData(formCreateColor);
+                    const res = await axios.post(route('tenant.abastecimiento.tipos_plato.store'), formData);
 
                     if (res.data.success) {
-                        toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
-                        $('#mdlOpenCash').modal('hide');
-                        dtCash.ajax.reload();
+                        toastr.success(res.data.message, 'OPERCIÓN COMPLETADA');
+                        $('#mdl_create').modal('hide');
+                        dtItems.ajax.reload();
                     } else {
                         Swal.close();
                         toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');

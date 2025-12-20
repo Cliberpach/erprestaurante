@@ -20,7 +20,7 @@
         <div class="table-responsive text-nowrap">
 
             @include('company.tables.tbl_landlord_companies')
-           
+
         </div>
     </div>
 @endsection
@@ -75,7 +75,7 @@
                 {
                     data: null,
                     render: function (data) {
-                      
+
                         const urlEditCompany = "{{ route('landlord.mantenimientos.empresas.edit', ':id') }}".replace(':id', data.id);
 
                         return `<div class="btn-group">
@@ -84,7 +84,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" href="javascript:void(0);" onclick="resetPassword(${data.id});"> 
+                                    <a class="dropdown-item" href="javascript:void(0);" onclick="resetPassword(${data.id});">
                                         <i class="fas fa-key"></i> Resetear clave
                                     </a>
                                 </li>
@@ -104,7 +104,7 @@
                     name: 'actions',
                     orderable: false,
                     searchable: false
-                }  
+                }
             ],
             pageLength: 25,
             lengthChange: false,
@@ -155,13 +155,13 @@
         reverseButtons: true
         }).then(async (result) => {
         if (result.isConfirmed) {
-        
+
             Swal.fire({
                 title: `Reseteando clave...`,
                 html: "Porfavor espere...",
                 allowOutsideClick: false,
                 didOpen: () => {
-                    Swal.showLoading(); 
+                    Swal.showLoading();
                 }
             });
 
@@ -169,7 +169,7 @@
 
                 toastr.clear();
                 const token                   =   document.querySelector('input[name="_token"]').value;
-                
+
                 const formData                =   new FormData();
                 const urlResetPassword        =   @json(route('landlord.mantenimientos.empresas.resetearClave'));
 
@@ -194,7 +194,7 @@
                     Swal.close();
                     return;
                 }
-                
+
                 if(res.success){
                     dtCompaniesLandlord.ajax.reload(null, false);
                     toastr.success(res.message,'OPERACIÓN COMPLETADA');
@@ -251,7 +251,7 @@
                 html: "Porfavor espere...",
                 allowOutsideClick: false,
                 didOpen: () => {
-                    Swal.showLoading(); 
+                    Swal.showLoading();
                 }
             });
 
@@ -259,7 +259,7 @@
 
                 toastr.clear();
                 const token                     =   document.querySelector('input[name="_token"]').value;
-                
+
                 const formData                  =   new FormData();
                 const urlDeleteTenant           =   "{{ route('landlord.mantenimientos.empresas.deleteTenant', ':id') }}".replace(':id', company_id);
 
@@ -269,7 +269,7 @@
                                         method: 'POST',
                                         headers: {
                                             'X-CSRF-TOKEN': token,
-                                            'X-HTTP-Method-Override': 'DELETE' 
+                                            'X-HTTP-Method-Override': 'DELETE'
                                         }
                                     });
 
@@ -284,7 +284,7 @@
                     Swal.close();
                     return;
                 }
-                
+
                 if(res.success){
                     dtCompaniesLandlord.ajax.reload(null, false);
                     toastr.success(res.message,'OPERACIÓN COMPLETADA');

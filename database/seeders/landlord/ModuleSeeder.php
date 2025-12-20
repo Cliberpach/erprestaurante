@@ -30,7 +30,7 @@ class ModuleSeeder extends Seeder
         ModuleChild::create([
             'module_id' => $petty_cash->id,
             'description' => 'Apertura/Cierre',
-            'route_name' => 'cajas.apertura_cierre',
+            'route_name' => 'movimientos_caja.apertura_cierre',
             'order' => '2'
         ]);
 
@@ -117,22 +117,6 @@ class ModuleSeeder extends Seeder
             'order'         => '2'
         ]);
 
-
-
-
-        // ModuleChild::create([
-        //     'module_id' => $sale->id,
-        //     'description' => 'Comprobante Electrónico',
-        //     'route_name' => 'ventas.comprobante_electronico',
-        //     'order' => '2'
-
-        // // ModuleChild::create([
-        // //     'module_id' => $sale->id,
-        // //     'description' => 'Cotización',
-        // //     'route_name' => 'ventas.cotizacion',
-        // //     'order' => '2'
-        // // ]);
-
         ModuleChild::create([
             'module_id' => $sale->id,
             'description' => 'Clientes',
@@ -147,6 +131,55 @@ class ModuleSeeder extends Seeder
             'order'         => '2'
         ]);
 
+        //Abastecimiento
+        $accounts = Module::create([
+            'description' => 'Abastecimiento',
+            'order' => '1'
+        ]);
+
+        ModuleChild::create([
+            'module_id'     => $accounts->id,
+            'description'   => 'Mesas',
+            'route_name'    => 'abastecimiento.mesas.index',
+            'order'         => '2'
+        ]);
+
+        ModuleChild::create([
+            'module_id'     => $accounts->id,
+            'description'   => 'Tipo Plato',
+            'route_name'    => 'abastecimiento.tipos_plato.index',
+            'order'         => '2'
+        ]);
+
+        ModuleChild::create([
+            'module_id'     => $accounts->id,
+            'description'   => 'Platos',
+            'route_name'    => 'abastecimiento.platos.index',
+            'order'         => '2'
+        ]);
+
+        ModuleChild::create([
+            'module_id'     => $accounts->id,
+            'description'   => 'Categorías',
+            'route_name'    => 'abastecimiento.categorias.index',
+            'order'         => '2'
+        ]);
+
+        ModuleChild::create([
+            'module_id'     => $accounts->id,
+            'description'   => 'Bebidas',
+            'route_name'    => 'abastecimiento.bebidas.index',
+            'order'         => '2'
+        ]);
+
+        ModuleChild::create([
+            'module_id'     => $accounts->id,
+            'description'   => 'Programación',
+            'route_name'    => 'abastecimiento.programacion.index',
+            'order'         => '2'
+        ]);
+
+        //Cuentas
         $accounts = Module::create([
             'description' => 'Cuentas',
             'order' => '1'

@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -12,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('petty_cashes', function (Blueprint $table) {
+        Schema::create('tables', function (Blueprint $table) {
+
             $table->id();
-            $table->string('name')->nullable(false);
-            $table->enum('status', ['ABIERTO', 'ANULADO', 'CERRADO'])->default('CERRADO');
-            $table->enum('type', ['CAJA', 'FICTICIO'])->default('CAJA');
+
+            $table->string('name',160);
+
+            $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
 
             $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->string('creator_user_name')->nullable();
@@ -34,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('petty_cashes');
+        Schema::dropIfExists('tables');
     }
 };

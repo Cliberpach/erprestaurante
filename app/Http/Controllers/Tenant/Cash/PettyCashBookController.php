@@ -27,7 +27,7 @@ class PettyCashBookController extends Controller
     {
         try {
             return $this->s_pettycashbook->getPdfOne($request->toArray());
-        } catch (Throwable $th) {
+        } catch (Throwable $th) {dd($th->getMessage());
             Session::flash('message_error', $th->getMessage());
             return back();
         }

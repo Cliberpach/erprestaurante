@@ -23,9 +23,15 @@ return new class extends Migration
             $table->double('total');
             $table->boolean('status')->default(true);
             $table->timestamps();
+
             $table->foreign('proof_payment_id')->references('id')->on('proof_payments');
             $table->foreign('supplier_id')->references('id')->on('suppliers');
             $table->foreign('user_id')->references('id')->on('users');
+
+            $table->unsignedBigInteger('payment_method_id');
+            $table->unsignedBigInteger('petty_cash_book_id');
+            $table->string('payment_method_name', 160);
+
         });
     }
 

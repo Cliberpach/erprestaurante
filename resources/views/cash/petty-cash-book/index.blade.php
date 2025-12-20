@@ -253,14 +253,6 @@
             }
         }
 
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger',
-            },
-            buttonsStyling: false
-        })
-
         function eliminar(id) {
             const fila = getRowById(dtCash, id);
             const name = fila.name;
