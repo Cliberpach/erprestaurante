@@ -14,6 +14,7 @@ use App\Http\Controllers\Tenant\CustomerController;
 use App\Http\Controllers\Tenant\InventoryController;
 use App\Http\Controllers\Tenant\KardexController;
 use App\Http\Controllers\Tenant\Maintenance\BankAccountController;
+use App\Http\Controllers\Tenant\Maintenance\UserController as MaintenanceUserController;
 use App\Http\Controllers\Tenant\ModuleController;
 use App\Http\Controllers\Tenant\NoteIncomeController;
 use App\Http\Controllers\Tenant\NoteReleaseController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\Tenant\Reports\ReportFieldController;
 use App\Http\Controllers\Tenant\Reports\ReportSaleController;
 use App\Http\Controllers\Tenant\Reports\ReservationDocumentController;
 use App\Http\Controllers\Tenant\SupplierController;
+use App\Http\Controllers\Tenant\Supply\DishController;
 use App\Http\Controllers\Tenant\ValuedKardexController;
 use App\Http\Controllers\Tenant\WorkShop\ModelController;
 use App\Http\Controllers\Tenant\WorkShop\ServiceController;
@@ -246,6 +248,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
 Route::group(["prefix" => "utils"], function () {
     Route::get('cash-available-search', [PettyCashController::class, 'searchCashAvailable'])->name('tenant.utils.searchCashAvailable');
+
+    Route::get('cash-open-search', [PettyCashController::class, 'searchCashOpen'])->name('tenant.utils.searchCashOpen');
+
     Route::get('service-search', [ServiceController::class, 'searchService'])->name('tenant.utils.searchService');
     Route::get('product-search', [ProductController::class, 'searchProduct'])->name('tenant.utils.searchProduct');
     Route::get('product-search/stock', [ProductController::class, 'searchProductStock'])->name('tenant.utils.searchProductStock');
@@ -257,4 +262,7 @@ Route::group(["prefix" => "utils"], function () {
     Route::get('validated-product/stock', [ProductController::class, 'validatedProductStock'])->name('tenant.utils.validatedProductStock');
     Route::get('getListBankAccounts', [BankAccountController::class,'getListBankAccounts'])->name('tenant.utils.getListBankAccounts');
     Route::get('is-active-invoice/{id}', [UtilController::class, 'isActiveInvoiceType'])->name('tenant.utils.isActiveInvoiceType');
+
+    Route::get('dishes/get-list', [DishController::class, 'getList'])->name('tenant.utils.getDisheslist');
+    Route::get('get-list/free-servers', [MaintenanceUserController::class, 'getListFreeServers'])->name('tenant.utils.getListFreeServers');
 });

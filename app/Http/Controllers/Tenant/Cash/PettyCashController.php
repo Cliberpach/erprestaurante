@@ -6,17 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenant\Cash\Cash\CashStoreRequest;
 use App\Http\Requests\Tenant\Cash\Cash\CashUpdateRequest;
 use App\Http\Services\Tenant\Cash\PettyCash\CashManager;
-use App\Models\Company;
-use App\Models\ExitMoney;
-use App\Models\ExitMoneyDetail;
 use Illuminate\Http\Request;
 use App\Models\PettyCash;
-use App\Models\PettyCashBook;
 use App\Models\ProofPayment;
 use App\Models\Supplier;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
-use PDF;
 use Throwable;
 
 class PettyCashController extends Controller
@@ -161,6 +156,25 @@ class PettyCashController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al buscar cajas disponibles.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+     public function searchCashOpen(Request $request)
+    {
+        try {
+
+            $cashes =   $this->s_cash->searchCashOpen($request->toArray());
+
+            return response()->json([
+                'success' => true,
+                'data' => $cashes
+            ]);
+        } catch (Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al buscar cajas abiertas.',
                 'error' => $e->getMessage()
             ], 500);
         }

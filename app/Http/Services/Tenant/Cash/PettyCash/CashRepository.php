@@ -61,4 +61,35 @@ class CashRepository
         $cash->status   =   $status;
         $cash->save();
     }
+
+    public function searchCashOpen($data)
+    {
+        $search = $data['search'] ?? null;
+        $user_id = $data['user_id'] ?? null;
+
+        $query = PettyCash::from('petty_cashes as pc')
+            ->join('petty_cash_books as pcb','pc.id', '=', 'pcb.petty_cash_id')
+            ->join('users as u','pcb.user_id', '=', 'u.id')
+            ->join('shifts as s','pcb.shift_id', '=', 's.id')
+            ->where('pcb.status', 'ABIERTO')
+            ->when($search, function ($q) use ($search) {
+                $q->where('pc.name', 'like', "%{$search}%");
+            })
+            ->select(
+                'pc.id',
+                'pc.name',
+                'pc.status',
+                'pcb.id as petty_cash_book_id',
+                'u.name as user_name',
+                'pcb.initial_date',
+                's.time as shift_name'
+            )
+            ->distinct();
+
+        if($user_id) {
+            $query->where('pcb.user_id', $user_id);
+        }
+
+        return $query->get();
+    }
 }

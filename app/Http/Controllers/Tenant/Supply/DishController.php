@@ -10,7 +10,6 @@ use App\Http\Services\Tenant\Supply\Dish\DishManagement;
 use App\Models\Landlord\ModelV;
 use App\Models\Tenant\Supply\Dish\Dish;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -31,6 +30,7 @@ class DishController extends Controller
 
     public function getList(Request $request)
     {
+        $type_dish_id = $request->get('type_dish_id');
 
         $items = Dish::from('dishes as d')
             ->join('types_dish as td', 'td.id', 'd.type_dish_id')
@@ -44,6 +44,10 @@ class DishController extends Controller
                 'td.name as type_dish_name'
             )
             ->where('d.status', 'ACTIVO');
+
+        if($type_dish_id){
+            $items->where('d.type_dish_id', $type_dish_id);
+        }
 
         return DataTables::of($items)->toJson();
     }

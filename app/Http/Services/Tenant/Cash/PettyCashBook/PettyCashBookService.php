@@ -30,9 +30,14 @@ class PettyCashBookService
 
     public function openPettyCash(array $data): PettyCashBook
     {
-        $this->s_validation->validateOpenCash($data);
-        $dto    =   $this->s_dto->getDtoStore($data);
-        $petty_cash_book   =   $this->s_repository->insertPettyCashBook($dto);
+        $data               =   $this->s_validation->validateOpenCash($data);
+
+        $dto                =   $this->s_dto->getDtoStore($data);
+        $petty_cash_book    =   $this->s_repository->insertPettyCashBook($dto);
+
+        $dto_servers   =   $this->s_dto->getDtoCashServers($data['lst_servers'],$petty_cash_book->id);
+        $this->s_repository->insertPettyCashServers($dto_servers);
+        
         $this->s_cash->setStatus($dto['petty_cash_id'], 'ABIERTO');
         return $petty_cash_book;
     }
@@ -250,4 +255,10 @@ class PettyCashBookService
 
         return $petty_cash_book;
     }
+
+    public function pettyCashIsOpen(int $petty_cash_id)
+    {
+        return $this->s_repository->pettyCashIsOpen($petty_cash_id);
+    }
+
 }

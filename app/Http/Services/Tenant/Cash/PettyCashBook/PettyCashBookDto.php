@@ -22,4 +22,16 @@ class PettyCashBookDto
 
         return $dto;
     }
+
+    public function getDtoCashServers(array $data,int $petty_cash_book_id){
+        $dto = [];
+        foreach ($data as $item) {
+            $_item = [
+                'petty_cash_book_id'   =>  $petty_cash_book_id,
+                'user_id'              =>  $item
+            ];
+            $dto[]  =   $_item;
+        }
+        return $dto;
+    }
 }

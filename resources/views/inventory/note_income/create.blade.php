@@ -25,7 +25,7 @@
     </div>
     <div class="card-footer d-flex justify-content-between align-items-center">
         <span  style="color:rgb(219, 155, 35);font-size:14px;font-weight:bold;">Los campos con * son obligatorios</span>
-        
+
         <div style="display:flex;">
             <button class="btn btn-danger btnVolver" style="margin-right:5px;" type="button">
                 <i class="fa-solid fa-door-open"></i> VOLVER
@@ -72,7 +72,7 @@
             if (e.target.closest('.btnAgregarProducto')) {
 
                 toastr.clear();
-                const inputCantidad =   document.querySelector('#cantidad'); 
+                const inputCantidad =   document.querySelector('#cantidad');
                 const validacion    =   validationAddProduct();
 
                 if(validacion){
@@ -81,7 +81,7 @@
                     clearFormSelectProduct();
                     ocultarAnimacion1();
                 }
-              
+
             }
         })
 
@@ -92,7 +92,7 @@
             theme: "bootstrap-5",
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
-            allowClear: true  
+            allowClear: true
         } );
 
         $( '.select2_form_mdl' ).select2( {
@@ -100,22 +100,22 @@
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
             allowClear: true,
-            dropdownParent: $('#mdlProductos')  
+            dropdownParent: $('#mdlProductos')
         } );
     }
 
     function loadDataTableProducts(){
         const urlGetProductos   =   @json(route('tenant.inventarios.nota_ingreso.getProducts'));
-        
+
         dtProductos  =   new DataTable('#tbl_products',{
-            serverSide: true,  
-            processing: true,  
+            serverSide: true,
+            processing: true,
             ajax: {
-                url: urlGetProductos, 
-                type: 'GET',  
+                url: urlGetProductos,
+                type: 'GET',
                 data: function(d) {
-                    d.categoria_id  =   $('#categoria').val();  
-                    d.marca_id      =   $('#marca').val();  
+                    d.categoria_id  =   $('#categoria').val();
+                    d.marca_id      =   $('#marca').val();
                 },
             },
             columns: [
@@ -127,7 +127,7 @@
             ],
             createdRow: function(row, data, dataIndex) {
                 $(row).css('cursor', 'pointer');
-                
+
                 $(row).attr('onclick', 'selectProduct(' + data.id + ')');
             },
             language: {
@@ -181,13 +181,13 @@
     }
 
     function validationAddProduct(){
-        
+
         if(!product_selected.product_id){
             toastr.error('DEBE SELECCIONAR UN PRODUCTO!!');
             return false;
         }
 
-        const inputCantidad =   document.querySelector('#cantidad'); 
+        const inputCantidad =   document.querySelector('#cantidad');
         if(!inputCantidad.value){
             toastr.error('DEBE INGRESAR UNA CANTIDAD!!');
             return false;
@@ -250,7 +250,6 @@
         tbody.innerHTML =   filas;
     }
 
-    
     function destruirDataTableProductos(){
         if(dtProductos){
             dtProductos.destroy();
@@ -317,7 +316,7 @@
                 html: 'Registrando nueva nota de ingreso...',
                 allowOutsideClick: false,
                 didOpen: () => {
-                    Swal.showLoading(); 
+                    Swal.showLoading();
                 }
             });
 
@@ -325,15 +324,15 @@
                 const response  =   await fetch(urlStoreNoteIncome, {
                                         method: 'POST',
                                         headers: {
-                                            'X-CSRF-TOKEN': token 
+                                            'X-CSRF-TOKEN': token
                                         },
                                         body: formData
                                     });
 
                 const   res =   await response.json();
-                
+
                 console.log(res);
-                
+
                 if(response.status === 422){
                     if('errors' in res){
                         pintarErroresValidacion(res.errors);
@@ -341,7 +340,7 @@
                     Swal.close();
                     return;
                 }
-                
+
                 if(res.success){
                     const note_income_index     =   @json(route('tenant.inventarios.nota_ingreso'));
                     toastr.success(res.message,'OPERACIÓN COMPLETADA');
@@ -351,12 +350,12 @@
                     Swal.close();
                 }
 
-              
+
             } catch (error) {
                 toastr.error(error,'ERROR EN LA PETICIÓN REGISTRAR NOTA DE INGRESO');
                 Swal.close();
             }
-          
+
 
         } else if (result.dismiss === Swal.DismissReason.cancel) {
             swalWithBootstrapButtons.fire({

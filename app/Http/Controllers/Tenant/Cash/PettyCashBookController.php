@@ -76,6 +76,7 @@ array:3 [ // app\Http\Controllers\Tenant\Cash\PettyCashBookController.php:112
   "cash_available_id" => "4"
   "shift" => "1"
   "initial_amount" => "0"
+  "lst_servers" => "["7","9","6"]"
 ]
 */
     public function openPettyCash(PettyCashBookStore $request)

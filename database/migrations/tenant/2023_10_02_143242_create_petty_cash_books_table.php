@@ -23,10 +23,9 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 
-
             $table->string('petty_cash_name');
 
-            $table->enum('status', ['ANULADO', 'ABIERTO', 'CERRADO'])->default('CERRADO');
+            $table->enum('status', ['ANULADO', 'ABIERTO', 'CERRADO'])->default('ABIERTO');
             $table->enum('type', ['CAJA', 'FICTICIO'])->default('CAJA');
 
             $table->decimal('initial_amount', 10, 2);

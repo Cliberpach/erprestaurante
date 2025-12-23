@@ -2,11 +2,6 @@
 
 namespace App\Http\Services\Tenant\Maintenance\Company;
 
-use App\Models\Company;
-use App\Models\Product;
-use Exception;
-use Illuminate\Support\Facades\DB;
-
 class CompanyManager
 {
 

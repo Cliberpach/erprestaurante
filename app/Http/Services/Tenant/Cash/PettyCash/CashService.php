@@ -45,8 +45,14 @@ class CashService
         return $cashes;
     }
 
+    public function searchCashOpen(array $data)
+    {
+        $cashes = $this->s_repository->searchCashOpen($data);
+        return $cashes;
+    }
+
     public function setStatus(int $id, string $status)
     {
-        $this->s_repository->setStatus($id,$status);
+        $this->s_repository->setStatus($id, $status);
     }
 }

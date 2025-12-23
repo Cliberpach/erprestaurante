@@ -41,8 +41,8 @@ return new class extends Migration
             $table->foreign('petty_cash_book_id')->references('id')->on('petty_cash_books');
 
             //========= TIPO DE VENTA, CODIGO Y NOMBRE =======
-            $table->enum('type_sale_code', ['80', '3','1']);
-            $table->enum('type_sale_name', ['NOTA DE VENTA', 'BOLETA DE VENTA ELECTRÓNICA','FACTURA ELECTRÓNICA']);
+            $table->string('type_sale_code',160);
+            $table->string('type_sale_name',160);
 
             //====== MONTOS =========
             $table->decimal('igv_percentage', 14, 6)->unsigned();

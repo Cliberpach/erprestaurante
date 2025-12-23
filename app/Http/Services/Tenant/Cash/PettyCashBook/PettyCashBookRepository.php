@@ -4,6 +4,7 @@ namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 
 use App\Models\Tenant\Cash\PettyCash;
 use App\Models\Tenant\Cash\PettyCashBook;
+use App\Models\Tenant\Cash\PettyCashServer;
 use Illuminate\Support\Facades\DB;
 
 class PettyCashBookRepository
@@ -90,7 +91,8 @@ class PettyCashBookRepository
             ->select(
                 'pc.name',
                 'pcb.id as petty_cash_book_id',
-                'pc.id as petty_cash_id'
+                'pc.id as petty_cash_id',
+                'pc.name as petty_cash_name'
             )->where('pcb.status', 'ABIERTO')
             ->whereNull('pcb.final_date')
             ->where('pcb.user_id', $user_id)
@@ -98,5 +100,17 @@ class PettyCashBookRepository
             ->first();
 
         return $cash_book;
+    }
+
+    public function serverIsAssigned(int $user_id)
+    {
+        $exists =   PettyCashServer::where('user_id', $user_id)
+                    ->exists();
+        return $exists;
+    }
+
+     public function insertPettyCashServers(array $dto)
+    {
+       PettyCashServer::insert($dto);
     }
 }

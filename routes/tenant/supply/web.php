@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Tenant\Cash\ExitMoneyController;
 use App\Http\Controllers\Tenant\Supply\DishController;
+use App\Http\Controllers\Tenant\Supply\ProgrammingController;
 use App\Http\Controllers\Tenant\Supply\TableController;
 use App\Http\Controllers\Tenant\Supply\TypeDishController;
 use Illuminate\Support\Facades\Route;
@@ -60,10 +61,10 @@ Route::group(["prefix" => "abastecimiento"], function () {
     });
 
     Route::group(["prefix" => "programacion"], function () {
-        Route::get('index', [ExitMoneyController::class, 'index'])->name('tenant.abastecimiento.programacion.index');
-        Route::get('create', [ExitMoneyController::class, 'create'])->name('tenant.egreso.create');
-        Route::get('getEgresos', [ExitMoneyController::class, 'getExitMoneys'])->name('tenant.egreso.getExitMoneys');
-        Route::post('store', [ExitMoneyController::class, 'store'])->name('tenant.egreso.store');
+        Route::get('index', [ProgrammingController::class, 'index'])->name('tenant.abastecimiento.programacion.index');
+        Route::get('create', [ProgrammingController::class, 'create'])->name('tenant.abastecimiento.programacion.create');
+        Route::get('getList', [ProgrammingController::class, 'getList'])->name('tenant.abastecimiento.programacion.getList');
+        Route::post('store', [ProgrammingController::class, 'store'])->name('tenant.abastecimiento.programacion.store');
         Route::get('pdf-one/{id}', [ExitMoneyController::class, 'showPDF'])->name('tenant.egreso.pdf');
         Route::put('update/{id}', [ExitMoneyController::class, 'updateExit'])->name('tenant.egreso.update');
         Route::get('edit/{id}', [ExitMoneyController::class, 'editExit'])->name('tenant.egreso.edit');

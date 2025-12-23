@@ -180,7 +180,6 @@ class UtilController extends Controller
 
     public static function getTechnicians()
     {
-
         $technicians   =   DB::table('users as u')
             ->join('model_has_roles as mhr', 'mhr.model_id', 'u.id')
             ->join('roles as r', 'r.id', 'mhr.role_id')

@@ -25,9 +25,8 @@
                             <i class="fas fa-save"></i> Guardar
                         </button>
                     </div>
-                    <div class="col-12 col-info">
-                        <i class="fas fa-info-circle"></i>
-                        <p>Los campos marcados con asterisco (*) son obligatorios.</p>
+                    <div class="col-12">
+                        <p>Los campos con asterisco (*) son obligatorios.</p>
                     </div>
 
                 </div>
@@ -38,15 +37,104 @@
 
 
 <script>
+    let dtFreeServers;
+    const lstServers = [];
+
     function openMdlOpenCash() {
         $('#mdlOpenCash').modal('show');
     }
 
     function eventsMdlOpenCash() {
+        loadDtFreeServers();
         document.querySelector('#form-open-cash').addEventListener('submit', (e) => {
             e.preventDefault();
             openPettyCash(e.target);
         })
+
+        document.addEventListener('click', (e) => {
+
+            if (e.target.closest('.chk-server')) {
+                actionCheckServer(e.target);
+            }
+
+            if (e.target.closest('.btnReloadServers')) {
+                reloadServersFree();
+            }
+
+        });
+
+        $('#mdlOpenCash').on('hidden.bs.modal', function() {
+            reloadServersFree();
+            window.cashesAvailableSelect.clear();
+            window.cashesAvailableSelect.refreshOptions(false);
+        });
+
+    }
+
+    function loadDtFreeServers() {
+        const url = @json(route('tenant.utils.getListFreeServers'));
+
+        dtFreeServers = new DataTable('#dt-servers', {
+            serverSide: false,
+            processing: true,
+            ajax: {
+                url: url,
+                type: 'GET',
+                data: function(d) {},
+            },
+            order: [
+                [0, 'desc']
+            ],
+            columns: [{
+                    data: 'id',
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row) {
+                        return `
+                            <div class="form-check form-switch text-center">
+                                <input
+                                    class="form-check-input chk-server"
+                                    type="checkbox"
+                                    value="${data}"
+                                    id="server_${data}"
+                                >
+                            </div>
+                        `;
+                    }
+                },
+                {
+                    visible: false,
+                    data: 'id',
+                    name: 'u.id'
+                },
+                {
+                    data: 'user_name',
+                    name: 'u.name'
+                }
+            ],
+
+            language: {
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "emptyTable": "No hay datos disponibles en la tabla",
+                "aria": {
+                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
     }
 
     function openPettyCash(formOpenCash) {
@@ -61,7 +149,7 @@
             },
             buttonsStyling: false
         });
-        
+
         swalWithBootstrapButtons.fire({
             title: "Desea aperturar la caja?",
             html: `
@@ -95,6 +183,7 @@
                     toastr.clear();
 
                     const formData = new FormData(formOpenCash);
+                    formData.append('lst_servers', JSON.stringify(lstServers));
                     const res = await axios.post(route('tenant.movimientos_caja.abrirCaja'), formData);
 
                     if (res.data.success) {
@@ -137,5 +226,24 @@
                 });
             }
         });
+    }
+
+    function actionCheckServer(chkServer) {
+        const serverId = chkServer.value;
+        if (chkServer.checked) {
+            lstServers.push(serverId);
+        } else {
+            const index = lstServers.indexOf(serverId);
+            if (index > -1) {
+                lstServers.splice(index, 1);
+            }
+        }
+    }
+
+    function reloadServersFree() {
+        toastr.clear();
+        dtFreeServers.ajax.reload();
+        lstServers.length = 0;
+        toastr.info('MESEROS RECARGADOS', 'SE LIMPIARON SELECCIONES');
     }
 </script>
