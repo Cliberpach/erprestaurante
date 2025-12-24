@@ -73,6 +73,26 @@
                         }
                     },
                     {
+                        data: 'status',
+                        name: 'p.status',
+                        searchable: false,
+                        orderable: true,
+                        render: function(data) {
+                            let badgeClass = '';
+                            let text = data;
+
+                            if (data === 'ACTIVO') {
+                                badgeClass = 'bg-primary';
+                            } else if (data === 'CERRADO') {
+                                badgeClass = 'bg-danger';
+                            } else {
+                                badgeClass = 'bg-secondary';
+                            }
+
+                            return `<span class="badge ${badgeClass}">${text}</span>`;
+                        }
+                    },
+                    {
                         data: 'created_at',
                         name: 'p.created_at',
                         searchable: false,

@@ -11,8 +11,8 @@ class UserManager
         $this->s_user    =   new UserService();
     }
 
-    public function getMeserosLibres(){
-        return $this->s_user->getMeserosLibres();
+    public function getMeserosLibres($data){
+        return $this->s_user->getMeserosLibres($data);
     }
 
 }

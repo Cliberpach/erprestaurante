@@ -21,11 +21,19 @@ class ProgrammingValidation
         $petty_cash_id      =   $datos['cash_available_id'];
         $petty_cash_book    =   $this->pcb_service->getCashBookUser(Auth::user()->id);
 
-        if(!$petty_cash_book){
+        if (!$petty_cash_book) {
             throw new Exception("Debes pertenecer a una caja abierta.");
         }
-        if($petty_cash_book->petty_cash_id != $petty_cash_id){
+        if ($petty_cash_book->petty_cash_id != $petty_cash_id) {
             throw new Exception("La caja seleccionada no corresponde a tu caja abierta.");
+        }
+
+        $programming    =   $this->pcb_service->hasProgrammingActive($petty_cash_book->petty_cash_book_id);
+        if ($programming === false) {
+            throw new Exception("EL MOVIMIENTO DE CAJA: CM-" . $petty_cash_book->petty_cash_book_id . ", TIENE MÁS DE UNA PROGRAMACIÓN ACTIVA");
+        }
+        if ($programming) {
+            throw new Exception("EL MOVIMIENTO DE CAJA: CM-" . $petty_cash_book->petty_cash_book_id . " YA TIENE UNA PROGRAMACIÓN ACTIVA");
         }
 
         $datos['petty_cash_book_id']   =   $petty_cash_book->petty_cash_book_id;
@@ -41,5 +49,4 @@ class ProgrammingValidation
 
         return $datos;
     }
-
 }

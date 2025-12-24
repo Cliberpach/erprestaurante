@@ -12,9 +12,9 @@ class PettyCashBookDto
         $petty_cash =   PettyCash::findOrFail($datos['cash_available_id']);
 
         $dto    =   [
-            'petty_cash_id' =>  $datos['cash_available_id'],
-            'shift_id'  =>  $datos['shift'],
-            'user_id'   =>  Auth::user()->id,
+            'petty_cash_id'     =>  $datos['cash_available_id'],
+            'shift_id'          =>  $datos['shift'],
+            'user_id'           =>  Auth::user()->id,
             'initial_amount'    =>  $datos['initial_amount'],
             'initial_date'      =>  now(),
             'petty_cash_name'   =>  $petty_cash->name
@@ -32,6 +32,23 @@ class PettyCashBookDto
             ];
             $dto[]  =   $_item;
         }
+        return $dto;
+    }
+
+     public function getDtoUpdate(array $datos,int $id)
+    {
+
+        $petty_cash =   PettyCash::findOrFail($datos['petty_cash_id']);
+
+        $dto    =   [
+            'petty_cash_id'     =>  $datos['petty_cash_id'],
+            'shift_id'          =>  $datos['shift_edit'],
+            'user_id'           =>  Auth::user()->id,
+            'initial_amount'    =>  $datos['initial_amount_edit'],
+            'initial_date'      =>  now(),
+            'petty_cash_name'   =>  $petty_cash->name
+        ];
+
         return $dto;
     }
 }

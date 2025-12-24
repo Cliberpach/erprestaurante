@@ -23,6 +23,8 @@ Route::group(["prefix" => "cajas"], function () {
         Route::get('getCashBooks', [PettyCashBookController::class, 'getCashBooks'])->name('tenant.cajas.getCashBooks');
         Route::get('getConsolidated', [PettyCashBookController::class, 'getConsolidated'])->name('tenant.movimientos_caja.getConsolidated');
         Route::post('close-cash', [PettyCashBookController::class, 'closePettyCash'])->name('tenant.movimientos_caja.closePettyCash');
+        Route::get('get-one/{id}', [PettyCashBookController::class, 'getOne'])->name('tenant.movimientos_caja.getOne');
+        Route::put('update/{id}', [PettyCashBookController::class, 'update'])->name('tenant.movimientos_caja.update');
     });
 
     Route::group(["prefix" => "egresos"], function () {

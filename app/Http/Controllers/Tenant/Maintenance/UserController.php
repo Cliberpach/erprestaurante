@@ -36,9 +36,9 @@ class UserController extends Controller
         return back();
     }
 
-    public function getListFreeServers ()
+    public function getListFreeServers (Request $request)
     {
-        $meseros = $this->s_manager->getMeserosLibres();
+        $meseros = $this->s_manager->getMeserosLibres($request->toArray());
         return DataTables::of($meseros)->toJson();
     }
 }

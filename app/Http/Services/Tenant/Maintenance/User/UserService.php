@@ -10,9 +10,9 @@ class UserService
         $this->s_repository    =   new UserRepository();
     }
 
-    public function getMeserosLibres()
+    public function getMeserosLibres($data)
     {
-       return $this->s_repository->getMeserosLibres();
+       return $this->s_repository->getMeserosLibres($data);
     }
 
 }

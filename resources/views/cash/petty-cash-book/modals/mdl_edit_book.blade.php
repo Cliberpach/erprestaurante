@@ -1,15 +1,15 @@
-<div class="modal fade" id="mdlOpenCash" tabindex="-1" aria-labelledby="mdlOpenCashLabel" aria-hidden="true">
+<div class="modal fade" id="mdlEditBook" tabindex="-1" aria-labelledby="mdlEditBookLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Aperturar Caja </h5>
+                <h5 class="modal-title" id="exampleModalLabel">Editar Movimiento Caja </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12 colCaja">
-                            @include('cash.petty-cash-book.forms.form_open_cash')
+                            @include('cash.petty-cash-book.forms.form_edit_book')
                         </div>
                     </div>
                 </div>
@@ -21,8 +21,8 @@
                         <button type="button" class="btn btn-secondary btnCancelar" data-bs-dismiss="modal">
                             <i class="fas fa-ban"></i> Cancelar
                         </button>
-                        <button form="form-open-cash" type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Guardar
+                        <button form="form-edit-book" type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Actualizar
                         </button>
                     </div>
                     <div class="col-12">
@@ -37,51 +37,96 @@
 
 
 <script>
-    let dtFreeServers;
-    const lstServers = [];
+    let dtFreeServersEdit;
+    const lstServersEdit = [];
+    const paramsMdlEditBook = {
+        id: null,
+    };
 
-    function openMdlOpenCash() {
-        dtFreeServers.ajax.reload();
-        $('#mdlOpenCash').modal('show');
+    async function openMdlEditBook(id) {
+        paramsMdlEditBook.id = id;
+        await getOne();
+        $('#mdlEditBook').modal('show');
     }
 
-    function eventsMdlOpenCash() {
-        loadDtFreeServers();
-        document.querySelector('#form-open-cash').addEventListener('submit', (e) => {
+    async function getOne() {
+
+        try {
+            mostrarAnimacion1();
+            const res = await axios.get(route('tenant.movimientos_caja.getOne', {
+                id: paramsMdlEditBook.id
+            }));
+            if (res.data.success) {
+
+                setEditBook(res.data.data);
+                dtFreeServersEdit.ajax.reload(null, false);
+
+            } else {
+                toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
+            }
+        } catch (error) {
+            toastr.error(error, 'ERROR EN LA PETICIÓN OBTENER MOVIMIENTO DE CAJA');
+        } finally {
+            ocultarAnimacion1();
+        }
+
+    }
+
+    function setEditBook(data) {
+        let movimientoId = data.petty_cash_book.id;
+        let codigoFormateado = 'CM-' + String(movimientoId).padStart(8, '0');
+        document.querySelector('#infoCodigoCaja').textContent = codigoFormateado;
+        document.querySelector('#infoNombreCaja').textContent = data.petty_cash_book.petty_cash_name;
+
+        document.getElementById('shift_edit').value = data.petty_cash_book.shift_id;
+        document.getElementById('initial_amount_edit').value = parseFloat(data.petty_cash_book.initial_amount).toFixed(
+            2);
+
+        lstServersEdit.length = 0;
+        data.servers.forEach(server => {
+            lstServersEdit.push(server.user_id.toString());
+        });
+
+    }
+
+    function eventsMdlEditBook() {
+        loadDtEditServers();
+
+        document.querySelector('#form-edit-book').addEventListener('submit', (e) => {
             e.preventDefault();
-            openPettyCash(e.target);
+            updatePettyCash(e.target);
         })
 
         document.addEventListener('click', (e) => {
 
-            if (e.target.closest('.chk-server')) {
-                actionCheckServer(e.target);
+            if (e.target.closest('.chk-server-edit')) {
+                actionCheckServerEdit(e.target);
             }
 
-            if (e.target.closest('.btnReloadServers')) {
-                reloadServersFree();
+            if (e.target.closest('.btnReloadServersEdit')) {
+                reloadServersFreeEdit();
             }
 
         });
 
-        $('#mdlOpenCash').on('hidden.bs.modal', function() {
-            reloadServersFree();
-            window.cashesAvailableSelect.clear();
-            window.cashesAvailableSelect.refreshOptions(false);
+        $('#mdlEditBook').on('hidden.bs.modal', function() {
+            reloadServersFreeEdit();
         });
 
     }
 
-    function loadDtFreeServers() {
+    function loadDtEditServers() {
         const url = @json(route('tenant.utils.getListFreeServers'));
 
-        dtFreeServers = new DataTable('#dt-servers', {
+        dtFreeServersEdit = new DataTable('#dt-servers-edit', {
             serverSide: false,
             processing: true,
             ajax: {
                 url: url,
                 type: 'GET',
-                data: function(d) {},
+                data: function(d) {
+                    d.id = paramsMdlEditBook.id;
+                },
             },
             order: [
                 [0, 'desc']
@@ -94,10 +139,10 @@
                         return `
                             <div class="form-check form-switch text-center">
                                 <input
-                                    class="form-check-input chk-server"
+                                    class="form-check-input chk-server-edit"
                                     type="checkbox"
                                     value="${data}"
-                                    id="server_${data}"
+                                    id="server_edit_${data}"
                                 >
                             </div>
                         `;
@@ -134,14 +179,22 @@
                     "sortAscending": ": activar para ordenar la columna de manera ascendente",
                     "sortDescending": ": activar para ordenar la columna de manera descendente"
                 }
+            },
+            drawCallback: function() {
+                lstServersEdit.forEach(function(id) {
+                    const checkbox = document.querySelector(`#server_edit_${id}`);
+                    console.log('check', checkbox)
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
             }
         });
     }
 
-    function openPettyCash(formOpenCash) {
-        const id = cashesAvailableSelect.getValue();
-        const item = cashesAvailableSelect.options[id];
+    function updatePettyCash(formOpenCash) {
 
+        const fila = getRowById(dtCash, paramsMdlEditBook.id);
 
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
@@ -152,11 +205,11 @@
         });
 
         swalWithBootstrapButtons.fire({
-            title: "Desea aperturar la caja?",
+            title: "Desea actualizar la caja?",
             html: `
                 <div style="text-align: center; margin-top: 10px;">
                     <p style="font-size: 16px; margin-bottom: 10px;">
-                        <strong>Nombre:</strong> ${item.name}
+                        <strong>N°:</strong> ${fila.code}
                     </p>
                 </div>
             `,
@@ -169,7 +222,7 @@
             if (result.isConfirmed) {
 
                 Swal.fire({
-                    title: "Aperturando caja...",
+                    title: "Actualizando caja...",
                     text: "Por favor, espere",
                     icon: "info",
                     allowOutsideClick: false,
@@ -184,12 +237,16 @@
                     toastr.clear();
 
                     const formData = new FormData(formOpenCash);
-                    formData.append('lst_servers', JSON.stringify(lstServers));
-                    const res = await axios.post(route('tenant.movimientos_caja.abrirCaja'), formData);
+                    formData.append('_method', 'PUT');
+                    formData.append('lst_servers', JSON.stringify(lstServersEdit));
+
+                    const res = await axios.post(route('tenant.movimientos_caja.update', {
+                        id: paramsMdlEditBook.id
+                    }), formData);
 
                     if (res.data.success) {
                         toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
-                        $('#mdlOpenCash').modal('hide');
+                        $('#mdlEditBook').modal('hide');
                         dtCash.ajax.reload();
                     } else {
                         Swal.close();
@@ -229,22 +286,21 @@
         });
     }
 
-    function actionCheckServer(chkServer) {
+    function actionCheckServerEdit(chkServer) {
         const serverId = chkServer.value;
         if (chkServer.checked) {
-            lstServers.push(serverId);
+            lstServersEdit.push(serverId);
         } else {
-            const index = lstServers.indexOf(serverId);
+            const index = lstServersEdit.indexOf(serverId);
             if (index > -1) {
-                lstServers.splice(index, 1);
+                lstServersEdit.splice(index, 1);
             }
         }
     }
 
-    function reloadServersFree() {
+    function reloadServersFreeEdit() {
         toastr.clear();
-        dtFreeServers.ajax.reload();
-        lstServers.length = 0;
+        dtFreeServersEdit.ajax.reload();
         toastr.info('MESEROS RECARGADOS', 'SE LIMPIARON SELECCIONES');
     }
 </script>

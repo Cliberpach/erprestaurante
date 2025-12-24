@@ -29,4 +29,12 @@ class PettyCashBookManager
         return $this->s_cashbook->closePettyCash($data);
     }
 
+    public function getOne(int $id):array{
+        return $this->s_cashbook->getOne($id);
+    }
+
+    public function update(array $data,int $id):PettyCashBook{
+        return $this->s_cashbook->update($data,$id);
+    }
+
 }

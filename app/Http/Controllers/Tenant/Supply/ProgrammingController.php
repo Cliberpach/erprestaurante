@@ -38,9 +38,10 @@ class ProgrammingController extends Controller
                 'p.petty_cash_name',
                 'p.creator_user_name',
                 'p.created_at',
-                'p.updated_at'
+                'p.updated_at',
+                'p.status'
             )
-            ->where('p.status', 'ACTIVO');
+            ->where('p.status','<>', 'ANULADO');
 
         return DataTables::of($items)
             ->filterColumn('petty_cash_book_code', function ($query, $keyword) {

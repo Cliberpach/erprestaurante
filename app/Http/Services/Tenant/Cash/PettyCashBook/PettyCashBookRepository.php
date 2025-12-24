@@ -5,6 +5,8 @@ namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Cash\PettyCash;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Cash\PettyCashServer;
+use App\Models\Tenant\Supply\Programming\Programming;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class PettyCashBookRepository
@@ -12,6 +14,13 @@ class PettyCashBookRepository
     public function insertPettyCashBook(array $dto): PettyCashBook
     {
         return PettyCashBook::create($dto);
+    }
+
+    public function udpatePettyCashBook(array $dto, int $id): PettyCashBook
+    {
+        $item = PettyCashBook::findOrFail($id);
+        $item->update($dto);
+        return $item;
     }
 
     public function updateCash(array $dto, int $id): PettyCash
@@ -102,15 +111,44 @@ class PettyCashBookRepository
         return $cash_book;
     }
 
-    public function serverIsAssigned(int $user_id)
+    public function serverIsAssigned(int $user_id, int $exception_id = null)
     {
-        $exists =   PettyCashServer::where('user_id', $user_id)
-                    ->exists();
-        return $exists;
+        $item =   PettyCashServer::where('user_id', $user_id);
+
+        if ($exception_id) {
+            $item->where('petty_cash_book_id', '<>', $exception_id);
+        }
+
+        return $item->exists();
     }
 
-     public function insertPettyCashServers(array $dto)
+    public function insertPettyCashServers(array $dto)
     {
-       PettyCashServer::insert($dto);
+        PettyCashServer::insert($dto);
     }
+
+    public function deletePettyCashServers(int $id){
+        PettyCashServer::where('petty_cash_book_id',$id)->delete();
+    }
+
+    public function getOne(int $id): array
+    {
+        $petty_cash_book    = PettyCashBook::findOrFail($id);
+        $servers            = PettyCashServer::where('petty_cash_book_id', $id)->get();
+        return ['petty_cash_book' => $petty_cash_book, 'servers' => $servers];
+    }
+
+    public function hasProgrammingActive(int $petty_cash_book_id){
+        $programming    =   Programming::where('petty_cash_book_id',$petty_cash_book_id)->where('status','ACTIVO')->get();
+
+        if(count($programming) > 1){
+            return false;
+        }
+        if(count($programming) === 0){
+            return null;
+        }
+
+        return $programming->first();
+    }
+
 }

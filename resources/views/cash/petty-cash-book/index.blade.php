@@ -16,6 +16,7 @@
 @section('content')
     @include('cash.petty-cash-book.modals.mdl_open_cash')
     @include('cash.petty-cash-book.modals.mdl_close_cash')
+    @include('cash.petty-cash-book.modals.mdl_edit_book')
     <div class="card overflow-hidden">
         <div class="card-header d-flex align-items-center justify-content-between">
             <h6 class="card-title mb-0">MOVIMIENTOS DE CAJA</h6>
@@ -44,6 +45,7 @@
         function events() {
             eventsMdlOpenCash();
             eventsMdlCloseCash();
+            eventsMdlEditBook();
         }
 
         function iniciarDtCash() {
@@ -139,6 +141,12 @@
                                         <button class="dropdown-item text-primary fw-semibold"
                                                 onclick="openMdlCloseCash(${data.id})">
                                             <i class="fas fa-lock me-2"></i> Cerrar caja
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item text-primary fw-semibold"
+                                                onclick="openMdlEditBook(${data.id})">
+                                            <i class="fas fa-edit me-2"></i> Editar
                                         </button>
                                     </li>
                                 ` : '';

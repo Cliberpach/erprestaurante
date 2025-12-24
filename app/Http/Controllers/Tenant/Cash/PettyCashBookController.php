@@ -27,7 +27,8 @@ class PettyCashBookController extends Controller
     {
         try {
             return $this->s_pettycashbook->getPdfOne($request->toArray());
-        } catch (Throwable $th) {dd($th->getMessage());
+        } catch (Throwable $th) {
+            dd($th->getMessage());
             Session::flash('message_error', $th->getMessage());
             return back();
         }
@@ -62,7 +63,7 @@ class PettyCashBookController extends Controller
                 'c.petty_cash_name'
             )
             ->where('c.status', '<>', 'ANULADO')
-            ->where('c.type','<>','FICTICIO');
+            ->where('c.type', '<>', 'FICTICIO');
 
         return DataTables::of($cashes)
             ->filterColumn('code', function ($query, $keyword) {
@@ -91,7 +92,6 @@ array:3 [ // app\Http\Controllers\Tenant\Cash\PettyCashBookController.php:112
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
     }
-
 
     public function closeCashBook(Request $request)
     {
@@ -146,11 +146,39 @@ array:3 [ // app\Http\Controllers\Tenant\Cash\PettyCashBookController.php:112
 
     public function closePettyCash(Request $request)
     {
+        DB::beginTransaction();
         try {
             $petty_cash_book   =   $this->s_pettycashbook->closePettyCash($request->toArray());
             DB::commit();
             return response()->json(['success' => true, 'message' => 'CAJA CERRADA CON ÉXITO']);
         } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    public function getOne(int $id)
+    {
+        try {
+            $data   =   $this->s_pettycashbook->getOne($id);
+            return response()->json(['success' => true, 'message' => 'DATOS OBTENIDOS', 'data' => $data]);
+        } catch (Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+
+            $petty_cash_book    =   $this->s_pettycashbook->update($request->toArray(),$id);
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'MOVIMIENTO DE CAJA ACTUALIZADO']);
+
+        } catch (Throwable $th) {
+            DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
     }

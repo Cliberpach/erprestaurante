@@ -3,6 +3,7 @@
 namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 
 use App\Http\Services\Tenant\Cash\PettyCash\CashService;
+use App\Http\Services\Tenant\Supply\Programming\ProgrammingService;
 use App\Models\Company;
 use App\Models\ExitMoney;
 use App\Models\Tenant\Accounts\CustomerAccountDetail;
@@ -11,6 +12,7 @@ use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sale;
 use App\Models\Tenant\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class PettyCashBookService
@@ -19,6 +21,7 @@ class PettyCashBookService
     private PettyCashBookDto $s_dto;
     private PettyCashBookValidation $s_validation;
     private CashService $s_cash;
+    private ProgrammingService $s_programming;
 
     public function __construct()
     {
@@ -35,9 +38,9 @@ class PettyCashBookService
         $dto                =   $this->s_dto->getDtoStore($data);
         $petty_cash_book    =   $this->s_repository->insertPettyCashBook($dto);
 
-        $dto_servers   =   $this->s_dto->getDtoCashServers($data['lst_servers'],$petty_cash_book->id);
+        $dto_servers   =   $this->s_dto->getDtoCashServers($data['lst_servers'], $petty_cash_book->id);
         $this->s_repository->insertPettyCashServers($dto_servers);
-        
+
         $this->s_cash->setStatus($dto['petty_cash_id'], 'ABIERTO');
         return $petty_cash_book;
     }
@@ -66,7 +69,7 @@ class PettyCashBookService
             ->join('customer_accounts as ca', 'ca.id', 'cad.customer_account_id')
             ->leftJoin('work_orders as wo', 'wo.id', '=', 'ca.work_order_id')
             ->leftJoin('sales_documents as sd', 'sd.id', '=', 'ca.sale_id')
-            ->where('cad.petty_cash_book_id',$id)
+            ->where('cad.petty_cash_book_id', $id)
             ->select(
                 'ca.document_number',
                 DB::raw("
@@ -252,6 +255,16 @@ class PettyCashBookService
         $petty_cash_book->save();
 
         $this->s_cash->setStatus($petty_cash_book->petty_cash_id, 'CERRADO');
+        $this->s_repository->deletePettyCashServers($data['id']);
+
+        $programming            =   $this->s_repository->hasProgrammingActive($data['id']);
+        if ($programming == false) {
+            throw new Exception("EL MOVIMIENTO DE CAJA: CM-" . $data['id'] . "TIENE MÁS DE UNA PROGRAMACIÓN ACTIVA");
+        }
+        if ($programming) {
+            $this->s_programming    =   new ProgrammingService();
+            $this->s_programming->setStatus($programming->id, 'CERRADO');
+        }
 
         return $petty_cash_book;
     }
@@ -261,4 +274,25 @@ class PettyCashBookService
         return $this->s_repository->pettyCashIsOpen($petty_cash_id);
     }
 
+    public function getOne(int $id): array
+    {
+        return $this->s_repository->getOne($id);
+    }
+
+    public function update(array $data, int $id): PettyCashBook
+    {
+        $data               =   $this->s_validation->validateUpdateCash($data, $id);
+        $dto                =   $this->s_dto->getDtoUpdate($data, $id);
+        $petty_cash_book    =   $this->s_repository->udpatePettyCashBook($dto, $id);
+
+        $dto_servers        =   $this->s_dto->getDtoCashServers($data['lst_servers'], $petty_cash_book->id);
+        $this->s_repository->deletePettyCashServers($id);
+        $this->s_repository->insertPettyCashServers($dto_servers);
+
+        return $petty_cash_book;
+    }
+
+    public function hasProgrammingActive(int $petty_cash_book_id) {
+        return $this->s_repository->hasProgrammingActive($petty_cash_book_id);
+    }
 }
