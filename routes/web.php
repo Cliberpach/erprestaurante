@@ -238,6 +238,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     require __DIR__ . '/tenant/sales/web.php';
     require __DIR__ . '/tenant/accounts/web.php';
     require __DIR__ . '/tenant/supply/web.php';
+    require __DIR__ . '/tenant/waiter_counter/web.php';
 
     Route::get("landlord/ruc/{ruc}", [ApiController::class, 'apiRuc']);
     Route::get("landlord/dni/{dni}", [ApiController::class, 'apiDni']);
