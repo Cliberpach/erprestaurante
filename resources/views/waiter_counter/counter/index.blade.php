@@ -59,7 +59,24 @@
             events();
         })
 
-        function events() {}
+        function events() {
+
+
+        }
+
+
+        function toOrderCreate(tableId) {
+            alert(tableId)
+            window.location.href = route('tenant.mostrador_mesero.mostrador.create', {
+                table: tableId
+            });
+        }
+
+        function openMdlOrder(tableId) {
+            window.location.href = route('tenant.mostrador_mesero.mostrador.create', {
+                table: tableId
+            });
+        }
 
         async function loadTablesAsCircles() {
             try {
@@ -87,7 +104,9 @@
                     grid.innerHTML += `
                         <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                             <div class="table-card ${bgClass}"
-                                onclick="openOrder(${item.order_id ?? 'null'})">
+                                data-table="${item.table_id}"
+                                data-status="${item.status ?? ''}"
+                                style="cursor:pointer">
 
                                 <div class="table-icon">
                                     <i class="fas fa-utensils"></i>
@@ -102,13 +121,32 @@
                                 </div>
 
                                 ${item.total ? `
-                                                                    <div class="table-total">
-                                                                        S/ ${formatSoles(item.total)}
-                                                                    </div>
+                                                                <div class="table-total">
+                                                                    S/ ${formatSoles(item.total)}
+                                                                </div>
                                                                 ` : ''}
                             </div>
                         </div>
                     `;
+
+                    if (!grid.dataset.delegateAttached) {
+                        grid.addEventListener('click', (e) => {
+                            const card = e.target.closest('.table-card');
+                            if (!card || !grid.contains(card)) return;
+
+                            const tableId = card.getAttribute('data-table');
+                            const status = (card.getAttribute('data-status') || '').toString()
+                                .toUpperCase();
+
+                            if (status === 'LIBRE' || !status) {
+                                toOrderCreate(tableId);
+                            } else {
+                                openMdlOrder(tableId);
+                            }
+                        });
+
+                        grid.dataset.delegateAttached = '1';
+                    }
                 });
 
             } catch (error) {

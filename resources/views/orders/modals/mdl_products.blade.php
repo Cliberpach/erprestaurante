@@ -50,20 +50,75 @@
 
 <script>
     const lstTableProducts = [];
-    const product_selected = {
-        product_id: null,
-        product_name: null,
-        brand_name: null,
-        category_name: null,
-        quantity: null
+    const productSelected = {
+        id: null,
+        name: null,
+        type_name: null,
+        purchase_price: null,
+        sale_price: null,
+        type_item: null,
+        quantity: null,
     }
 
     function eventsMdlProductos() {
         loadDataTableProducts();
+        loadSelectsMdlProducts();
+    }
+
+    function loadSelectsMdlProducts() {
+        const categorySelect = document.getElementById('categoria');
+        if (categorySelect && !categorySelect.tomselect) {
+            window.categorySelect = new TomSelect(categorySelect, {
+                valueField: 'id',
+                labelField: 'name',
+                searchField: ['name', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div>
+                                ${escape(item.name)}
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div>${escape(item.name)}</div>
+                        `
+                }
+            });
+        }
+
+        const brandSelect = document.getElementById('marca');
+        if (brandSelect && !brandSelect.tomselect) {
+            window.brandSelect = new TomSelect(brandSelect, {
+                valueField: 'id',
+                labelField: 'name',
+                searchField: ['name', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div>
+                                ${escape(item.name)}
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div>${escape(item.name)}</div>
+                        `
+                }
+            });
+        }
     }
 
     function loadDataTableProducts() {
-        const urlGetProductos = @json(route('tenant.inventarios.nota_ingreso.getProducts'));
+        const urlGetProductos = @json(route('tenant.utils.getProducts'));
 
         dtProductos = new DataTable('#tbl_products', {
             serverSide: true,
@@ -144,37 +199,31 @@
         //======= SETTEAR PRODUCTO =======
         const product = fila;
         document.querySelector('#producto').value = product.name;
-        document.querySelector('#unidad').value = 'NIU';
+        document.querySelector('#purchase_price').value = formatSoles(product.purchase_price);
+        document.querySelector('#sale_price').value = formatSoles(product.sale_price);
+        document.querySelector('#item_stock').value = product.stock;
 
-        product_selected.product_id = product.id;
-        product_selected.product_name = product.name;
-        product_selected.category_name = product.category_name;
-        product_selected.brand_name = product.brand_name;
+        productSelected.id = product.id;
+        productSelected.name = product.name;
+        productSelected.type_name = product.category_name + '-' + product.brand_name;
+        productSelected.sale_price  =   product.sale_price;
+        productSelected.purchase_price  =   product.purchase_price;
+        productSelected.type_item = 'PRODUCTO';
 
-        console.log('PRODUCTO ELEGIDO');
-        console.log(product_selected);
-
+        itemSelected = productSelected;
 
         $('#mdlProductos').modal('hide');
         document.querySelector('#cantidad').focus();
 
     }
 
-    function clearFormSelectProduct() {
+    function clearProductSelected() {
 
-        const inputProducto = document.querySelector('#producto');
-        const inputUnidad = document.querySelector('#unidad');
-        const inputCantidad = document.querySelector('#cantidad');
-
-        inputProducto.value = '';
-        inputUnidad.value = '';
-        inputCantidad.value = '';
-
-        product_selected.product_id = null;
-        product_selected.product_name = null;
-        product_selected.category_name = null;
-        product_selected.brand_name = null;
-        product_selected.quantity = null;
+        productSelected.id = null;
+        productSelected.name = null;
+        productSelected.type_name = null;
+        productSelected.type_item = null;
+        productSelected.quantity = null;
 
     }
 </script>

@@ -9,6 +9,7 @@ use App\Http\Requests\Tenant\Supply\Dish\DishUpdateRequest;
 use App\Http\Services\Tenant\Supply\Dish\DishManagement;
 use App\Models\Landlord\ModelV;
 use App\Models\Tenant\Supply\Dish\Dish;
+use App\Models\Tenant\Supply\Programming\ProgrammingDetail;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +46,35 @@ class DishController extends Controller
             )
             ->where('d.status', 'ACTIVO');
 
-        if($type_dish_id){
+        if ($type_dish_id) {
+            $items->where('d.type_dish_id', $type_dish_id);
+        }
+
+        return DataTables::of($items)->toJson();
+    }
+
+    public function getListProgramming(Request $request)
+    {
+        $programming_id = $request->get('programming_id');
+        $type_dish_id = $request->get('type_dish_id');
+
+        $items = ProgrammingDetail::from('programming_detail as pd')
+            ->join('dishes as d', 'd.id', 'pd.dish_id')
+            ->join('types_dish as td', 'td.id', 'd.type_dish_id')
+            ->select(
+                'pd.stock',
+                'd.name',
+                'td.name as type_dish_name',
+                'd.sale_price',
+                'd.purchase_price',
+                'd.img_route',
+                'd.creator_user_name',
+                'd.id'
+            )
+            ->where('pd.status', 'ACTIVO')
+            ->where('pd.programming_id', $programming_id);
+
+        if ($type_dish_id) {
             $items->where('d.type_dish_id', $type_dish_id);
         }
 
@@ -94,14 +123,13 @@ array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:79
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
-
     }
 
     public function edit(int $id)
     {
         $types_dish =   UtilController::getTypesDish();
         $dish       =   $this->s_manager->getOne($id);
-        $img_route  =   $dish->img_route?asset($dish->img_route):null;
+        $img_route  =   $dish->img_route ? asset($dish->img_route) : null;
 
         return view('supply.dishes.edit', compact(
             'types_dish',
@@ -110,7 +138,7 @@ array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:79
         ));
     }
 
-/*
+    /*
 array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:128
   "_token" => "DqXWf0GYW1K8Yug3TWzKqCQcnyVz6quC1fgxcYi9"
   "_method" => "PUT"

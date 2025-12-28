@@ -244,7 +244,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get("landlord/dni/{dni}", [ApiController::class, 'apiDni']);
 
     Route::get("/logout", [ModuleController::class, 'logout'])->name('module.logout');
-
 });
 
 Route::group(["prefix" => "utils"], function () {
@@ -261,9 +260,12 @@ Route::group(["prefix" => "utils"], function () {
     Route::get('get-years/{model}', [YearController::class, 'getYearsModel'])->name('tenant.utils.getYearsModel');
     Route::get('serch-plate/{placa}', [VehicleController::class, 'searchPlate'])->name('tenant.utils.searchPlate');
     Route::get('validated-product/stock', [ProductController::class, 'validatedProductStock'])->name('tenant.utils.validatedProductStock');
-    Route::get('getListBankAccounts', [BankAccountController::class,'getListBankAccounts'])->name('tenant.utils.getListBankAccounts');
+    Route::get('getListBankAccounts', [BankAccountController::class, 'getListBankAccounts'])->name('tenant.utils.getListBankAccounts');
     Route::get('is-active-invoice/{id}', [UtilController::class, 'isActiveInvoiceType'])->name('tenant.utils.isActiveInvoiceType');
 
     Route::get('dishes/get-list', [DishController::class, 'getList'])->name('tenant.utils.getDisheslist');
+    Route::get('dishes/get-list-programming', [DishController::class, 'getListProgramming'])->name('tenant.utils.getDishesProgramming');
+
+    Route::get('products/get-list', [ProductController::class, 'getProducts'])->name('tenant.utils.getProducts');
     Route::get('get-list/free-servers', [MaintenanceUserController::class, 'getListFreeServers'])->name('tenant.utils.getListFreeServers');
 });
