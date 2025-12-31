@@ -19,6 +19,18 @@
                     </div>
 
                     <div class="row align-items-center g-3">
+                        
+                        <!-- Cliente -->
+                        <div class="col-lg-6 col-md-8 col-sm-12">
+                            <label class="form-label fw-bold required_field">Cliente:</label>
+                            <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlNewCustomer();"
+                                style="margin-left:4px;"></i>
+
+                            <select class="form-control" id="client_id" name="client_id" required>
+                                <option value="">Seleccione un cliente</option>
+                            </select>
+                            <p class="client_id_error msgError mb-0"></p>
+                        </div>
 
                     </div>
 

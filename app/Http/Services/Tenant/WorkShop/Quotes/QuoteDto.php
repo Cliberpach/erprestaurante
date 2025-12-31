@@ -43,7 +43,7 @@ class QuoteDto
         }
 
         //======== AMOUNTS ======
-        $dto_amounts    =   $this->calculateAmounts($data['lst_products'], $data['lst_services']);
+        $dto_amounts        =   $this->calculateAmounts($data['lst_products'], $data['lst_services']);
         $dto['total']       =   $dto_amounts['total'];
         $dto['subtotal']    =   $dto_amounts['subtotal'];
         $dto['igv']         =   $dto_amounts['igv'];

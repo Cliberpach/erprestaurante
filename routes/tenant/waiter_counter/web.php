@@ -14,7 +14,7 @@ Route::group(["prefix" => "mostrador_mesero"], function () {
         Route::get('create/{table}', [OrderController::class, 'create'])->name('tenant.mostrador_mesero.mostrador.create');
         Route::get('getAll', [WCounterController::class, 'getAll'])->name('tenant.mostrador_mesero.mostrador.getAll');
         Route::get('getCustomerAccount/{id}', [WCounterController::class, 'getCustomerAccount'])->name('tenant.cuentas.cliente.getCustomerAccount');
-        Route::post('store-pago', [WCounterController::class, 'storePago'])->name('tenant.cuentas.cliente.storePago');
+        Route::post('store', [WCounterController::class, 'store'])->name('tenant.mostrador_mesero.mostrador.store');
         Route::get('pdf-one/{id}', [WCounterController::class, 'pdfOne'])->name('tenant.cuentas.cliente.pdfOne');
     });
 });
