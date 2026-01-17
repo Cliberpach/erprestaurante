@@ -2,13 +2,8 @@
 
 namespace App\Http\Services\Tenant\WCounter\Counter;
 
-use App\Http\Controllers\UtilController;
-use App\Http\Services\Tenant\Cash\PettyCashBook\PettyCashBookService;
-use App\Http\Services\Tenant\Orders\OrderManager;
 use App\Http\Services\Tenant\Orders\OrderService;
 use App\Models\Tenant\Orders\Order;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
 
 class CounterService
 {
@@ -24,7 +19,11 @@ class CounterService
     public function store(array $data): Order
     {
         $order  =   $this->s_order->store($data);
-
         return $order;
+    }
+
+     public function getOrderTable(int $table_id)
+    {
+        return $this->s_order->getOrderTable($table_id);
     }
 }

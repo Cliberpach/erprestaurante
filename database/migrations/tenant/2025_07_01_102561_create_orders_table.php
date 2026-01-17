@@ -21,7 +21,7 @@ return new class extends Migration
 
             $table->date('date');
             $table->string('place')->default('LOCAL');
-            $table->string('observation', 500);
+            $table->string('observation', 500)->nullable();
             $table->unsignedInteger('n_attempts_dishes');
             $table->unsignedInteger('n_attempts_products');
 

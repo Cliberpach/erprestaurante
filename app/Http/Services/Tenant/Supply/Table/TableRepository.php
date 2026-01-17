@@ -57,8 +57,8 @@ class TableRepository
 
     public function setStatus(int $id, string $status)
     {
-        $cash   =   Table::findOrFail($id);
-        $cash->status   =   $status;
-        $cash->save();
+        $item           =   Table::findOrFail($id);
+        $item->status   =   $status;
+        $item->save();
     }
 }

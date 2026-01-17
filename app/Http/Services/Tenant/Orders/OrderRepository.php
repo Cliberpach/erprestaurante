@@ -3,11 +3,50 @@
 namespace App\Http\Services\Tenant\Orders;
 
 use App\Models\Tenant\Orders\Order;
+use App\Models\Tenant\Orders\OrderDish;
+use App\Models\Tenant\Orders\OrderProduct;
+use Illuminate\Support\Facades\DB;
 
 class OrderRepository
 {
-    public function insertOrder(array $dto): Order
+    public function store(array $dto): Order
     {
         return Order::create($dto);
+    }
+
+    public function storeOrderProduct(array $dto): void
+    {
+        OrderProduct::insert($dto);
+    }
+
+    public function storeOrderDish(array $dto): void
+    {
+        OrderDish::insert($dto);
+    }
+
+    public function getOrderTable(int $table_id)
+    {
+        $item   =   DB::table('orders as o')
+            ->join('reservations as r', 'r.order_id', 'o.id')
+            ->join('tables as t','t.id','r.table_id')
+            ->where('o.table_id', $table_id)
+            ->where('r.status', 'OCUPADO')
+            ->select(
+                'o.id as order_id',
+                'o.code as order_code',
+                'o.customer_name',
+                'o.customer_type_document_abbreviation',
+                'o.customer_document_number',
+                'o.creator_user_name',
+                'o.created_at',
+                'o.status',
+                'o.total',
+                'o.subtotal',
+                'o.igv',
+                'o.observation',
+                't.name as table_name'
+            )->first();
+
+        return $item;
     }
 }

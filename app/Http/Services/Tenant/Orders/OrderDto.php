@@ -27,10 +27,13 @@ class OrderDto
         $dto['subtotal']    =   $dto_amounts['subtotal'];
         $dto['igv']         =   $dto_amounts['igv'];
 
+        $dto['table_id']    =   $data['table_id'];
+
         return $dto;
     }
 
-    public function getDtoOrderDish(array $lst_items,int $order_id):array{
+    public function getDtoOrderDish(array $lst_items, int $order_id): array
+    {
         $dto    =   [];
         foreach ($lst_items as $item) {
             $_item  =   [];
@@ -41,25 +44,26 @@ class OrderDto
             $_item['dish_name']         =   $dish->name;
             $_item['sale_price']        =   $dish->sale_price;
             $_item['quantity']          =   $item->quantity;
-            
+
             $dto[]  =   $_item;
         }
 
         return $dto;
     }
 
-    public function getDtoOrderProduct(array $lst_items,int $order_id):array{
+    public function getDtoOrderProduct(array $lst_items, int $order_id): array
+    {
         $dto    =   [];
         foreach ($lst_items as $item) {
             $_item  =   [];
             $product   =   Product::findOrFail($item->id);
 
             $_item['order_id']          =   $order_id;
-            $_item['dish_id']           =   $product->id;
-            $_item['dish_name']         =   $product->name;
+            $_item['product_id']        =   $product->id;
+            $_item['product_name']      =   $product->name;
             $_item['sale_price']        =   $product->sale_price;
             $_item['quantity']          =   $item->quantity;
-            
+
             $dto[]  =   $_item;
         }
 

@@ -28,8 +28,8 @@
                 <div class="col-12 d-flex justify-content-end">
 
                     <!-- BOTÓN VOLVER -->
-                    <button type="button" class="btn btn-danger me-1"
-                        onclick="redirect('tenant.abastecimiento.programacion.index')">
+                   <button type="button" class="btn btn-danger me-1"
+                        onclick="redirect('tenant.mostrador_mesero.mostrador.index')">
                         <i class="fas fa-arrow-left"></i> VOLVER
                     </button>
 

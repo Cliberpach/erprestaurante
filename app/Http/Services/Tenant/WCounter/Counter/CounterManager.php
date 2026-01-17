@@ -9,14 +9,18 @@ class CounterManager
 {
     private CounterService $s_service;
 
-     public function __construct()
+    public function __construct()
     {
         $this->s_service    =   new CounterService();
     }
 
-    public function store(array $data):Order{
-       return $this->s_service->store($data);
+    public function store(array $data): Order
+    {
+        return $this->s_service->store($data);
     }
 
-
+    public function getOrderTable(int $table_id)
+    {
+        return $this->s_service->getOrderTable($table_id);
+    }
 }

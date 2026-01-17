@@ -28,7 +28,7 @@
 
                     <!-- BOTÓN VOLVER -->
                     <button type="button" class="btn btn-danger me-1"
-                        onclick="redirect('tenant.abastecimiento.programacion.index')">
+                        onclick="redirect('tenant.mostrador_mesero.mostrador.index')">
                         <i class="fas fa-arrow-left"></i> VOLVER
                     </button>
 
@@ -301,7 +301,7 @@
         async function store(formCreate) {
 
             toastr.clear();
-            if(lstNoteIncome.length === 0){
+            if (lstNoteIncome.length === 0) {
                 toastr.error('DEBE AGREGAR AL MENOS UN PRODUCTO EN EL DETALLE!!');
                 return;
             }

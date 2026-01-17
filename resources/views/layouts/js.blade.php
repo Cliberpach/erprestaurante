@@ -4,11 +4,11 @@
 <script src="{{ asset('assets/js/appSettings.js') }}"></script>
 
 <script>
-    window.lstSearchModules =   @json($lst_search_modules);
-    const baseUrl           =   @json($base);
+    window.lstSearchModules = @json($lst_search_modules);
+    const baseUrl = @json($base);
 
-    lstSearchModules.forEach((item)=>{
-        item.url    =   route(`${baseUrl}${item.url}`);
+    lstSearchModules.forEach((item) => {
+        item.url = route(`${baseUrl}${item.url}`);
     })
 </script>
 
@@ -51,5 +51,5 @@
 
     }
 </script>
-
 @yield('js')
+@stack('js-script')

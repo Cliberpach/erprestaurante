@@ -25,4 +25,34 @@ class Reservation extends Model
         'delete_user_name',
         'code',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (auth()->check()) {
+                $model->creator_user_id = auth()->id();
+                $model->creator_user_name = auth()->user()->name;
+            }
+        });
+
+        static::created(function ($model) {
+            $model->code = 'RE-' . str_pad($model->id, 8, '0', STR_PAD_LEFT);
+            $model->saveQuietly();
+        });
+
+        static::updating(function ($model) {
+            if (auth()->check()) {
+                $model->editor_user_id = auth()->id();
+                $model->editor_user_name = auth()->user()->name;
+            }
+            if ($model->isDirty('status') && $model->status === 'ANULADO') {
+                if (auth()->check()) {
+                    $model->delete_user_id = auth()->id();
+                    $model->delete_user_name = auth()->user()->name;
+                }
+            }
+        });
+    }
 }

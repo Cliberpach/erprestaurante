@@ -22,13 +22,12 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('id')->on('orders');
 
-
             /* 🔹 INDEXED FIELDS */
             $table->unsignedBigInteger('customer_id')->index();
 
             /* 🔹 DATA */
             $table->dateTime('date');
-            $table->string('status', 25);
+            $table->enum('status', ['OCUPADO', 'FINALIZADO', 'ANULADO'])->default('OCUPADO');
             $table->integer('estado_delete')->default(1);
 
             /* 🔹 AUDIT */

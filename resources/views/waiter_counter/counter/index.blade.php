@@ -5,8 +5,7 @@
 @endsection
 
 @section('content')
-    @include('workshop.brands.modals.mdl_create_marca')
-    @include('workshop.brands.modals.mdl_edit_marca')
+    @include('waiter_counter.counter.modals.mdl_show')
     <div class="card overflow-hidden">
         <div class="card-header d-flex align-items-center justify-content-between">
             <h6 class="card-title mb-0">Mostrador Mozo</h6>
@@ -61,18 +60,9 @@
 
         function events() {
 
-
         }
-
 
         function toOrderCreate(tableId) {
-            alert(tableId)
-            window.location.href = route('tenant.mostrador_mesero.mostrador.create', {
-                table: tableId
-            });
-        }
-
-        function openMdlOrder(tableId) {
             window.location.href = route('tenant.mostrador_mesero.mostrador.create', {
                 table: tableId
             });
@@ -93,9 +83,9 @@
                     let bgClass = 'bg-libre';
                     let statusText = 'LIBRE';
 
-                    if (item.status === 'OCUPADA') {
+                    if (item.status === 'OCUPADO') {
                         bgClass = 'bg-ocupada';
-                        statusText = 'OCUPADA';
+                        statusText = 'OCUPADO';
                     } else if (!item.status) {
                         bgClass = 'bg-cerrada';
                         statusText = 'LIBRE';
@@ -121,10 +111,10 @@
                                 </div>
 
                                 ${item.total ? `
-                                                                <div class="table-total">
-                                                                    S/ ${formatSoles(item.total)}
-                                                                </div>
-                                                                ` : ''}
+                                                                    <div class="table-total">
+                                                                        S/ ${formatSoles(item.total)}
+                                                                    </div>
+                                                                    ` : ''}
                             </div>
                         </div>
                     `;
@@ -141,7 +131,7 @@
                             if (status === 'LIBRE' || !status) {
                                 toOrderCreate(tableId);
                             } else {
-                                openMdlOrder(tableId);
+                                openMdlShowOrder(tableId);
                             }
                         });
 
@@ -215,9 +205,9 @@
                             let badgeClass = '';
                             let text = data;
 
-                            if (data === 'ACTIVO') {
+                            if (data === 'LIBRE') {
                                 badgeClass = 'bg-primary';
-                            } else if (data === 'CERRADO') {
+                            } else if (data === 'OCUPADO') {
                                 badgeClass = 'bg-danger';
                             } else {
                                 badgeClass = 'bg-secondary';

@@ -288,6 +288,20 @@ class ModuleSeeder extends Seeder
             'order'         => '2'
         ]);
 
+        // Mosttrador mesero
+        $mostrador_mesero = Module::create([
+            'description' => 'Mostrador Mesero',
+            'order' => '1'
+        ]);
+
+        ModuleChild::create([
+            'module_id' => $mostrador_mesero->id,
+            'description' => 'Mostrador',
+            'route_name' => 'mostrador_mesero.mostrador.index',
+            'order' => '2'
+        ]);
+
+
         // Compras
         $purchase = Module::create([
             'description' => 'Compras',
@@ -300,8 +314,6 @@ class ModuleSeeder extends Seeder
             'route_name' => 'compras.proveedor',
             'order' => '2'
         ]);
-
-
 
         ModuleChild::create([
             'module_id'     => $purchase->id,

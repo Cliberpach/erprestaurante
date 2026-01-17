@@ -8,6 +8,7 @@ use App\Models\Tenant\Supply\Table\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -30,7 +31,7 @@ class WCounterController extends Controller
         $free_tables =   Table::from('tables as t')
             ->leftJoin('reservations as r', function ($join) {
                 $join->on('r.table_id', '=', 't.id')
-                    ->where('r.status', '=', 'OCUPADA');
+                    ->where('r.status', '=', 'OCUPADO');
             })
             ->leftJoin('orders as o', 'o.id', 'r.order_id')
             ->select(
@@ -40,7 +41,7 @@ class WCounterController extends Controller
                 'r.created_at as reservation_date',
                 DB::raw("
                     CASE
-                        WHEN r.status = 'OCUPADA' THEN 'OCUPADA'
+                        WHEN r.status = 'OCUPADO' THEN 'OCUPADO'
                         ELSE 'LIBRE'
                     END AS status
                 "),
@@ -56,7 +57,7 @@ class WCounterController extends Controller
         return DataTables::of($free_tables)->make(true);
     }
 
-/*
+    /*
 array:10 [ // app\Http\Services\Tenant\Orders\OrderValidation.php:64
   "_token" => "6pRzBlylQlHD4KyHQXpuG1Rpt5jWFH9BWIOcq3ER"
   "_method" => "POST"
@@ -77,6 +78,35 @@ array:10 [ // app\Http\Services\Tenant\Orders\OrderValidation.php:64
 
             $this->s_manager->store($request->toArray());
 
+            Session::flash('message_success', 'PEDIDO REGISTRO CON ÉXITO');
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'PEDIDO REGISTRADO CON ÉXITO'
+            ]);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
+            ]);
+        }
+    }
+
+    public function getOrderTable(int $table)
+    {
+        DB::beginTransaction();
+        try {
+
+            $data   =   $this->s_manager->getOrderTable($table);
+
+            return response()->json([
+                'success'   => true,
+                'message'   => 'PEDIDO OBTENIDO CON ÉXITO',
+                'data'      =>  $data
+            ]);
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json([

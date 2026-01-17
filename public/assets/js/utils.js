@@ -257,7 +257,6 @@ function formatQuantity(valor) {
     });
 }
 
-
 function formatMoney(valor) {
     return parseFloat(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }

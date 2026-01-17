@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->string('name',160);
 
-            $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
+            $table->enum('status', ['LIBRE', 'ANULADO','OCUPADO'])->default('LIBRE');
 
             $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->string('creator_user_name')->nullable();
