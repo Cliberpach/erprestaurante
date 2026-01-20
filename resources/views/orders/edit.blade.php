@@ -10,7 +10,7 @@
     @include('orders.modals.mdl_edit_item')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-            <h4 class="card-title mb-md-0 mb-2">REGISTRAR PEDIDO</h4>
+            <h4 class="card-title mb-md-0 mb-2">EDITAR PEDIDO</h4>
 
             <div class="d-flex flex-wrap gap-2">
 
@@ -19,7 +19,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12">
-                    @include('orders.forms.form_create')
+                    @include('orders.forms.form_edit')
                 </div>
             </div>
         </div>
@@ -34,8 +34,8 @@
                     </button>
 
                     <!-- BOTÓN REGISTRAR -->
-                    <button class="btn btn-primary" form="form_create" type="submit">
-                        <i class="fas fa-save"></i> REGISTRAR
+                    <button class="btn btn-primary" form="form_edit" type="submit">
+                        <i class="fas fa-save"></i> ACTUALIZAR
                     </button>
 
                 </div>
@@ -54,9 +54,11 @@
 @section('js')
     <script>
         window.app = {
+            orderId: @json($order->id),
             customerFormatted: @json($customer_formatted),
             companyIgv: @json($igv),
             tableId: @json($table->id),
+            lstDetail:@json($lst_detail),
             init() {
                 eventsMdlDishes();
                 eventsMdlProductos();
@@ -64,5 +66,5 @@
             }
         };
     </script>
-    @vite(['resources/js/orders/create/main.js'])
+    @vite(['resources/js/orders/edit/main.js'])
 @endsection

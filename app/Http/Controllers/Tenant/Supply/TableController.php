@@ -9,7 +9,6 @@ use App\Http\Services\Tenant\Supply\Table\TableManagement;
 use App\Models\Landlord\ModelV;
 use App\Models\Tenant\Supply\Table\Table;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -32,7 +31,7 @@ class TableController extends Controller
     public function getTables(Request $request)
     {
 
-        $tables = Table::where('status', 'ACTIVO');
+        $tables = Table::where('status', '<>','ANULADO');
 
         return DataTables::of($tables)->toJson();
     }

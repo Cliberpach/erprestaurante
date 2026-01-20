@@ -42,6 +42,7 @@
         const lstTableDishes = [];
         const dishSelected = {
             id: null,
+            programming_id:null,
             name: null,
             type_name: null,
             purchase_price: null,
@@ -206,21 +207,22 @@
             console.log(fila);
 
             //======= SETTEAR PRODUCTO =======
-            const product = fila;
-            document.querySelector('#producto').value = product.name;
-            document.querySelector('#purchase_price').value = formatSoles(product.purchase_price);
-            document.querySelector('#sale_price').value = formatSoles(product.sale_price);
-            document.querySelector('#item_stock').value = formatQuantity(product.stock);
+            const item = fila;
+            document.querySelector('#producto').value = item.name;
+            document.querySelector('#purchase_price').value = formatSoles(item.purchase_price);
+            document.querySelector('#sale_price').value = formatSoles(item.sale_price);
+            document.querySelector('#item_stock').value = formatQuantity(item.stock);
 
-            dishSelected.id = product.id;
-            dishSelected.name = product.name;
-            dishSelected.type_name = product.type_dish_name;
-            dishSelected.purchase_price = product.purchase_price;
-            dishSelected.sale_price = product.sale_price;
-            dishSelected.stock = product.stock;
+            dishSelected.id = item.id;
+            dishSelected.name = item.name;
+            dishSelected.type_name = item.type_dish_name;
+            dishSelected.purchase_price = item.purchase_price;
+            dishSelected.sale_price = item.sale_price;
+            dishSelected.stock = item.stock;
             dishSelected.type_item = 'PLATO';
+            dishSelected.programming_id =   item.programming_id;
 
-            itemSelected = dishSelected;
+            setItemSelected(dishSelected);
 
             $('#mdlDishes').modal('hide');
             document.querySelector('#cantidad').focus();

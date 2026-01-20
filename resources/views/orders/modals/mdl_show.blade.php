@@ -1,20 +1,20 @@
 <style>
     .data-key {
       font-weight: bold !important;
-      color: #007bff !important; 
+      color: #007bff !important;
       width: 160px;
-      display: inline-block; 
+      display: inline-block;
     }
     .data-value {
-      color: #343a40 !important; 
-      word-break: break-word !important; 
+      color: #343a40 !important;
+      word-break: break-word !important;
     }
     .modal-body {
-      background-color: #f8f9fa; 
+      background-color: #f8f9fa;
     }
     .modal-body .col-12 {
       border: 1px solid #dee2e6;
-      background-color: #ffffff; 
+      background-color: #ffffff;
     }
 </style>
 
@@ -37,7 +37,7 @@
                   <p class="mb-2"><span class="data-key">Creado el:</span> <span class="data-value" id="createdAt"></span></p>
                   <p class="mb-0"><span class="data-key">Actualizado el:</span> <span class="data-value" id="updatedAt"></span></p>
                 </div>
-                
+
                 <div class="col-12 border rounded p-2 bg-light shadow-sm">
                     @include('inventory.note_income.tables.tbl_note_income_show')
                 </div>
@@ -53,12 +53,12 @@
 
 <script>
 
-    let dtNoteIncomeShow    =   null;
+    let dtDetailShow    =   null;
 
     function openMdlShowNoteIncome(note_id) {
 
         getNoteIncome(note_id);
-        
+
     }
 
     async function getNoteIncome(note_id){
@@ -72,7 +72,7 @@
             const response  =   await fetch(url, {
                                     method: 'GET',
                                     headers: {
-                                        'X-CSRF-TOKEN': token 
+                                        'X-CSRF-TOKEN': token
                                     }
                                 });
 
@@ -81,10 +81,10 @@
             if(res.success){
                 paintNoteIncome(res.note_income);
 
-                destroyDataTable(dtNoteIncomeShow);
+                destroyDataTable(dtDetailShow);
                 clearTable('tbl_note_income_show');
                 paintNoteIncomeDetail(res.note_income_detail);
-                dtNoteIncomeShow    =   loadDataTableSimple(dtNoteIncomeShow,'tbl_note_income_show');
+                dtDetailShow    =   loadDataTableSimple(dtDetailShow,'tbl_note_income_show');
 
                 $('#mdlShowNoteIncome').modal('show');
                 toastr.success('MOSTRANDO NOTA DE INGRESO');
@@ -112,12 +112,12 @@
     }
 
     function paintNoteIncomeDetail(details) {
-        
+
         const tbody = document.querySelector("#tbl_note_income_show tbody");
 
         details.forEach(detail => {
             const row = document.createElement("tr");
-            
+
             row.innerHTML = `
                 <td>${detail.product_name}</td>
                 <td>${detail.category_name}</td>
@@ -125,7 +125,7 @@
                 <td>${detail.quantity}</td>
             `;
 
-            tbody.appendChild(row); 
+            tbody.appendChild(row);
         });
 
     }

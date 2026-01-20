@@ -12,8 +12,8 @@ use App\Http\Requests\Tenant\Inventory\Product\ProductUpdateRequest;
 use App\Http\Services\Tenant\Inventory\Product\ProductManager;
 use App\Imports\Inventory\Producto\ProductoImport;
 use App\Models\Product;
+use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\WarehouseProduct;
-use App\Models\Tenant\WorkShop\WorkOrder\WorkOrderProduct;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -343,7 +343,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
             $warehouse_id   = $request->get('warehouse_id');
             $product_id     = $request->get('product_id');
             $quantity       = (float) $request->get('quantity');
-            $work_order_id  = $request->get('work_order_id');
+            $order_id       = $request->get('order_id');
 
             $item = WarehouseProduct::where('warehouse_id', $warehouse_id)
                 ->where('product_id', $product_id)
@@ -356,7 +356,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
 
             $stock_actual = (float) $item->stock;
 
-            if (!$work_order_id) {
+            if (!$order_id) {
 
                 if ($quantity > $stock_actual) {
                     throw new Exception("STOCK INSUFICIENTE (Stock: $stock_actual, Requiere: $quantity)");
@@ -368,7 +368,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
                 ]);
             }
 
-            $item_bd = WorkOrderProduct::where('work_order_id', $work_order_id)
+            $item_bd = OrderProduct::where('order_id', $order_id)
                 ->where('product_id', $product_id)
                 ->first();
 
@@ -410,7 +410,6 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
         }
     }
 
-
     public function getProducts(Request $request)
     {
 
@@ -435,6 +434,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
                 'p.stock_min',
                 'b.name as brand_name',
                 'c.name as category_name',
+                'wp.warehouse_id'
             );
 
         if ($categoria_id) {
@@ -446,7 +446,6 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
         }
 
         $products  =   $products->get();
-
 
         return DataTables::of($products)->make(true);
     }

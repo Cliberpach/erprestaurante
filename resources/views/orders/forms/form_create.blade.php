@@ -19,7 +19,7 @@
                     </div>
 
                     <div class="row align-items-center g-3">
-                        
+
                         <!-- Cliente -->
                         <div class="col-lg-6 col-md-8 col-sm-12">
                             <label class="form-label fw-bold required_field">Cliente:</label>
@@ -30,6 +30,20 @@
                                 <option value="">Seleccione un cliente</option>
                             </select>
                             <p class="client_id_error msgError mb-0"></p>
+                        </div>
+
+                        <!-- Observación -->
+                        <div class="col-lg-6 col-md-8 col-sm-12">
+                            <label class="form-label fw-bold">Observación:</label>
+
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fa-solid fa-comment-dots"></i>
+                                </span>
+                                <textarea class="form-control" id="observation" name="observation" rows="2" maxlength="500"
+                                    placeholder="Ingrese una observación (opcional)"></textarea>
+                            </div>
+                            <p class="observation_error msgError mb-0"></p>
                         </div>
 
                     </div>

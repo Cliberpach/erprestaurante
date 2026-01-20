@@ -22,5 +22,10 @@ class OrderDish extends Model
         'print_status',
         'print_delivery_status',
         'detail_printed',
+
+        'purchase_price',
+        'total',
+        'type_dish_id',
+        'type_dish_name'
     ];
 }

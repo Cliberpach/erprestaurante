@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class WarehouseProductService
 {
-
     public function increaseStock(int $warehouse_id, int $product_id, float $quantity)
     {
         $exists =   DB::table('warehouse_products')
@@ -37,6 +36,13 @@ class WarehouseProductService
         }
     }
 
+    public function increaseLstStock(array $lst_items)
+    {  
+        foreach ($lst_items as $item) {
+            $this->increaseStock($item['warehouse_id'], $item['product_id'], $item['quantity']);
+        }
+    }
+
     public function decreaseStock(int $warehouse_id, int $product_id, float $quantity)
     {
         DB::table('warehouse_products')
@@ -46,6 +52,13 @@ class WarehouseProductService
                 'stock' => DB::raw("stock - $quantity"),
                 'updated_at' => Carbon::now(),
             ]);
+    }
+
+    public function decreaseLstStock(array $lst_items)
+    {
+        foreach ($lst_items as $item) {
+            $this->decreaseStock($item['warehouse_id'], $item['product_id'], $item['quantity']);
+        }
     }
 
     public function getProductStock(int $warehouse_id, int $product_id)
@@ -77,7 +90,7 @@ class WarehouseProductService
         return $product_stock[0];
     }
 
-    public function validatedStock(array $lst_items):array
+    public function validatedStock(array $lst_items): array
     {
         $lst_items_validated    =   [];
         foreach ($lst_items as $item) {

@@ -23,4 +23,14 @@ class CounterManager
     {
         return $this->s_service->getOrderTable($table_id);
     }
+
+    public function edit(int $id){
+        return $this->s_service->edit($id);
+    }
+
+      public function update(int $id,array $data): Order
+    {
+        return $this->s_service->update($id,$data);
+    }
+
 }

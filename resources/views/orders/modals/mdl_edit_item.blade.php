@@ -28,7 +28,7 @@
 </div>
 
 <script>
-    const itemEdition = {
+    const paramsMdlItem = {
         id: null
     };
 
@@ -53,23 +53,28 @@
 
         })
 
-        document.querySelector('#formEditItem').addEventListener('submit', (e) => {
+        document.querySelector('#formEditItem').addEventListener('submit', async (e) => {
 
             mostrarAnimacion1();
             e.preventDefault();
+
+            const lstDetail = getLstDetail();
+            const itemUpdate = lstDetail.find( lcd => lcd.id == paramsMdlItem.id);
+
             const dataFormEdit = getDataFormEdit();
-            const validacionFormEdit = validarDataFormEdit(dataFormEdit);
+            const validationForm = await validationFormEdit(dataFormEdit, itemUpdate);
 
-            if (validacionFormEdit) {
-                const actualizacion = actualizarItem(dataFormEdit);
-                if (actualizacion) {
+            if (validationForm) {
+                const validation = updateItem(dataFormEdit, lstDetail);
+                if (validation) {
+                    const dtDetail = getDtDetail();
                     clearTable('tbl_order_detail');
-                    dtCompraDetalle = destroyDataTable(dtCompraDetalle);
+                    setDtDetail(destroyDataTable(dtDetail));
                     paintTblDetail(lstDetail);
-                    iniciarDataTableCompraDetalle();
+                    setDtDetail(loadDataTableSimple('tbl_order_detail'));
 
-                    calculateAmounts();
-                    paintAmounts();
+                    calculateAmounts(getAmounts());
+                    paintAmounts(getAmounts());
                     $('#mdlEditItem').modal('hide');
                     toastr.success('ITEM ACTUALIZADO');
                 }
@@ -83,11 +88,11 @@
         $('#mdlEditItem').modal('show');
     }
 
-    function actualizarItem(dataFormEdit) {
+    function updateItem(dataFormEdit, lstDetail) {
 
         //======= GRABANDO =========
         const indiceItem = lstDetail.findIndex((lcd) => {
-            return lcd.id == itemEdition.id;
+            return lcd.id == paramsMdlItem.id;
         })
 
         if (indiceItem === -1) {
@@ -96,7 +101,7 @@
         }
 
         lstDetail[indiceItem].quantity = dataFormEdit.cantidad;
-        lstDetail[indiceItem].total     =   lstDetail[indiceItem].sale_price * parseFloat(dataFormEdit.cantidad);
+        lstDetail[indiceItem].total = lstDetail[indiceItem].sale_price * parseFloat(dataFormEdit.cantidad);
         return true;
     }
 
@@ -108,7 +113,7 @@
         return data;
     }
 
-    function validarDataFormEdit(data) {
+    async function validationFormEdit(data, itemUpdate) {
         let validacion = false;
 
         if (data.cantidad === null) {
@@ -120,12 +125,34 @@
             toastr.error('LA CANTIDAD DEBE SER MAYOR A 0!!');
             return validacion;
         }
+        console.log('itemUpdate',itemUpdate);
+        if (itemUpdate.type_item === 'PRODUCTO') {
+            const params = {
+                warehouseId: itemUpdate.warehouse_id,
+                productId: itemUpdate.id,
+                quantity: data.cantidad
+            }
+
+            const res = await validateProductStock(params);
+            if (!res || !res.data.success) return;
+        }
+
+        if (itemUpdate.type_item === 'PLATO') {
+            const params = {
+                programmingId: itemUpdate.programming_id,
+                dishId: itemUpdate.id,
+                quantity: data.cantidad
+            }
+
+            const res = await validateDishStock(params);
+            if (!res || !res.data.success) return;
+        }
 
         return true;
     }
 
     function setProducto(itemId) {
-
+        const lstDetail = getLstDetail();
         const itemIndice = lstDetail.findIndex((lcd) => {
             return lcd.id == itemId;
         })
@@ -144,7 +171,6 @@
         document.querySelector('#item_precio_venta_edit').textContent = formatSoles(itemFind.sale_price);
 
         document.querySelector('#item_cantidad_edit').value = itemFind.quantity;
-        itemEdition.id = itemFind.id;
-
+        paramsMdlItem.id = itemFind.id;
     }
 </script>

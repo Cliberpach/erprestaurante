@@ -69,31 +69,38 @@ class FormatController extends Controller
 
         foreach ($items as $item) {
             $formatted[] = [
-                'warehouse_id'=>$item['warehouse_id'],
-                'id' => $item['product_id'],
-                'name' => $item['product_name'],
-                'category_name' => $item['category_name'],
-                'brand_name' => $item['brand_name'],
-                'sale_price' => $item['price_sale'],
-                'quantity' => $item['quantity'],
-                'total' => $item['amount'],
+                'warehouse_id'      =>  $item['warehouse_id'],
+                'id'                =>  $item['product_id'],
+                'name'              =>  $item['product_name'],
+                'purchase_price'    =>  $item['purchase_price'],
+                'quantity'          =>  $item['quantity'],
+                'sale_price'        =>  $item['sale_price'],
+                'stock'             =>  null,
+                'total'             =>  $item['total'],
+                'type_item'         =>  'PRODUCTO',
+                'type_name'         =>  $item['category_name'] . '-' . $item['brand_name']
             ];
         }
 
         return $formatted;
     }
 
-    public static function formatLstServices(array $items): array
+    public static function formatLstDishes(array $items): array
     {
         $formatted = [];
 
         foreach ($items as $item) {
             $formatted[] = [
-                'id' => $item['service_id'],
-                'name' => $item['service_name'],
-                'sale_price' => $item['price_sale'],
-                'quantity' => $item['quantity'],
-                'total' => $item['amount'],
+                'programming_id'    =>  $item['programming_id'],
+                'id'                =>  $item['dish_id'],
+                'name'              =>  $item['dish_name'],
+                'purchase_price'    =>  $item['purchase_price'],
+                'quantity'          =>  $item['quantity'],
+                'sale_price'        =>  $item['sale_price'],
+                'stock'             =>  null,
+                'total'             =>  $item['total'],
+                'type_item'         =>  'PLATO',
+                'type_name'         =>  $item['type_dish_name']
             ];
         }
 

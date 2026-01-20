@@ -18,7 +18,6 @@ use App\Http\Controllers\Tenant\Maintenance\UserController as MaintenanceUserCon
 use App\Http\Controllers\Tenant\ModuleController;
 use App\Http\Controllers\Tenant\NoteIncomeController;
 use App\Http\Controllers\Tenant\NoteReleaseController;
-use App\Http\Controllers\Tenant\PettyCashBookController;
 use App\Http\Controllers\Tenant\ProductController;
 use App\Http\Controllers\Tenant\Purchase\PurchaseDocumentoController;
 use App\Http\Controllers\Tenant\PurchaseController;
@@ -259,7 +258,9 @@ Route::group(["prefix" => "utils"], function () {
     Route::get('vehicle-search', [VehicleController::class, 'searchVehicle'])->name('tenant.utils.searchVehicle');
     Route::get('get-years/{model}', [YearController::class, 'getYearsModel'])->name('tenant.utils.getYearsModel');
     Route::get('serch-plate/{placa}', [VehicleController::class, 'searchPlate'])->name('tenant.utils.searchPlate');
-    Route::get('validated-product/stock', [ProductController::class, 'validatedProductStock'])->name('tenant.utils.validatedProductStock');
+    Route::get('validated-stock/product', [ProductController::class, 'validatedProductStock'])->name('tenant.utils.validatedProductStock');
+    Route::get('validated-stock/dish', [DishController::class, 'validatedDishStock'])->name('tenant.utils.validatedDishStock');
+
     Route::get('getListBankAccounts', [BankAccountController::class, 'getListBankAccounts'])->name('tenant.utils.getListBankAccounts');
     Route::get('is-active-invoice/{id}', [UtilController::class, 'isActiveInvoiceType'])->name('tenant.utils.isActiveInvoiceType');
 

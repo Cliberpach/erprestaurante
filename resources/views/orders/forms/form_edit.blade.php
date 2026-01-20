@@ -5,63 +5,180 @@
     <p class="text-muted mb-2">
         <span class="text-danger">*</span> Los campos marcados son obligatorios.
     </p>
+
     <div class="row g-3">
+        <!-- Información de Caja -->
+        <div class="col-lg-12 col-md-12">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body py-3">
 
-        <!-- Tipo Plato -->
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <label for="type_dish_id" class="form-label fw-bold required_field">TIPO PLATO:</label><i
-                class="fas fa-add btn btn-warning" onclick="openMdlNewCustomer();"
-                style="margin-left:4px;margin-bottom:4px;"></i>
-            <select class="form-control" id="type_dish_id" name="type_dish_id" required>
-                <option value="">Seleccionar</option>
-                @foreach ($types_dish as $type_dish)
-                    <option @if ($dish->type_dish_id === $type_dish->id) selected @endif value="{{ $type_dish->id }}">
-                        {{ $type_dish->name }}</option>
-                @endforeach
-            </select>
-            <div class="invalid-feedback">
-                Debe seleccionar un tipo de plato.
+                    <!-- Título -->
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-cash-register text-primary fs-4 me-2"></i>
+                        <h6 class="fw-bold text-primary mb-0">Información</h6>
+                    </div>
+
+                    <div class="row align-items-center g-3">
+
+                        <!-- Cliente -->
+                        <div class="col-lg-6 col-md-8 col-sm-12">
+                            <label class="form-label fw-bold required_field">Cliente:</label>
+                            <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlNewCustomer();"
+                                style="margin-left:4px;"></i>
+
+                            <select class="form-control" id="client_id" name="client_id" required>
+                                <option value="">Seleccione un cliente</option>
+                            </select>
+                            <p class="client_id_error msgError mb-0"></p>
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
-            <p class="type_dish_id_error msgError mb-0"></p>
         </div>
-
-        <!-- Nombre -->
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <label for="name" class="form-label fw-bold required_field">Nombre:</label>
-            <div class="input-group">
-                <input value="{{ $dish->name }}" type="text" class="form-control text-uppercase" id="name"
-                    name="name" maxlength="160" placeholder="Ingrese un nombre" required>
-            </div>
-            <p class="name_error msgError mb-0"></p>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <label for="purchase_price" class="form-label fw-bold required_field">Precio Compra:</label>
-            <div class="input-group">
-                <input value="{{ number_format((float) $dish->purchase_price, 2, '.', '') }}" type="text" value="0"
-                    class="form-control text-uppercase inputDecimalPositivo" id="purchase_price" name="purchase_price"
-                    placeholder="Ingrese un precio compra" required>
-            </div>
-            <p class="purchase_price_error msgError mb-0"></p>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <label for="sale_price" class="form-label fw-bold required_field">Precio Venta:</label>
-            <div class="input-group">
-                <input value="{{ number_format((float) $dish->sale_price, 2, '.', '') }}" type="text"
-                    class="form-control text-uppercase inputDecimalPositivo" id="sale_price" name="sale_price"
-                    placeholder="Ingrese un precio venta" required>
-            </div>
-            <p class="sale_price_error msgError mb-0"></p>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-            <label class="form-label small fw-bold">Imagen</label>
-            <input accept=".jpg,.jpeg,.png,.webp,.avif,image/jpeg,image/png,image/webp,image/avif" data-max-files="1"
-                data-allow-reorder="true" data-max-file-size="3MB" type="file" name="img" accept="image/*"
-                class="filepond-input form-control">
-            <p class="img_error msgError mb-0"></p>
-        </div>
-
     </div>
+
+    <div class="row mt-3">
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm">
+                <!-- Header -->
+                <div
+                    class="card-header d-flex align-items-center justify-content-between bg-primary fw-bold text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-utensils me-2"></i>
+                        SELECCIONAR PLATOS
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body">
+
+                    <div class="row mb-3">
+                        <div class="col-12 d-flex gap-2">
+                            <!-- Botón agregar Plato -->
+                            <button type="button" class="btn btn-outline-primary d-flex align-items-center gap-2"
+                                onclick="openMdlDishes()">
+                                <i class="fas fa-utensils"></i>
+                                <span>Agregar Plato</span>
+                            </button>
+
+                            <!-- Botón agregar Producto -->
+                            <button type="button" class="btn btn-outline-success d-flex align-items-center gap-2"
+                                onclick="openMdlProducts()">
+                                <i class="fas fa-bottle-water"></i>
+                                <span>Agregar Producto</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+
+                        <!-- Item seleccionado -->
+                        <div class="col-lg-5 col-md-7">
+                            <label class="form-label fw-bold">Ítem seleccionado</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="fa-solid fa-box"></i>
+                                </span>
+                                <input id="producto" readonly type="text" class="form-control"
+                                    placeholder="Seleccione un plato o producto">
+                            </div>
+                        </div>
+
+                        <!-- Stock -->
+                        <div class="col-lg-2 col-md-3 col-sm-4">
+                            <label class="form-label fw-bold">Stock</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="fa-solid fa-warehouse"></i>
+                                </span>
+                                <input id="item_stock" readonly type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- Precio compra -->
+                        <div class="col-lg-2 col-md-3 col-sm-4">
+                            <label class="form-label fw-bold">Precio Compra</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="fa-solid fa-coins"></i>
+                                </span>
+                                <input id="purchase_price" readonly type="text"
+                                    class="form-control" placeholder="S/ 0.00">
+                            </div>
+                        </div>
+
+                        <!-- Precio venta -->
+                        <div class="col-lg-2 col-md-3 col-sm-4">
+                            <label class="form-label fw-bold">Precio Venta</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="fa-solid fa-tag"></i>
+                                </span>
+                                <input id="sale_price" readonly type="text" class="form-control"
+                                    placeholder="S/ 0.00">
+                            </div>
+                        </div>
+
+                        <!-- Cantidad -->
+                        <div class="col-lg-2 col-md-3 col-sm-4">
+                            <label class="form-label fw-bold required_field">Cantidad</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </span>
+                                <input id="cantidad" type="text"
+                                    class="form-control inputEnteroPositivo" placeholder="Cantidad">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Acción -->
+                    <div class="d-flex justify-content-end mt-4">
+                        <button class="btn btn-primary btnAgregarProducto px-4" type="button">
+                            <i class="fa-solid fa-cart-plus me-1"></i>
+                            Agregar
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-12 mb-3 mt-3">
+            <div class="card">
+                <div class="card-header" style="background-color: rgb(0, 102, 255);font-weight:bold;color:white;">
+                    DETALLE DEL PEDIDO
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                @include('orders.tables.tbl_order_detail')
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 d-flex justify-content-lg-end">
+            <div class="col-12 col-lg-4">
+                <div class="table-responsive">
+                    @include('orders.tables.tbl_amounts')
+                </div>
+            </div>
+        </div>
+    </div>
+
 </form>

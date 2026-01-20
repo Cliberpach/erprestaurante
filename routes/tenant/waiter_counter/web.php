@@ -14,5 +14,7 @@ Route::group(["prefix" => "mostrador_mesero"], function () {
         Route::get('getCustomerAccount/{id}', [WCounterController::class, 'getCustomerAccount'])->name('tenant.cuentas.cliente.getCustomerAccount');
         Route::post('store', [WCounterController::class, 'store'])->name('tenant.mostrador_mesero.mostrador.store');
         Route::get('get-order-table/{table}', [WCounterController::class, 'getOrderTable'])->name('tenant.mostrador_mesero.mostrador.getOrderTable');
+        Route::put('update/{id}', [WCounterController::class, 'update'])->name('tenant.mostrador_mesero.mostrador.update');
+        Route::get('edit/{id}', [WCounterController::class, 'edit'])->name('tenant.mostrador_mesero.mostrador.edit');
     });
 });

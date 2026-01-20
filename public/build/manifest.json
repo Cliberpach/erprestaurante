@@ -42,5 +42,10 @@
     "file": "assets/app-4a524e14.js",
     "isEntry": true,
     "src": "resources/js/app.js"
+  },
+  "resources/js/orders/edit/main.js": {
+    "file": "assets/main-e924907a.js",
+    "isEntry": true,
+    "src": "resources/js/orders/edit/main.js"
   }
 }

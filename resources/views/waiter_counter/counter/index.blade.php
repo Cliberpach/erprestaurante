@@ -59,7 +59,7 @@
         })
 
         function events() {
-
+            eventsMdlOrderShow();
         }
 
         function toOrderCreate(tableId) {
@@ -95,6 +95,7 @@
                         <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                             <div class="table-card ${bgClass}"
                                 data-table="${item.table_id}"
+                                data-order = "${item.order_id}"
                                 data-status="${item.status ?? ''}"
                                 style="cursor:pointer">
 
@@ -111,10 +112,10 @@
                                 </div>
 
                                 ${item.total ? `
-                                                                    <div class="table-total">
-                                                                        S/ ${formatSoles(item.total)}
-                                                                    </div>
-                                                                    ` : ''}
+                                                                        <div class="table-total">
+                                                                            S/ ${formatSoles(item.total)}
+                                                                        </div>
+                                                                        ` : ''}
                             </div>
                         </div>
                     `;
@@ -125,13 +126,13 @@
                             if (!card || !grid.contains(card)) return;
 
                             const tableId = card.getAttribute('data-table');
-                            const status = (card.getAttribute('data-status') || '').toString()
-                                .toUpperCase();
+                            const status = (card.getAttribute('data-status') || '').toString().toUpperCase();
+                            const orderId = card.getAttribute('data-order');
 
                             if (status === 'LIBRE' || !status) {
                                 toOrderCreate(tableId);
                             } else {
-                                openMdlShowOrder(tableId);
+                                openMdlShowOrder(tableId,orderId);
                             }
                         });
 

@@ -22,5 +22,14 @@ class OrderProduct extends Model
         'print_status',
         'print_delivery_status',
         'detail_printed',
+
+        'purchase_price',
+        'total',
+        'category_id',
+        'brand_id',
+        'category_name',
+        'brand_name',
+        'warehouse_id',
+        'warehouse_name'
     ];
 }

@@ -53,6 +53,7 @@
         const lstTableProducts = [];
         const productSelected = {
             id: null,
+            warehouse_id:null,
             name: null,
             type_name: null,
             purchase_price: null,
@@ -210,8 +211,9 @@
             productSelected.sale_price = product.sale_price;
             productSelected.purchase_price = product.purchase_price;
             productSelected.type_item = 'PRODUCTO';
+            productSelected.warehouse_id = product.warehouse_id;
 
-            itemSelected = productSelected;
+            setItemSelected(productSelected);
 
             $('#mdlProductos').modal('hide');
             document.querySelector('#cantidad').focus();

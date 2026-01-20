@@ -117,4 +117,43 @@ array:10 [ // app\Http\Services\Tenant\Orders\OrderValidation.php:64
             ]);
         }
     }
+
+    public function edit(int $id)
+    {
+        $view   =   $this->s_manager->edit($id);
+        return $view;
+    }
+
+/*
+array:5 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:136
+  "_token" => "nLC9ESLc8E5XI4HuR8lNMcpju2xHbHRCXUsXfm0q"
+  "_method" => "PUT"
+  "client_id" => "1"
+  "lst_detail" => "[{"id":1,"name":"BUJIA","purchase_price":"1.000000","quantity":1,"sale_price":"1.000000","stock":null,"total":"1.000000","type_item":"PRODUCTO","type_name":"REPUESTO-NACIONAL"},{"id":3,"name":"CEVICHE DE CONCHAS","purchase_price":"1.000000","quantity":1,"sale_price":"20.000000","stock":null,"total":"20.000000","type_item":"PLATO","type_name":"ENTRADA"}]"
+  "table_id" => "2"
+]
+*/
+    public function update(int $id, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $this->s_manager->update($id,$request->toArray());
+
+            Session::flash('message_success', 'PEDIDO ACTUALIZADO CON ÉXITO');
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'PEDIDO ACTUALIZADO CON ÉXITO'
+            ]);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
+            ]);
+        }
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Services\Tenant\WCounter\Counter;
 
 use App\Http\Services\Tenant\Orders\OrderService;
 use App\Models\Tenant\Orders\Order;
+use Illuminate\Contracts\View\View;
 
 class CounterService
 {
@@ -22,8 +23,19 @@ class CounterService
         return $order;
     }
 
-     public function getOrderTable(int $table_id)
+    public function getOrderTable(int $table_id)
     {
         return $this->s_order->getOrderTable($table_id);
+    }
+
+    public function edit(int $id):View
+    {
+        $view   =   $this->s_order->edit($id);
+        return $view;
+    }
+
+       public function update(int $id,array $data): Order
+    {
+        return $this->s_order->update($id,$data);
     }
 }

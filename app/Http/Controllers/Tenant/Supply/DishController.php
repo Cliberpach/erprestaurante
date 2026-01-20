@@ -8,8 +8,10 @@ use App\Http\Requests\Tenant\Supply\Dish\DishStoreRequest;
 use App\Http\Requests\Tenant\Supply\Dish\DishUpdateRequest;
 use App\Http\Services\Tenant\Supply\Dish\DishManagement;
 use App\Models\Landlord\ModelV;
+use App\Models\Tenant\Orders\OrderDish;
 use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\Programming\ProgrammingDetail;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -69,7 +71,8 @@ class DishController extends Controller
                 'd.purchase_price',
                 'd.img_route',
                 'd.creator_user_name',
-                'd.id'
+                'd.id',
+                'pd.programming_id'
             )
             ->where('pd.status', 'ACTIVO')
             ->where('pd.programming_id', $programming_id);
@@ -207,5 +210,79 @@ array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:128
             });
 
         return response()->json($results);
+    }
+
+    public function validatedDishStock(Request $request)
+    {
+        try {
+
+            $programming_id = $request->get('programming_id');
+            $dish_id        = $request->get('dish_id');
+            $quantity       = (float) $request->get('quantity');
+            $order_id       = $request->get('order_id');
+
+            $item = ProgrammingDetail::where('programming_id', $programming_id)
+                ->where('dish_id', $dish_id)
+                ->select('stock')
+                ->first();
+
+            if (!$item) {
+                throw new Exception("Plato no encontrado en programación.");
+            }
+
+            $stock_actual = (float) $item->stock;
+
+            if (!$order_id) {
+
+                if ($quantity > $stock_actual) {
+                    throw new Exception("STOCK INSUFICIENTE (Stock: $stock_actual, Requiere: $quantity)");
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'VALIDACIÓN COMPLETADA'
+                ]);
+            }
+
+            $item_bd = OrderDish::where('order_id', $order_id)
+                ->where('dish_id', $dish_id)
+                ->first();
+
+            if (!$item_bd) {
+
+                if ($quantity > $stock_actual) {
+                    throw new Exception("STOCK INSUFICIENTE (Stock: $stock_actual, Requiere: $quantity)");
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'VALIDACIÓN COMPLETADA (Nuevo item)'
+                ]);
+            }
+
+            $cantidad_anterior  = (float) $item_bd->quantity;
+            $diferencia         = $quantity - $cantidad_anterior;
+
+            if ($diferencia <= 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'VALIDACIÓN COMPLETADA (Cantidad reducida o igual)'
+                ]);
+            }
+
+            if ($diferencia > $stock_actual) {
+                throw new Exception("STOCK INSUFICIENTE (Stock: $stock_actual, Requiere adicional: $diferencia)");
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'VALIDACIÓN COMPLETADA (Actualización con diferencia)'
+            ]);
+        } catch (Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ]);
+        }
     }
 }

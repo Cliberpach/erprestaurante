@@ -53,4 +53,14 @@ class ProgrammingService
     {
         $this->s_repository->setStatus($id, $status);
     }
+
+    public function increaseLstStock(array $lst_items)
+    {
+        $this->s_repository->increaseLstStock($lst_items);
+    }
+
+    public function decreaseLstStock(array $lst_items)
+    {
+        $this->s_repository->decreaseLstStock($lst_items);
+    }
 }

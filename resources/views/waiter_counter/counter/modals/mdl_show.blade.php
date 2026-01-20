@@ -101,10 +101,10 @@
 
             <div class="modal-footer d-flex justify-content-between flex-wrap gap-2">
                 <div>
-                    <button type="button" class="btn btn-outline-danger" id="btnDeleteNote">
+                    <button type="button" class="btn btn-outline-danger" id="btnDeleteOrder">
                         <i class="fas fa-trash-alt"></i> Eliminar
                     </button>
-                    <button type="button" class="btn btn-outline-primary" id="btnEditNote">
+                    <button type="button" class="btn btn-outline-primary" id="btnEditOrder">
                         <i class="fas fa-edit"></i> Editar
                     </button>
                 </div>
@@ -120,15 +120,31 @@
 
 @push('js-script')
     <script>
-        let dtNoteIncomeShow = null;
+        let dtDetailShow = null;
 
+        const paramsMdlShow = {
+            orderId:null,
+            tableId:null
+        }
 
-        async function openMdlShowOrder(tableId) {
+        function eventsMdlOrderShow() {
+            document.querySelector('#btnEditOrder').addEventListener('click', (e) => {
+                actionBtnEditOrder(e);
+            })
+        }
+
+        async function openMdlShowOrder(tableId,orderId) {
+            paramsMdlShow.orderId   =   orderId;
+            paramsMdlShow.tableId   =   tableId;
             const data = await getOrderTable(tableId);
             paintOrderTable(data);
             $('#mdlShowOrder').modal('show');
         }
 
+        function actionBtnEditOrder(e) {
+            const url = route('tenant.mostrador_mesero.mostrador.edit', {id:paramsMdlShow.orderId});
+            window.location.href = url;
+        }
 
         async function getOrderTable(tableId) {
             try {
