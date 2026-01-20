@@ -1,11 +1,12 @@
+import { eventsUtilChange } from "../shared/events";
 import { actionAddItem, actionDeleteItem, actionFormStore } from "./action";
 
 export function events() {
     app.init();
+    eventsUtilChange();
     eventsSubmit();
     eventsClick();
 }
-
 
 function eventsSubmit() {
     document.querySelector('#form_create').addEventListener('submit', (e) => {
@@ -28,3 +29,5 @@ function eventsClick() {
 
     })
 }
+
+

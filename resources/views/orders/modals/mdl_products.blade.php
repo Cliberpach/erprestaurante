@@ -7,7 +7,7 @@
             </div>
             <div class="modal-body">
 
-                <div class="row">
+                {{-- <div class="row">
                     <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                         <label for="categoria" style="font-weight: bold;">CATEGORÍA</label>
 
@@ -30,11 +30,11 @@
                             @endforeach
                         </select>
                     </div>
-                </div>
+                </div> --}}
                 <div class="row">
                     <div class="col-12">
                         <div class="table-responsive">
-                            @include('inventory.note_income.tables.tbl_products')
+                            @include('orders.tables.tbl_products')
                         </div>
                     </div>
                 </div>
@@ -48,12 +48,18 @@
     </div>
 </div>
 
+<style>
+    #tbl_products_wrapper .dt-search {
+        text-align: start;
+    }
+</style>
+
 @push('js-script')
     <script>
         const lstTableProducts = [];
         const productSelected = {
             id: null,
-            warehouse_id:null,
+            warehouse_id: null,
             name: null,
             type_name: null,
             purchase_price: null,
@@ -125,33 +131,49 @@
             dtProductos = new DataTable('#tbl_products', {
                 serverSide: true,
                 processing: true,
+                pageLength: 100,
+                lengthChange: false,
+                paging: false,
                 ajax: {
                     url: urlGetProductos,
                     type: 'GET',
                     data: function(d) {
-                        d.categoria_id = $('#categoria').val();
-                        d.marca_id = $('#marca').val();
+                        // d.categoria_id = $('#categoria').val();
+                        // d.marca_id = $('#marca').val();
                     },
                 },
                 columns: [{
                         data: 'id',
-                        name: 'id'
+                        name: 'id',
+                        visible: false,
                     },
                     {
                         data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'brand_name',
-                        name: 'brand_name'
+                        name: 'p.name',
+                        searchable: true,
+                        orderable: true
                     },
                     {
                         data: 'category_name',
-                        name: 'category_name'
+                        name: 'c.name',
+                        visible: false
+                    },
+                    {
+                        data: 'brand_name',
+                        name: 'b.name',
+                        visible: false
+                    },
+                    {
+                        data: 'sale_price',
+                        name: 'sale_price',
+                        searchable: false,
+                        orderable: true
                     },
                     {
                         data: 'stock',
-                        name: 'Stock'
+                        name: 'Stock',
+                        visible: false,
+                        searchable: false
                     }
                 ],
                 createdRow: function(row, data, dataIndex) {
@@ -196,12 +218,10 @@
                 return;
             }
 
-            console.log(fila);
-
             //======= SETTEAR PRODUCTO =======
             const product = fila;
             document.querySelector('#producto').value = product.name;
-            document.querySelector('#purchase_price').value = formatSoles(product.purchase_price);
+            //document.querySelector('#purchase_price').value = formatSoles(product.purchase_price);
             document.querySelector('#sale_price').value = formatSoles(product.sale_price);
             document.querySelector('#item_stock').value = product.stock;
 

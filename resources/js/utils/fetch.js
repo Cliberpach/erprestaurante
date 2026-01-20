@@ -1,11 +1,12 @@
 import { routesUtil } from "./routes";
 
-export async function validateProductStock({ warehouseId, productId, quantity }) {
+export async function validateProductStock({ warehouseId, productId, quantity,orderId = null }) {
     try {
         const res = await axios.get(routesUtil.validateProductStock({
             warehouseId,
             productId,
-            quantity
+            quantity,
+            orderId
         }));
 
         if (res.data.success) {
@@ -21,12 +22,13 @@ export async function validateProductStock({ warehouseId, productId, quantity })
     }
 }
 
-export async function validateDishStock({ programmingId, dishId, quantity }) {
+export async function validateDishStock({ programmingId, dishId, quantity,orderId = null }) {
     try {
         const res = await axios.get(routesUtil.validateDishStock({
             programmingId,
             dishId,
-            quantity
+            quantity,
+            orderId
         }));
 
         if (res.data.success) {

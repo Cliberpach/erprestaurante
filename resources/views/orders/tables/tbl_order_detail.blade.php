@@ -1,4 +1,4 @@
-<table class="table-hover table-bordered table" id="tbl_order_detail">
+<table class="table-hover table-bordered d-none d-lg-table table" id="tbl_order_detail">
     <thead>
         <tr>
             <th scope="col">#</th>

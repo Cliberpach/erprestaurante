@@ -32,6 +32,21 @@
                             <p class="client_id_error msgError mb-0"></p>
                         </div>
 
+                        <!-- Observación -->
+                        <div class="col-lg-6 col-md-8 col-sm-12">
+                            <label class="form-label fw-bold">Observación:</label>
+
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fa-solid fa-comment-dots"></i>
+                                </span>
+                                <textarea value="{{ $order->observation }}" class="form-control input-fill" id="observation" name="observation"
+                                    rows="2" maxlength="500" placeholder="Ingrese una observación (opcional)"></textarea>
+                            </div>
+                            <p class="observation_error msgError mb-0"></p>
+                        </div>
+
+
                     </div>
 
                 </div>
@@ -74,76 +89,91 @@
                     </div>
 
                     <div class="row g-3">
-
                         <!-- Item seleccionado -->
-                        <div class="col-lg-5 col-md-7">
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-12">
                             <label class="form-label fw-bold">Ítem seleccionado</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fa-solid fa-box"></i>
                                 </span>
-                                <input id="producto" readonly type="text" class="form-control"
-                                    placeholder="Seleccione un plato o producto">
+                                <input id="producto" name="producto" readonly type="text" class="form-control"
+                                    placeholder="Item seleccionado">
                             </div>
                         </div>
 
                         <!-- Stock -->
-                        <div class="col-lg-2 col-md-3 col-sm-4">
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-3">
                             <label class="form-label fw-bold">Stock</label>
-                            <div class="input-group">
+                            <input id="item_stock" name="item_stock" readonly type="text" class="form-control">
+
+                            {{-- <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fa-solid fa-warehouse"></i>
                                 </span>
-                                <input id="item_stock" readonly type="text" class="form-control">
-                            </div>
+                                <input id="item_stock" name="item_stock" readonly type="text" class="form-control">
+                            </div> --}}
                         </div>
 
                         <!-- Precio compra -->
-                        <div class="col-lg-2 col-md-3 col-sm-4">
+                        {{-- <div class="col-lg-2 col-md-3 col-sm-4">
                             <label class="form-label fw-bold">Precio Compra</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fa-solid fa-coins"></i>
                                 </span>
-                                <input id="purchase_price" readonly type="text"
+                                <input id="purchase_price" name="purchase_price" readonly type="text"
                                     class="form-control" placeholder="S/ 0.00">
                             </div>
-                        </div>
+                        </div> --}}
 
                         <!-- Precio venta -->
-                        <div class="col-lg-2 col-md-3 col-sm-4">
-                            <label class="form-label fw-bold">Precio Venta</label>
-                            <div class="input-group">
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-3">
+                            <label class="form-label fw-bold">P.Venta</label>
+                            <input id="sale_price" name="sale_price" readonly type="text" class="form-control"
+                                placeholder="">
+                            {{-- <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fa-solid fa-tag"></i>
                                 </span>
-                                <input id="sale_price" readonly type="text" class="form-control"
+                                <input id="sale_price" name="sale_price" readonly type="text" class="form-control"
                                     placeholder="S/ 0.00">
-                            </div>
+                            </div> --}}
                         </div>
 
                         <!-- Cantidad -->
-                        <div class="col-lg-2 col-md-3 col-sm-4">
-                            <label class="form-label fw-bold required_field">Cantidad</label>
-                            <div class="input-group">
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-3">
+                            <label class="form-label fw-bold">Cantidad</label>
+                            <input id="cantidad" name="cantidad" type="text"
+                                class="form-control inputEnteroPositivo input-fill" placeholder="">
+                            {{-- <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fa-solid fa-layer-group"></i>
                                 </span>
-                                <input id="cantidad" type="text"
+                                <input id="cantidad" name="cantidad" type="text"
                                     class="form-control inputEnteroPositivo" placeholder="Cantidad">
-                            </div>
+                            </div> --}}
                         </div>
 
-                    </div>
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-3" style="margin:auto 0 0 0;">
+                            <button class="btn btn-primary btnAgregarProducto px-4" type="button">
+                                <i class="fa-solid fa-cart-plus me-1"></i>
+                            </button>
+                        </div>
 
-                    <!-- Acción -->
-                    <div class="d-flex justify-content-end mt-4">
-                        <button class="btn btn-primary btnAgregarProducto px-4" type="button">
-                            <i class="fa-solid fa-cart-plus me-1"></i>
-                            Agregar
-                        </button>
-                    </div>
+                        <div class="col-lg-6 col-md-8 col-sm-12">
+                            <label class="form-label fw-bold">Observación:</label>
 
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fa-solid fa-comment-dots"></i>
+                                </span>
+                                <textarea class="form-control input-fill" id="observation_item" rows="2" maxlength="20"
+                                    placeholder="Ingrese una observación (opcional)"></textarea>
+                            </div>
+                            <p class="observation_error msgError mb-0"></p>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
 
@@ -164,8 +194,10 @@
                             <div class="table-responsive">
                                 @include('orders.tables.tbl_order_detail')
                             </div>
+                            @include('orders.cards.card-detail')
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

@@ -15,86 +15,155 @@
             <!-- BODY -->
             <div class="modal-body">
 
-                <!-- INFO GENERAL -->
-                <div class="row g-3 mb-3">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="row align-items-center text-center">
 
-                    <div class="col-12 col-md-6">
-                        <div class="bg-light h-100 rounded border p-3">
-                            <p class="mb-2">
-                                <i class="fas fa-hashtag text-primary"></i>
-                                <strong>ID:</strong> <span id="noteId"></span>
-                            </p>
-                            <p class="mb-2">
-                                <i class="fas fa-receipt text-primary"></i>
-                                <strong>N° Pedido:</strong> <span id="orderNumber"></span>
-                            </p>
-                            <p class="mb-2">
-                                <i class="fas fa-user text-primary"></i>
-                                <strong>Cliente:</strong> <span id="customerName"></span>
-                            </p>
-                            <p class="mb-0">
-                                <i class="fas fa-id-card text-primary"></i>
-                                <strong>Documento:</strong>
-                                <span id="customerDocument"></span>
-                                <!-- Ej: DNI: 9283928 -->
-                            </p>
-                        </div>
-                    </div>
+                            <!-- CLIENTE -->
+                            <div class="col-6 border-end">
+                                <i class="fas fa-user text-primary fs-4 mb-1"></i>
+                                <div class="small text-muted">Cliente</div>
+                                <div class="fw-bold text-truncate" id="customerName"></div>
+                            </div>
 
-                    <div class="col-12 col-md-6">
-                        <div class="bg-light h-100 rounded border p-3">
-                            <p class="mb-2">
-                                <i class="fas fa-user-tie text-success"></i>
-                                <strong>Mesero:</strong> <span id="waiterName"></span>
-                            </p>
-                            <p class="mb-2">
-                                <i class="fas fa-calendar-plus text-success"></i>
-                                <strong>Fecha Registro:</strong> <span id="createdAt"></span>
-                            </p>
-                            <p class="mb-0">
-                                <i class="fas fa-info-circle text-success"></i>
-                                <strong>Estado:</strong>
-                                <span id="estado" class="badge bg-secondary"></span>
-                            </p>
-                        </div>
-                    </div>
+                            <!-- TOTAL -->
+                            <div class="col-6">
+                                <i class="fas fa-coins text-success fs-4 mb-1"></i>
+                                <div class="small text-muted">Total</div>
+                                <div class="fw-bold fs-5 text-success" id="total"></div>
+                            </div>
 
-                </div>
-
-                <!-- MONTOS -->
-                <div class="row g-2 mb-3">
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                        <div class="rounded border p-1 text-center">
-                            <i class="fas fa-file-invoice-dollar text-info fs-6"></i>
-                            <div class="small fw-semibold">Subtotal</div>
-                            <div class="fw-semibold" id="subtotal"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                        <div class="rounded border p-1 text-center">
-                            <i class="fas fa-percent text-warning fs-6"></i>
-                            <div class="small fw-semibold">IGV</div>
-                            <div class="fw-semibold" id="igv"></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                        <div class="bg-light rounded border p-1 text-center">
-                            <i class="fas fa-coins text-success fs-6"></i>
-                            <div class="small fw-bold">Total</div>
-                            <div class="fw-bold" id="total"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- OBSERVACIÓN -->
-                <div class="col-12 mb-3">
-                    <div class="bg-light rounded border p-3">
-                        <p class="mb-1">
-                            <i class="fas fa-comment-dots text-secondary"></i>
-                            <strong>Observación</strong>
-                        </p>
-                        <p class="mb-0" id="observation"></p>
+
+                <!-- CARD COLAPSABLE -->
+                <div class="card mb-2 shadow-sm">
+
+                    <!-- HEADER CLICKABLE -->
+                    <div class="card-header bg-white p-2" role="button" data-bs-toggle="collapse"
+                        data-bs-target="#detailsSection" aria-expanded="false" aria-controls="detailsSection">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold text-primary">
+                                <i class="fas fa-info-circle me-1"></i> Detalles del pedido
+                            </span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+
                     </div>
+
+                    <!-- BODY -->
+                    <div id="detailsSection" class="collapse">
+                        <div class="card-body">
+
+                            <!-- INFO GENERAL -->
+                            <div class="row g-3 mb-3">
+
+                                <!-- DATOS DEL PEDIDO -->
+                                <div class="col-12 col-md-6">
+                                    <div class="bg-light h-100 rounded border p-3">
+
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-receipt text-primary me-2"></i>
+                                            <span class="fw-semibold">Datos del pedido</span>
+                                        </div>
+
+                                        <p class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-hashtag text-muted me-2"></i>
+                                            <span class="text-muted me-1">ID:</span>
+                                            <span id="noteId" class="fw-semibold"></span>
+                                        </p>
+
+                                        <p class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-file-invoice text-muted me-2"></i>
+                                            <span class="text-muted me-1">N° Pedido:</span>
+                                            <span id="orderNumber" class="fw-semibold"></span>
+                                        </p>
+
+                                        <p class="d-flex align-items-center mb-0">
+                                            <i class="fas fa-id-card text-muted me-2"></i>
+                                            <span class="text-muted me-1">Documento:</span>
+                                            <span id="customerDocument" class="fw-semibold"></span>
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                                <!-- DATOS DE ATENCIÓN -->
+                                <div class="col-12 col-md-6">
+                                    <div class="bg-light h-100 rounded border p-3">
+
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-user-tie text-success me-2"></i>
+                                            <span class="fw-semibold">Atención</span>
+                                        </div>
+
+                                        <p class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-user text-muted me-2"></i>
+                                            <span class="text-muted me-1">Mesero:</span>
+                                            <span id="waiterName" class="fw-semibold"></span>
+                                        </p>
+
+                                        <p class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-calendar-alt text-muted me-2"></i>
+                                            <span class="text-muted me-1">Fecha:</span>
+                                            <span id="createdAt" class="fw-semibold"></span>
+                                        </p>
+
+                                        <p class="d-flex align-items-center mb-0">
+                                            <i class="fas fa-info-circle text-muted me-2"></i>
+                                            <span class="text-muted me-1">Estado:</span>
+                                            <span id="estado" class="badge bg-secondary"></span>
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- MONTOS -->
+                            <div class="row g-2 mb-3 text-center">
+
+                                <div class="col-4">
+                                    <div class="rounded border bg-white p-2">
+                                        <i class="fas fa-file-invoice-dollar text-info mb-1"></i>
+                                        <div class="small text-muted">Subtotal</div>
+                                        <div class="fw-semibold" id="subtotal"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
+                                    <div class="rounded border bg-white p-2">
+                                        <i class="fas fa-percent text-warning mb-1"></i>
+                                        <div class="small text-muted">IGV</div>
+                                        <div class="fw-semibold" id="igv"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
+                                    <div class="bg-light rounded border p-2">
+                                        <i class="fas fa-coins text-success mb-1"></i>
+                                        <div class="small fw-bold">Total</div>
+                                        <div class="fw-bold fs-6 text-success" id="totalDetail"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- OBSERVACIÓN -->
+                            <div class="bg-light rounded border p-3">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-comment-dots text-secondary me-2"></i>
+                                    <strong>Observación</strong>
+                                </div>
+                                <p class="text-muted mb-0" id="observation"></p>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
@@ -117,14 +186,13 @@
     </div>
 </div>
 
-
 @push('js-script')
     <script>
         let dtDetailShow = null;
 
         const paramsMdlShow = {
-            orderId:null,
-            tableId:null
+            orderId: null,
+            tableId: null
         }
 
         function eventsMdlOrderShow() {
@@ -133,16 +201,18 @@
             })
         }
 
-        async function openMdlShowOrder(tableId,orderId) {
-            paramsMdlShow.orderId   =   orderId;
-            paramsMdlShow.tableId   =   tableId;
+        async function openMdlShowOrder(tableId, orderId) {
+            paramsMdlShow.orderId = orderId;
+            paramsMdlShow.tableId = tableId;
             const data = await getOrderTable(tableId);
             paintOrderTable(data);
             $('#mdlShowOrder').modal('show');
         }
 
         function actionBtnEditOrder(e) {
-            const url = route('tenant.mostrador_mesero.mostrador.edit', {id:paramsMdlShow.orderId});
+            const url = route('tenant.mostrador_mesero.mostrador.edit', {
+                id: paramsMdlShow.orderId
+            });
             window.location.href = url;
         }
 
@@ -185,7 +255,7 @@
             document.querySelector('#customerName').textContent = data.customer_name ?? '-';
 
             const documentText = (data.customer_type_document_abbreviation && data.customer_document_number) ?
-                `${data.customer_type_document_abbreviation}: ${data.customer_document_number}` :
+                `${data.customer_type_document_abbreviation}-${data.customer_document_number}` :
                 '-';
             document.querySelector('#customerDocument').textContent = documentText;
 
@@ -218,6 +288,7 @@
             document.querySelector('#subtotal').textContent = `S/ ${formatSoles(data.subtotal)}`;
             document.querySelector('#igv').textContent = `S/ ${formatSoles(data.igv)}`;
             document.querySelector('#total').textContent = `S/ ${formatSoles(data.total)}`;
+            document.querySelector('#totalDetail').textContent = `S/ ${formatSoles(data.total)}`;
 
             // OBSERVACIÓN
             document.querySelector('#observation').textContent = data.observation ?? '—';

@@ -54,33 +54,7 @@
         })
 
         document.querySelector('#formEditItem').addEventListener('submit', async (e) => {
-
-            mostrarAnimacion1();
-            e.preventDefault();
-
-            const lstDetail = getLstDetail();
-            const itemUpdate = lstDetail.find( lcd => lcd.id == paramsMdlItem.id);
-
-            const dataFormEdit = getDataFormEdit();
-            const validationForm = await validationFormEdit(dataFormEdit, itemUpdate);
-
-            if (validationForm) {
-                const validation = updateItem(dataFormEdit, lstDetail);
-                if (validation) {
-                    const dtDetail = getDtDetail();
-                    clearTable('tbl_order_detail');
-                    setDtDetail(destroyDataTable(dtDetail));
-                    paintTblDetail(lstDetail);
-                    setDtDetail(loadDataTableSimple('tbl_order_detail'));
-
-                    calculateAmounts(getAmounts());
-                    paintAmounts(getAmounts());
-                    $('#mdlEditItem').modal('hide');
-                    toastr.success('ITEM ACTUALIZADO');
-                }
-            }
-            ocultarAnimacion1();
-
+            actionFormEditItem(e);
         })
     }
 
@@ -125,12 +99,16 @@
             toastr.error('LA CANTIDAD DEBE SER MAYOR A 0!!');
             return validacion;
         }
-        console.log('itemUpdate',itemUpdate);
+
         if (itemUpdate.type_item === 'PRODUCTO') {
             const params = {
                 warehouseId: itemUpdate.warehouse_id,
                 productId: itemUpdate.id,
                 quantity: data.cantidad
+            }
+
+            if ('orderId' in app) {
+                params.orderId = app.orderId;
             }
 
             const res = await validateProductStock(params);
@@ -142,6 +120,10 @@
                 programmingId: itemUpdate.programming_id,
                 dishId: itemUpdate.id,
                 quantity: data.cantidad
+            }
+
+            if ('orderId' in app) {
+                params.orderId = app.orderId;
             }
 
             const res = await validateDishStock(params);
@@ -172,5 +154,38 @@
 
         document.querySelector('#item_cantidad_edit').value = itemFind.quantity;
         paramsMdlItem.id = itemFind.id;
+    }
+
+    async function actionFormEditItem(e) {
+        e.preventDefault();
+        mostrarAnimacion1();
+
+        const lstDetail = getLstDetail();
+        const itemUpdate = lstDetail.find(lcd => lcd.id == paramsMdlItem.id);
+
+        const dataFormEdit = getDataFormEdit();
+        const validationForm = await validationFormEdit(dataFormEdit, itemUpdate);
+
+        if (validationForm) {
+            const validation = updateItem(dataFormEdit, lstDetail);
+            if (validation) {
+
+                if (isDesktop()) {
+                    const dtDetail = getDtDetail();
+                    clearTable('tbl_order_detail');
+                    setDtDetail(destroyDataTable(dtDetail));
+                    paintTblDetail(lstDetail);
+                    setDtDetail(loadDataTableSimple('tbl_order_detail'));
+                } else {
+                    paintCardsDetail(lstDetail);
+                }
+
+                calculateAmounts(getAmounts());
+                paintAmounts(getAmounts());
+                $('#mdlEditItem').modal('hide');
+                toastr.success('ITEM ACTUALIZADO');
+            }
+        }
+        ocultarAnimacion1();
     }
 </script>

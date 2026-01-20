@@ -1,129 +1,211 @@
-<form id="formEditCompanyTenant" action="{{ route('tenant.mantenimientos.empresa.update', $company->id) }}" method="POST" enctype="multipart/form-data">
+<form id="formEditCompanyTenant" action="{{ route('tenant.mantenimientos.empresa.update', $company->id) }}" method="POST"
+    enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
+    <!-- DATOS GENERALES -->
     <div class="row mb-3">
-        <div class="col-md-6">
-            <label for="ruc" class="form-label">RUC</label>
-            <input type="text" class="form-control" id="ruc" name="ruc" value="{{ $company->ruc }}" readonly>
-        </div>
-        <div class="col-md-6">
-            <label for="business_name" class="form-label">Razón Social</label>
-            <input type="text" class="form-control" id="business_name" name="business_name" value="{{ $company->business_name }}">
-        </div>
-    </div>
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label for="abbreviated_business_name" class="form-label">Razón Social Abreviada</label>
-            <input type="text" class="form-control" id="abbreviated_business_name" name="abbreviated_business_name" value="{{ $company->abbreviated_business_name }}">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label for="ruc" class="form-label fw-bold">
+                <i class="fas fa-id-card text-primary me-1"></i> RUC
+            </label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                <input type="text" class="form-control" id="ruc" name="ruc" value="{{ $company->ruc }}"
+                    readonly>
+            </div>
         </div>
-        <div class="col-md-6">
-            <label for="fiscal_address" class="form-label">Dirección Fiscal</label>
-            <input type="text" class="form-control" id="fiscal_address" name="fiscal_address" value="{{ $company->fiscal_address }}">
-        </div>
-    </div>
 
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label for="phone" class="form-label">Teléfono</label>
-            <input type="text" class="form-control" id="phone" name="phone" value="{{ $company->phone }}">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label for="business_name" class="form-label fw-bold">
+                <i class="fas fa-building text-primary me-1"></i> Razón Social
+            </label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-building"></i></span>
+                <input type="text" class="form-control input-fill" id="business_name" name="business_name"
+                    value="{{ $company->business_name }}">
+            </div>
         </div>
-        <div class="col-md-4">
-            <label for="cellphone" class="form-label">Celular</label>
-            <input type="text" class="form-control" id="cellphone" name="cellphone" value="{{ $company->cellphone }}">
-        </div>
-        <div class="col-md-4">
-            <label for="zip_code" class="form-label">Código Postal</label>
-            <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ $company->zip_code }}">
-        </div>
-    </div>
 
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label for="email" class="form-label">Correo Electrónico</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ $company->email }}">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-file-signature text-primary me-1"></i> Razón Social Abreviada
+            </label>
+            <input type="text" class="form-control input-fill" name="abbreviated_business_name"
+                value="{{ $company->abbreviated_business_name }}">
         </div>
-        <div class="col-md-4">
-            <label for="facebook" class="form-label">Facebook</label>
-            <input type="text" class="form-control" id="facebook" name="facebook" value="{{ $company->facebook }}">
-        </div>
-        <div class="col-md-4">
-            <label for="instagram" class="form-label">Instagram</label>
-            <input type="text" class="form-control" id="instagram" name="instagram" value="{{ $company->instagram }}">
-        </div>
-    </div>
 
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label for="web" class="form-label">Página Web</label>
-            <input type="text" class="form-control" id="web" name="web" value="{{ $company->web }}">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-map-marker-alt text-primary me-1"></i> Dirección Fiscal
+            </label>
+            <input type="text" class="form-control input-fill" name="fiscal_address"
+                value="{{ $company->fiscal_address }}">
         </div>
-        <div class="col-md-4">
-            <label for="invoicing_status" class="form-label">Estado de Facturación</label>
-            <select class="form-select" id="invoicing_status" name="invoicing_status">
+
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-phone text-primary me-1"></i> Teléfono
+            </label>
+            <input type="text" class="form-control input-fill" name="phone" value="{{ $company->phone }}">
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-mobile-alt text-primary me-1"></i> Celular
+            </label>
+            <input type="text" class="form-control input-fill" name="cellphone" value="{{ $company->cellphone }}">
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-mailbox text-primary me-1"></i> Código Postal
+            </label>
+            <input type="text" class="form-control input-fill" name="zip_code" value="{{ $company->zip_code }}">
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-envelope text-primary me-1"></i> Correo Electrónico
+            </label>
+            <input type="email" class="form-control input-fill" name="email" value="{{ $company->email }}">
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fab fa-facebook text-primary me-1"></i> Facebook
+            </label>
+            <input type="text" class="form-control input-fill" name="facebook" value="{{ $company->facebook }}">
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fab fa-instagram text-primary me-1"></i> Instagram
+            </label>
+            <input type="text" class="form-control input-fill" name="instagram" value="{{ $company->instagram }}">
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-globe text-primary me-1"></i> Página Web
+            </label>
+            <input type="text" class="form-control input-fill" name="web" value="{{ $company->web }}">
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-file-invoice-dollar text-primary me-1"></i> Estado de Facturación
+            </label>
+            <select class="form-select" name="invoicing_status">
                 <option value="0" {{ $company->invoicing_status == '0' ? 'selected' : '' }}>Inactivo</option>
                 <option value="1" {{ $company->invoicing_status == '1' ? 'selected' : '' }}>Activo</option>
             </select>
         </div>
-        <div class="col-md-4 mb-3">
-            <label for="input-logo" class="form-label">LOGO</label>
-            <input class="form-control image" accept="image/*" type="file" id="input-logo" name="logo">
-        </div>
 
-        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-3">
-            <label class="required_field" for="department" style="font-weight: bold;">DEPARTAMENTO</label>
-            <select required name="department" required class="form-select select2_form" id="department" data-placeholder="Seleccionar" onchange="changeDepartment(this.value)">
-                <option></option>
-                @foreach ($departments as $department)
-                    <option @if ($company_invoice->department_id == $department->id)
-                        selected
-                    @endif value="{{$department->id}}">{{$department->name}}</option>
-                @endforeach
-            </select>
-            <span class="department_error_customer msgErrorCustomer"  style="color:red;"></span>
-        </div>
-        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-3">
-            <label class="required_field" for="province" style="font-weight: bold;">PROVINCIA</label>
-            <select required name="province" required class="form-select select2_form" id="province" data-placeholder="Seleccionar" onchange="changeProvince(this.value)">
-                <option></option>
-            </select>
-            <span class="province_error_customer msgErrorCustomer"  style="color:red;"></span>
-        </div>
-        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-3">
-            <label class="required_field" for="district" style="font-weight: bold;">DISTRITO</label>
-            <select required name="district" required class="form-select select2_form" id="district" data-placeholder="Seleccionar">
-                <option></option>
-            </select>
-            <span class="district_customer msgErrorCustomer"  style="color:red;"></span>
-        </div>
-
-        <div class="col-12">
-            <label for="map" class="form-label" style="font-weight: bold;">UBICACIÓN</label>
-            <div>
-                <input id="searchBox" type="text" placeholder="Buscar dirección..." style="width: 100%; padding: 10px; margin-bottom: 10px;">
-            </div>
-            <div id="map" style="width:100%;height:300px;">
-            </div>
-            <input type="hidden" id="lat" name="lat">
-            <input type="hidden" id="lng" name="lng">
-        </div>
     </div>
 
-    <!-- Mostrar logo actual -->
-    @if($company->logo_url)
-        <div class="row mb-3">
-            <div class="col-md-12 text-center">
-                <div class="container-img">
-                    <img src="{{ asset($company->logo_url) }}" id="preview-logo" alt="Logo Actual" class="logo-preview">
-                    <span class="delete-image">Quitar imagen</span>
+    <div class="row">
+        <div class="col-6">
+            <!-- UBICACIÓN -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    <i class="fas fa-map-marked-alt text-primary me-1"></i> Ubicación
+                </label>
+
+                <input id="searchBox" type="text" class="form-control mb-2" placeholder="Buscar dirección...">
+
+                <div id="map" class="rounded border" style="width:100%;height:300px;"></div>
+
+                <input type="hidden" id="lat" name="lat">
+                <input type="hidden" id="lng" name="lng">
+            </div>
+        </div>
+        <div class="col-6">
+            <label class="form-label fw-bold">
+                <i class="fas fa-image text-primary me-1"></i> Logo
+            </label>
+            <input class="form-control" type="file" name="logo" id="input-logo"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+        </div>
+
+        <div class="col-12 mt-3">
+
+            <div class="card border shadow-sm">
+                <div class="card-header bg-light fw-bold">
+                    <i class="fas fa-qrcode text-primary me-2"></i>
+                    QRs de Pago <span class="text-muted">(Opcional)</span>
+                </div>
+
+                <div class="card-body">
+                    <div class="row g-3">
+
+                        <!-- QR 1 -->
+                        <div class="col-md-4 col-sm-6 col-12">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-qrcode text-success me-1"></i> QR Pago 1
+                            </label>
+                            <input type="file" class="form-control" name="yape_qr_1" id="yape_qr_1"
+                                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                        </div>
+
+                        <!-- QR 2 -->
+                        <div class="col-md-4 col-sm-6 col-12">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-qrcode text-success me-1"></i> QR Pago 2
+                            </label>
+                            <input type="file" class="form-control" name="yape_qr_2" id="yape_qr_2"
+                                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                        </div>
+
+                        <!-- QR 3 -->
+                        <div class="col-md-4 col-sm-6 col-12">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-qrcode text-success me-1"></i> QR Pago 3
+                            </label>
+                            <input type="file" class="form-control" name="yape_qr_3" id="yape_qr_3"
+                                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                        </div>
+
+                        <!-- QR 4 -->
+                        <div class="col-md-4 col-sm-6 col-12">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-qrcode text-success me-1"></i> QR Pago 4
+                            </label>
+                            <input type="file" class="form-control" name="yape_qr_4" id="yape_qr_4"
+                                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                        </div>
+
+                        <!-- QR 5 -->
+                        <div class="col-md-4 col-sm-6 col-12">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-qrcode text-success me-1"></i> QR Pago 5
+                            </label>
+                            <input type="file" class="form-control" name="yape_qr_5" id="yape_qr_5"
+                                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light small text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Puedes subir hasta 5 códigos QR de Yape. Todos son opcionales.
                 </div>
             </div>
-        </div>
-    @endif
 
-    <div class="d-flex justify-content-end">
-        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-        <a href="{{ route('tenant.mantenimientos.empresa') }}" class="btn btn-secondary ms-2">Cancelar</a>
+        </div>
+
     </div>
+
+    <!-- BOTONES -->
+    <div class="d-flex justify-content-end gap-2">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save me-1"></i> Guardar Cambios
+        </button>
+        <a href="{{ route('tenant.mantenimientos.empresa') }}" class="btn btn-secondary">
+            <i class="fas fa-times me-1"></i> Cancelar
+        </a>
+    </div>
+
 </form>

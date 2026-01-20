@@ -7,6 +7,7 @@
             </div>
             <div class="modal-body">
 
+                {{--
                 <div class="row">
                     <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                         <label for="type_dish_id" style="font-weight: bold;">TIPO PLATO</label>
@@ -20,6 +21,7 @@
                         </select>
                     </div>
                 </div>
+                --}}
                 <div class="row">
                     <div class="col-12">
                         <div class="table-responsive">
@@ -37,12 +39,18 @@
     </div>
 </div>
 
+<style>
+    #tbl_dishes_wrapper .dt-search{
+        text-align: start;
+    }
+</style>
+
 @push('js-script')
     <script>
         const lstTableDishes = [];
         const dishSelected = {
             id: null,
-            programming_id:null,
+            programming_id: null,
             name: null,
             type_name: null,
             purchase_price: null,
@@ -93,11 +101,14 @@
             dtDishes = new DataTable('#tbl_dishes', {
                 serverSide: true,
                 processing: true,
+                pageLength: 100,
+                lengthChange: false,
+                paging: false,
                 ajax: {
                     url: urlGetProductos,
                     type: 'GET',
                     data: function(d) {
-                        d.type_dish_id = $('#type_dish_id').val();
+                        // d.type_dish_id = $('#type_dish_id').val();
                         d.programming_id = @json($programming->id);
                     },
                 },
@@ -106,7 +117,8 @@
                 ],
                 columns: [{
                         data: 'id',
-                        name: 'd.id'
+                        name: 'd.id',
+                        visible: false
                     },
                     {
                         data: 'name',
@@ -114,11 +126,13 @@
                     },
                     {
                         data: 'type_dish_name',
-                        name: 'td.name'
+                        name: 'td.name',
+                        visible: false
                     },
                     {
                         data: 'stock',
                         name: 'pd.stock',
+                        visible: false,
                         render: function(data, type, row) {
                             return formatQuantity(data);
                         }
@@ -133,6 +147,7 @@
                     {
                         data: 'purchase_price',
                         name: 'd.purchase_price',
+                        visible: false,
                         render: function(data, type, row) {
                             return formatSoles(data);
                         }
@@ -142,6 +157,7 @@
                         name: 'd.img_route',
                         searchable: false,
                         orderable: false,
+                        visible: false,
                         className: "text-center",
                         render: function(data, type, row) {
 
@@ -209,7 +225,7 @@
             //======= SETTEAR PRODUCTO =======
             const item = fila;
             document.querySelector('#producto').value = item.name;
-            document.querySelector('#purchase_price').value = formatSoles(item.purchase_price);
+            //document.querySelector('#purchase_price').value = formatSoles(item.purchase_price);
             document.querySelector('#sale_price').value = formatSoles(item.sale_price);
             document.querySelector('#item_stock').value = formatQuantity(item.stock);
 
@@ -220,7 +236,7 @@
             dishSelected.sale_price = item.sale_price;
             dishSelected.stock = item.stock;
             dishSelected.type_item = 'PLATO';
-            dishSelected.programming_id =   item.programming_id;
+            dishSelected.programming_id = item.programming_id;
 
             setItemSelected(dishSelected);
 

@@ -1,7 +1,10 @@
 import { validateDishStock, validateProductStock } from "../../utils/fetch";
+import { isDesktop } from "../../utils/utils";
+import { dtDetail, elementsUI, lstDetail, setDtDetail } from "../shared/state";
+import { clearFormAddItem, paintCardsDetail } from "../shared/ui";
 import { routes } from "./routes";
-import { amounts, dtDetail, elementsUI, itemSelected, lstDetail, setDtDetail, setLstDetail } from "./state";
-import { clearFormAddItem, paintAmounts, paintTblDetail } from "./ui";
+import { amounts, itemSelected } from "./state";
+import { paintAmounts, paintTblDetail } from "./ui";
 
 export async function actionFormStore(formUpdate) {
 
@@ -85,11 +88,13 @@ export async function actionFormStore(formUpdate) {
 export async function actionAddItem() {
     toastr.clear();
     mostrarAnimacion1();
+
     const inputCantidad = elementsUI.inputQuantity;
     itemSelected.quantity = inputCantidad.value;
-    itemSelected.total = itemSelected.sale_price * parseFloat(inputCantidad.value);
-
     const validacion = await validationAddItem();
+
+    itemSelected.total = itemSelected.sale_price * parseFloat(inputCantidad.value);
+    itemSelected.observation = elementsUI.inputObservation.value.trim();
 
     if (validacion) {
         addItem({
@@ -117,10 +122,16 @@ function addItem(item, cantidad) {
     }
 
     lstDetail.push(item);
-    clearTable('tbl_order_detail');
-    setDtDetail(destroyDataTable(dtDetail));
-    paintTblDetail(lstDetail);
-    setDtDetail(loadDataTableSimple('tbl_order_detail'));
+
+    if (isDesktop()) {
+        clearTable('tbl_order_detail');
+        setDtDetail(destroyDataTable(dtDetail));
+        paintTblDetail(lstDetail);
+        setDtDetail(loadDataTableSimple('tbl_order_detail'));
+    } else {
+        paintCardsDetail(lstDetail);
+    }
+
     toastr.info(`${item.type_name} AGREGADO AL DETALLE`);
 }
 
@@ -150,16 +161,21 @@ export function actionDeleteItem(btn) {
 
     const res = deleteItem(itemId);
     if (res) {
-        clearTable('tbl_order_detail');
-        setDtDetail(destroyDataTable(dtDetail));
-        paintTblDetail(lstDetail);
-        setDtDetail(loadDataTableSimple('tbl_order_detail'));
+
+        if (isDesktop()) {
+            clearTable('tbl_order_detail');
+            setDtDetail(destroyDataTable(dtDetail));
+            paintTblDetail(lstDetail);
+            setDtDetail(loadDataTableSimple('tbl_order_detail'));
+        } else {
+            paintCardsDetail(lstDetail);
+        }
+
         calculateAmounts(amounts);
         paintAmounts(amounts);
         toastr.success('ITEM ELIMINADO!!');
     }
 }
-
 
 function deleteItem(itemId) {
 
@@ -190,6 +206,11 @@ async function validationAddItem() {
     }
     if (inputCantidad.value == 0) {
         toastr.error('LA CANTIDAD DEBE SER MAYOR A 0!!');
+        return false;
+    }
+    const inputObservation = elementsUI.inputObservation;
+    if (inputObservation.value.trim().length > 20) {
+        toastr.error('OBSERVACIÓN MÁX PERMITIDA 20 CARACTERES');
         return false;
     }
 

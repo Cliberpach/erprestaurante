@@ -1,6 +1,6 @@
 <table id="tbl-amounts" class="table table-bordered table-striped mt-3 shadow-sm" style="text-transform: uppercase; font-size: 14px;">
     <tbody>
-        <tr>
+        <tr class="d-none">
             <th style="width: 40%;">
                 <i class="fas fa-money-bill-wave text-secondary me-2"></i> SUBTOTAL
             </th>
@@ -8,7 +8,7 @@
                 S/ 0.00
             </td>
         </tr>
-        <tr>
+        <tr class="d-none">
             <th>
                 <i class="fas fa-receipt text-warning me-2"></i> IGV ({{$igv}}%)
             </th>

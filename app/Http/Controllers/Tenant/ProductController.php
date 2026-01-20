@@ -445,8 +445,6 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
             $products  =   $products->where('p.brand_id', $marca_id);
         }
 
-        $products  =   $products->get();
-
         return DataTables::of($products)->make(true);
     }
 }

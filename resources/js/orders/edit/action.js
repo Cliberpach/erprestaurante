@@ -1,6 +1,10 @@
+import { validateDishStock, validateProductStock } from "../../utils/fetch";
+import { isDesktop } from "../../utils/utils";
+import { dtDetail, elementsUI, lstDetail, setDtDetail, setLstDetail } from "../shared/state";
+import { clearFormAddItem, paintCardsDetail } from "../shared/ui";
 import { routes } from "./routes";
-import { amounts, dtDetail, elementsUI, itemSelected, lstDetail, setDtDetail, setLstDetail } from "./state";
-import { clearFormAddItem, paintAmounts, paintTblDetail } from "./ui";
+import { amounts, itemSelected } from "./state";
+import { paintAmounts, paintTblDetail } from "./ui";
 
 export async function actionFormUpdate(formUpdate) {
 
@@ -46,9 +50,8 @@ export async function actionFormUpdate(formUpdate) {
             formData.append('table_id', app.tableId);
             formData.append('_method', 'PUT');
 
-            console.log(formData);
             const res = await axios.post(routes.update(app.orderId), formData);
-            console.log(res);
+
             if (res.data.success) {
                 toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
                 window.location.href = routes.index;
@@ -83,12 +86,18 @@ export async function actionFormUpdate(formUpdate) {
     }
 }
 
-export function actionAddItem() {
+export async function actionAddItem() {
     toastr.clear();
+    mostrarAnimacion1();
+
     const inputCantidad = elementsUI.inputQuantity;
-    const validacion = validationAddItem();
+    itemSelected.quantity = inputCantidad.value;
+
+    const validacion = await validationAddItem();
 
     itemSelected.total = itemSelected.sale_price * parseFloat(inputCantidad.value);
+    itemSelected.observation = elementsUI.inputObservation.value.trim();
+
 
     if (validacion) {
         mostrarAnimacion1();
@@ -100,8 +109,8 @@ export function actionAddItem() {
         paintAmounts(amounts);
 
         clearFormAddItem(itemSelected);
-        ocultarAnimacion1();
     }
+    ocultarAnimacion1();
 }
 
 function addItem(item, cantidad) {
@@ -117,10 +126,16 @@ function addItem(item, cantidad) {
     }
 
     lstDetail.push(item);
-    clearTable('tbl_order_detail');
-    setDtDetail(destroyDataTable(dtDetail));
-    paintTblDetail(lstDetail);
-    setDtDetail(loadDataTableSimple('tbl_order_detail'));
+
+    if (isDesktop()) {
+        clearTable('tbl_order_detail');
+        setDtDetail(destroyDataTable(dtDetail));
+        paintTblDetail(lstDetail);
+        setDtDetail(loadDataTableSimple('tbl_order_detail'));
+    } else {
+        paintCardsDetail(lstDetail);
+    }
+
     toastr.info(`${item.type_name} AGREGADO AL DETALLE`);
 }
 
@@ -150,16 +165,21 @@ export function actionDeleteItem(btn) {
 
     const res = deleteItem(itemId);
     if (res) {
-        clearTable('tbl_order_detail');
-        setDtDetail(destroyDataTable(dtDetail));
-        paintTblDetail(lstDetail);
-        setDtDetail(loadDataTableSimple('tbl_order_detail'));
+
+        if (isDesktop()) {
+            clearTable('tbl_order_detail');
+            setDtDetail(destroyDataTable(dtDetail));
+            paintTblDetail(lstDetail);
+            setDtDetail(loadDataTableSimple('tbl_order_detail'));
+        } else {
+            paintCardsDetail(lstDetail);
+        }
+
         calculateAmounts(amounts);
         paintAmounts(amounts);
         toastr.success('ITEM ELIMINADO!!');
     }
 }
-
 
 function deleteItem(itemId) {
 
@@ -177,8 +197,7 @@ function deleteItem(itemId) {
 
 }
 
-
-function validationAddItem() {
+async function validationAddItem() {
 
     if (!itemSelected.id) {
         toastr.error(`DEBE SELECCIONAR UN PLATO O PRODUCTO PREVIAMENTE`);
@@ -195,21 +214,49 @@ function validationAddItem() {
         return false;
     }
 
+    if (itemSelected.type_item === 'PRODUCTO') {
+        const params = {
+            warehouseId: itemSelected.warehouse_id,
+            productId: itemSelected.id,
+            quantity: itemSelected.quantity,
+            orderId: app.orderId
+        }
+        console.log('params', params)
+        const res = await validateProductStock(params);
+        if (!res || !res.data.success) return;
+    }
+
+    if (itemSelected.type_item === 'PLATO') {
+        const params = {
+            programmingId: itemSelected.programming_id,
+            dishId: itemSelected.id,
+            quantity: itemSelected.quantity,
+            orderId: app.orderId
+        }
+
+        const res = await validateDishStock(params);
+        if (!res || !res.data.success) return;
+    }
+
     return true;
 }
 
 export function loadDataEdit() {
-
     setLstDetail(app.lstDetail);
+
     //====== PRODUCTS =======
-    setDtDetail(destroyDataTable(dtDetail));
-    clearTable('tbl_order_detail');
-    paintTblDetail(lstDetail);
-    setDtDetail(loadDataTableSimple('tbl_order_detail'));
+    if (isDesktop()) {
+        setDtDetail(destroyDataTable(dtDetail));
+        clearTable('tbl_order_detail');
+        paintTblDetail(lstDetail);
+        setDtDetail(loadDataTableSimple('tbl_order_detail'));
+    } else {
+        paintCardsDetail(lstDetail);
+    }
+
     calculateAmounts(amounts);
     paintAmounts(amounts);
-    console.log(amounts);
 }
 
-window.calculateAmounts =   calculateAmounts;
-window.paintAmounts     =   paintAmounts;
+window.calculateAmounts = calculateAmounts;
+window.paintAmounts = paintAmounts;
