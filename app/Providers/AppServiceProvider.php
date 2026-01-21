@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        $databaseConnection = (parse_url(config("app.url"), PHP_URL_HOST) === request()->getHost()) ? 'landlord' : 'tenant';
+        /*$databaseConnection = (parse_url(config("app.url"), PHP_URL_HOST) === request()->getHost()) ? 'landlord' : 'tenant';
         config(['database.default' => $databaseConnection]);
 
         $base = ($databaseConnection === 'landlord') ? 'landlord' : 'tenant';
@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
         // Compartir variables globales con las vistas
         View::share('base', $base . '.');
         View::share('modules', $modules);
-        View::share('lst_search_modules', $this->getLstSearchModules($base));
+        View::share('lst_search_modules', $this->getLstSearchModules($base));*/
     }
 
     public function getLstSearchModules($base)
