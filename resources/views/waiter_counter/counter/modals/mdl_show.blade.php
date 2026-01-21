@@ -3,43 +3,60 @@
         <div class="modal-content shadow">
 
             <!-- HEADER -->
-            <div class="modal-header text-white">
+            <div class="modal-header">
                 <h5 class="modal-title d-flex align-items-center gap-2" id="mdlShowOrderLabel">
                     <i class="fas fa-chair"></i>
                     Mesa: <span id="spanMesaNombre" class="fw-semibold"></span>
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
 
             <!-- BODY -->
             <div class="modal-body">
 
-                <div class="card mb-3 shadow-sm">
-                    <div class="card-body py-3">
-                        <div class="row align-items-center text-center">
+                <div class="row g-3 text-center">
 
-                            <!-- CLIENTE -->
-                            <div class="col-6 border-end">
-                                <i class="fas fa-user text-primary fs-4 mb-1"></i>
-                                <div class="small text-muted">Cliente</div>
-                                <div class="fw-bold text-truncate" id="customerName"></div>
-                            </div>
-
-                            <!-- TOTAL -->
-                            <div class="col-6">
-                                <i class="fas fa-coins text-success fs-4 mb-1"></i>
-                                <div class="small text-muted">Total</div>
-                                <div class="fw-bold fs-5 text-success" id="total"></div>
-                            </div>
-
-                        </div>
+                    <!-- EDITAR -->
+                    <div class="col-3">
+                        <button type="button" id="btnEditOrder"
+                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
+                            <i class="fas fa-edit fs-2 text-primary mb-1"></i>
+                            <span class="fw-semibold text-primary small">Editar</span>
+                        </button>
                     </div>
+
+                    <!-- PRECUENTA -->
+                    <div class="col-3">
+                        <button type="button" id="btnPreCuenta"
+                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
+                            <i class="fas fa-receipt fs-2 text-warning mb-1"></i>
+                            <span class="fw-semibold text-warning small">Precuenta</span>
+                        </button>
+                    </div>
+
+                    <!-- CAMBIAR MESA -->
+                    <div class="col-3">
+                        <button type="button" id="btnChangeTable"
+                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
+                            <i class="fas fa-chair fs-2 text-info mb-1"></i>
+                            <span class="fw-semibold text-info small">Cambio Mesa</span>
+                        </button>
+                    </div>
+
+                    <!-- ELIMINAR -->
+                    <div class="col-3">
+                        <button type="button" id="btnDeleteOrder"
+                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
+                            <i class="fas fa-trash-alt fs-2 text-danger mb-1"></i>
+                            <span class="fw-semibold text-danger small">Eliminar</span>
+                        </button>
+                    </div>
+
                 </div>
 
 
                 <!-- CARD COLAPSABLE -->
-                <div class="card mb-2 shadow-sm">
+                <div class="card d-none mb-2 shadow-sm">
 
                     <!-- HEADER CLICKABLE -->
                     <div class="card-header bg-white p-2" role="button" data-bs-toggle="collapse"
@@ -60,6 +77,30 @@
 
                             <!-- INFO GENERAL -->
                             <div class="row g-3 mb-3">
+
+                                <div class="col-12">
+                                    <div class="card mb-3 shadow-sm">
+                                        <div class="card-body py-3">
+                                            <div class="row align-items-center text-center">
+
+                                                <!-- CLIENTE -->
+                                                <div class="col-6 border-end">
+                                                    <i class="fas fa-user text-primary fs-4 mb-1"></i>
+                                                    <div class="small text-muted">Cliente</div>
+                                                    <div class="fw-bold text-truncate" id="customerName"></div>
+                                                </div>
+
+                                                <!-- TOTAL -->
+                                                <div class="col-6">
+                                                    <i class="fas fa-coins text-success fs-4 mb-1"></i>
+                                                    <div class="small text-muted">Total</div>
+                                                    <div class="fw-bold fs-5 text-success" id="total"></div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <!-- DATOS DEL PEDIDO -->
                                 <div class="col-12 col-md-6">
@@ -165,21 +206,6 @@
                     </div>
 
                 </div>
-
-            </div>
-
-            <div class="modal-footer d-flex justify-content-between flex-wrap gap-2">
-                <div>
-                    <button type="button" class="btn btn-outline-danger" id="btnDeleteOrder">
-                        <i class="fas fa-trash-alt"></i> Eliminar
-                    </button>
-                    <button type="button" class="btn btn-outline-primary" id="btnEditOrder">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                </div>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times"></i> Salir
-                </button>
             </div>
 
         </div>

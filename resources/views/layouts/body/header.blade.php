@@ -78,7 +78,7 @@
         <div class="vr my-3"></div>
         <div class="d-flex align-items-center gap-sm-2 px-lg-4 px-sm-2 gap-0 px-1">
 
-            @if ($mostrarButton)
+            {{-- @if ($mostrarButton)
                 <div style="display:flex;flex-direction:column;justify-items:center;">
                     <a href="{{ route('tenant.taller.cotizaciones.create') }}"
                         class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light">
@@ -93,7 +93,7 @@
                     </a>
                     <span style="font-size: 9px;">Orden</span>
                 </div>
-            @endif
+            @endif --}}
             {{-- <a href="email/inbox.html"
                 class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light position-relative">
                 <i class="fi fi-rr-envelope"></i>

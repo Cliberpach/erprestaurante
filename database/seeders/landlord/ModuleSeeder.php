@@ -43,7 +43,7 @@ class ModuleSeeder extends Seeder
 
 
         // Taller
-        $taller = Module::create([
+        /*$taller = Module::create([
             'description' => 'Taller',
             'order' => '1'
         ]);
@@ -102,7 +102,7 @@ class ModuleSeeder extends Seeder
             'description'   => 'Vehiculos',
             'route_name'    => 'taller.vehiculos.index',
             'order'         => '2'
-        ]);
+        ]);*/
 
         // Ventas
         $sale = Module::create([
@@ -367,13 +367,13 @@ class ModuleSeeder extends Seeder
             'show' => 'tenant'
         ]);
 
-        ModuleChild::create([
+        /*ModuleChild::create([
             'module_id' => $maintenance->id,
             'description' => 'Planes',
             'route_name' => 'mantenimientos.plan',
             'order' => '2',
             'show' => 'landlord'
-        ]);
+        ]);*/
 
 
         ModuleChild::create([
@@ -408,12 +408,12 @@ class ModuleSeeder extends Seeder
             'show' => 'tenant'
         ]);
 
-        ModuleChild::create([
+        /*ModuleChild::create([
             'module_id' => $maintenance->id,
             'description' => 'Horario de atención',
             'route_name' => 'mantenimientos.horario',
             'order' => '2'
-        ]);
+        ]);*/
 
         ModuleChild::create([
             'module_id'     => $maintenance->id,
