@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('payment_method_accounts', function (Blueprint $table) {
             $table->unsignedBigInteger('payment_method_id');
             $table->unsignedBigInteger('bank_account_id');
+
+            $table->boolean('is_active')->default(false)->comment('CUENTA ACTIVA PARA QR MOZO');
             $table->timestamps();
 
             $table->primary(['payment_method_id', 'bank_account_id']);

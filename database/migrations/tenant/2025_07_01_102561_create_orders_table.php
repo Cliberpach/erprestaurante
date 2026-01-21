@@ -32,6 +32,11 @@ return new class extends Migration
             $table->enum('status', ['ACTIVO', 'FINALIZADO', 'ANULADO'])->default('ACTIVO');
             $table->enum('status_invoice', ['FACTURADO', 'NO FACTURADO'])->default('NO FACTURADO');
 
+            $table->unsignedBigInteger('payref_id')->nullable()->comment('ID de la referencia de pago (payref)');
+            $table->string('payref_name',160)->nullable()->comment('Nombre de la referencia de pago (payref)');
+            $table->longText('payref_img_url')->nullable()->comment('Imagen de la referencia de pago (payref)');
+            $table->longText('payref_img_name')->nullable()->comment('Nombre de la imagen de la referencia de pago (payref)');
+
             /* 🔹 PRINT CONFIGURATION */
             $table->string('pending_print', 2)->default('NO')->nullable();
             $table->string('pending_kitchen_print', 5)->default('NO')->nullable();

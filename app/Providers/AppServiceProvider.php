@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Models\Company;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Module;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use Spatie\Multitenancy\Models\Tenant;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,13 +19,59 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
+    public function boot(): void
+    {
+        $host    = request()->getHost();
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+
+        // Detectar landlord vs tenant
+        $isLandlord = $host === $appHost;
+        $base = $isLandlord ? 'landlord' : 'tenant';
+
+        // 🔌 Cambiar conexión por defecto (TU enfoque)
+        $databaseConnection = $isLandlord ? 'landlord' : 'tenant';
+        config(['database.default' => $databaseConnection]);
+
+        if (!$isLandlord && Tenant::current()) {
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        }
+
+        // 🔐 Tenant ID (solo para cache / lógica)
+        $tenantId = $isLandlord
+            ? 'landlord'
+            : (Tenant::current()?->id ?? 'tenant');
+
+        $modules = Cache::remember(
+            "modules_menu_{$tenantId}_{$base}",
+            now()->addHours(6),
+            function () use ($base) {
+                return Module::where('show', $base)
+                    ->with([
+                        'children' => fn($q) => $q->where('show', $base),
+                        'children.grandchildren' => fn($q) => $q->where('show', $base),
+                    ])
+                    ->get();
+            }
+        );
+
+        $lst_search_modules = Cache::remember(
+            "modules_search_{$tenantId}_{$base}",
+            now()->addHours(6),
+            fn() => $this->getLstSearchModules($base)
+        );
+
+        View::share('base', $base . '.');
+        View::share('modules', $modules);
+        View::share('lst_search_modules', $lst_search_modules);
+    }
+
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot_old(): void
     {
 
-        /*$databaseConnection = (parse_url(config("app.url"), PHP_URL_HOST) === request()->getHost()) ? 'landlord' : 'tenant';
+        $databaseConnection = (parse_url(config("app.url"), PHP_URL_HOST) === request()->getHost()) ? 'landlord' : 'tenant';
         config(['database.default' => $databaseConnection]);
 
         $base = ($databaseConnection === 'landlord') ? 'landlord' : 'tenant';
@@ -37,10 +83,9 @@ class AppServiceProvider extends ServiceProvider
             }])
             ->get();
 
-        // Compartir variables globales con las vistas
         View::share('base', $base . '.');
         View::share('modules', $modules);
-        View::share('lst_search_modules', $this->getLstSearchModules($base));*/
+        View::share('lst_search_modules', $this->getLstSearchModules($base));
     }
 
     public function getLstSearchModules($base)
@@ -73,7 +118,8 @@ class AppServiceProvider extends ServiceProvider
                                 ) AS category,
                                 "fi fi-rr-file" AS icon
                             FROM module_grand_children  AS mgc
-                            WHERE mgc.route_name IS NOT NULL');
+                            WHERE mgc.route_name IS NOT NULL'
+        );
 
         return $lst_modules;
     }

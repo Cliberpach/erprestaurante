@@ -9,10 +9,12 @@ class Collaborator extends Model
 {
     use HasFactory;
     protected $table = 'collaborators';
+    protected $connection = 'tenant';
 
     protected $fillable = [
 
         'document_type_id',
+        'document_type_abbreviation',
         'position_id',
         'document_number',
         'full_name',

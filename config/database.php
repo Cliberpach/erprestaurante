@@ -34,7 +34,7 @@ return [
     */
 
     'connections' => [
-/*
+        /*
         'tenant' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
@@ -100,9 +100,9 @@ return [
             'url' => env('LANDLORD_DATABASE_URL'),
             'host' => env('LANDLORD_HOST', '127.0.0.1'),
             'port' => env('LANDLORD_PORT', '3306'),
-            'database' => env('DB_DATABASE'),
-            'username' => env('DB_USERNAME'),
-            'password' => env('DB_PASSWORD'),
+            'database' => env('LANDLORD_DATABASE'),
+            'username' => env('LANDLORD_USERNAME'),
+            'password' => env('LANDLORD_PASSWORD'),
             'unix_socket' => env('LANDLORD_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -114,7 +114,6 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
-
     ],
 
     /*
@@ -147,7 +146,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [

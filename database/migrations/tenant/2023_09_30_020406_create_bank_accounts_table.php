@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('holder', 200)->comment('Titular');
             $table->string('currency', 160)->comment('Moneda');
 
+            $table->longText('qr_url')->nullable();
+            $table->longText('qr_name')->nullable();
+
             $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->string('creator_user_name', 200)->nullable();
             $table->unsignedBigInteger('editor_user_id')->nullable();

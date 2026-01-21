@@ -5,7 +5,6 @@ namespace App\Http\Controllers\LandLord;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyStoreRequest;
 use App\Models\Company;
-use App\Models\CompanyInvoice;
 use App\Models\Landlord\Company as LandlordCompany;
 use App\Models\Module;
 use App\Models\ModuleChild;
@@ -13,19 +12,26 @@ use App\Models\ModuleGrandChild;
 use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\Tenant\DocumentSerialization;
-use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Tenant\Maintenance\Company\Company as TenantCompany;
+use App\Models\Tenant\Maintenance\Company\CompanyInvoice as TenantCompanyInvoice;
+use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
+use App\Models\Tenant\User;
+use Throwable;
+use Spatie\Permission\Models\Role;
+use App\Models\Tenant\Maintenance\Company\Module as CompanyModule;
+use App\Models\Tenant\Maintenance\Company\ModuleChild as CompanyModuleChild;
+use App\Models\Tenant\Maintenance\Company\ModuleGrandChild as CompanyModuleGrandChild;
+use App\Models\Tenant\Maintenance\Company\Plan as CompanyPlan;
 
 class CompanyController extends Controller
 {
@@ -165,6 +171,8 @@ class CompanyController extends Controller
                 "domain" => $domain . "." . parse_url(config("app.url"), PHP_URL_HOST),
             ]);
 
+            $tenantDirectory = "{$domain}_{$tenant->id}";
+
             $company                                =   new Company();
             $company->tenant_id                     =   $tenant->id;
             $company->ruc                           =   $request->get("ruc");
@@ -177,20 +185,14 @@ class CompanyController extends Controller
             $company->files_route                   =   "{$domain}_{$tenant->id}";
             $company->token_placa                   =  "nsHeEpNSOBr8ucEFnL7OtKmVkZhefUuvoM8O1Lz7uFEOi4KtFZ54==";
 
+            //=========== CERTIFICADO ==========
             if ($request->hasFile('certificate_url')) {
-                $imagen = $request->file('certificate_url');
-                $fileFolderPath = 'assets/img/certificado/';
-                $nombreImagen = $imagen->getClientOriginalName();
-                $suffix = 1;
-                $fileNameWithoutExtension = pathinfo($nombreImagen, PATHINFO_FILENAME);
-                while (CompanyInvoice::where('certificate_url', $nombreImagen)->exists()) {
-                    $fileName = $fileNameWithoutExtension . "($suffix)." . $imagen->getClientOriginalExtension();
-                    $suffix++;
-                    $nombreImagen = $fileName;
-                }
-                $imagen->move(public_path($fileFolderPath), $nombreImagen);
-                $company->certificate = $nombreImagen;
-                $company->certificate_url = $fileFolderPath . $nombreImagen;
+                $certificate                =   $request->file('certificate_url');
+                $fileFolderPath             =   'storage/' . $tenantDirectory . '/certificate/';
+                $fileName                   =   $tenant->name . '_' . $tenant->id . "_" . $certificate->getClientOriginalExtension();
+
+                $company->certificate       =   $fileName;
+                $company->certificate_url   =   $fileFolderPath . $fileName;
             }
 
             $company->save();
@@ -199,53 +201,54 @@ class CompanyController extends Controller
             $child_array        = $request->child_id;
             $grandchild_array   = $request->grandchild_id;
 
-            $this->modules          = Module::whereIn('id', $module_array)->get();
-            $this->children         = ModuleChild::whereIn('id', $child_array)->get();
-            $this->grand_children   = ModuleGrandChild::whereIn('id', $grandchild_array)->get();
-            $this->plan             = Plan::findOrFail($company->plan);
+            $this->modules          =   Module::whereIn('id', $module_array)->get();
+            $this->children         =   ModuleChild::whereIn('id', $child_array)->get();
+            $this->grand_children   =   ModuleGrandChild::whereIn('id', $grandchild_array)->get();
+            $this->plan             =   Plan::findOrFail($company->plan);
 
-            DB::commit();
+            DB::connection('landlord')->commit();
 
             $request->merge([
-                'tenant_id'     => $tenant->id,
-                'files_route'   => "{$domain}_{$tenant->id}"
+                'tenant_id'     =>  $tenant->id,
+                'tenant_name'   =>  $tenant->name,
+                'files_route'   =>  "{$domain}_{$tenant->id}",
             ]);
 
+            $tenant->makeCurrent();
             $this->insertDataTenant($tenant->database, $request);
 
             //======= CREAR CARPETA DE ARCHIVOS PARA EL TENANT  EN PUBLIC/STORAGE/ ====
-            $tenantDirectory = "{$domain}_{$tenant->id}";
             if (!Storage::disk('public')->exists($tenantDirectory)) {
                 Storage::disk('public')->makeDirectory($tenantDirectory);
             }
 
-            //========== HABILITAR SSL PARA EL SUBDOMINIO DEL TENANT =====
-            /*$env = env('APP_ENV');
+            Tenant::forgetCurrent();
 
-            if($env === 'production'){
-                $mainDomain = 'eldeportivo.online';
-                $command    = "sudo certbot --expand -d {$mainDomain} -d www.{$mainDomain} -d {$domain}.{$mainDomain}";
-                exec($command, $output, $resultCode);
+            Session::flash('message_success', 'EMPRESA REGISTRADA CON ÉXITO');
+            return response()->json(['success' => true, 'message' => 'EMPRESA REGISTRADA CON ÉXITO']);
+        } catch (Throwable $th) {
+
+            DB::connection('landlord')->rollback();
+
+            if (isset($tenantDatabase)) {
+                DB::connection('landlord')->statement("DROP DATABASE IF EXISTS `{$tenantDatabase}`");
             }
 
-            if ($resultCode !== 0) {
-                dd('Error al generar el certificado subdmonio', $output, $resultCode);
-            }*/
-
-            Session::flash('message_success','EMPRESA REGISTRADA CON ÉXITO');
-            return response()->json(['success' => true, 'message' => 'EMPRESA REGISTRADA CON ÉXITO']);
-        } catch (Exception $ex) {
-            DB::rollback();
-            Session::flash('message_error', $ex->getMessage());
-            return response()->json(['success' => false, 'message' => $ex->getMessage()]);
+            Session::flash('message_error', $th->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
+            ]);
         }
     }
 
     private function insertDataTenant($database, $request)
     {
-        DB::statement("use $database");
+        $files_route            =   $request->get('files_route');
 
-        $company                                =   new Company();
+        $company                                =   new TenantCompany();
         $company->ruc                           =   $request->get("ruc");
         $company->domain                        =   $request->get('domain');
         $company->tenant_id                     =   $request->get('tenant_id');
@@ -258,25 +261,19 @@ class CompanyController extends Controller
         $company->plan                          =   $request->get("plan_id");
 
         if ($request->hasFile('certificate_url')) {
-            $imagen = $request->file('certificate_url');
-            $fileFolderPath = 'assets/img/certificado/';
-            $nombreImagen = $imagen->getClientOriginalName();
-            $suffix = 1;
-            $fileNameWithoutExtension = pathinfo($nombreImagen, PATHINFO_FILENAME);
-            while (CompanyInvoice::where('certificate_url', $nombreImagen)->exists()) {
-                $fileName = $fileNameWithoutExtension . "($suffix)." . $imagen->getClientOriginalExtension();
-                $suffix++;
-                $nombreImagen = $fileName;
-            }
-            $imagen->move(public_path($fileFolderPath), $nombreImagen);
-            $company->certificate = $nombreImagen;
-            $company->certificate_url = $fileFolderPath . $nombreImagen;
+            $certificate                = $request->file('certificate_url');
+            $fileFolderPath             = 'storage/' . $files_route . '/certificate/';
+            $fileName                   = $files_route . "." . $certificate->getClientOriginalExtension();
+
+            $certificate->move(public_path($fileFolderPath), $fileName);
+            $company->certificate       = $fileName;
+            $company->certificate_url   = $fileFolderPath . $fileName;
         }
 
         $company->save();
 
         //========= DATOS DE FACTURACIÓN COMPANY INVOICE =========
-        DB::table('company_invoices')->insert([
+        TenantCompanyInvoice::create([
             'company_id'           => $company->id,
             'plan'                 => $company->plan,
             'environment'          => 'DEMO',
@@ -292,58 +289,59 @@ class CompanyController extends Controller
             'secondary_user'       => 'MODDATOS',
             'secondary_password'   => 'MODDATOS',
             'api_user_gre'         => 'test-85e5b0ae-255c-4891-a595-0b98c65c9854',
-            'api_password_gre'    => 'test-Hty/M6QshYvPgItX2P0+Kw==',
-            'created_at'           => now(),
-            'updated_at'           => now(),
+            'api_password_gre'     => 'test-Hty/M6QshYvPgItX2P0+Kw==',
         ]);
 
+
         //========= CREANDO USUARIO PARA EL TENANT ========
-        /*$user                     =   new User();
-        $user->name                 =   'SUPERADMIN';
+        $collaborator                               =   new Collaborator();
+        $collaborator->full_name                    =   'LUIS DANIEL ALVA LUJAN';
+        $collaborator->document_type_id             =   1;
+        $collaborator->document_number              =   77412431;
+        $collaborator->address                      =   'AV HUSARES 123';
+        $collaborator->phone                        =   '989392912';
+        $collaborator->work_days                    =   30;
+        $collaborator->rest_days                    =   20;
+        $collaborator->monthly_salary               =   12000;
+        $collaborator->daily_salary                 =   400;
+        $collaborator->position_id                  =   1;
+        $collaborator->document_type_abbreviation   =   'DNI';
+        $collaborator->save();
+
+        $user                       =   new User();
+        $user->name                 =   'ADMIN';
         $user->email                =   $request->get("correo");
         $user->password             =   Hash::make($request->get("password"));
         $user->password_visible     =   $request->get("password");
+        $user->collaborator_id      =   $collaborator->id;
         $user->save();
 
         $role = Role::where('name', 'admin')->first();
-        $user->assignRole($role);*/
+        $user->assignRole($role);
 
-        DB::table("document_serializations")->insert([
-            // ['company_id' => $company->id, 'document_type_id' => '01', 'serie' => 'F001', 'number_limit' => 8, 'destiny' => 'VENTAS', 'default' => 'NO', 'final_number' => 0],
-            // ['company_id' => $company->id, 'document_type_id' => '03', 'serie' => 'B001', 'number_limit' => 8, 'destiny' => 'VENTAS', 'default' => 'NO', 'final_number' => 0],
-            // ['company_id' => $company->id, 'document_type_id' => '06', 'serie' => 'FF01', 'number_limit' => 8, 'destiny' => 'FNC', 'default' => 'NO', 'final_number' => 0],
-            // ['company_id' => $company->id, 'document_type_id' => '07', 'serie' => 'BB01', 'number_limit' => 8, 'destiny' => 'FNC', 'default' => 'NO', 'final_number' => 0],
-            // ['company_id' => $company->id, 'document_type_id' => '08', 'serie' => 'FD01', 'number_limit' => 8, 'destiny' => 'FND', 'default' => 'NO', 'final_number' => 0],
-            // ['company_id' => $company->id, 'document_type_id' => '09', 'serie' => 'T001', 'number_limit' => 8, 'destiny' => 'GUIAS', 'default' => 'NO', 'final_number' => 0],
-            //['company_id' => $company->id, 'document_type_id' => '80', 'serie' => 'NV01', 'descriptión' => 'NOTA DE VENTA','start_number'=>'1', 'number_limit' => 8, 'destiny' => 'VENTAS', 'default' => 'NO', 'final_number' => 0,'initiated'=>'NO'],
-            ['company_id' => $company->id, 'document_type_id' => '50', 'serie' => 'TV01', 'number_limit' => 8, 'destiny' => 'VENTAS', 'default' => 'SI', 'final_number' => 0],
-            ['company_id' => $company->id, 'document_type_id' => '52', 'serie' => 'NI01', 'number_limit' => 8, 'destiny' => 'NOTAS', 'default' => 'NO', 'final_number' => 0],
-            ['company_id' => $company->id, 'document_type_id' => '53', 'serie' => 'NS01', 'number_limit' => 8, 'destiny' => 'NOTAS', 'default' => 'NO', 'final_number' => 0],
+        DocumentSerialization::create([
+            'company_id'        => $company->id,
+            'document_type_id'  => 67,
+            'serie'             => 'NV01',
+            'number_limit'      => 8,
+            'destiny'           => 'NOTA DE VENTA',
+            'default'           => 'NO',
+            'final_number'      => 0,
+            'description'       => 'NOTA DE VENTA',
         ]);
 
-        $serialization                      =   new DocumentSerialization();
-        $serialization->company_id          =   1;
-        $serialization->document_type_id    =   80;
-        $serialization->serie               =   'NV01';
-        $serialization->description         =   'NOTA DE VENTA';
-        $serialization->start_number        =   '1';
-        $serialization->number_limit        =   8;
-        $serialization->destiny             =   NULL;
-        $serialization->default             =   'NO';
-        $serialization->final_number        =   0;
-        $serialization->initiated           =   'NO';
-        $serialization->save();
 
         foreach ($this->modules as $module) {
-            Module::create([
+            CompanyModule::create([
                 'id' => $module->id,
                 'description' => $module->description,
                 'order' => $module->order,
+                'icon'  =>  $module->icon
             ]);
         }
 
         foreach ($this->children as $children) {
-            ModuleChild::create([
+            CompanyModuleChild::create([
                 'id' => $children->id,
                 'module_id' => $children->module_id,
                 'description' => $children->description,
@@ -353,7 +351,7 @@ class CompanyController extends Controller
         }
 
         foreach ($this->grand_children as $grand_children) {
-            ModuleGrandChild::create([
+            CompanyModuleGrandChild::create([
                 'id' => $grand_children->id,
                 'module_child_id' => $grand_children->module_child_id,
                 'description' => $grand_children->description,
@@ -362,7 +360,7 @@ class CompanyController extends Controller
             ]);
         }
 
-        Plan::create([
+        CompanyPlan::create([
             'id' => $this->plan->id,
             'description' => $this->plan->description,
             'number_fields' => $this->plan->number_fields,
