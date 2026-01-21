@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Tenant\TenantPermission;
+use App\Models\Tenant\TenantRole;
+
 return [
 
     'models' => [
@@ -13,7 +16,7 @@ return [
          * `Spatie\Permission\Contracts\Permission` contract.
          */
 
-        'permission' => Spatie\Permission\Models\Permission::class,
+        //'permission' => Spatie\Permission\Models\Permission::class,
 
         /*
          * When using the "HasRoles" trait from this package, we need to know which
@@ -24,6 +27,8 @@ return [
          * `Spatie\Permission\Contracts\Role` contract.
          */
 
+        //'role' => Spatie\Permission\Models\Role::class,
+        'permission' => Spatie\Permission\Models\Permission::class,
         'role' => Spatie\Permission\Models\Role::class,
 
     ],
@@ -95,6 +100,14 @@ return [
 
         'team_foreign_key' => 'team_id',
     ],
+
+    'database_connection' => function() {
+        $host = request()->getHost();
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $isLandlord = $host === $appHost;
+
+        return $isLandlord ? 'landlord' : 'tenant';
+    },
 
     /*
      * When set to true, the method for checking permissions will be registered on the gate.
