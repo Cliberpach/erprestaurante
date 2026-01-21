@@ -17,8 +17,13 @@ class CounterService
         $this->s_order      =   new OrderService();
     }
 
-    public function store(array $data): Order
+    public function create(int $table): View
     {
+        return $this->s_order->create($table);
+    }
+
+    public function store(array $data): Order
+    {   
         $order  =   $this->s_order->store($data);
         return $order;
     }
@@ -28,14 +33,14 @@ class CounterService
         return $this->s_order->getOrderTable($table_id);
     }
 
-    public function edit(int $id):View
+    public function edit(int $id): View
     {
         $view   =   $this->s_order->edit($id);
         return $view;
     }
 
-       public function update(int $id,array $data): Order
+    public function update(int $id, array $data): Order
     {
-        return $this->s_order->update($id,$data);
+        return $this->s_order->update($id, $data);
     }
 }

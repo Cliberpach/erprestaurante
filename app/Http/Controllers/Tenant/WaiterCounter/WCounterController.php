@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tenant\WaiterCounter;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Tenant\WaiterCounter\WaiterCounterStoreRequest;
 use App\Http\Services\Tenant\WCounter\Counter\CounterManager;
 use App\Models\Tenant\Supply\Table\Table;
 use Illuminate\Contracts\View\View;
@@ -57,28 +58,37 @@ class WCounterController extends Controller
         return DataTables::of($free_tables)->make(true);
     }
 
+    public function create(int $table_id)
+    {
+        try {
+            $view   =   $this->s_manager->create($table_id);
+            return $view;
+        } catch (Throwable $th) {
+            Session::flash('message_error', $th->getMessage());
+            return back();
+        }
+    }
+
     /*
-array:10 [ // app\Http\Services\Tenant\Orders\OrderValidation.php:64
-  "_token" => "6pRzBlylQlHD4KyHQXpuG1Rpt5jWFH9BWIOcq3ER"
+array:8 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:89
+  "_token" => "W2IrNvvxkcHseBAAVATFvG7aoL5CB3146mVQWkzi"
   "_method" => "POST"
-  "client_id" => "2"
-  "producto" => null
-  "item_stock" => null
-  "purchase_price" => null
-  "sale_price" => null
-  "cantidad" => null
-  "lst_detail" => "[{"id":1,"name":"INCA COLA ZERO","type_name":"GASEOSAS-INCA COLA","purchase_price":"1.00","sale_price":"2.60","type_item":"PRODUCTO","quantity":"2","total":5.2},{"id":25,"name":"Flan casero","type_name":"POSTRES","purchase_price":"2.500000","sale_price":"5.000000","type_item":"PLATO","quantity":"4","stock":"80.00","total":20}]"
-  "table_id" => "22"
+  "client_id" => "1"
+  "observation" => "test"
+  "payment_method" => "2"
+  "lst_detail" => "[{"id":3,"programming_id":7,"name":"CEVICHE DE CONCHAS","type_name":"ENTRADA","purchase_price":"3.000000","sale_price":"20.000000","type_item":"PLATO","quantity":"2","stock":"70.000000","total":40,"observation":"con aji"}]"
+  "table_id" => "1"
+  "voucher" =>Illuminate\Http\UploadedFile {#2462
 ]
 */
-    public function store(Request $request)
-    {
+    public function store(WaiterCounterStoreRequest $request)
+    {   
         DB::beginTransaction();
         try {
 
             $this->s_manager->store($request->toArray());
 
-            Session::flash('message_success', 'PEDIDO REGISTRO CON ÉXITO');
+            Session::flash('message_success', 'PEDIDO REGISTRADO CON ÉXITO');
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -124,7 +134,7 @@ array:10 [ // app\Http\Services\Tenant\Orders\OrderValidation.php:64
         return $view;
     }
 
-/*
+    /*
 array:5 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:136
   "_token" => "nLC9ESLc8E5XI4HuR8lNMcpju2xHbHRCXUsXfm0q"
   "_method" => "PUT"
@@ -138,7 +148,7 @@ array:5 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:13
         DB::beginTransaction();
         try {
 
-            $this->s_manager->update($id,$request->toArray());
+            $this->s_manager->update($id, $request->toArray());
 
             Session::flash('message_success', 'PEDIDO ACTUALIZADO CON ÉXITO');
             DB::commit();

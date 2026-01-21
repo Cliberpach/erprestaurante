@@ -1,4 +1,4 @@
-import { validateDishStock, validateProductStock } from "../../utils/fetch";
+import { getBankAccountPayment, validateDishStock, validateProductStock } from "../../utils/fetch";
 import { isDesktop } from "../../utils/utils";
 import { dtDetail, elementsUI, lstDetail, setDtDetail } from "../shared/state";
 import { clearFormAddItem, paintCardsDetail } from "../shared/ui";
@@ -237,6 +237,27 @@ async function validationAddItem() {
     }
 
     return true;
+}
+
+export async function actionPaymentMethodsChange() {
+
+    const paymentMethodId = window.paymentMethodsSelect.getValue();
+    if(!paymentMethodId) return;
+
+    mostrarAnimacion1();
+    const res = await getBankAccountPayment(paymentMethodId);
+
+    if (!res) {
+        ocultarAnimacion1();
+    }
+
+    const urlQrPayment = res.data.bank_account.qr_url;
+    if(urlQrPayment){
+        elementsUI.imgQrPayment.src = urlQrPayment;
+    }
+
+    ocultarAnimacion1();
+    $('#mdlQrPay').modal('show');
 }
 
 window.calculateAmounts = calculateAmounts;

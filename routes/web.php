@@ -269,4 +269,6 @@ Route::group(["prefix" => "utils"], function () {
 
     Route::get('products/get-list', [ProductController::class, 'getProducts'])->name('tenant.utils.getProducts');
     Route::get('get-list/free-servers', [MaintenanceUserController::class, 'getListFreeServers'])->name('tenant.utils.getListFreeServers');
+
+    Route::get('get-bank-account/{payment_method}', [BankAccountController::class, 'getBackAccountPayment'])->name('tenant.utils.getBackAccountPayment');
 });

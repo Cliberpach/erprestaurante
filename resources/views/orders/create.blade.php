@@ -8,6 +8,7 @@
     @include('orders.modals.mdl_dishes')
     @include('orders.modals.mdl_products')
     @include('orders.modals.mdl_edit_item')
+    @include('orders.modals.mdl_qr_payment')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
             <h4 class="card-title mb-md-0 mb-2">REGISTRAR PEDIDO</h4>

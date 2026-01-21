@@ -164,17 +164,11 @@
     <script>
         let map;
         let onemarker = 0;
-        let fileLogo = null;
 
-        let qr1 = null,
-            qr2 = null,
-            qr3 = null,
-            qr4 = null,
-            qr5 = null;
+
 
         document.addEventListener('DOMContentLoaded', function() {
             iniciarSelect2();
-            loadFilePound();
             startDataTableNumeration();
             setUbigeoPreview();
             setMapa();
@@ -196,44 +190,6 @@
                 }
             });
 
-        }
-
-        function loadFilePound() {
-            const inputLogo = document.querySelector('#input-logo')
-            fileLogo = FilePond.create(inputLogo, {
-                allowImagePreview: true,
-                imagePreviewHeight: 120,
-                imageCropAspectRatio: '1:1',
-                styleLayout: 'compact',
-                stylePanelAspectRatio: 0.5,
-                storeAsFile: true,
-            });
-
-            qr1 = createQrPond('#yape_qr_1');
-            qr2 = createQrPond('#yape_qr_2');
-            qr3 = createQrPond('#yape_qr_3');
-            qr4 = createQrPond('#yape_qr_4');
-            qr5 = createQrPond('#yape_qr_5');
-
-        }
-
-        function createQrPond(inputId) {
-            const input = document.querySelector(inputId);
-            if (!input) return null;
-
-            return FilePond.create(input, {
-                    allowImagePreview: true,
-                    imagePreviewHeight: 120,
-                    imageCropAspectRatio: '1:1',
-                    styleLayout: 'compact',
-                    stylePanelAspectRatio: 0.5,
-                    storeAsFile: true,
-                    acceptedFileTypes: ['image/jpeg', 'image/png', 'image/webp'],
-                    labelIdle: `
-                        <i class="fas fa-qrcode fa-lg text-success mb-1"></i><br>
-                        <span class="filepond--label-action">Subir QR Pago</span>
-                    `,
-            });
         }
 
         function iniciarSelect2() {

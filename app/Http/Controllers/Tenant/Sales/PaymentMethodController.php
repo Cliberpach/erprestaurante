@@ -78,11 +78,11 @@ class PaymentMethodController extends Controller
     }
 
     /*
-array:2 [ // app\Http\Controllers\Tenant\Sales\PaymentMethodController.php:76
-  "lstCuentasAsignadas" => "[1]"
-  "tipo_pago_id" => "4"
+array:2 [ // app\Http\Controllers\Tenant\Sales\PaymentMethodController.php:90
+  "lstCuentasAsignadas" => "[{"id":15,"active":true},{"id":14,"active":false}]"
+  "tipo_pago_id" => "2"
 ]
-    */
+*/
     public function assignAccountsStore(Request $request)
     {
         DB::beginTransaction();
@@ -93,20 +93,32 @@ array:2 [ // app\Http\Controllers\Tenant\Sales\PaymentMethodController.php:76
             DB::delete('DELETE FROM payment_method_accounts WHERE payment_method_id = ?', [$tipo_pago_id]);
 
             $lstCuentasAsignadas    =   json_decode($request->get('lstCuentasAsignadas'));
+            $collect_accounts       =   collect($lstCuentasAsignadas);
+            $count_active_accounts  =   $collect_accounts->where('active', true)->count();
+            if ($count_active_accounts > 1) {
+                return response()->json(['success' => false, 'message' => 'SOLO PUEDE HABER UNA CUENTA ACTIVA POR MÉTODO DE PAGO']);
+            }
+            
             foreach ($lstCuentasAsignadas as $cuenta_asignada) {
-                $cuenta_nueva               =   new PaymentMethodAccount();
-                $cuenta_nueva->payment_method_id =   $tipo_pago_id;
-                $cuenta_nueva->bank_account_id    =   $cuenta_asignada;
-                $cuenta_nueva->save();
+                $account                       =   new PaymentMethodAccount();
+                $account->payment_method_id    =   $tipo_pago_id;
+                $account->bank_account_id      =   $cuenta_asignada->id;
+                $account->is_active            =   $cuenta_asignada->active;
+                $account->save();
             }
 
             DB::commit();
 
-            Session::flash('message_success','CUENTAS ASIGNADAS CON ÉXITO');
+            Session::flash('message_success', 'CUENTAS ASIGNADAS CON ÉXITO');
             return response()->json(['success' => true, 'message' => 'CUENTAS ASIGNADAS CON ÉXITO']);
         } catch (Throwable $th) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
+            ]);
         }
     }
 }

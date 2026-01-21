@@ -2,13 +2,13 @@
     <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">NOMBRE</th>
-        <th scope="col">FECHA REGISTRO</th>
-        <th scope="col">FECHA MODIFICACION</th>
-        <th scope="col">ACCIONES</th>
+        <th data-priority="2" scope="col">NOMBRE</th>
+        <th data-priority="3" scope="col">FECHA REGISTRO</th>
+        <th data-priority="4" scope="col">FECHA MODIFICACION</th>
+        <th data-priority="1" scope="col">ACCIÓN</th>
       </tr>
     </thead>
     <tbody>
-      
+
     </tbody>
 </table>

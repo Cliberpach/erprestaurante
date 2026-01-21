@@ -14,6 +14,11 @@ class CounterManager
         $this->s_service    =   new CounterService();
     }
 
+    public function create(int $table_id): View
+    {
+        return $this->s_service->create($table_id);
+    }
+
     public function store(array $data): Order
     {
         return $this->s_service->store($data);

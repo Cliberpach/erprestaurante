@@ -1,12 +1,12 @@
-<table class="table table-hover table-striped" id="tbl_asignar_cuentas">
+<table class="table-hover table-striped table" id="tbl_asignar_cuentas">
     <thead>
         <tr>
-            <th scope="col"></th>
-            <th scope="col">#</th>
-            <th scope="col">BANCO</th>
-            <th scope="col">N° CUENTA</th>
+            <th scope="col">Asignar</th>
+            <th scope="col">Activar</th>
+            <th scope="col">Banco</th>
+            <th scope="col">N° Cuenta</th>
             <th scope="col">CCI</th>
-            <th scope="col">CELULAR</th>
+            <th scope="col">Celular</th>
         </tr>
     </thead>
     <tbody>
@@ -18,10 +18,22 @@
             @endphp
             <tr>
                 <td>
-                    <input @if ($tipo_pago_cuenta) checked @endif type="checkbox"
-                        aria-label="Checkbox for following text input" class="chk-cuenta" data-id="{{ $cuenta->id }}">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input check-primary chk-cuenta" type="checkbox"
+                            id="chk-cuenta-{{ $cuenta->id }}" data-id="{{ $cuenta->id }}"
+                            @if ($tipo_pago_cuenta) checked @endif>
+                        <label class="form-check-label" for="chk-cuenta-{{ $cuenta->id }}">Asignar </label>
+                    </div>
                 </td>
-                <td>{{ $cuenta->id }}</td>
+                <td>
+                    <div class="form-check form-switch mb-2">
+                        <input
+                        @if ($tipo_pago_cuenta && $tipo_pago_cuenta->is_active) checked @endif
+                        data-id="{{ $cuenta->id }}" class="form-check-input switch-primary chk-activate" type="checkbox"
+                            id="chk-activate-{{ $cuenta->id }}">
+                        <label class="form-check-label" for="chk-activate-{{ $cuenta->id }}"> Activar </label>
+                    </div>
+                </td>
                 <td>{{ $cuenta->bank_name }}</td>
                 <td>{{ $cuenta->account_number }}</td>
                 <td>{{ $cuenta->cci }}</td>

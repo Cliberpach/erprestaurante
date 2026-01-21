@@ -18,7 +18,7 @@ class OrderDish extends Model
         'quantity',
         'status',
         'delete_status',
-        'obseravation',
+        'observation',
         'print_status',
         'print_delivery_status',
         'detail_printed',

@@ -1,6 +1,6 @@
 {
-  "_ui-8f47bf0c.js": {
-    "file": "assets/ui-8f47bf0c.js"
+  "_ui-ee4c496b.js": {
+    "file": "assets/ui-ee4c496b.js"
   },
   "node_modules/lightgallery/fonts/lg.svg": {
     "file": "assets/lg-f2fe1c00.svg",
@@ -23,7 +23,7 @@
     "src": "node_modules/lightgallery/images/loading.gif"
   },
   "resources/css/app.css": {
-    "file": "assets/app-0af765d7.css",
+    "file": "assets/app-87401917.css",
     "isEntry": true,
     "src": "resources/css/app.css"
   },
@@ -47,17 +47,17 @@
     "src": "resources/js/app.js"
   },
   "resources/js/orders/create/main.js": {
-    "file": "assets/main-ff0ef70d.js",
+    "file": "assets/main-79bcc750.js",
     "imports": [
-      "_ui-8f47bf0c.js"
+      "_ui-ee4c496b.js"
     ],
     "isEntry": true,
     "src": "resources/js/orders/create/main.js"
   },
   "resources/js/orders/edit/main.js": {
-    "file": "assets/main-7aa33f3c.js",
+    "file": "assets/main-828a8ee5.js",
     "imports": [
-      "_ui-8f47bf0c.js"
+      "_ui-ee4c496b.js"
     ],
     "isEntry": true,
     "src": "resources/js/orders/edit/main.js"

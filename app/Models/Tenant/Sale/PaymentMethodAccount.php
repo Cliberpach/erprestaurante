@@ -13,5 +13,6 @@ class PaymentMethodAccount extends Model
     protected $fillable = [
         'payment_method_id',
         'bank_account_id',
+        'is_active'
     ];
 }

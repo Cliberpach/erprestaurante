@@ -1,11 +1,12 @@
 import { eventsUtilChange } from "../shared/events";
-import { actionAddItem, actionDeleteItem, actionFormStore } from "./action";
+import { actionAddItem, actionDeleteItem, actionFormStore, actionPaymentMethodsChange } from "./action";
 
 export function events() {
     app.init();
     eventsUtilChange();
     eventsSubmit();
     eventsClick();
+    eventsChange();
 }
 
 function eventsSubmit() {
@@ -28,6 +29,10 @@ function eventsClick() {
         }
 
     })
+}
+
+function eventsChange(){
+    window.paymentMethodsSelect.on('change', () => actionPaymentMethodsChange());
 }
 
 

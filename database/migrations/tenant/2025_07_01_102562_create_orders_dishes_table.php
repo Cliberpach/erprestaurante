@@ -30,7 +30,7 @@ return new class extends Migration
             $table->integer('delete_status')->default(1);
 
             /* 🔹 DESCRIPTION */
-            $table->string('obseravation', 500)->nullable();
+            $table->string('observation', 20)->nullable();
 
             /* 🔹 PRINT STATUS */
             $table->enum('print_status', ['IMPRESO', 'SIN_IMPRIMIR'])

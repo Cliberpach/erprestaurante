@@ -56,6 +56,12 @@ class BankAccountStoreRequest extends FormRequest
                 'nullable',
                 'regex:/^\d{1,20}$/',
             ],
+            'qr' => [
+                'nullable',
+                'file',
+                'mimes:jpg,jpeg,png',
+                'max:4096',
+            ]
         ];
     }
 
@@ -68,7 +74,7 @@ class BankAccountStoreRequest extends FormRequest
             'currency.required'      => 'La moneda es obligatoria.',
             'currency.in'            => 'La moneda debe ser SOLES o DÓLARES.',
 
-            'account_number.required'=> 'El número de cuenta es obligatorio.',
+            'account_number.required' => 'El número de cuenta es obligatorio.',
             'account_number.max'     => 'El número de cuenta no puede superar los 100 caracteres.',
             'account_number.unique'  => 'El número de cuenta ya está registrado en una cuenta activa.',
 
@@ -77,6 +83,11 @@ class BankAccountStoreRequest extends FormRequest
             'cci.unique'             => 'El CCI ya está registrado en una cuenta activa.',
 
             'phone.regex'            => 'El celular debe contener solo números y tener un máximo de 20 dígitos.',
+
+            'qr.file'  => 'El archivo QR no es válido.',
+            'qr.mimes' => 'El QR debe ser una imagen en formato JPG, JPEG o PNG.',
+            'qr.max'   => 'El QR no debe superar los 4 MB.',
+
         ];
     }
 

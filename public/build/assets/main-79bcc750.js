@@ -1,0 +1,45 @@
+import{s as E,l as i,e as l,c as A,i as u,a as c,d as w,p as S,v,b as T,g as _,f as h}from"./ui-ee4c496b.js";const g={index:E("tenant.mostrador_mesero.mostrador.index"),store:E("tenant.mostrador_mesero.mostrador.store")};let r={id:null,warehouse_id:null,programming_id:null,name:null,type_name:null,purchase_price:null,sale_price:null,type_item:null,quantity:null,total:null};const d={subTotal:0,tax:0,totalPay:0};function I(e){r=e}function D(){return d}window.setItemSelected=I;window.getAmounts=D;function m(e){let o="";e.forEach(t=>{o+=`<tr>
+                            <th>
+                                <div class="d-flex justify-content-center gap-1">
+
+                                    <button class="btn btn-info btn-sm btnEditItem" type="button"
+                                    data-producto-id="${t.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+
+                                    <button class="btn btn-danger btn-sm btnDeleteItem" type="button"
+                                    data-producto-id="${t.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+
+                                </div>
+                            </th>
+                            <td>${t.name}</td>
+                            <td>${t.type_item}</td>
+                            <td>${t.type_name}</td>
+                            <td>${formatSoles(t.sale_price)}</td>
+                            <td>${t.quantity}</td>
+                            <td>${formatSoles(t.total)}</td>
+                            <td>${formatSoles(t.purchase_price)}</td>
+                        </tr>`});const a=document.querySelector("#tbl_order_detail tbody");a.innerHTML=o}function p(e){document.querySelector("#subtotal_amount").innerText=formatSoles(e.subTotal),document.querySelector("#igv_amount").innerText=formatSoles(e.tax),document.querySelector("#total_amount").innerText=formatSoles(e.totalPay)}window.paintTblDetail=m;async function x(e){if(toastr.clear(),i.length===0){toastr.error("DEBE AGREGAR AL MENOS UN PRODUCTO EN EL DETALLE!!");return}if((await Swal.fire({title:"¿Desea registrar el pedido?",text:"Confirme para continuar",icon:"question",showCancelButton:!0,confirmButtonText:"SI",cancelButtonText:"NO",reverseButtons:!0,customClass:{confirmButton:"btn btn-primary",cancelButton:"btn btn-secondary"},buttonsStyling:!1})).isConfirmed)try{clearValidationErrors("msgError"),Swal.fire({title:"Registrando pedido...",text:"Por favor espere",allowOutsideClick:!1,allowEscapeKey:!1,didOpen:()=>{Swal.showLoading()}});const a=new FormData(e);a.append("lst_detail",JSON.stringify(i)),a.append("table_id",app.tableId);const t=await axios.post(g.store,a);t.data.success?(toastr.success(t.data.message,"OPERACIÓN COMPLETADA"),window.location.href=g.index):(toastr.error(t.data.message,"ERROR EN EL SERVIDOR"),Swal.close())}catch(a){if(Swal.close(),a.response&&a.response.status===422){const t=a.response.data.errors;paintValidationErrors(t,"error");return}}else Swal.fire({icon:"info",title:"Operación cancelada",text:"No se realizaron acciones.",confirmButtonText:"OK",customClass:{confirmButton:"btn btn-secondary"},buttonsStyling:!1})}async function C(){toastr.clear(),mostrarAnimacion1();const e=l.inputQuantity;r.quantity=e.value;const o=await R();r.total=r.sale_price*parseFloat(e.value),r.observation=l.inputObservation.value.trim(),o&&(P({...r},e.value),f(d),p(d),A(r)),ocultarAnimacion1()}function P(e,o){if(e.quantity=o,i.findIndex(t=>t.id==e.id&&t.type_item===t.type_item)!==-1){toastr.error(`EL ${e.type_name} YA EXISTE EN EL DETALLE`);return}i.push(e),u()?(clearTable("tbl_order_detail"),c(destroyDataTable(w)),m(i),c(loadDataTableSimple("tbl_order_detail"))):S(i),toastr.info(`${e.type_name} AGREGADO AL DETALLE`)}function f(e){let o=app.companyIgv,a=0,t=0,n=0;console.log(i),i.forEach(s=>{a+=parseFloat(s.total)}),n=a/((100+o)/100),t=a-n,e.subTotal=n,e.tax=t,e.totalPay=a}function O(e){toastr.clear();const o=e.getAttribute("data-producto-id");L(o)&&(u()?(clearTable("tbl_order_detail"),c(destroyDataTable(w)),m(i),c(loadDataTableSimple("tbl_order_detail"))):S(i),f(d),p(d),toastr.success("ITEM ELIMINADO!!"))}function L(e){const o=i.findIndex(a=>a.id==e);return o===-1?(toastr.error("NO SE ENCONTRÓ EL ITEM EN EL DETALLE!!!"),!1):(i.splice(o,1),!0)}async function R(){if(!r.id)return toastr.error("DEBE SELECCIONAR UN PLATO O PRODUCTO PREVIAMENTE"),!1;const e=l.inputQuantity;if(!e.value)return toastr.error("DEBE INGRESAR UNA CANTIDAD!!"),!1;if(e.value==0)return toastr.error("LA CANTIDAD DEBE SER MAYOR A 0!!"),!1;if(l.inputObservation.value.trim().length>20)return toastr.error("OBSERVACIÓN MÁX PERMITIDA 20 CARACTERES"),!1;if(r.type_item==="PRODUCTO"){const a={warehouseId:r.warehouse_id,productId:r.id,quantity:r.quantity},t=await v(a);if(!t||!t.data.success)return}if(r.type_item==="PLATO"){const a={programmingId:r.programming_id,dishId:r.id,quantity:r.quantity},t=await T(a);if(!t||!t.data.success)return}return!0}async function N(){const e=window.paymentMethodsSelect.getValue();if(!e)return;mostrarAnimacion1();const o=await _(e);o||ocultarAnimacion1();const a=o.data.bank_account.qr_url;a&&(l.imgQrPayment.src=a),ocultarAnimacion1(),$("#mdlQrPay").modal("show")}window.calculateAmounts=f;window.paintAmounts=p;function F(){app.init(),h(),M(),B(),q()}function M(){document.querySelector("#form_create").addEventListener("submit",e=>{e.preventDefault(),x(e.target)})}function B(){document.addEventListener("click",e=>{e.target.closest(".btnAgregarProducto")&&C();const o=e.target.closest(".btnDeleteItem");o&&O(o)})}function q(){window.paymentMethodsSelect.on("change",()=>N())}function G(){const e=document.querySelector("#voucher");FilePond.create(e,{allowImagePreview:!0,imagePreviewHeight:120,imageCropAspectRatio:"1:1",styleLayout:"compact",stylePanelAspectRatio:.5,storeAsFile:!0,allowFileTypeValidation:!0,acceptedFileTypes:["image/png","image/jpeg","image/jpg"],allowFileSizeValidation:!0,maxFileSize:"4MB",labelFileTypeNotAllowed:"Solo se permiten imágenes PNG,JPG,JPEG",fileValidateTypeLabelExpectedTypes:"Formatos válidos: PNG, JPG, JPEG",labelMaxFileSizeExceeded:"El archivo es demasiado grande",labelMaxFileSize:"El tamaño máximo permitido es 4 MB"})}function U(){const e=app.customerFormatted;window.clientSelect=new TomSelect("#client_id",{valueField:"id",options:[e],items:[e.id],labelField:"full_name",searchField:["full_name"],plugins:["clear_button"],placeholder:"Seleccione un cliente",maxOptions:20,create:!1,preload:!1,onType:t=>{lastCustomerQuery=t},load:async(t,n)=>{if(t.length<3)return n();try{const s=`{{ route('tenant.utils.searchCustomer') }}?q=${encodeURIComponent(t)}`,y=await fetch(s);if(!y.ok)throw new Error("Error al buscar clientes");const b=(await y.json()).data??[];n(b),b.length===0&&(customerParams.documentSearchCustomer=lastCustomerQuery,console.log("No se encontró en BD. Guardado:",window.typedCustomer))}catch(s){console.error("Error cargando clientes:",s),n()}},render:{option:(t,n)=>`
+                        <div>
+                            <strong>${n(t.full_name)}</strong><br>
+                            <small>${n(t.email??"")}</small>
+                        </div>
+                    `,item:(t,n)=>`<div>${n(t.full_name)}</div>`,no_results:function(t,n){return`
+                            <div class="no-results">
+                                <i class="fas fa-search" style="margin-right:6px; color:#17a2b8;"></i>
+                                Sin resultados
+                            </div>
+                        `}}});const o=document.getElementById("payment_method");o&&!o.tomselect&&(window.paymentMethodsSelect=new TomSelect(o,{valueField:"id",labelField:"description",searchField:["description","id"],create:!1,sortField:{field:"id"},plugins:["clear_button"],render:{option:(t,n)=>{const s=a(t);return`
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="${s.class} ${s.color}"></i>
+                        <span>${n(t.description)}</span>
+                    </div>
+                `},item:(t,n)=>{const s=a(t);return`
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="${s.class} ${s.color}"></i>
+                        <span>${n(t.description)}</span>
+                    </div>
+                `}}}));function a(t){const n=t.description.toLowerCase();return n.includes("yape")?{class:"fas fa-mobile-screen-button",color:"text-purple"}:n.includes("plin")?{class:"fas fa-mobile-screen-button",color:"text-info"}:n.includes("tarjeta")||n.includes("visa")||n.includes("master")?{class:"fas fa-credit-card",color:"text-primary"}:n.includes("banco")||n.includes("transfer")?{class:"fas fa-building-columns",color:"text-info"}:n.includes("efectivo")?{class:"fas fa-money-bill-wave",color:"text-success"}:{class:"fas fa-wallet",color:"text-secondary"}}}document.addEventListener("DOMContentLoaded",()=>{mostrarAnimacion1(),U(),G(),u()&&c(loadDataTableSimple("tbl_order_detail")),F(),ocultarAnimacion1()});

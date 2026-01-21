@@ -86,7 +86,7 @@ class DatabaseSeeder extends Seeder
         $this->call(GeneralTableSeeder::class);
         $this->call(IdentityDocumentSeeder::class);
         $this->call(TypeIdentityDocumentSeeder::class);
-        $this->call(InvoiceTypeSeeder::class);
         $this->call(BankSeeder::class);
+        $this->call(InvoiceTypeSeeder::class);
     }
 }

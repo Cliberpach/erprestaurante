@@ -1,9 +1,9 @@
-<div class="app-navbar-brand">
+<div class="app-navbar-brand" style="gap: 0px !important;">
     <a class="navbar-brand-logo" href="index.html">
-        <img src="{{ asset('assets/images/logo.svg') }}" alt="GXON Admin Dashboard Logo">
+        <img src="{{ asset('assets/images/logo.svg') }}" width="51px" height="50px" alt="ComandaPro Logo">
     </a>
     <a class="navbar-brand-mini visible-light" href="index.html">
-        <img src="{{ asset('assets/images/logo-text.svg') }}" alt="GXON Admin Dashboard Logo">
+        <img src="{{ asset('assets/images/logo-text.svg') }}" alt="Comanda Pro Text">
     </a>
     <a class="navbar-brand-mini visible-dark" href="index.html">
         <img src="{{ asset('assets/images/logo-text-white.svg') }}" alt="GXON Admin Dashboard Logo">

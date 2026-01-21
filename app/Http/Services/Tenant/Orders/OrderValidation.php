@@ -8,6 +8,7 @@ use App\Http\Services\Tenant\Cash\PettyCashBook\PettyCashBookService;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Company;
+use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Reservation\Reservation;
 use App\Models\Tenant\Supply\Programming\ProgrammingDetail;
 use App\Models\Tenant\Supply\Table\Table;
@@ -36,6 +37,7 @@ class OrderValidation
         $petty_cash_book    =   $this->s_cash_book->getCashBookUser($user->id);
         $igv                =   round(Company::find(1)->igv, 2);
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
+        $payment_methods    =   UtilController::getPaymentMethods();
 
         if (!$petty_cash_book) {
             throw new Exception('DEBES PERTENECER A UNA CAJA ABIERTA!!!');
@@ -57,7 +59,8 @@ class OrderValidation
             'categories'            =>  $categories,
             'brands'                =>  $brands,
             'igv'                   =>  $igv,
-            'customer_formatted'    =>  $customer_formatted
+            'customer_formatted'    =>  $customer_formatted,
+            'payment_methods'       =>  $payment_methods
         ];
 
         return $vars;
@@ -139,6 +142,11 @@ class OrderValidation
             throw new Exception("LA MESA: " . $table->name . " ESTÁ OCUPADA");
         }
 
+        $payment_method_id  =   $data['payment_method'];
+        $payment_method     =   PaymentMethod::find($payment_method_id);
+        $payref_id          =   $payment_method->id;
+        $payref_name        =   $payment_method->description;
+
         $lst_detail =   json_decode($data['lst_detail']);
         if (count($lst_detail) === 0) {
             throw new Exception("EL DETALLE DEL PEDIDO ESTÁ VACÍO!!!");
@@ -146,6 +154,8 @@ class OrderValidation
 
         $data['table']      =   $table;
         $data['lst_detail'] =   $lst_detail;
+        $data['payref_id']  =   $payref_id;
+        $data['payref_name']=   $payref_name;
 
         $this->validationLstDetail($lst_detail, $programming->id);
 

@@ -8,15 +8,15 @@
                 <span class="input-group-text" id="basic-addon1">
                     <i class="fas fa-user"></i>
                 </span>
-                <input maxlength="160" required id="holder_edit" name="holder_edit" type="text"
-                    class="form-control" placeholder="Titular" aria-label="Titular" aria-describedby="basic-addon1">
+                <input maxlength="160" required id="holder_edit" name="holder_edit" type="text" class="form-control"
+                    placeholder="Titular" aria-label="Titular" aria-describedby="basic-addon1">
             </div>
             <span class="holder_edit_error msgError text-danger"></span>
         </div>
 
         <div class="col-12 mb-3">
             <label for="currency_edit" class="form-label fw-bold required_field">Moneda</label>
-            <select name="currency_edit" id="currency_edit" class="form-select select2_account_edit">
+            <select name="currency_edit" id="currency_edit" class="select2_account_edit form-select">
                 <option value="SOLES">SOLES</option>
                 <option value="DOLARES">DÓLARES</option>
             </select>
@@ -61,12 +61,26 @@
 
         <div class="col-12 mb-3">
             <label for="bank_id_edit" class="form-label fw-bold required_field">Banco</label>
-            <select name="bank_id_edit" id="bank_id_edit" class="form-select select2_account_edit">
+            <select name="bank_id_edit" id="bank_id_edit" class="select2_account_edit form-select">
                 @foreach ($banks as $bank)
                     <option value="{{ $bank->id }}">{{ $bank->name }}</option>
                 @endforeach
             </select>
             <span class="bank_id_edit_error msgError text-danger"></span>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-qrcode text-success me-1"></i> QR Pago
+            </label>
+
+            <input type="file" class="form-control" name="qr_edit" id="qr_edit"
+                accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+
+            <small class="text-secondary fst-italic">
+                Máx. 4 MB — JPG / JPEG / PNG
+            </small>
+            <span class="qr_edit_error msgError text-danger"></span>
         </div>
 
     </div>

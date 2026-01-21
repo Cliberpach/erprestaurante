@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Tenant\Orders;
 
+use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Inventory\WarehouseProduct\WarehouseProductService;
 use App\Http\Services\Tenant\Reservation\ReservationService;
 use App\Http\Services\Tenant\Supply\Programming\ProgrammingService;
@@ -38,6 +39,7 @@ class OrderService
     {
         $data   =   $this->s_validation->validationStore($data);
         $dto    =   $this->s_dto->getDtoStore($data);
+     
         $order  =   $this->s_repository->store($dto);
 
         $collect_detail =   collect($data['lst_detail']);
@@ -53,6 +55,11 @@ class OrderService
 
         $this->s_pct->decreaseLstStock($dto_oproduct);
         $this->s_programming->decreaseLstStock($dto_odish);
+
+        //========= SAVE VOUCHER ===========
+        if (isset($data['voucher'])) {
+            UtilController::saveImg($data['voucher'], $order->payref_img_name, 'orders/payrefs/');
+        }
 
         return $order;
     }

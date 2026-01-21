@@ -67,6 +67,7 @@
         dtCuentas = new DataTable('#tbl_cuentas', {
             serverSide: true,
             processing: true,
+            responsive:true,
             ajax: {
                 url: urlGet,
                 type: 'GET',

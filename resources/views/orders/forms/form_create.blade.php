@@ -95,7 +95,7 @@
                                 <span class="input-group-text bg-light">
                                     <i class="fa-solid fa-box"></i>
                                 </span>
-                                <input id="producto" name="producto" readonly type="text" class="form-control"
+                                <input id="producto" readonly type="text" class="form-control"
                                     placeholder="Item seleccionado">
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                         <!-- Stock -->
                         <div class="col-lg-2 col-md-2 col-sm-3 col-3">
                             <label class="form-label fw-bold">Stock</label>
-                            <input id="item_stock" name="item_stock" readonly type="text" class="form-control">
+                            <input id="item_stock"  readonly type="text" class="form-control">
 
                             {{-- <div class="input-group">
                                 <span class="input-group-text bg-light">
@@ -128,7 +128,7 @@
                         <!-- Precio venta -->
                         <div class="col-lg-2 col-md-2 col-sm-3 col-3">
                             <label class="form-label fw-bold">P.Venta</label>
-                            <input id="sale_price" name="sale_price" readonly type="text" class="form-control"
+                            <input id="sale_price" readonly type="text" class="form-control"
                                 placeholder="">
                             {{-- <div class="input-group">
                                 <span class="input-group-text bg-light">
@@ -142,7 +142,7 @@
                         <!-- Cantidad -->
                         <div class="col-lg-2 col-md-2 col-sm-3 col-3">
                             <label class="form-label fw-bold">Cantidad</label>
-                            <input id="cantidad" name="cantidad" type="text"
+                            <input id="cantidad" type="text"
                                 class="form-control inputEnteroPositivo input-fill" placeholder="">
                             {{-- <div class="input-group">
                                 <span class="input-group-text bg-light">
@@ -203,12 +203,38 @@
     </div>
 
     <div class="row">
-        <div class="col-12 d-flex justify-content-lg-end">
-            <div class="col-12 col-lg-4">
-                <div class="table-responsive">
-                    @include('orders.tables.tbl_amounts')
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 tex-align-end">
+            <div class="table-responsive">
+                @include('orders.tables.tbl_amounts')
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label for="payment_method" class="form-label fw-bold">Método de Pago</label>
+                    <select name="payment_method" id="payment_method" class="form-control">
+                        <option value="">Seleccionar método de pago</option>
+                        @foreach ($payment_methods as $method)
+                            <option value="{{ $method->id }}">{{ $method->description }}</option>
+                        @endforeach
+                    </select>
+                    <p class="payment_method_error msgError mb-0"></p>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-qrcode text-success me-1"></i> Voucher Pago
+                    </label>
+
+                    <input type="file" class="form-control" name="voucher" id="voucher"
+                        accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+
+                    <small class="text-secondary fst-italic">
+                        Máx. 4 MB — JPG / JPEG / PNG
+                    </small>
+                    <span class="voucher_error msgError text-danger"></span>
                 </div>
             </div>
+
         </div>
     </div>
 

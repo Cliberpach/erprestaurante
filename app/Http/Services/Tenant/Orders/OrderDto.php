@@ -33,6 +33,16 @@ class OrderDto
         $dto['table_id']    =   $data['table_id'];
         $dto['observation'] =   mb_strtoupper(trim($data['observation']), 'UTF-8');
 
+        $dto['payref_id']      =   $data['payref_id'] ?? null;
+        $dto['payref_name']    =   $data['payref_name'] ?? null;
+
+        if(isset($data['voucher'])){
+            $files_route            =   Company::findOrFail(1)->files_route;
+            $file_name              =   uniqid() . '_' . trim($data['voucher']->getClientOriginalName());
+            $dto['payref_img_url']  =   $files_route . '/orders/payrefs/'.$file_name;
+            $dto['payref_img_name'] =   $file_name;
+        }
+
         return $dto;
     }
 
@@ -54,6 +64,7 @@ class OrderDto
             $_item['total']             =   $dish->sale_price * $item->quantity;
             $_item['type_dish_id']      =   $dish->type_dish_id;
             $_item['type_dish_name']    =   $type_dish->name;
+            $_item['observation']       =   mb_strtoupper(trim($item->observation), 'UTF-8');
 
             $dto[]  =   $_item;
         }
@@ -82,6 +93,7 @@ class OrderDto
             $_item['brand_id']          =   $product->brand_id;
             $_item['category_name']     =   $category->name;
             $_item['brand_name']        =   $brand->name;
+            $_item['observation']       =   mb_strtoupper(trim($item->observation), 'UTF-8');
 
             $dto[]  =   $_item;
         }

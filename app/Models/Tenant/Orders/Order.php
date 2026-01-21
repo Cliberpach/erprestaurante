@@ -45,6 +45,11 @@ class Order extends Model
         'subtotal',
         'total',
         'igv',
+
+        'payref_id',
+        'payref_img_url',
+        'payref_img_name',
+        'payref_name'
     ];
 
     protected $guarded = ['code'];

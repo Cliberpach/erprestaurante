@@ -22,6 +22,9 @@ class BankAccount extends Model
         'holder',
         'currency',
 
+        'qr_url',
+        'qr_name',
+
         'creator_user_id',
         'editor_user_id',
         'delete_user_id',

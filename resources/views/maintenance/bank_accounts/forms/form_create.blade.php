@@ -20,7 +20,7 @@
                 <span class="input-group-text">
                     <i class="fas fa-dollar-sign"></i>
                 </span>
-                <select name="currency" id="currency" class="form-select select2_account">
+                <select name="currency" id="currency" class="select2_account form-select">
                     <option value="SOLES">SOLES</option>
                     <option value="DOLARES">DÓLARES</option>
                 </select>
@@ -34,8 +34,9 @@
                 <span class="input-group-text" id="basic-addon1">
                     <i class="fas fa-university"></i>
                 </span>
-                <input maxlength="160" required id="account_number" name="account_number" type="text" class="form-control"
-                    placeholder="Cuenta" aria-label="Account Number" aria-describedby="basic-addon1">
+                <input maxlength="160" required id="account_number" name="account_number" type="text"
+                    class="form-control" placeholder="Cuenta" aria-label="Account Number"
+                    aria-describedby="basic-addon1">
             </div>
             <span class="account_number_error msgError text-danger"></span>
         </div>
@@ -70,13 +71,27 @@
                 <span class="input-group-text">
                     <i class="fas fa-building"></i>
                 </span>
-                <select name="bank_id" id="bank_id" class="form-select select2_account">
+                <select name="bank_id" id="bank_id" class="select2_account form-select">
                     @foreach ($banks as $bank)
                         <option value="{{ $bank->id }}">{{ $bank->name }}</option>
                     @endforeach
                 </select>
             </div>
             <span class="bank_id_error msgError text-danger"></span>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="fas fa-qrcode text-success me-1"></i> QR Pago
+            </label>
+
+            <input type="file" class="form-control" name="qr" id="qr"
+                accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+
+            <small class="text-secondary fst-italic">
+                Máx. 4 MB — JPG / JPEG / PNG
+            </small>
+            <span class="qr_error msgError text-danger"></span>
         </div>
 
     </div>

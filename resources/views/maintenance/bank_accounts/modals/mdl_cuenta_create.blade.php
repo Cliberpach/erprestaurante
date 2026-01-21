@@ -22,9 +22,12 @@
     </div>
 </div>
 
-
 <script>
+    let fpQr = null;
+
     function eventsMdlCreateCuenta() {
+        loadFpMdlCreateCuenta();
+
         document.querySelector('#formRegisterAccount').addEventListener('submit', (e) => {
             e.preventDefault();
             registrarCuenta();
@@ -44,6 +47,30 @@
 
     function openMdlNuevoMetodoPago() {
         $('#mdlCreateCuenta').modal('show');
+    }
+
+    function loadFpMdlCreateCuenta() {
+        const inputLogo = document.querySelector('#qr');
+
+        fpQr = FilePond.create(inputLogo, {
+            allowImagePreview: true,
+            imagePreviewHeight: 120,
+            imageCropAspectRatio: '1:1',
+            styleLayout: 'compact',
+            stylePanelAspectRatio: 0.5,
+            storeAsFile: true,
+
+            allowFileTypeValidation: true,
+            acceptedFileTypes: ['image/png', 'image/jpeg','image/jpg'],
+
+            allowFileSizeValidation: true,
+            maxFileSize: '4MB',
+
+            labelFileTypeNotAllowed: 'Solo se permiten imágenes PNG,JPG,JPEG',
+            fileValidateTypeLabelExpectedTypes: 'Formatos válidos: PNG, JPG, JPEG',
+            labelMaxFileSizeExceeded: 'El archivo es demasiado grande',
+            labelMaxFileSize: 'El tamaño máximo permitido es 4 MB'
+        });
     }
 
     function registrarCuenta() {

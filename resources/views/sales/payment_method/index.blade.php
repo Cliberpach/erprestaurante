@@ -24,14 +24,14 @@
                     <i class="fas fa-plus pe-1"></i>
                     <p class="mb-0 ml-2"> NUEVO</p>
                 </div>
-            </button> 
+            </button>
         </div>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
-                    @include('sales.payment_method.tables.tbl_list_payment_methods') 
+                    @include('sales.payment_method.tables.tbl_list_payment_methods')
                 </div>
             </div>
         </div>
@@ -71,6 +71,7 @@
         dtPaymentMethods  =   new DataTable('#tbl_list_payment_methods',{
             serverSide: true,
             processing: true,
+            responsive:true,
             ajax: {
                 url: urlGet,
                 type: 'GET',
@@ -82,10 +83,10 @@
                 { data: 'created_at', name: 'created_at' },
                 { data: 'updated_at', name: 'updated_at' },
                 {
-                    data: null, 
+                    data: null,
                     render: function(data, type, row) {
                         const routeAccounts = route('tenant.ventas.metodo_pago.assignAccountsCreate',{id:row.id});
-                      
+
                         return `
                             <div class="btn-group dropdown">
                             <button type="button" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
@@ -112,9 +113,9 @@
                             </div>
                         `;
                     },
-                    name: 'actions', 
-                    orderable: false, 
-                    searchable: false 
+                    name: 'actions',
+                    orderable: false,
+                    searchable: false
                 }
             ],
             language: {
@@ -165,13 +166,13 @@
         reverseButtons: true
         }).then(async (result) => {
         if (result.isConfirmed) {
-            
+
             Swal.fire({
                 title: 'Cargando...',
                 html: 'Eliminando almacén...',
                 allowOutsideClick: false,
                 didOpen: () => {
-                    Swal.showLoading(); 
+                    Swal.showLoading();
                 }
             });
 
@@ -183,7 +184,7 @@
                 const response  =   await fetch(urlDeleteAlmacen, {
                                         method: 'DELETE',
                                         headers: {
-                                            'X-CSRF-TOKEN': token 
+                                            'X-CSRF-TOKEN': token
                                         }
                                     });
 
