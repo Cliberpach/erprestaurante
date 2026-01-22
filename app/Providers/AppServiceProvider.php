@@ -21,8 +21,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (!$this->app->runningInConsole() || $this->app->runningUnitTests()) {
+            $this->bootForHttpRequests();
+        }
+    }
 
-        // Solo necesitas la lógica de módulos
+    public function bootForHttpRequests(): void
+    {
         $base = Tenant::checkCurrent() ? 'tenant' : 'landlord';
         $tenantId = Tenant::current()?->id ?? 'landlord';
 
