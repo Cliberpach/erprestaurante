@@ -119,6 +119,8 @@
 
                 const user      = @json($user);
                 const roles     = @json($roles);
+                console.log('roles',roles);
+                console.log('isAdmin',roles.includes('admin'));
                 const isAdmin   = roles.includes('admin');
                 window.cashesAvailableSelect = new TomSelect(cashesAvailable, {
                     valueField: 'id',
