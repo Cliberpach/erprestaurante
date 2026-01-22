@@ -4,74 +4,14 @@
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-import axios from 'axios';
-window.axios = axios;
-
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
-import TomSelect from "tom-select";
-import "tom-select/dist/css/tom-select.bootstrap5.css";
-window.TomSelect   =   TomSelect;
-
-import * as FilePond from "filepond";
-import "filepond/dist/filepond.min.css";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
-import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
-import es_ES from "filepond/locale/es-es.js";
-
-import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
-
-FilePond.registerPlugin(
-    FilePondPluginImagePreview,
-    FilePondPluginFileValidateSize,
-    FilePondPluginFileValidateType
-);
-
-FilePond.setOptions(es_ES);
-
-window.FilePond = FilePond;
-
-
-import lightGallery from 'lightgallery';
-
-// Estilos principales
-import 'lightgallery/css/lightgallery.css';
-
-// Plugins
-import lgThumbnail from 'lightgallery/plugins/thumbnail';
-import 'lightgallery/css/lg-thumbnail.css';
-
-import lgZoom from 'lightgallery/plugins/zoom';
-import 'lightgallery/css/lg-zoom.css';
-
-
-window.lightGallery = lightGallery;
-window.lgThumbnail = lgThumbnail;
-window.lgZoom = lgZoom;
+import './libs/global/axios.js'
+import './libs/global/tomselect.js'
+import './libs/global/toastr.js'
+import './libs/global/swal.js'
 
 
 /*======== HOVERCSS =========*/
 import 'hover.css/css/hover.css';
-
-/*======= TOASTR ==========*/
-import toastr from 'toastr';
-import 'toastr/build/toastr.min.css';
-
-toastr.options = {
-    closeButton: true,
-    progressBar: true,
-    positionClass: 'toast-top-right',
-    timeOut: 3000,
-};
-
-window.toastr = toastr;
-
-
-/*======== SWAL =========*/
-import Swal from 'sweetalert2';
-window.Swal = Swal;
-
 
 
 /**
