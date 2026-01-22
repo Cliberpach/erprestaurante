@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-       $host    = request()->getHost();
+       /*$host    = request()->getHost();
         $appHost = parse_url(config('app.url'), PHP_URL_HOST);
 
         // Detectar landlord vs tenant
@@ -62,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
 
         View::share('base', $base . '.');
         View::share('modules', $modules);
-        View::share('lst_search_modules', $lst_search_modules);
+        View::share('lst_search_modules', $lst_search_modules);*/
     }
 
     /**
