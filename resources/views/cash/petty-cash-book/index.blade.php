@@ -66,6 +66,13 @@
                         className: "text-center"
                     },
                     {
+                        data: 'user_name',
+                        name: 'u.name',
+                        searchable: true,
+                        orderable: true,
+                        className: "text-center"
+                    },
+                    {
                         data: 'petty_cash_name',
                         name: 'c.petty_cash_name',
                         searchable: true,
@@ -126,7 +133,7 @@
                     },
                     {
                         searchable: false,
-                        orderable:false,
+                        orderable: false,
                         data: null,
                         className: "text-center",
                         render: function(data, type, row) {

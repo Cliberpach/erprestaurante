@@ -46,6 +46,7 @@ class PettyCashBookController extends Controller
     {
         $cashes = DB::connection('tenant')
             ->table('petty_cash_books as c')
+            ->join('users as u','u.id','c.user_id')
             ->select(
                 DB::raw("CONCAT('CM-', LPAD(c.id, 8, '0')) as code"),
                 'c.id',
@@ -60,7 +61,8 @@ class PettyCashBookController extends Controller
                 'c.sale_day',
                 'c.created_at',
                 'c.updated_at',
-                'c.petty_cash_name'
+                'c.petty_cash_name',
+                'u.name as user_name'
             )
             ->where('c.status', '<>', 'ANULADO')
             ->where('c.type', '<>', 'FICTICIO');

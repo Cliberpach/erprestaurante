@@ -3,6 +3,7 @@
         <tr>
             <th class="minw-100px">ID</th>
             <th class="minw-100px">#</th>
+            <th class="minw-100px" data-priority="2">CAJERO</th>
             <th class="minw-100px" data-priority="2">CAJA</th>
             <th class="minw-100px">CANT INICIAL</th>
             <th class="minw-100px" data-priority="3">FECHA APERTURA</th>
