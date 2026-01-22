@@ -2,6 +2,26 @@
   "_ui-ee4c496b.js": {
     "file": "assets/ui-ee4c496b.js"
   },
+  "node_modules/lightgallery/fonts/lg.svg": {
+    "file": "assets/lg-f2fe1c00.svg",
+    "src": "node_modules/lightgallery/fonts/lg.svg"
+  },
+  "node_modules/lightgallery/fonts/lg.ttf": {
+    "file": "assets/lg-22b72ba5.ttf",
+    "src": "node_modules/lightgallery/fonts/lg.ttf"
+  },
+  "node_modules/lightgallery/fonts/lg.woff": {
+    "file": "assets/lg-fefc5c0d.woff",
+    "src": "node_modules/lightgallery/fonts/lg.woff"
+  },
+  "node_modules/lightgallery/fonts/lg.woff2": {
+    "file": "assets/lg-965a0e5f.woff2",
+    "src": "node_modules/lightgallery/fonts/lg.woff2"
+  },
+  "node_modules/lightgallery/images/loading.gif": {
+    "file": "assets/loading-298ad3ff.gif",
+    "src": "node_modules/lightgallery/images/loading.gif"
+  },
   "resources/css/app.css": {
     "file": "assets/app-87401917.css",
     "isEntry": true,
@@ -28,6 +48,37 @@
     "file": "assets/main-86b96090.js",
     "isEntry": true,
     "src": "resources/js/global/main.js"
+  },
+  "resources/js/libs/filepond.css": {
+    "file": "assets/filepond-605e09f8.css",
+    "src": "resources/js/libs/filepond.css"
+  },
+  "resources/js/libs/filepond.js": {
+    "css": [
+      "assets/filepond-605e09f8.css"
+    ],
+    "file": "assets/filepond-5aa719ee.js",
+    "isEntry": true,
+    "src": "resources/js/libs/filepond.js"
+  },
+  "resources/js/libs/lightgalery.css": {
+    "file": "assets/lightgalery-534c2363.css",
+    "src": "resources/js/libs/lightgalery.css"
+  },
+  "resources/js/libs/lightgalery.js": {
+    "assets": [
+      "assets/lg-965a0e5f.woff2",
+      "assets/lg-22b72ba5.ttf",
+      "assets/lg-fefc5c0d.woff",
+      "assets/lg-f2fe1c00.svg",
+      "assets/loading-298ad3ff.gif"
+    ],
+    "css": [
+      "assets/lightgalery-534c2363.css"
+    ],
+    "file": "assets/lightgalery-56a0ea87.js",
+    "isEntry": true,
+    "src": "resources/js/libs/lightgalery.js"
   },
   "resources/js/orders/create/main.js": {
     "file": "assets/main-2b4467f3.js",
