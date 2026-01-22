@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('petty_cash_book_id');
             $table->foreign('petty_cash_book_id')->references('id')->on('petty_cash_books');
 
-            $table->unsignedBigInteger('user_id')->nullable()->comment('Mesero');
+            $table->unsignedBigInteger('user_id')->comment('Mesero');
             $table->foreign('user_id')->references('id')->on('users');
 
             $table->timestamps();

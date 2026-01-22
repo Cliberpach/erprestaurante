@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('programming_id');
             $table->foreign('programming_id')->references('id')->on('programming');
 
-            $table->unsignedBigInteger('dish_id')->nullable();
+            $table->unsignedBigInteger('dish_id');
             $table->foreign('dish_id')->references('id')->on('dishes');
 
             $table->string('dish_name', 160);
