@@ -132,7 +132,7 @@ function addItem(item, cantidad) {
         paintCardsDetail(lstDetail);
     }
 
-    toastr.info(`${item.type_name} AGREGADO AL DETALLE`);
+    toastr.info(`${item.name} AGREGADO AL DETALLE`);
 }
 
 
