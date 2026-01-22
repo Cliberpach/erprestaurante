@@ -44,7 +44,7 @@
                                     <input type="text" class="form-control @error('domain') is-invalid @enderror"
                                         placeholder="Nombre del dominio" id="domain" name="domain"
                                         value="{{ old('domain') }}">
-                                    <span class="input-group-text">.tallersuite.store</span>
+                                    <span class="input-group-text">.comandapro.online</span>
                                     <br>
                                 </div>
                                 <p class="domain_error msgError mb-0"></p>
