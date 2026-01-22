@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-       $host    = request()->getHost();
+        $host    = request()->getHost();
         $appHost = parse_url(config('app.url'), PHP_URL_HOST);
 
         // Detectar landlord vs tenant
