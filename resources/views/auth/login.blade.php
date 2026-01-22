@@ -14,7 +14,7 @@
     <meta name="description" content="GXON HR Login">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Login | ErpTaller</title>
+    <title>Login | ComandaPro</title>
 
     {{-- Favicon --}}
     <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
@@ -62,7 +62,7 @@
 
                         {{-- TITLE --}}
                         <div class="mb-4 text-center">
-                            <h5 class="mb-1">Bienvenido a ErpTaller</h5>
+                            <h5 class="mb-1">Bienvenido a ComandaPro</h5>
                             <p>Inicia Sesión para acceder al panel</p>
                         </div>
 
