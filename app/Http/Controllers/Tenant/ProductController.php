@@ -430,4 +430,45 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
             ]);
         }
     }
+
+
+    public function getProducts(Request $request)
+    {
+
+        $categoria_id   =   $request->get('categoria_id');
+        $marca_id       =   $request->get('marca_id');
+
+        $products = DB::table('products as p')
+            ->leftJoin('warehouse_products as wp', function ($join) {
+                $join->on('wp.product_id', '=', 'p.id')
+                    ->where('wp.warehouse_id', '=', 1); // Filtrar por almacen_id = 1
+            })
+            ->join('brands as b', 'b.id', '=', 'p.brand_id')
+            ->join('categories as c', 'c.id', '=', 'p.category_id')
+            ->select(
+                'p.id',
+                'p.brand_id',
+                'p.category_id',
+                'p.name',
+                'p.sale_price',
+                'p.purchase_price',
+                DB::raw('IFNULL(wp.stock, 0) as stock'),
+                'p.stock_min',
+                'b.name as brand_name',
+                'c.name as category_name',
+            );
+
+        if ($categoria_id) {
+            $products  =   $products->where('p.category_id', $categoria_id);
+        }
+
+        if ($marca_id) {
+            $products  =   $products->where('p.brand_id', $marca_id);
+        }
+
+        $products  =   $products->get();
+
+
+        return DataTables::of($products)->make(true);
+    }
 }
