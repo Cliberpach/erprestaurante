@@ -9,7 +9,7 @@ class PettyCashServer extends Model
 {
     use HasFactory;
     protected $table = 'petty_cash_servers';
-
+    protected $connection = 'tenant';
     protected $fillable = [
         'petty_cash_book_id',
         'user_id',
