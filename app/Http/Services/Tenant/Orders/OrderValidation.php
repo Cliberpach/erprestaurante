@@ -34,12 +34,15 @@ class OrderValidation
         $brands             =   Brand::all();
         $types_dish         =   UtilController::getTypesDish();
         $user               =   Auth::user();
-        $petty_cash_book    =   $this->s_cash_book->getCashBookUser($user->id);
         $igv                =   round(Company::find(1)->igv, 2);
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
         $payment_methods    =   UtilController::getPaymentMethods();
 
-        if (!$petty_cash_book) {
+        $petty_cash_book    =   $this->s_cash_book->waiterInCash($user->id);
+        if ($petty_cash_book === null) {
+            throw new Exception('PERTENCES A MÁS DE UNA CAJA');
+        }
+        if($petty_cash_book === false){
             throw new Exception('DEBES PERTENECER A UNA CAJA ABIERTA!!!');
         }
 
@@ -155,7 +158,7 @@ class OrderValidation
         $data['table']      =   $table;
         $data['lst_detail'] =   $lst_detail;
         $data['payref_id']  =   $payref_id;
-        $data['payref_name']=   $payref_name;
+        $data['payref_name'] =   $payref_name;
 
         $this->validationLstDetail($lst_detail, $programming->id);
 
@@ -249,7 +252,7 @@ class OrderValidation
                 }
 
                 $item_preview       =   $order_dishes->where('dish_id', $item->id)->first();
-                $quantity_preview   =   $item_preview? $item_preview->quantity : 0;
+                $quantity_preview   =   $item_preview ? $item_preview->quantity : 0;
                 $stock              =   (int)$item_bd->stock + $quantity_preview;
                 if ($stock < $item->quantity) {
                     throw new Exception("STOCK INSUFICIENTE: " . $stock . " PARA LA CANT SOLICITADA: " . $item->quantity);

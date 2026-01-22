@@ -122,13 +122,29 @@ class PettyCashBookRepository
         return $item->exists();
     }
 
+    public function waiterInCash(int $user_id)
+    {
+        $item =   PettyCashServer::where('user_id', $user_id)->get();
+
+        if (count($item) > 0) {
+            return null;
+        }
+
+        if (count($item) === 0) {
+            return false;
+        }
+
+        return $item->first();
+    }
+
     public function insertPettyCashServers(array $dto)
     {
         PettyCashServer::insert($dto);
     }
 
-    public function deletePettyCashServers(int $id){
-        PettyCashServer::where('petty_cash_book_id',$id)->delete();
+    public function deletePettyCashServers(int $id)
+    {
+        PettyCashServer::where('petty_cash_book_id', $id)->delete();
     }
 
     public function getOne(int $id): array
@@ -138,17 +154,17 @@ class PettyCashBookRepository
         return ['petty_cash_book' => $petty_cash_book, 'servers' => $servers];
     }
 
-    public function hasProgrammingActive(int $petty_cash_book_id){
-        $programming    =   Programming::where('petty_cash_book_id',$petty_cash_book_id)->where('status','ACTIVO')->get();
+    public function hasProgrammingActive(int $petty_cash_book_id)
+    {
+        $programming    =   Programming::where('petty_cash_book_id', $petty_cash_book_id)->where('status', 'ACTIVO')->get();
 
-        if(count($programming) > 1){
+        if (count($programming) > 1) {
             return false;
         }
-        if(count($programming) === 0){
+        if (count($programming) === 0) {
             return null;
         }
 
         return $programming->first();
     }
-
 }

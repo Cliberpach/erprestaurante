@@ -295,4 +295,9 @@ class PettyCashBookService
     public function hasProgrammingActive(int $petty_cash_book_id) {
         return $this->s_repository->hasProgrammingActive($petty_cash_book_id);
     }
+
+    public function waiterInCash(int $user_id)
+    {
+       return $this->s_repository->waiterInCash($user_id);
+    }
 }
