@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Tenant\Cash\ExitMoneyController;
 use App\Http\Controllers\Tenant\Supply\DishController;
 use App\Http\Controllers\Tenant\Supply\ProgrammingController;
 use App\Http\Controllers\Tenant\Supply\TableController;

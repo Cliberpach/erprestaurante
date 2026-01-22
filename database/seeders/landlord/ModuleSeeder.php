@@ -158,19 +158,6 @@ class ModuleSeeder extends Seeder
             'order'         => '2'
         ]);
 
-        ModuleChild::create([
-            'module_id'     => $accounts->id,
-            'description'   => 'Categorías',
-            'route_name'    => 'abastecimiento.categorias.index',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $accounts->id,
-            'description'   => 'Bebidas',
-            'route_name'    => 'abastecimiento.bebidas.index',
-            'order'         => '2'
-        ]);
 
         ModuleChild::create([
             'module_id'     => $accounts->id,
