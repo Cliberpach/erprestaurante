@@ -21,6 +21,38 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+
+        // Solo necesitas la lógica de módulos
+        $base = Tenant::checkCurrent() ? 'tenant' : 'landlord';
+        $tenantId = Tenant::current()?->id ?? 'landlord';
+
+        $modules = Cache::remember(
+            "modules_menu_{$tenantId}_{$base}",
+            now()->addHours(6),
+            function () use ($base) {
+                return Module::where('show', $base)
+                    ->with([
+                        'children' => fn($q) => $q->where('show', $base),
+                        'children.grandchildren' => fn($q) => $q->where('show', $base),
+                    ])
+                    ->get();
+            }
+        );
+
+        $lst_search_modules = Cache::remember(
+            "modules_search_{$tenantId}_{$base}",
+            now()->addHours(6),
+            fn() => $this->getLstSearchModules($base)
+        );
+
+        View::share('base', $base . '.');
+        View::share('modules', $modules);
+        View::share('lst_search_modules', $lst_search_modules);
+    }
+
+
+    public function __boot(): void
+    {
         $host    = request()->getHost();
         $appHost = parse_url(config('app.url'), PHP_URL_HOST);
 
@@ -31,6 +63,15 @@ class AppServiceProvider extends ServiceProvider
         // 🔌 Cambiar conexión por defecto (TU enfoque)
         $databaseConnection = $isLandlord ? 'landlord' : 'tenant';
         config(['database.default' => $databaseConnection]);
+        config(['permission.database.connection' => $databaseConnection]);
+
+        if (!$isLandlord) {
+            config([
+                'auth.providers.users.model' => \App\Models\Tenant\User::class,
+                'permission.database_connection' => 'tenant',
+            ]);
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        }
 
         if (!$isLandlord && Tenant::current()) {
             app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();

@@ -101,13 +101,7 @@ return [
         'team_foreign_key' => 'team_id',
     ],
 
-    'database_connection' => function() {
-        $host = request()->getHost();
-        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
-        $isLandlord = $host === $appHost;
-
-        return $isLandlord ? 'landlord' : 'tenant';
-    },
+    'database_connection' => null,
 
     /*
      * When set to true, the method for checking permissions will be registered on the gate.

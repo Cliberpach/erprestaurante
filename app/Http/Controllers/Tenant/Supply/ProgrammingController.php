@@ -55,7 +55,8 @@ class ProgrammingController extends Controller
     {
         $types_dish =   UtilController::getTypesDish();
         $user       =   Auth::user();
-        $roles      =   $user->getRoleNames();dd($roles);
+
+        $roles      =   $user->getRoleNames();
         return view('supply.programming.create', compact(
             'types_dish',
             'roles',
