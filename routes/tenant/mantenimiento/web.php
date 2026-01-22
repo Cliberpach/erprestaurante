@@ -15,9 +15,9 @@ Route::group(["prefix" => "mantenimiento"], function () {
 
     Route::group(["prefix" => "cuentas"], function () {
         Route::get('index', [BankAccountController::class, 'index'])->name('tenant.mantenimientos.cuentas.index');
-        Route::get('getCuentas', [BankAccountController::class,'getBankAccounts'])->name('tenant.mantenimiento.cuentas.getBankAccounts');
-        Route::post('store',[BankAccountController::class,'store'])->name('tenant.mantenimiento.cuentas.store');
-        Route::put('update/{id}', [BankAccountController::class,'update'])->name('tenant.mantenimiento.cuentas.update');
+        Route::get('getCuentas', [BankAccountController::class, 'getBankAccounts'])->name('tenant.mantenimiento.cuentas.getBankAccounts');
+        Route::post('store', [BankAccountController::class, 'store'])->name('tenant.mantenimiento.cuentas.store');
+        Route::put('update/{id}', [BankAccountController::class, 'update'])->name('tenant.mantenimiento.cuentas.update');
         Route::delete('/destroy/{id}', [BankAccountController::class, 'destroy'])->name('tenant.mantenimiento.cuentas.destroy');
     });
 
@@ -55,7 +55,13 @@ Route::group(["prefix" => "mantenimiento"], function () {
     });
 
     Route::group(["prefix" => "usuario"], function () {
-        Route::get('usuario', [UserController::class, 'index'])->name('tenant.mantenimientos.usuario');
+        Route::get('index', [UserController::class, 'index'])->name('tenant.mantenimientos.usuario.index');
+        Route::get('create', [UserController::class, 'create'])->name('tenant.mantenimientos.usuario.create');
+        Route::get('getAll', [UserController::class, 'getAll'])->name('tenant.mantenimientos.usuario.getAll');
+        Route::get('edit/{id}', [UserController::class, 'edit'])->name('tenant.mantenimientos.usuario.edit');
+        Route::delete('destroy/{id}', [UserController::class, 'destroy'])->name('tenant.mantenimientos.usuario.destroy');
+        Route::post('store', [UserController::class, 'store'])->name('tenant.mantenimientos.usuario.store');
+        Route::put('update/{id}', [UserController::class, 'update'])->name('tenant.mantenimientos.usuario.update');
     });
 
     Route::group(["prefix" => "configuracion"], function () {
