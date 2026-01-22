@@ -111,6 +111,23 @@ class PettyCashBookRepository
         return $cash_book;
     }
 
+    public function getCashBookCash(int $cash_id){
+        $cash_book  =   DB::table('petty_cash_books as pcb')
+            ->join('petty_cashes as pc', 'pc.id', 'pcb.petty_cash_id')
+            ->select(
+                'pc.name',
+                'pcb.id as petty_cash_book_id',
+                'pc.id as petty_cash_id',
+                'pc.name as petty_cash_name'
+            )->where('pcb.status', 'ABIERTO')
+            ->whereNull('pcb.final_date')
+            ->where('pcb.petty_cash_id', $cash_id)
+            ->orderBy('pcb.id', 'ASC')
+            ->first();
+
+        return $cash_book;
+    }
+
     public function serverIsAssigned(int $user_id, int $exception_id = null)
     {
         $item =   PettyCashServer::where('user_id', $user_id);
