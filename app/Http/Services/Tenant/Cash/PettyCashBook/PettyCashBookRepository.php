@@ -125,7 +125,7 @@ class PettyCashBookRepository
     public function waiterInCash(int $user_id)
     {
         $item =   PettyCashServer::where('user_id', $user_id)->get();
-
+        dd($item);
         if (count($item) > 0) {
             return null;
         }
