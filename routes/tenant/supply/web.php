@@ -43,9 +43,5 @@ Route::group(["prefix" => "abastecimiento"], function () {
         Route::get('create', [ProgrammingController::class, 'create'])->name('tenant.abastecimiento.programacion.create');
         Route::get('getList', [ProgrammingController::class, 'getList'])->name('tenant.abastecimiento.programacion.getList');
         Route::post('store', [ProgrammingController::class, 'store'])->name('tenant.abastecimiento.programacion.store');
-        Route::get('pdf-one/{id}', [ExitMoneyController::class, 'showPDF'])->name('tenant.egreso.pdf');
-        Route::put('update/{id}', [ExitMoneyController::class, 'updateExit'])->name('tenant.egreso.update');
-        Route::get('edit/{id}', [ExitMoneyController::class, 'editExit'])->name('tenant.egreso.edit');
-        Route::delete('destroy/{id}', [ExitMoneyController::class, 'destroy'])->name('tenant.egreso.destroy');
     });
 });
