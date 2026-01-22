@@ -6,13 +6,13 @@
                 <h5 class="modal-title" id="exampleModalLabel">Registrar producto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <hr>
+
             <div class="modal-body">
 
                 @include('product.forms.form_create')
 
             </div>
-            <hr>
+
             <div class="modal-footer">
                 <div class="col-info">
                     <i class="fas fa-info-circle"></i>
@@ -32,11 +32,15 @@
 </div>
 
 <script>
+    let pondImg = null;
+
     function openMdlCreate() {
         $('#mdl-create-product').modal('show');
     }
 
     function eventsMdlCreateProduct() {
+        loadFilePound();
+
         document.querySelector('#form-create-product').addEventListener('submit', (e) => {
             e.preventDefault();
             registrarProducto(e.target);
@@ -67,6 +71,33 @@
                 inputCargarImg.value = '';
             }
         })
+
+        $('#mdl-create-product').on('hidden.bs.modal', function() {
+            clearMdlCreateProduct();
+        });
+    }
+
+    function loadFilePound() {
+        const inputImg = document.querySelector('#image');
+
+        pondImg = FilePond.create(inputImg, {
+            allowImagePreview: true,
+            imagePreviewHeight: 120,
+            imageCropAspectRatio: '1:1',
+            styleLayout: 'compact',
+            stylePanelAspectRatio: 0.5,
+            storeAsFile: true,
+
+            maxFileSize: '2MB',
+            acceptedFileTypes: [
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+                'image/avif'
+            ],
+            labelFileTypeNotAllowed: 'Formato no permitido',
+            labelMaxFileSizeExceeded: 'El archivo supera los 2 MB',
+        });
     }
 
     function registrarProducto(formRegistrarProducto) {
@@ -145,5 +176,25 @@
                 });
             }
         });
+    }
+
+    function clearMdlCreateProduct() {
+        document.querySelector('#name').value = '';
+        document.querySelector('#description').value = '';
+        document.querySelector('#sale_price').value = '1';
+        document.querySelector('#purchase_price').value = '1';
+        document.querySelector('#stock').value = '0';
+        document.querySelector('#stock_min').value = '1';
+        document.querySelector('#code_factory').value = '';
+        document.querySelector('#code_bar').value = '';
+        window.categorySelect.clear();
+        window.brandSelect.clear();
+        window.unitSelect.clear();
+        setText(window.categorySelect, 'REPUESTO');
+        setText(window.brandSelect, 'NACIONAL');
+        setText(window.unitSelect, 'NIU-UNIDAD');
+        if (pondImg) {
+            pondImg.removeFiles();
+        }
     }
 </script>

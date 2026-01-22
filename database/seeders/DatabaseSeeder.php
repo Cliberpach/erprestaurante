@@ -88,5 +88,6 @@ class DatabaseSeeder extends Seeder
         $this->call(TypeIdentityDocumentSeeder::class);
         $this->call(BankSeeder::class);
         $this->call(InvoiceTypeSeeder::class);
+        $this->call(UnitMeasurementSeeder::class);
     }
 }

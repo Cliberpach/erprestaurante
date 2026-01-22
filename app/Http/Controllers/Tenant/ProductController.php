@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tenant;
 
 use App\Exports\Tenant\Inventory\Producto\ProductoExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\UtilController;
 use App\Http\Requests\Tenant\Inventory\Product\ProductoImportExcelRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,9 +12,10 @@ use App\Http\Requests\Tenant\Inventory\Product\ProductStoreRequest;
 use App\Http\Requests\Tenant\Inventory\Product\ProductUpdateRequest;
 use App\Http\Services\Tenant\Inventory\Product\ProductManager;
 use App\Imports\Inventory\Producto\ProductoImport;
+use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Product;
-use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\WarehouseProduct;
+use App\Models\Tenant\WorkShop\WorkOrder\WorkOrderProduct;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -34,9 +36,16 @@ class ProductController extends Controller
     {
         $urlImagen = asset('assets/img/products/img_default.png');
 
-        $categories = DB::select('SELECT * FROM categories as c where c.status = "ACTIVE"');
-        $brands     = DB::select('SELECT * FROM brands b WHERE b.status = "ACTIVE"');
-        return view('product.index', compact('urlImagen', 'categories', 'brands'));
+        $categories =   DB::select('SELECT * FROM categories as c where c.status = "ACTIVE"');
+        $brands     =   DB::select('SELECT * FROM brands b WHERE b.status = "ACTIVE"');
+        $units      =   UtilController::getUnitsMeasurement();
+
+        return view('product.index', compact(
+            'urlImagen',
+            'categories',
+            'brands',
+            'units'
+        ));
     }
 
     public function getAll(Request $request)
@@ -58,8 +67,10 @@ class ProductController extends Controller
                 'p.stock_min',
                 'p.code_factory',
                 'p.code_bar',
-                'p.img_route'
-            )->where('p.status', 'ACTIVE');
+                'p.img_route',
+                'p.unit_id',
+                'p.unit_symbol'
+            )->where('p.status', 'ACTIVO');
 
         return DataTables::of($products)->make(true);
     }
@@ -78,6 +89,7 @@ array:12 [ // app\Http\Controllers\Tenant\ProductController.php:74
   "code_bar" => null
   "category_id" => "1"
   "brand_id" => "1"
+   "unit_id" => "121"
   "image" =>Illuminate\Http\UploadedFile
 */
     public function store(ProductStoreRequest $request)
@@ -117,7 +129,8 @@ array:11 [ // app\Http\Controllers\Tenant\ProductController.php:127
   "category_id_edit" => "2"
   "brand_id_edit" => "2"
   "deleteImg"   =>  1
-  "image_edit" => Illuminate\Http\UploadedFile
+   "unit_id" => "97"
+   "image_edit" => Illuminate\Http\UploadedFile
 ]
 */
     public function update($id, ProductUpdateRequest $request)
@@ -126,6 +139,11 @@ array:11 [ // app\Http\Controllers\Tenant\ProductController.php:127
         try {
 
             $data       =   $request->validated();
+            $unit       =   GeneralTableDetail::findOrfail($request->get('unit_id'));
+
+            $data['unit_symbol']    =   $unit->symbol;
+            $data['unit_name']      =   $unit->name;
+
             $product    =   Product::findOrFail($id);
 
             //====== ELIMINAR IMAGEN PREVIA ========
@@ -136,9 +154,6 @@ array:11 [ // app\Http\Controllers\Tenant\ProductController.php:127
             }
 
             $product->update($data);
-
-            //====== GUARDAR NUEVA IMAGEN =======
-            $this->saveImagePublic($request->file('image_edit'), $product);
 
             DB::commit();
             return response()->json(['success' => true, 'data' => $product, 'message' => 'PRODUCTO ACTUALIZADO CON ÉXITO']);
@@ -243,7 +258,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
      */
     public function searchProduct(Request $request)
     {
-        $query = trim($request->get('q', ''));
+        $query          =   trim($request->get('q', ''));
         $warehouse_id   =   $request->get('warehouse_id');
 
         if (empty($query)) {
@@ -259,8 +274,10 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
                     ->orWhere('c.name', 'LIKE', "%{$query}%")
                     ->orWhere('b.name', 'LIKE', "%{$query}%");
             })
-            ->where('wp.warehouse_id', $warehouse_id)
-            ->orWhereNull('wp.warehouse_id')
+            ->where(function ($q) use ($warehouse_id) {
+                $q->where('wp.warehouse_id', $warehouse_id)
+                    ->orWhereNull('wp.warehouse_id');
+            })
             ->limit(20)
             ->select(
                 'wp.warehouse_id',
@@ -279,10 +296,14 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
             'sale_price' =>  $p->sale_price,
             'name'  =>  $p->name,
             'category_name' =>  $p->category_name,
-            'brand_name'    =>  $p->brand_name
+            'brand_name'    =>  $p->brand_name,
+            'stock'         =>  $p->stock
         ]);
 
-        return response()->json(['data' => $data]);
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }
 
     public function searchProductStock(Request $request)
@@ -343,7 +364,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
             $warehouse_id   = $request->get('warehouse_id');
             $product_id     = $request->get('product_id');
             $quantity       = (float) $request->get('quantity');
-            $order_id       = $request->get('order_id');
+            $work_order_id  = $request->get('work_order_id');
 
             $item = WarehouseProduct::where('warehouse_id', $warehouse_id)
                 ->where('product_id', $product_id)
@@ -356,7 +377,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
 
             $stock_actual = (float) $item->stock;
 
-            if (!$order_id) {
+            if (!$work_order_id) {
 
                 if ($quantity > $stock_actual) {
                     throw new Exception("STOCK INSUFICIENTE (Stock: $stock_actual, Requiere: $quantity)");
@@ -368,7 +389,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
                 ]);
             }
 
-            $item_bd = OrderProduct::where('order_id', $order_id)
+            $item_bd = WorkOrderProduct::where('work_order_id', $work_order_id)
                 ->where('product_id', $product_id)
                 ->first();
 
@@ -408,43 +429,5 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
                 'message' => $th->getMessage()
             ]);
         }
-    }
-
-    public function getProducts(Request $request)
-    {
-
-        $categoria_id   =   $request->get('categoria_id');
-        $marca_id       =   $request->get('marca_id');
-
-        $products = DB::table('products as p')
-            ->leftJoin('warehouse_products as wp', function ($join) {
-                $join->on('wp.product_id', '=', 'p.id')
-                    ->where('wp.warehouse_id', '=', 1); // Filtrar por almacen_id = 1
-            })
-            ->join('brands as b', 'b.id', '=', 'p.brand_id')
-            ->join('categories as c', 'c.id', '=', 'p.category_id')
-            ->select(
-                'p.id',
-                'p.brand_id',
-                'p.category_id',
-                'p.name',
-                'p.sale_price',
-                'p.purchase_price',
-                DB::raw('IFNULL(wp.stock, 0) as stock'),
-                'p.stock_min',
-                'b.name as brand_name',
-                'c.name as category_name',
-                'wp.warehouse_id'
-            );
-
-        if ($categoria_id) {
-            $products  =   $products->where('p.category_id', $categoria_id);
-        }
-
-        if ($marca_id) {
-            $products  =   $products->where('p.brand_id', $marca_id);
-        }
-
-        return DataTables::of($products)->make(true);
     }
 }

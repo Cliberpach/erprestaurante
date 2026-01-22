@@ -8,11 +8,17 @@
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
 @endsection
 
+@push('js-head')
+    @vite(['resources/js/libs/filepond.js'])
+@endpush
+
 @section('content')
     @include('utils.lightbox.lightbox')
     @include('product.modals.mdl_create')
     @include('product.modals.mdl_edit')
     @include('product.modals.mdl_import')
+    @include('utils.modals.categories.mdl_create')
+    @include('utils.modals.brands.mdl_create')
 
     <x-card>
         <x-slot name="headerCard">
@@ -51,7 +57,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadDtProducts();
-            iniciarSelect2();
+            loadTomSelect();
             events();
         })
 
@@ -59,6 +65,8 @@
             eventsMdlCreateProduct();
             eventsMdlEditProduct();
             eventsMdlImportarProductos();
+            eventsMdlCategory();
+            eventsMdlBrand();
         }
 
         function loadDtProducts() {
@@ -83,73 +91,79 @@
                 columns: [{
                         data: 'id',
                         name: 'id',
-                        searchable:false,
-                        orderable:true
+                        searchable: false,
+                        orderable: true
                     },
                     {
                         data: 'name',
                         name: 'p.name',
-                        searchable:true,
-                        orderable:true
+                        searchable: true,
+                        orderable: true
                     },
                     {
                         data: 'category_name',
                         name: 'c.name',
-                        searchable:true,
-                        orderable:true
+                        searchable: true,
+                        orderable: true
                     },
                     {
                         data: 'brand_name',
                         name: 'b.name',
-                        searchable:true,
-                        orderable:true
+                        searchable: true,
+                        orderable: true
                     },
                     {
                         data: 'sale_price',
                         name: 'p.sale_price',
                         className: 'text-end',
-                        searchable:false,
-                        orderable:true
+                        searchable: false,
+                        orderable: true
                     },
                     {
                         data: 'purchase_price',
                         name: 'p.purchase_price',
                         className: 'text-end',
-                        searchable:false,
-                        orderable:true
+                        searchable: false,
+                        orderable: true
                     },
                     {
                         data: 'stock',
                         name: 'p.stock',
                         className: 'text-end',
-                        searchable:false,
-                        orderable:false
+                        searchable: false,
+                        orderable: false
                     },
                     {
                         data: 'stock_min',
                         name: 'stock_min',
                         className: 'text-end',
-                        searchable:false,
-                        orderable:false
+                        searchable: false,
+                        orderable: false
                     },
                     {
                         data: 'code_factory',
                         name: 'p.code_factory',
-                        searchable:true,
-                        orderable:false
+                        searchable: true,
+                        orderable: false
                     },
                     {
                         data: 'code_bar',
                         name: 'p.code_bar',
-                        searchable:true,
-                        orderable:false
+                        searchable: true,
+                        orderable: false
+                    },
+                    {
+                        data: 'unit_symbol',
+                        name: 'p.unit_symbol',
+                        searchable: false,
+                        orderable: false
                     },
                     {
                         data: 'img_route',
                         name: 'img_route',
                         className: 'text-center',
-                        searchable:false,
-                        orderable:false,
+                        searchable: false,
+                        orderable: false,
                         render: function(data, type, row) {
                             if (data) {
                                 return `<img class="imgShowLightBox" src="/${data}" alt="Imagen" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">`;
@@ -238,16 +252,98 @@
             }
         }
 
-        function iniciarSelect2() {
-            $('.select2_form').select2({
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                allowClear: true,
-                dropdownParent: $('#mdl-create-product')
-            });
-        }
+        function loadTomSelect() {
+            const categorySelect = document.getElementById('category_id');
+            if (categorySelect && !categorySelect.tomselect) {
+                window.categorySelect = new TomSelect(categorySelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    placeholder: 'Seleccionar',
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                        <div>
+                            <i class="fas fa-tags" style="margin-right:6px; color:#28a745;"></i>
+                            ${escape(item.description)}
+                        </div>
+                    `,
+                        item: (item, escape) => `
+                        <div>
+                            <i class="fas fa-tags" style="margin-right:6px; color:#28a745;"></i>
+                            ${escape(item.description)}
+                        </div>
+                    `
+                    }
+                });
+            }
 
+            const brandSelect = document.getElementById('brand_id');
+            if (brandSelect && !brandSelect.tomselect) {
+                window.brandSelect = new TomSelect(brandSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    placeholder: 'Seleccionar',
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                        <div>
+                            <i class="fas fa-bullseye" style="margin-right:6px; color:#0d6efd;"></i>
+                            ${escape(item.description)}
+                        </div>
+                    `,
+                        item: (item, escape) => `
+                        <div>
+                            <i class="fas fa-bullseye" style="margin-right:6px; color:#0d6efd;"></i>
+                            ${escape(item.description)}
+                        </div>
+                    `,
+                    }
+                });
+            }
+
+            const unitSelect = document.getElementById('unit_id');
+            if (unitSelect && !unitSelect.tomselect) {
+                window.unitSelect = new TomSelect(unitSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    placeholder: 'Seleccionar',
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-ruler-combined me-2 text-primary"></i>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-ruler-combined me-2 text-primary"></i>
+                                ${escape(item.description)}
+                            </div>
+                        `
+                    }
+                });
+            }
+
+        }
 
         function eliminarProducto(id) {
             toastr.clear();
