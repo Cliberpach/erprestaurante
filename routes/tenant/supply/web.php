@@ -49,17 +49,6 @@ Route::group(["prefix" => "abastecimiento"], function () {
         Route::delete('destroy/{id}', [ExitMoneyController::class, 'destroy'])->name('tenant.egreso.destroy');
     });
 
-    Route::group(["prefix" => "bebidas"], function () {
-        Route::get('index', [ExitMoneyController::class, 'index'])->name('tenant.abastecimiento.bebidas.index');
-        Route::get('create', [ExitMoneyController::class, 'create'])->name('tenant.egreso.create');
-        Route::get('getEgresos', [ExitMoneyController::class, 'getExitMoneys'])->name('tenant.egreso.getExitMoneys');
-        Route::post('store', [ExitMoneyController::class, 'store'])->name('tenant.egreso.store');
-        Route::get('pdf-one/{id}', [ExitMoneyController::class, 'showPDF'])->name('tenant.egreso.pdf');
-        Route::put('update/{id}', [ExitMoneyController::class, 'updateExit'])->name('tenant.egreso.update');
-        Route::get('edit/{id}', [ExitMoneyController::class, 'editExit'])->name('tenant.egreso.edit');
-        Route::delete('destroy/{id}', [ExitMoneyController::class, 'destroy'])->name('tenant.egreso.destroy');
-    });
-
     Route::group(["prefix" => "programacion"], function () {
         Route::get('index', [ProgrammingController::class, 'index'])->name('tenant.abastecimiento.programacion.index');
         Route::get('create', [ProgrammingController::class, 'create'])->name('tenant.abastecimiento.programacion.create');
