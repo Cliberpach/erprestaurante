@@ -79,7 +79,7 @@
     })();
 </script>
 
-@vite(['resources/css/app.css', 'resources/js/app.js'])
 @yield('css')
 @stack('styles')
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 @stack('js-head')
