@@ -17,5 +17,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/bootstrap/cache/*
 !/bootstrap/cache/.gitignore
-bootstrap/cache/services.php
+
