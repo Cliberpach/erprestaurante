@@ -33,7 +33,7 @@ class OrderValidation
         $categories         =   Category::all();
         $brands             =   Brand::all();
         $types_dish         =   UtilController::getTypesDish();
-        $user               =   Auth::user();
+        $user               =   Auth::user();dd($user);
         $igv                =   round(Company::find(1)->igv, 2);
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
         $payment_methods    =   UtilController::getPaymentMethods();
