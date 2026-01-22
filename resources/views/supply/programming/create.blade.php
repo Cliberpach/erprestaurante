@@ -115,9 +115,11 @@
         function loadTomSelect() {
 
             const cashesAvailable = document.getElementById('cash_available_id');
-
             if (cashesAvailable && !cashesAvailable.tomselect) {
 
+                const user      = @json($user);
+                const roles     = @json($roles);
+                const isAdmin   = roles.includes('admin');
                 window.cashesAvailableSelect = new TomSelect(cashesAvailable, {
                     valueField: 'id',
                     labelField: 'name',
@@ -143,7 +145,7 @@
 
                             const url = route('tenant.utils.searchCashOpen', {
                                 search: query,
-                                user_id: {{ auth()->user()->id }},
+                                user_id: isAdmin ? null : user.id,
                             });
 
                             const response = await fetch(url);

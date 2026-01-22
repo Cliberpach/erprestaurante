@@ -7,6 +7,7 @@ use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Supply\Programming\ProgrammingManager;
 use App\Models\Tenant\Supply\Programming\Programming;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Throwable;
@@ -41,7 +42,7 @@ class ProgrammingController extends Controller
                 'p.updated_at',
                 'p.status'
             )
-            ->where('p.status','<>', 'ANULADO');
+            ->where('p.status', '<>', 'ANULADO');
 
         return DataTables::of($items)
             ->filterColumn('petty_cash_book_code', function ($query, $keyword) {
@@ -52,11 +53,17 @@ class ProgrammingController extends Controller
 
     public function create()
     {
-        $types_dish = UtilController::getTypesDish();
-        return view('supply.programming.create', compact('types_dish'));
+        $types_dish =   UtilController::getTypesDish();
+        $user       =   Auth::user();
+        $roles      =   $user->getRoleNames();
+        return view('supply.programming.create', compact(
+            'types_dish',
+            'roles',
+            'user'
+        ));
     }
 
-/*
+    /*
 array:8 [ // app\Http\Controllers\Tenant\Supply\ProgrammingController.php:50
   "_token" => "qGlvuzy47KHzjWl81SNfxb9CikhiFe2wRB8qTZaz"
   "_method" => "POST"
