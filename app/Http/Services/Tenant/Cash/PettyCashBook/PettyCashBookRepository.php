@@ -134,7 +134,7 @@ class PettyCashBookRepository
             return false;
         }
 
-        return $item->first();
+        return $item[0];
     }
 
     public function insertPettyCashServers(array $dto)
