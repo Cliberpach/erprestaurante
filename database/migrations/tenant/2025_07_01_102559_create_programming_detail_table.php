@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('type_dish_name', 160);
 
             $table->decimal('quantity', 16, 6)->unsigned();
+            $table->decimal('stock', 16, 6)->unsigned();
             $table->decimal('purchase_price', 16, 6)->unsigned();
             $table->decimal('sale_price', 16, 6)->unsigned();
 

@@ -37,6 +37,7 @@ class ProgrammingDto
                 'programming_id'    =>  $programming->id,
                 'dish_id'           =>  $item['product_id'],
                 'quantity'          =>  $item['quantity'],
+                'stock'             =>  $item['quantity']
             ];
 
             $dish       =   Dish::findOrFail($item['product_id']);

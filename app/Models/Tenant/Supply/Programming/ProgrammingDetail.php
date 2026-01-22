@@ -18,6 +18,7 @@ class ProgrammingDetail extends Model
         'type_dish_name',
 
         'quantity',
+        'stock',
         'purchase_price',
         'sale_price',
 

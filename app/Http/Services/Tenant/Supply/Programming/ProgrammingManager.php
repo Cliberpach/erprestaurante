@@ -2,9 +2,7 @@
 
 namespace App\Http\Services\Tenant\Supply\Programming;
 
-use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\Programming\Programming;
-use App\Models\Tenant\Supply\TypeDish\TypeDish;
 
 class ProgrammingManager
 {
