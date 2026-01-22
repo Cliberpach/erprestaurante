@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
 
             /* 🔹 PRIMARY KEY */
-            $table->primary('id');
+            $table->id();
 
             $table->unsignedBigInteger('table_id');
             $table->foreign('table_id')->references('id')->on('tables');
