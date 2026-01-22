@@ -38,7 +38,7 @@ class OrderValidation
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
         $payment_methods    =   UtilController::getPaymentMethods();
 
-        $petty_cash_book    =   $this->s_cash_book->waiterInCash($user->id);
+        $petty_cash_book    =   $this->s_cash_book->waiterInCash($user->id);dd($petty_cash_book);
         if ($petty_cash_book === null) {
             throw new Exception('PERTENCES A MÁS DE UNA CAJA');
         }
