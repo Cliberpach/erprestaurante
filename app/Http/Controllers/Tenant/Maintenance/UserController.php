@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant\Maintenance;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenant\Maintenance\Users\UserStoreRequest;
 use App\Http\Requests\Tenant\Maintenance\Users\UserUpdateRequest;
+use App\Http\Services\Tenant\Maintenance\User\UserManager;
 use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
 use App\Models\Tenant\TenantRole;
 use App\Models\Tenant\User;
@@ -20,6 +21,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
+    private UserManager $s_manager;
+
+    public function __construct(){
+        $this->s_manager = new UserManager();
+    }
+
     public function index(): View
     {
         return view('maintenance.users.index');
@@ -177,5 +184,11 @@ class UserController extends Controller
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
+    }
+
+    public function getListFreeServers(Request $request)
+    {
+        $meseros = $this->s_manager->getMeserosLibres($request->toArray());
+        return DataTables::of($meseros)->toJson();
     }
 }

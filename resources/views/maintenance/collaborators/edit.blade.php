@@ -31,8 +31,6 @@
             </div>
         </div>
     </div>
-
-    <!-- end card -->
 @endsection
 
 <style>
@@ -43,7 +41,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        iniciarSelect2();
+        loadTomSelect();
         events();
     })
 
@@ -165,12 +163,63 @@
         });
     }
 
-    function iniciarSelect2() {
-        $('.select2_form').select2({
-            theme: "bootstrap-5",
-            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-            placeholder: $(this).data('placeholder'),
-        });
+    function loadTomSelect() {
+        const documentTypeSelect = document.getElementById('document_type');
+        if (documentTypeSelect && !documentTypeSelect.tomselect) {
+            window.documentTypeSelect = new TomSelect(documentTypeSelect, {
+                valueField: 'id',
+                labelField: 'abbreviation',
+                searchField: ['abbreviation', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-id-card text-primary"></i>
+                                <span>${escape(item.abbreviation)}</span>
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-id-card text-primary"></i>
+                                <span>${escape(item.abbreviation)}</span>
+                            </div>`
+                }
+            });
+        }
+        const positionSelect = document.getElementById('position');
+        if (positionSelect && !positionSelect.tomselect) {
+            window.positionSelect = new TomSelect(positionSelect, {
+                valueField: 'id',
+                labelField: 'name',
+                searchField: ['name', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-user-tie text-primary"></i>
+                                <span>${escape(item.name)}</span>
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-user-tie text-primary"></i>
+                                <span>${escape(item.name)}</span>
+                            </div>
+                        `
+                }
+            });
+        }
+
     }
 
     function actualizarColaborador() {
@@ -201,8 +250,8 @@
 
                 try {
 
-                    const id    = @json($colaborador->id);
-                    const url   = route('tenant.mantenimientos.colaboradores.update', {
+                    const id = @json($colaborador->id);
+                    const url = route('tenant.mantenimientos.colaboradores.update', {
                         id
                     });
 

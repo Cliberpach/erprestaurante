@@ -1,3 +1,5 @@
+@routes
+
 <!-- begin::GXON Meta Basic -->
 <meta charset="utf-8">
 <meta name="theme-color" content="#316AFF">
@@ -66,8 +68,18 @@
 <link rel="stylesheet" href="{{ asset('assets/libs/datatables/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/style-own.css') }}">
-
 <!-- end::GXON CSS Stylesheet -->
 
+<script>
+    (function () {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    })();
+</script>
+
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 @yield('css')
 @stack('styles')
+@stack('js-head')

@@ -49,6 +49,7 @@
         dtColaboradores = new DataTable('#table_colaboradores', {
             serverSide: true,
             processing: true,
+            responsive:true,
             ajax: {
                 url: urlGetColaboradores,
                 type: 'GET',
@@ -125,7 +126,7 @@
                                 ':id', data.id);
 
                         return `
-                            <div class="btn-group dropstart">
+                            <div class="btn-group">
                             <button type="button" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa-solid fa-grip"></i>
                             </button>

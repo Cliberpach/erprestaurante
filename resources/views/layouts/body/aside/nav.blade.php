@@ -1,5 +1,5 @@
 <ul class="menubar">
-    <li class="menu-item menu-arrow">
+    {{-- <li class="menu-item menu-arrow">
         <a class="menu-link" href="javascript:void(0);" role="button">
             <i class="fi fi-rr-apps"></i>
             <span class="menu-label">Dashboard</span>
@@ -56,7 +56,8 @@
                 </a>
             </li>
         </ul>
-    </li>
+    </li> --}}
+
     <li class="menu-heading">
         <span class="menu-label">Menu</span>
     </li>
@@ -116,7 +117,7 @@
                             <ul class="menu-inner">
                                 @foreach ($child->grandchildren as $grandchild)
                                     <li class="menu-item">
-                                        <a class="menu-link" href="{{ route($base . $grandchild->route_name) }}">
+                                        <a class="menu-link menu-click" href="{{ route($base . $grandchild->route_name) }}">
                                             <span class="menu-label">{{ $grandchild->description }}</span>
                                         </a>
                                     </li>
@@ -125,7 +126,7 @@
                         </li>
                     @else
                         <li class="menu-item">
-                            <a class="menu-link" href="{{ route($base . $child->route_name) }}">
+                            <a class="menu-link menu-click" href="{{ route($base . $child->route_name) }}">
                                 <span class="menu-label">{{ $child->description }}</span>
                             </a>
                         </li>

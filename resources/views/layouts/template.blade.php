@@ -2,11 +2,7 @@
 <html lang="en">
 
 <head>
-    <!-- Scripts -->
-    @routes
     @include('layouts.head')
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @stack('js-head')
 </head>
 
 <body>
@@ -16,6 +12,14 @@
             @include('utils.spinners.spinner_1')
         </div>
     </div>
+
+    <button class="theme-toggle d-none">
+        <span class="theme-icon">🌓</span>
+        <span id="theme-text">Modo Oscuro</span>
+    </button>
+
+    <!-- Overlay del loader -->
+    @include('layouts.loaders.loader1')
 
     <div class="page-layout">
 

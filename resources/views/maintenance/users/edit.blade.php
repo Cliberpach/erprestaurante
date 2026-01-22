@@ -4,7 +4,7 @@
 @endsection
 
 @section('content')
-  <div class="card">
+    <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
             <h6>Datos del Usuario<i class="fa-solid fa-user"></i></h6>
         </div>
@@ -33,7 +33,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        iniciarSelect2();
+        loadTomSelect();
         events();
     })
 
@@ -112,12 +112,64 @@
         })
     }
 
-    function iniciarSelect2() {
-        $('.select_2_form').select2({
-            theme: "bootstrap-5",
-            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-            placeholder: $(this).data('placeholder'),
-        });
+    function loadTomSelect() {
+        const collaboratorSelect = document.getElementById('colaborador');
+        if (collaboratorSelect && !collaboratorSelect.tomselect) {
+            window.collaboratorSelect = new TomSelect(collaboratorSelect, {
+                valueField: 'id',
+                labelField: 'name',
+                searchField: ['name', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-user text-primary"></i>
+                                <span>${escape(item.name)}</span>
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-user text-primary"></i>
+                                <span>${escape(item.name)}</span>
+                            </div>
+                        `
+                }
+            });
+        }
+
+        const rolSelect = document.getElementById('rol');
+        if (rolSelect && !rolSelect.tomselect) {
+            window.rolSelect = new TomSelect(rolSelect, {
+                valueField: 'id',
+                labelField: 'name',
+                searchField: ['name', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-user-gear text-primary"></i>
+                                <span>${escape(item.name)}</span>
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-user-gear text-primary"></i>
+                                <span>${escape(item.name)}</span>
+                            </div>
+                        `
+                }
+            });
+        }
     }
 
     function actualizarUsuario() {
@@ -148,10 +200,12 @@
                 try {
 
                     const formActualizarUsuario = document.querySelector('#formActualizarUsuario');
-                    const formData              = new FormData(formActualizarUsuario);
-                    const token                 = document.querySelector('input[name="_token"]').value;
-                    const id                    = @json($user->id);
-                    let url                     = route('tenant.mantenimientos.usuario.update',{id});
+                    const formData = new FormData(formActualizarUsuario);
+                    const token = document.querySelector('input[name="_token"]').value;
+                    const id = @json($user->id);
+                    let url = route('tenant.mantenimientos.usuario.update', {
+                        id
+                    });
 
                     const response = await fetch(url, {
                         method: 'POST',

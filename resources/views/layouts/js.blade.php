@@ -18,38 +18,12 @@
 <script src="{{ asset('assets/js/utils.js') }}"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        mostrarSessionMessages();
-    })
-
-    function mostrarSessionMessages() {
-        const messageSuccess = "{{ Session::get('message_success') }}";
-        const messageError = "{{ Session::get('message_error') }}";
-
-        console.log(messageSuccess);
-        if (messageSuccess) {
-            Swal.fire({
-                icon: 'success',
-                title: 'OPERACIÓN COMPLETADA',
-                text: messageSuccess,
-                customClass: {
-                    confirmButton: 'btn-primary'
-                },
-            });
-        }
-
-        if (messageError) {
-            Swal.fire({
-                icon: 'error',
-                title: 'ERROR EN LA OPERACIÓN',
-                text: messageError,
-                customClass: {
-                    confirmButton: 'btn-primary'
-                },
-            });
-        }
-
-    }
+    window.sessionMessages = {
+        success: @json(session('message_success')),
+        error: @json(session('message_error'))
+    };
 </script>
+@vite(['resources/js/global/main.js'])
+
 @yield('js')
 @stack('js-script')

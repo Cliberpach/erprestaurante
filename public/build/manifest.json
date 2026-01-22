@@ -27,6 +27,11 @@
     "isEntry": true,
     "src": "resources/css/app.css"
   },
+  "resources/css/loader/loader1.css": {
+    "file": "assets/loader1-7bf28e85.css",
+    "isEntry": true,
+    "src": "resources/css/loader/loader1.css"
+  },
   "resources/js/app.css": {
     "file": "assets/app-c1078029.css",
     "src": "resources/js/app.css"
@@ -45,6 +50,11 @@
     "file": "assets/app-4a524e14.js",
     "isEntry": true,
     "src": "resources/js/app.js"
+  },
+  "resources/js/global/main.js": {
+    "file": "assets/main-86b96090.js",
+    "isEntry": true,
+    "src": "resources/js/global/main.js"
   },
   "resources/js/orders/create/main.js": {
     "file": "assets/main-79bcc750.js",

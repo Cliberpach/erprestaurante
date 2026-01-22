@@ -13,11 +13,19 @@ class PositionSeeder extends Seeder
     public function run(): void
     {
         $position           =   new Position();
-        $position->name     =   'TECNICO';
+        $position->name     =   'CAJERO';
+        $position->save();
+
+        $position           =   new Position();
+        $position->name     =   'MESERO';
         $position->save();
 
         $position           =   new Position();
         $position->name     =   'CONTADOR';
+        $position->save();
+
+        $position           =   new Position();
+        $position->name     =   'COCINERO';
         $position->save();
     }
 }
