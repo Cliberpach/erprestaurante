@@ -268,4 +268,10 @@ class UtilController extends Controller
         $payment_methods  =   PaymentMethod::where('estado', 'ACTIVO')->get();
         return $payment_methods;
     }
+
+    public static function getUnitsMeasurement()
+    {
+        $data   =   GeneralTableDetail::where('general_table_id', 5)->get();
+        return $data;
+    }
 }
