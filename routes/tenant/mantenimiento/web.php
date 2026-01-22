@@ -7,9 +7,9 @@ use App\Http\Controllers\Tenant\Maintenance\BankAccountController;
 use App\Http\Controllers\Tenant\Maintenance\CollaboratorController;
 use App\Http\Controllers\Tenant\Maintenance\ConfigurationController;
 use App\Http\Controllers\Tenant\Maintenance\PositionController;
+use App\Http\Controllers\Tenant\Maintenance\UserController;
 use App\Http\Controllers\Tenant\PlanController;
 use App\Http\Controllers\Tenant\RoleController;
-use App\Http\Controllers\Tenant\UserController;
 
 Route::group(["prefix" => "mantenimiento"], function () {
 
