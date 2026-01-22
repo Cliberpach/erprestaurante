@@ -10,6 +10,7 @@ class Module extends Model
     use HasFactory;
 
     protected $table = "modules";
+    protected $connection = 'landlord';
 
     protected $guarded = [''];
 
