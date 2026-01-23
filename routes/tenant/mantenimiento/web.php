@@ -21,10 +21,10 @@ Route::group(["prefix" => "mantenimiento"], function () {
     });
 
     Route::group(["prefix" => "empresa"], function () {
-        Route::get('index', [CompanyController::class, 'index'])->name('tenant.mantenimiento.empresa.index');
+        Route::get('index', [CompanyController::class, 'index'])->name('tenant.mantenimiento.empresas.index');
         Route::get('create', [CompanyController::class, 'create'])->name('tenant.mantenimiento.empresas.create');
-        Route::get('edit/{id}', [CompanyController::class, 'edit'])->name('tenant.mantenimiento.empresa.edit');
-        Route::put('update/{id}', [CompanyController::class, 'update'])->name('tenant.mantenimiento.empresa.update');
+        Route::get('edit/{id}', [CompanyController::class, 'edit'])->name('tenant.mantenimiento.empresas.edit');
+        Route::put('update/{id}', [CompanyController::class, 'update'])->name('tenant.mantenimiento.empresas.update');
         Route::post('store', [CompanyController::class, 'store'])->name('tenant.mantenimiento.empresas.store');
         Route::put('updateInvoice/{id}', [CompanyController::class, 'updateInvoice'])->name('tenant.mantenimiento.empresas.updateInvoice');
         Route::post('storeNumeration', [CompanyController::class, 'storeNumeration'])->name('tenant.mantenimiento.empresas.storeNumeration');
