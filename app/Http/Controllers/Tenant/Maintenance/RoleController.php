@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -78,6 +79,8 @@ class RoleController extends Controller
                 );
             }
 
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
+
             DB::commit();
             return response()->json(['success' => true, 'message' => 'ROL REGISTRADO CON ÉXITO']);
         } catch (Throwable $th) {
@@ -110,6 +113,8 @@ class RoleController extends Controller
                     [$permiso, $rol->id]
                 );
             }
+
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'ROL ACTUALIZADO CON ÉXITO']);
