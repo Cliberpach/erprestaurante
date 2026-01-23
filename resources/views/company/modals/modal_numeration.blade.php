@@ -36,7 +36,7 @@
     }
 
     function startDataTableNumeration(){
-        const urlGetNumerations = '{{ route('tenant.mantenimientos.empresas.getListNumeration') }}';
+        const urlGetNumerations = '{{ route('tenant.mantenimiento.empresas.getListNumeration') }}';
 
         dtNumerations  =   new DataTable('#tbl_numeration',{
             serverSide: true,
