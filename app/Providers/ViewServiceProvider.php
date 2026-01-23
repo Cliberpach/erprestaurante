@@ -29,7 +29,7 @@ class ViewServiceProvider extends ServiceProvider
             }
 
             $user = auth()->user();
-
+            dd('a');
             $menu = app(\App\Services\MenuService::class)->getMenuForUser($user);
 
             $view->with('modules', $menu);
@@ -46,7 +46,7 @@ class ViewServiceProvider extends ServiceProvider
             "search_modules_{$base}_{$roleNames}",
             now()->addHours(6),
             function () use ($user) {
-               
+
                 $permissions = $user->getAllPermissions()->pluck('name');
                 if ($permissions->isEmpty()) {
                     return [];
