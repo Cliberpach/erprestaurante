@@ -9,7 +9,7 @@
 
 @section('content')
     <div class="row">
-        <form action="{{ route('landlord.mantenimientos.empresas.update',['id'=>$company->id]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('landlord.mantenimiento.empresas.update',['id'=>$company->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="nav-align-top mb-4">
@@ -263,7 +263,7 @@
                     </div>
                     <div class="text-end">
                         <button type="submit" class="btn btn-outline-primary me-1">Registrar</button>
-                        <a href="{{ route('landlord.mantenimientos.empresa') }}"
+                        <a href="{{ route('landlord.mantenimiento.empresa') }}"
                             class="btn btn-outline-secondary me-1">Regresar</a>
                     </div>
                 </div>
@@ -473,7 +473,7 @@
         $("#frm_plan").on("submit", function(e) {
             e.preventDefault();
             $.ajax({
-                url: '{{ route('landlord.mantenimientos.planes.store') }}',
+                url: '{{ route('landlord.mantenimiento.planes.store') }}',
                 method: 'POST',
                 dataType: 'json',
                 data: new FormData($("#frm_plan")[0]),

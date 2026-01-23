@@ -9,7 +9,7 @@
 
 @section('content')
     <div class="row">
-        <form action="{{ route('landlord.mantenimientos.empresas.store') }}" method="POST">
+        <form action="{{ route('landlord.mantenimiento.empresas.store') }}" method="POST">
             @csrf
             <div class="nav-align-top mb-4">
                 <ul class="nav nav-pills mb-3" role="tablist">b
@@ -256,7 +256,7 @@
                         </div>
                         <div class="text-end">
                             <button type="submit" class="btn btn-outline-primary me-1">Registrar</button>
-                            <a href="{{ route('landlord.mantenimientos.empresa') }}"
+                            <a href="{{ route('landlord.mantenimiento.empresa') }}"
                                 class="btn btn-outline-secondary me-1">Regresar</a>
                         </div>
                     </div>
