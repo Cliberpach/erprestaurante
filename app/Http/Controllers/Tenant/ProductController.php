@@ -367,7 +367,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
     {
         try {
 
-            $warehouse_id   = $request->get('warehouse_id')??1;
+            $warehouse_id   = $request->get('warehouse_id') ?? 1;
             $product_id     = $request->get('product_id');
             $quantity       = (float) $request->get('quantity');
             $order_id       = $request->get('order_id');
@@ -461,6 +461,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
                 'p.stock_min',
                 'b.name as brand_name',
                 'c.name as category_name',
+                'wp.warehouse_id'
             );
 
         if ($categoria_id) {
