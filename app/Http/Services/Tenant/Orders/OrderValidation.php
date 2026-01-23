@@ -126,7 +126,7 @@ class OrderValidation
     public function validationStore(array $data): array
     {
         $user               =   Auth::user();
-       
+
         if (!$user->hasRole('MESERO')) {
             throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
         }
@@ -152,8 +152,8 @@ class OrderValidation
 
         $payment_method_id  =   $data['payment_method'];
         $payment_method     =   PaymentMethod::find($payment_method_id);
-        $payref_id          =   $payment_method->id;
-        $payref_name        =   $payment_method->description;
+        $payref_id          =   $payment_method?->id;
+        $payref_name        =   $payment_method?->description;
 
         $lst_detail =   json_decode($data['lst_detail']);
         if (count($lst_detail) === 0) {
