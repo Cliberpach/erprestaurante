@@ -95,9 +95,7 @@ class RoleController extends Controller
     {
         DB::connection('tenant')->beginTransaction();
         try {
-            dd('r');
             $lstPermisosAsignados   =   json_decode($request->get('lstPermisosAsignados'));
-
             $rol                =   Role::find($id);
             $rol->setConnection('tenant');
             $rol->name          =   mb_strtoupper(trim($request->get('nombre')), 'UTF-8');
