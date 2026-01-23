@@ -128,7 +128,7 @@ class PettyCashBookRepository
             ->where('pcb.user_id', $user_id)
             ->orderBy('pcb.id', 'ASC')
             ->first();
-
+        dd($cash_book);
         return $cash_book;
     }
 
