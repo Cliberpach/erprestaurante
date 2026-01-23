@@ -145,6 +145,11 @@ class PettyCashBookService
         return $this->s_repository->getCashBookCash($cash_id);
     }
 
+    public function getCashBookWaiter(int $user_id)
+    {
+        return $this->s_repository->getCashBookWaiter($user_id);
+    }
+
     public function getConsolidated(int $id)
     {
         $payment_methods            =   PaymentMethod::where('estado', 'ACTIVO')->get();

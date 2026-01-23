@@ -42,7 +42,7 @@ class OrderValidation
         if ($petty_cash_book === null) {
             throw new Exception('PERTENCES A MÁS DE UNA CAJA');
         }
-        if($petty_cash_book === false){
+        if ($petty_cash_book === false) {
             throw new Exception('DEBES PERTENECER A UNA CAJA ABIERTA!!!');
         }
 
@@ -126,7 +126,12 @@ class OrderValidation
     public function validationStore(array $data): array
     {
         $user               =   Auth::user();
-        $petty_cash_book    =   $this->s_cash_book->getCashBookUser($user->id);
+
+        if (!$user->hasRole('MESERO')) {
+            throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
+        }
+
+        $petty_cash_book    =   $this->s_cash_book->getCashBookWaiter($user->id);
         if (!$petty_cash_book) {
             throw new Exception('DEBES PERTENECER A UNA CAJA ABIERTA!!!');
         }
