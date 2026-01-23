@@ -96,7 +96,11 @@ class RoleController extends Controller
         DB::connection('tenant')->beginTransaction();
         try {
             $lstPermisosAsignados   =   json_decode($request->get('lstPermisosAsignados'));
-            $rol                =   Role::find($id);
+
+            $rol_name_preview   =   null;
+
+            $rol                =   Role::findOrFail($id);
+            $rol_name_preview   =   $rol->name;
             $rol->setConnection('tenant');
             $rol->name          =   mb_strtoupper(trim($request->get('nombre')), 'UTF-8');
             $rol->guard_name    =   'web';
@@ -116,9 +120,7 @@ class RoleController extends Controller
 
             app(PermissionRegistrar::class)->forgetCachedPermissions();
             $tenantId = Tenant::current()?->id ?? 'landlord';
-            $user = auth()->user()->load('roles');
-            $roleNames = $user->roles->pluck('name')->implode('_');
-            dd(Cache::get("menu_{$tenantId}_{$roleNames}"));
+            dd(Cache::get("menu_{$tenantId}_{$rol_name_preview}"));
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'ROL ACTUALIZADO CON ÉXITO']);
