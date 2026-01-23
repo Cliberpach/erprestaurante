@@ -82,6 +82,8 @@ class RoleController extends Controller
             }
 
             app(PermissionRegistrar::class)->forgetCachedPermissions();
+            $tenantId = Tenant::current()?->id ?? 'landlord';
+            Cache::forget("menu_{$tenantId}_{$rol->name}");
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'ROL REGISTRADO CON ÉXITO']);

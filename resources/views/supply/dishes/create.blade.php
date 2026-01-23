@@ -4,6 +4,10 @@
     Platos
 @endsection
 
+@push('js-head')
+    @vite(['resources/js/libs/filepond.js'])
+@endpush
+
 @section('content')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">

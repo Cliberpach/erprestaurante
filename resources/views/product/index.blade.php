@@ -353,14 +353,7 @@
 
             message = `Desea eliminar el producto: ${row.name}`;
 
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success",
-                    cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-            swalWithBootstrapButtons.fire({
+            Swal.fire({
                 title: message,
                 text: "Operación no reversible!",
                 icon: "warning",
@@ -411,7 +404,7 @@
                     /* Read more about handling dismissals below */
                     result.dismiss === Swal.DismissReason.cancel
                 ) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: "Operación cancelada",
                         text: "No se realizaron acciones",
                         icon: "error"
