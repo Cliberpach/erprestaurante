@@ -118,7 +118,7 @@ class RoleController extends Controller
 
             app(PermissionRegistrar::class)->forgetCachedPermissions();
             $tenantId = Tenant::current()?->id ?? 'landlord';
-            $user = auth()->user();
+            $user = auth()->user()->load('roles');
             $roleNames = $user->roles->pluck('name')->implode('_');
             Cache::forget("menu_{$tenantId}_{$roleNames}");
 
