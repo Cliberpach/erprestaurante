@@ -26,8 +26,8 @@ return new class extends Migration
             $table->date('date');
             $table->string('place')->default('LOCAL');
             $table->string('observation', 500)->nullable();
-            $table->unsignedInteger('n_attempts_dishes');
-            $table->unsignedInteger('n_attempts_products');
+            $table->unsignedInteger('n_attempts_dishes')->nullable();
+            $table->unsignedInteger('n_attempts_products')->nullable();
 
             $table->decimal('total', 16, 6)->unsigned();
             $table->decimal('subtotal', 16, 6)->unsigned();
