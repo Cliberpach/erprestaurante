@@ -62,6 +62,10 @@ class ProductStoreRequest extends FormRequest
             'brand_id' => [
                 'required',
                 Rule::exists('brands', 'id')->where('status', 'ACTIVE')
+            ],
+            'unit_id' => [
+                'required',
+                Rule::exists('landlord.general_table_details', 'id')->where('status', 'ACTIVO')
             ]
         ];
     }
@@ -112,6 +116,9 @@ class ProductStoreRequest extends FormRequest
 
             'brand_id.required' => 'La marca es obligatoria.',
             'brand_id.exists' => 'La marca seleccionada no es válida.',
+
+            'unit_id.required' => 'La unidad es obligatoria.',
+            'unit_id.exists' => 'La unidad seleccionada no es válida.',
         ];
     }
 
