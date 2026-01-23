@@ -4,6 +4,10 @@
     Pedidos
 @endsection
 
+@push('js-head')
+    @vite(['resources/js/libs/filepond.js'])
+@endpush
+
 @section('content')
     @include('orders.modals.mdl_dishes')
     @include('orders.modals.mdl_products')

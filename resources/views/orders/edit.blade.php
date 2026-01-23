@@ -4,6 +4,10 @@
     Pedidos
 @endsection
 
+@push('js-head')
+    @vite(['resources/js/libs/filepond.js'])
+@endpush
+
 @section('content')
     @include('orders.modals.mdl_dishes')
     @include('orders.modals.mdl_products')
@@ -58,7 +62,7 @@
             customerFormatted: @json($customer_formatted),
             companyIgv: @json($igv),
             tableId: @json($table->id),
-            lstDetail:@json($lst_detail),
+            lstDetail: @json($lst_detail),
             init() {
                 eventsMdlDishes();
                 eventsMdlProductos();
