@@ -125,10 +125,9 @@ class PettyCashBookRepository
             ->where('pcs.user_id', $user_id)
             ->where('pcb.status', 'ABIERTO')
             ->whereNull('pcb.final_date')
-            ->where('pcb.user_id', $user_id)
             ->orderBy('pcb.id', 'ASC')
             ->first();
-        dd($cash_book);
+
         return $cash_book;
     }
 
