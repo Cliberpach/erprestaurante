@@ -83,8 +83,15 @@ class OrderValidation
         $categories         =   Category::all();
         $brands             =   Brand::all();
         $types_dish         =   UtilController::getTypesDish();
+
         $user               =   Auth::user();
-        $petty_cash_book    =   $this->s_cash_book->getCashBookUser($user->id);
+        if (!$user->hasRole('MESERO')) {
+            throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
+        }
+
+        $petty_cash_book    =   $this->s_cash_book->getCashBookWaiter($user->id);
+
+
         $igv                =   round(Company::find(1)->igv, 2);
         $customer_formatted =   FormatController::getFormatInitialCustomer($order->customer_id);
 
