@@ -253,7 +253,7 @@
                     </div>
                     <div class="text-end">
                         <button type="submit" class="btn btn-outline-primary me-1">Registrar</button>
-                        <a href="{{ route('landlord.mantenimiento.empresa.index') }}"
+                        <a href="{{ route('landlord.mantenimiento.empresas.index') }}"
                             class="btn btn-outline-secondary me-1">Regresar</a>
                     </div>
                 </div>
@@ -573,7 +573,7 @@
                         const res = await axios.post(route('landlord.mantenimiento.empresas.store'), formData);
                         if (res.data.success) {
                             toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
-                            redirect("landlord.mantenimiento.empresa.index");
+                            redirect("landlord.mantenimiento.empresas.index");
                         } else {
                             toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
                             Swal.close();
