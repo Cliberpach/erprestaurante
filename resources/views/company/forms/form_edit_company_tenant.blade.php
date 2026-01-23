@@ -1,4 +1,4 @@
-<form id="formEditCompanyTenant" action="{{ route('tenant.mantenimiento.empresa.update', $company->id) }}" method="POST"
+<form id="formEditCompanyTenant" action="{{ route('tenant.mantenimiento.empresas.update', $company->id) }}" method="POST"
     enctype="multipart/form-data">
     @csrf
     @method('PUT')
@@ -136,7 +136,7 @@
         <button type="submit" class="btn btn-primary">
             <i class="fas fa-save me-1"></i> Guardar Cambios
         </button>
-        <a href="{{ route('tenant.mantenimiento.empresa') }}" class="btn btn-secondary">
+        <a href="{{ route('tenant.mantenimiento.empresas.index') }}" class="btn btn-secondary">
             <i class="fas fa-times me-1"></i> Cancelar
         </a>
     </div>
