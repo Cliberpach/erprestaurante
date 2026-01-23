@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders\Landlord;
+namespace Database\Seeders\landlord;
 
 use App\Models\Landlord\Maintenance\Position;
 use Illuminate\Database\Seeder;

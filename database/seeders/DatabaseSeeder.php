@@ -17,7 +17,7 @@ use Database\Seeders\landlord\IdentityDocumentSeeder;
 use Database\Seeders\landlord\InvoiceTypeSeeder;
 use Database\Seeders\landlord\ModelSeeder;
 use Database\Seeders\landlord\ModuleSeeder;
-use Database\Seeders\Landlord\PositionSeeder as LandlordPositionSeeder;
+use Database\Seeders\landlord\PositionSeeder as LandlordPositionSeeder;
 use Database\Seeders\landlord\TypeIdentityDocumentSeeder;
 use Database\Seeders\landlord\YearSeeder;
 use Database\Seeders\tenant\CategorySeeder;
