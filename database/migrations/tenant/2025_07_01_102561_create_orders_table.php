@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('code', 20)->unique();
 
+            $table->unsignedBigInteger('table_id');
+            $table->foreign('table_id')->references('id')->on('tables');
+
             $table->unsignedBigInteger('customer_id');
             $table->string('customer_name', 160);
             $table->string('customer_type_document_abbreviation', 20);
@@ -36,7 +39,7 @@ return new class extends Migration
             $table->unsignedBigInteger('payref_id')->nullable()->comment('ID de la referencia de pago (payref)');
             $table->foreign('payref_id')->references('id')->on('payment_methods');
 
-            $table->string('payref_name',160)->nullable()->comment('Nombre de la referencia de pago (payref)');
+            $table->string('payref_name', 160)->nullable()->comment('Nombre de la referencia de pago (payref)');
             $table->longText('payref_img_url')->nullable()->comment('Imagen de la referencia de pago (payref)');
             $table->longText('payref_img_name')->nullable()->comment('Nombre de la imagen de la referencia de pago (payref)');
 
