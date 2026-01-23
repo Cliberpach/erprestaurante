@@ -138,7 +138,7 @@
                 const token                     =   document.querySelector('input[name="_token"]').value;
 
                 const formData                  =   new FormData(formNumeration);
-                const urlStoreNumeration        =   @json(route('tenant.mantenimientos.empresas.storeNumeration'));
+                const urlStoreNumeration        =   @json(route('tenant.mantenimiento.empresas.storeNumeration'));
 
                 const response  =   await fetch(urlStoreNumeration, {
                                         method: 'POST',
