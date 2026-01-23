@@ -126,7 +126,7 @@ class OrderValidation
     public function validationStore(array $data): array
     {
         $user               =   Auth::user();
-        dd($user);
+       
         if (!$user->hasRole('MESERO')) {
             throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
         }
