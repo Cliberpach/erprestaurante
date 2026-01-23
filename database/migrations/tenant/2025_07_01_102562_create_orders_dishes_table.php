@@ -41,6 +41,13 @@ return new class extends Migration
 
             $table->string('detail_printed', 5)->nullable();
 
+            /* 🔹 NUEVAS COLUMNAS */
+            $table->decimal('purchase_price', 16, 6)->unsigned();
+            $table->decimal('total', 16, 6);
+            $table->unsignedBigInteger('type_dish_id');
+            $table->string('type_dish_name', 160);
+            $table->unsignedBigInteger('programming_id');
+
             $table->primary(['order_id', 'dish_id'], 'pk_order_dish');
 
             /* 🔹 TIMESTAMPS */
