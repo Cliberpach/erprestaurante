@@ -12,6 +12,8 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Cache;
+use Spatie\Multitenancy\Models\Tenant;
 
 class RoleController extends Controller
 {
@@ -115,6 +117,10 @@ class RoleController extends Controller
             }
 
             app(PermissionRegistrar::class)->forgetCachedPermissions();
+            $tenantId = Tenant::current()?->id ?? 'landlord';
+            $user = auth()->user();
+            $roleNames = $user->roles->pluck('name')->implode('_');
+            Cache::forget("menu_{$tenantId}_{$roleNames}");
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'ROL ACTUALIZADO CON ÉXITO']);
