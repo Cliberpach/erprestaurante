@@ -326,7 +326,7 @@ class CompanyController extends Controller
 
         $this->createUserWithRole(
             'CAJERO 1',
-            'cajero@demo.com',
+            'cajero@gmail.com',
             '123456789',
             'CAJERO',
             2
@@ -334,7 +334,7 @@ class CompanyController extends Controller
         for ($i = 1; $i <= 20; $i++) {
             $this->createUserWithRole(
                 "MESERO {$i}",
-                "mesero{$i}@demo.com",
+                "mesero{$i}@gmail.com",
                 '123456789',
                 'MESERO',
                 3
@@ -342,20 +342,18 @@ class CompanyController extends Controller
         }
         $this->createUserWithRole(
             'CONTADOR',
-            'contador@demo.com',
+            'contador@gmail.com',
             '123456789',
             'CONTADOR',
             4
         );
         $this->createUserWithRole(
             'COCINERO',
-            'cocinero@demo.com',
+            'cocinero@gmail.com',
             '123456789',
             'COCINERO',
             5
         );
-
-
 
         DocumentSerialization::create([
             'company_id'        => $company->id,
