@@ -15,7 +15,7 @@ return new class extends Migration
 
             /* 🔹 PRIMARY KEY */
             $table->id();
-            $table->string('code', 20)->unique();
+            $table->string('code', 20)->unique()->nullable();
 
             $table->unsignedBigInteger('table_id');
             $table->foreign('table_id')->references('id')->on('tables');
