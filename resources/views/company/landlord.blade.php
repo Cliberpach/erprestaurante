@@ -40,7 +40,7 @@
     }
 
     function startDataTableCompanies() {
-        const urlGetCompanies = '{{ route('landlord.mantenimiento.getCompanies') }}';
+        const urlGetCompanies = '{{ route('landlord.mantenimiento.empresas.getCompanies') }}';
 
         dtCompaniesLandlord = new DataTable('#tbl_landlord_companies', {
             serverSide: true,
