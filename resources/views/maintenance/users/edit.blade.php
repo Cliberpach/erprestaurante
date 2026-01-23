@@ -48,7 +48,7 @@
         document.addEventListener('click', (e) => {
 
             if (e.target.closest('.btnVolver')) {
-                const rutaIndex = '{{ route('tenant.mantenimientos.usuario.index') }}';
+                const rutaIndex = '{{ route('tenant.mantenimiento.usuario.index') }}';
                 window.location.href = rutaIndex;
             }
 
@@ -203,7 +203,7 @@
                     const formData = new FormData(formActualizarUsuario);
                     const token = document.querySelector('input[name="_token"]').value;
                     const id = @json($user->id);
-                    let url = route('tenant.mantenimientos.usuario.update', {
+                    let url = route('tenant.mantenimiento.usuario.update', {
                         id
                     });
 
@@ -228,7 +228,7 @@
 
 
                     if (res.success) {
-                        const usuario_index = @json(route('tenant.mantenimientos.usuario.index'));
+                        const usuario_index = @json(route('tenant.mantenimiento.usuario.index'));
                         toastr.success(res.message, 'OPERACIÓN COMPLETADA');
                         window.location.href = usuario_index;
                     } else {

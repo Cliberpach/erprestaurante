@@ -44,7 +44,7 @@
     })
 
     function iniciarDataTableColaboradores() {
-        const urlGetColaboradores = '{{ route('tenant.mantenimientos.colaboradores.getColaboradores') }}';
+        const urlGetColaboradores = '{{ route('tenant.mantenimiento.colaboradores.getColaboradores') }}';
 
         dtColaboradores = new DataTable('#table_colaboradores', {
             serverSide: true,
@@ -118,11 +118,11 @@
                     data: null,
                     render: function(data, type, row) {
                         const baseUrlEdit =
-                            `{{ route('tenant.mantenimientos.colaboradores.edit', ['id' => ':id']) }}`;
+                            `{{ route('tenant.mantenimiento.colaboradores.edit', ['id' => ':id']) }}`;
                         urlEdit = baseUrlEdit.replace(':id', data.id);
 
                         const urlDelete =
-                            `{{ route('tenant.mantenimientos.colaboradores.destroy', ':id') }}`.replace(
+                            `{{ route('tenant.mantenimiento.colaboradores.destroy', ':id') }}`.replace(
                                 ':id', data.id);
 
                         return `
@@ -176,7 +176,7 @@
     }
 
     function goToCrearColaborador() {
-        window.location.href = @json(route('tenant.mantenimientos.colaboradores.create'));
+        window.location.href = @json(route('tenant.mantenimiento.colaboradores.create'));
     }
 
 
@@ -246,7 +246,7 @@
 
                 try {
                     let urlDeleteColaborador =
-                        `{{ route('tenant.mantenimientos.colaboradores.destroy', ['id' => ':id']) }}`;
+                        `{{ route('tenant.mantenimiento.colaboradores.destroy', ['id' => ':id']) }}`;
                     urlDeleteColaborador = urlDeleteColaborador.replace(':id', id);
                     const token = document.querySelector('input[name="_token"]').value;
 

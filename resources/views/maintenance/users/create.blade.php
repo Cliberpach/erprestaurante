@@ -46,7 +46,7 @@
             document.addEventListener('click', (e) => {
 
                 if (e.target.closest('.btnVolver')) {
-                    const rutaIndex = '{{ route('tenant.mantenimientos.usuario.index') }}';
+                    const rutaIndex = '{{ route('tenant.mantenimiento.usuario.index') }}';
                     window.location.href = rutaIndex;
                 }
 
@@ -187,7 +187,7 @@
                     const token = document.querySelector('input[name="_token"]').value;
                     const formRegistrarUsuario = document.querySelector('#formRegistrarUsuario');
                     const formData = new FormData(formRegistrarUsuario);
-                    const urlRegistrarUsuario = @json(route('tenant.mantenimientos.usuario.store'));
+                    const urlRegistrarUsuario = @json(route('tenant.mantenimiento.usuario.store'));
 
                     Swal.fire({
                         title: 'Cargando...',
@@ -219,7 +219,7 @@
 
 
                         if (res.success) {
-                            const usuario_index = @json(route('tenant.mantenimientos.usuario.index'));
+                            const usuario_index = @json(route('tenant.mantenimiento.usuario.index'));
                             toastr.success(res.message, 'OPERACIÓN COMPLETADA');
                             window.location.href = usuario_index;
                         } else {

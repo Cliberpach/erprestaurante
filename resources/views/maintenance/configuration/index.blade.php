@@ -70,7 +70,7 @@
                 try {
                     const token = document.querySelector('input[name="_token"]').value;
                     const formData = new FormData(formConfiguration);
-                    const urlSaveConfiguration = @json(route('tenant.mantenimientos.configuracion.store'));
+                    const urlSaveConfiguration = @json(route('tenant.mantenimiento.configuracion.store'));
 
 
                     const response = await fetch(urlSaveConfiguration, {

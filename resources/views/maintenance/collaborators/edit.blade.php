@@ -54,7 +54,7 @@
 
         document.addEventListener('click', (e) => {
             if (e.target.closest('.btnVolver')) {
-                const rutaIndex = '{{ route('tenant.mantenimientos.colaboradores.index') }}';
+                const rutaIndex = '{{ route('tenant.mantenimiento.colaboradores.index') }}';
                 window.location.href = rutaIndex;
             }
         })
@@ -251,7 +251,7 @@
                 try {
 
                     const id = @json($colaborador->id);
-                    const url = route('tenant.mantenimientos.colaboradores.update', {
+                    const url = route('tenant.mantenimiento.colaboradores.update', {
                         id
                     });
 
@@ -275,7 +275,7 @@
                     }
 
                     if (res.success) {
-                        const colaborador_index = @json(route('tenant.mantenimientos.colaboradores.index'));
+                        const colaborador_index = @json(route('tenant.mantenimiento.colaboradores.index'));
                         toastr.success(res.message, 'OPERACIÓN COMPLETADA');
                         window.location.href = colaborador_index;
                     } else {
@@ -327,7 +327,7 @@
         mostrarAnimacion1();
         try {
             const token = document.querySelector('input[name="_token"]').value;
-            const url = route('tenant.mantenimientos.colaboradores.searchDocument', {
+            const url = route('tenant.mantenimiento.colaboradores.searchDocument', {
                 document_number: dni
             });
 

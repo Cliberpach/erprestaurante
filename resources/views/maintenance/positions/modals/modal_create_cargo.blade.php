@@ -61,7 +61,7 @@
             const token                     =   document.querySelector('input[name="_token"]').value;
             const formRegistrarCargo        =   document.querySelector('#formRegistrarCargo');
             const formData                  =   new FormData(formRegistrarCargo);
-            const urlRegistrarCargo         =   @json(route('tenant.mantenimientos.cargos.store'));
+            const urlRegistrarCargo         =   @json(route('tenant.mantenimiento.cargos.store'));
 
             Swal.fire({
                 title: 'Cargando...',

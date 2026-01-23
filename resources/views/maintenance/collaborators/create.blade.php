@@ -56,7 +56,7 @@
 
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.btnVolver')) {
-                    const rutaIndex = '{{ route('tenant.mantenimientos.colaboradores.index') }}';
+                    const rutaIndex = '{{ route('tenant.mantenimiento.colaboradores.index') }}';
                     window.location.href = rutaIndex;
                 }
             })
@@ -247,7 +247,7 @@
                     const token = document.querySelector('input[name="_token"]').value;
                     const formRegistrarColaborador = document.querySelector('#formRegistrarColaborador');
                     const formData = new FormData(formRegistrarColaborador);
-                    const urlRegistrarUsuario = @json(route('tenant.mantenimientos.colaboradores.store'));
+                    const urlRegistrarUsuario = @json(route('tenant.mantenimiento.colaboradores.store'));
 
                     Swal.fire({
                         title: 'Cargando...',
@@ -280,7 +280,7 @@
                         }
 
                         if (res.success) {
-                            const colaborador_index = @json(route('tenant.mantenimientos.colaboradores.index'));
+                            const colaborador_index = @json(route('tenant.mantenimiento.colaboradores.index'));
                             toastr.success(res.message, 'OPERACIÓN COMPLETADA');
                             window.location.href = colaborador_index;
                         } else {
@@ -333,7 +333,7 @@
             mostrarAnimacion1();
             try {
                 const token = document.querySelector('input[name="_token"]').value;
-                const url = route('tenant.mantenimientos.colaboradores.searchDocument', {
+                const url = route('tenant.mantenimiento.colaboradores.searchDocument', {
                     document_number: dni
                 });
 

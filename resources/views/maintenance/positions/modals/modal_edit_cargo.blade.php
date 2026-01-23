@@ -72,7 +72,7 @@
             const token                     =   document.querySelector('input[name="_token"]').value;
             const formActualizarCargo       =   document.querySelector('#formActualizarCargo');
             const formData                  =   new FormData(formActualizarCargo);
-            let urlUpdateCargo              =   `{{ route('tenant.mantenimientos.cargos.update', ['id' => ':id']) }}`;
+            let urlUpdateCargo              =   `{{ route('tenant.mantenimiento.cargos.update', ['id' => ':id']) }}`;
             urlUpdateCargo                  =   urlUpdateCargo.replace(':id', rowEditar.id);
 
             Swal.fire({

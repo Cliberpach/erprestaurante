@@ -36,7 +36,7 @@
         })
 
         function iniciarDataTableUsuarios() {
-            const urlGetUsuarios = '{{ route('tenant.mantenimientos.usuario.getAll') }}';
+            const urlGetUsuarios = '{{ route('tenant.mantenimiento.usuario.getAll') }}';
 
             dtUsuarios = new DataTable('#table_usuarios', {
                 serverSide: true,
@@ -82,10 +82,10 @@
                         data: null,
                         render: function(data, type, row) {
                             const baseUrlEdit =
-                                `{{ route('tenant.mantenimientos.usuario.edit', ['id' => ':id']) }}`;
+                                `{{ route('tenant.mantenimiento.usuario.edit', ['id' => ':id']) }}`;
                             urlEdit = baseUrlEdit.replace(':id', data.id);
 
-                            const urlDelete = `{{ route('tenant.mantenimientos.usuario.destroy', ':id') }}`
+                            const urlDelete = `{{ route('tenant.mantenimiento.usuario.destroy', ':id') }}`
                                 .replace(':id', data.id);
 
                             return `
@@ -139,7 +139,7 @@
         }
 
         function goToCrearUsuario() {
-            window.location.href = @json(route('tenant.mantenimientos.usuario.create'));
+            window.location.href = @json(route('tenant.mantenimiento.usuario.create'));
         }
 
         function eliminarUsuario(id) {
@@ -170,7 +170,7 @@
                     });
 
                     try {
-                        let url = `{{ route('tenant.mantenimientos.usuario.destroy', ['id' => ':id']) }}`;
+                        let url = `{{ route('tenant.mantenimiento.usuario.destroy', ['id' => ':id']) }}`;
                         url = url.replace(':id', id);
                         const token = document.querySelector('input[name="_token"]').value;
 
