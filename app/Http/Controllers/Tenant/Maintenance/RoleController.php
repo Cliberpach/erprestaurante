@@ -67,6 +67,7 @@ class RoleController extends Controller
             $rol                =   new Role();
             $rol->setConnection('tenant');
             $rol->name          =   mb_strtoupper(trim($request->get('nombre')), 'UTF-8');
+            $rol->guard_name    =   'web';
             $rol->save();
 
             //======== INSERTANDO PERMISOS =========
@@ -92,9 +93,10 @@ class RoleController extends Controller
 
             $lstPermisosAsignados   =   json_decode($request->get('lstPermisosAsignados'));
 
-            $rol        =   Role::find($id);
+            $rol                =   Role::find($id);
             $rol->setConnection('tenant');
-            $rol->name  =   mb_strtoupper(trim($request->get('nombre')), 'UTF-8');
+            $rol->name          =   mb_strtoupper(trim($request->get('nombre')), 'UTF-8');
+            $rol->guard_name    =   'web';
             $rol->update();
 
             //======== ELIMINANDO PERMISOS PREVIOS ====
