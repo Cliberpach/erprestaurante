@@ -104,7 +104,12 @@ array:12 [ // app\Http\Controllers\Tenant\ProductController.php:74
             return response()->json(['success' => true, 'message' => 'PRODUCTO REGISTRADO CON ÉXITO', 'product' => $product]);
         } catch (Throwable $th) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $th->getMessage(), 'line' => $th->getLine()]);
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ]);
         }
     }
 
