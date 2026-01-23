@@ -21,8 +21,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        
-        
+
+
     ];
 
     /**
@@ -32,6 +32,7 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
+            \App\Http\Middleware\SetDatabaseMiddleware::class,
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -72,8 +73,8 @@ class Kernel extends HttpKernel
 
 protected $routeMiddleware = [
     // Otros middlewares...
-    'validar.plan'      => \App\Http\Middleware\PlanMiddleware::class, 
-    'verificar.caja'    => \App\Http\Middleware\VerificarCajaAbierta::class, // Asegúrate de agregar esta línea
+    'validar.plan'      => \App\Http\Middleware\PlanMiddleware::class,
+    //'verificar.caja'    => \App\Http\Middleware\VerificarCajaAbierta::class, // Asegúrate de agregar esta línea
 ];
 
 }

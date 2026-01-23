@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Multitenancy\Models\Tenant;
 
-class AppServiceProvider extends ServiceProvider
+class ViewServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -19,11 +19,35 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    public function boot(): void
-    {   
-        /*if (!$this->app->runningInConsole() || $this->app->runningUnitTests()) {
+    public function boot()
+    {
+        View::composer('*', function ($view) {
+            $base = Tenant::checkCurrent() ? 'tenant' : 'landlord';
+            $tenantId = Tenant::current()?->id ?? 'landlord';
+
+            $modules = Cache::remember(
+                "modules_menu_{$tenantId}_{$base}",
+                now()->addHours(6),
+                fn() => Module::where('show', $base)
+                    ->with([
+                        'children' => fn($q) => $q->where('show', $base),
+                        'children.grandchildren' => fn($q) => $q->where('show', $base),
+                    ])
+                    ->get()
+            );
+
+            $view->with('modules', $modules);
+            $view->with('base', $base . '.');
+            $view->with('lst_search_modules', $this->getLstSearchModules($base));
+        });
+    }
+
+
+    public function ___boot(): void
+    {
+        if (!$this->app->runningInConsole() || $this->app->runningUnitTests()) {
             $this->bootForHttpRequests();
-        }*/
+        }
     }
 
     public function bootForHttpRequests(): void

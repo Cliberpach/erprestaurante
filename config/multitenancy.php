@@ -39,6 +39,7 @@ return [
         // \Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
         Spatie\Multitenancy\Tasks\SwitchTenantDatabaseTask::class,
         \App\Tasks\SwitchAuthTask::class,
+        \App\Tasks\SwitchLandlordDatabaseTask::class,
     ],
 
     /*
