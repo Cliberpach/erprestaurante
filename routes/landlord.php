@@ -13,7 +13,7 @@ Route::get('/', function () {
 Route::middleware(['auth:web', 'verified'])->group(function () {
 
     Route::get('/dashboard', function () {
-        return redirect()->route('landlord.mantenimiento.empresa.index');
+        return redirect()->route('landlord.mantenimiento.empresas.index');
     });
     //Route::get('/dashboard', [ModuleController::class, 'home'])->name('landlord.home');
 
