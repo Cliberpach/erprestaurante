@@ -120,7 +120,7 @@ class RoleController extends Controller
             $tenantId = Tenant::current()?->id ?? 'landlord';
             $user = auth()->user()->load('roles');
             $roleNames = $user->roles->pluck('name')->implode('_');
-            Cache::forget("menu_{$tenantId}_{$roleNames}");
+            dd(Cache::get("menu_{$tenantId}_{$roleNames}"));
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'ROL ACTUALIZADO CON ÉXITO']);

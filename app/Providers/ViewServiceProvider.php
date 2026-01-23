@@ -29,7 +29,6 @@ class ViewServiceProvider extends ServiceProvider
             }
 
             $user = auth()->user();
-            dd('a');
             $menu = app(\App\Services\MenuService::class)->getMenuForUser($user);
 
             $view->with('modules', $menu);
