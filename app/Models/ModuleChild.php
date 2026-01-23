@@ -9,15 +9,22 @@ class ModuleChild extends Model
 {
     use HasFactory;
 
-    protected $table ="module_children";
+    protected $table = "module_children";
 
     protected $guarded = [''];
 
-    public function parent() {
+    public function parent()
+    {
         return $this->belongsTo(Module::class, 'module_id');
     }
 
-    public function grandchildren() {
+    public function grandchildren()
+    {
         return $this->hasMany(ModuleGrandChild::class, 'module_child_id');
+    }
+
+    public function permissionName(): ?string
+    {
+        return $this->route_name;
     }
 }

@@ -32,6 +32,7 @@ use App\Models\Tenant\Maintenance\Company\Module as CompanyModule;
 use App\Models\Tenant\Maintenance\Company\ModuleChild as CompanyModuleChild;
 use App\Models\Tenant\Maintenance\Company\ModuleGrandChild as CompanyModuleGrandChild;
 use App\Models\Tenant\Maintenance\Company\Plan as CompanyPlan;
+use App\Services\TenantPermissionCloner;
 
 class CompanyController extends Controller
 {
@@ -44,6 +45,7 @@ class CompanyController extends Controller
     private $children;
     private $grand_children;
     private $plan;
+
 
     public function index()
     {
@@ -201,9 +203,10 @@ class CompanyController extends Controller
             $child_array        = $request->child_id;
             $grandchild_array   = $request->grandchild_id;
 
+
             $this->modules          =   Module::whereIn('id', $module_array)->get();
             $this->children         =   ModuleChild::whereIn('id', $child_array)->get();
-            $this->grand_children   =   ModuleGrandChild::whereIn('id', $grandchild_array)->get();
+            //$this->grand_children   =   ModuleGrandChild::whereIn('id', $grandchild_array)->get();
             $this->plan             =   Plan::findOrFail($company->plan);
 
             DB::connection('landlord')->commit();
@@ -292,6 +295,8 @@ class CompanyController extends Controller
             'api_password_gre'     => 'test-Hty/M6QshYvPgItX2P0+Kw==',
         ]);
 
+        //======== CLONAR ROLES Y PERMISOS ============
+        app(TenantPermissionCloner::class)->clone();
 
         //========= CREANDO USUARIO PARA EL TENANT ========
         $collaborator                               =   new Collaborator();
@@ -318,6 +323,39 @@ class CompanyController extends Controller
 
         $role = Role::where('name', 'admin')->first();
         $user->assignRole($role);
+
+        $this->createUserWithRole(
+            'CAJERO 1',
+            'cajero@demo.com',
+            '123456789',
+            'CAJERO',
+            2
+        );
+        for ($i = 1; $i <= 20; $i++) {
+            $this->createUserWithRole(
+                "MESERO {$i}",
+                "mesero{$i}@demo.com",
+                '123456789',
+                'MESERO',
+                3
+            );
+        }
+        $this->createUserWithRole(
+            'CONTADOR',
+            'contador@demo.com',
+            '123456789',
+            'CONTADOR',
+            4
+        );
+        $this->createUserWithRole(
+            'COCINERO',
+            'cocinero@demo.com',
+            '123456789',
+            'COCINERO',
+            5
+        );
+
+
 
         DocumentSerialization::create([
             'company_id'        => $company->id,
@@ -350,7 +388,7 @@ class CompanyController extends Controller
             ]);
         }
 
-        foreach ($this->grand_children as $grand_children) {
+        /*foreach ($this->grand_children as $grand_children) {
             CompanyModuleGrandChild::create([
                 'id' => $grand_children->id,
                 'module_child_id' => $grand_children->module_child_id,
@@ -358,7 +396,7 @@ class CompanyController extends Controller
                 'route_name' => $grand_children->route_name,
                 'order' => $grand_children->order,
             ]);
-        }
+        }*/
 
         CompanyPlan::create([
             'id' => $this->plan->id,
@@ -366,6 +404,39 @@ class CompanyController extends Controller
             'number_fields' => $this->plan->number_fields,
             'price' => $this->plan->price,
         ]);
+    }
+
+    public function createUserWithRole(
+        string $name,
+        string $email,
+        string $password,
+        string $roleName,
+        int $positionId
+    ): void {
+        $collaborator = new Collaborator();
+        $collaborator->full_name                  = $name;
+        $collaborator->document_type_id           = 1;
+        $collaborator->document_number            = rand(70000000, 79999999);
+        $collaborator->address                    = 'DIRECCION DEMO';
+        $collaborator->phone                      = '9' . rand(10000000, 99999999);
+        $collaborator->work_days                  = 30;
+        $collaborator->rest_days                  = 20;
+        $collaborator->monthly_salary             = 1500;
+        $collaborator->daily_salary               = 50;
+        $collaborator->position_id                = $positionId;
+        $collaborator->document_type_abbreviation = 'DNI';
+        $collaborator->save();
+
+        $user = new User();
+        $user->name             = strtoupper($name);
+        $user->email            = $email;
+        $user->password         = Hash::make($password);
+        $user->password_visible = $password;
+        $user->collaborator_id  = $collaborator->id;
+        $user->save();
+
+        $role = Role::where('name', $roleName)->firstOrFail();
+        $user->assignRole($role);
     }
 
     /*

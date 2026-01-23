@@ -85,7 +85,7 @@
 
 
     function descargarFormatoExcel() {
-        const ruta = @json(route('tenant.inventarios.productos.producto.get-format-excel'));
+        const ruta = @json(route('tenant.inventario.productos.get-format-excel'));
         console.log(ruta);
         window.location.href = ruta;
     }
@@ -121,7 +121,7 @@
                 const token = document.querySelector('input[name="_token"]').value;
                 const formImportarProductos = document.querySelector('#formImportarProductos');
                 const formData = new FormData(formImportarProductos);
-                const url = @json(route('tenant.inventarios.productos.producto.import-excel'));
+                const url = @json(route('tenant.inventario.productos.import-excel'));
 
                 formData.append('productos_import_excel', inputImportExcelProductos.files[0]);
 
@@ -204,7 +204,7 @@
                             <td>${lc.codigo_interno}</td>
                             <td>${lc.categoria}</td>
                             <td>${lc.marca}</td>
-                           
+
                             <td>${lc.precio_venta}</td>
                             <td>${lc.precio_compra}</td>
                             <td>${lc.stock_minimo}</td>

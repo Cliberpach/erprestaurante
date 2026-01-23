@@ -50,7 +50,7 @@
     }
 
     function updatePaymentMethod(){
-        
+
         const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: "btn btn-success",
@@ -73,7 +73,7 @@
             const token                     =   document.querySelector('input[name="_token"]').value;
             const formUpdatePaymentMethod   =   document.querySelector('#formUpdatePaymentMethod');
             const formData                  =   new FormData(formUpdatePaymentMethod);
-            let urlUpdatePaymentMethod      =   `{{ route('tenant.ventas.metodo_pago.update', ['id' => ':id']) }}`;
+            let urlUpdatePaymentMethod      =   `{{ route('tenant.ventas.metodos_pago.update', ['id' => ':id']) }}`;
             urlUpdatePaymentMethod          =   urlUpdatePaymentMethod.replace(':id', rowEditar.id);
 
             Swal.fire({
@@ -81,7 +81,7 @@
                 html: 'Actualizando método de pago...',
                 allowOutsideClick: false,
                 didOpen: () => {
-                    Swal.showLoading(); 
+                    Swal.showLoading();
                 }
             });
 
@@ -90,15 +90,15 @@
                                         method: 'POST',
                                         headers: {
                                             'X-CSRF-TOKEN': token,
-                                            'X-HTTP-Method-Override': 'PUT' 
+                                            'X-HTTP-Method-Override': 'PUT'
                                         },
                                         body: formData
                                     });
 
                 const   res =   await response.json();
-                
+
                 console.log(res);
-                
+
                 if(response.status === 422){
                     if('errors' in res){
                         paintValidationErrors(res.errors,'error');
@@ -106,7 +106,7 @@
                     Swal.close();
                     return;
                 }
-                
+
                 if(res.success){
                     dtPaymentMethods.draw();
                     $('#mdlEditPaymentMethod').modal('hide');
@@ -121,7 +121,7 @@
                 toastr.error(error,'ERROR EN LA PETICIÓN ACTUALIZAR MÉTODO DE PAGO');
                 Swal.close();
             }
-          
+
 
         } else if (result.dismiss === Swal.DismissReason.cancel) {
             swalWithBootstrapButtons.fire({

@@ -9,7 +9,7 @@
 
 @section('content')
     <div class="row">
-        <form id="form-empresa-store" action="{{ route('landlord.mantenimientos.empresas.store') }}" method="POST"
+        <form id="form-empresa-store" action="{{ route('landlord.mantenimiento.empresas.store') }}" method="POST"
             enctype="multipart/form-data">
             @csrf
             <div class="nav-align-top mb-4">
@@ -253,7 +253,7 @@
                     </div>
                     <div class="text-end">
                         <button type="submit" class="btn btn-outline-primary me-1">Registrar</button>
-                        <a href="{{ route('landlord.mantenimientos.empresa') }}"
+                        <a href="{{ route('landlord.mantenimiento.empresa.index') }}"
                             class="btn btn-outline-secondary me-1">Regresar</a>
                     </div>
                 </div>
@@ -472,7 +472,7 @@
         $("#frm_plan").on("submit", function(e) {
             e.preventDefault();
             $.ajax({
-                url: '{{ route('landlord.mantenimientos.planes.store') }}',
+                url: '{{ route('landlord.mantenimiento.planes.store') }}',
                 method: 'POST',
                 dataType: 'json',
                 data: new FormData($("#frm_plan")[0]),
@@ -570,10 +570,10 @@
                         });
 
                         const formData = new FormData(formCompanyStore);
-                        const res = await axios.post(route('landlord.mantenimientos.empresas.store'), formData);
+                        const res = await axios.post(route('landlord.mantenimiento.empresas.store'), formData);
                         if (res.data.success) {
                             toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
-                            redirect("landlord.mantenimientos.empresa");
+                            redirect("landlord.mantenimiento.empresa.index");
                         } else {
                             toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
                             Swal.close();

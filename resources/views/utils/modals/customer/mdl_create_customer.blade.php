@@ -139,7 +139,7 @@
         try {
             const token = document.querySelector('input[name="_token"]').value;
             const urlConsultDocument =
-                `{{ route('tenant.ventas.cliente.consult_document') }}?type_identity_document=${encodeURIComponent(type_identity_document)}&nro_document=${encodeURIComponent(nro_document)}`;
+                `{{ route('tenant.ventas.clientes.consult_document') }}?type_identity_document=${encodeURIComponent(type_identity_document)}&nro_document=${encodeURIComponent(nro_document)}`;
 
             const response = await fetch(urlConsultDocument, {
                 method: 'GET',
@@ -326,7 +326,7 @@
                 const token = document.querySelector('input[name="_token"]').value;
                 const formStoreCustomer = document.querySelector('#formStoreCustomer');
                 const formData = new FormData(formStoreCustomer);
-                const urlStoreCustomer = @json(route('tenant.ventas.cliente.store'));
+                const urlStoreCustomer = @json(route('tenant.ventas.clientes.store'));
 
                 Swal.fire({
                     title: 'Cargando...',

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders\landlord;
+namespace Database\Seeders\Landlord;
 
 use Illuminate\Database\Seeder;
 use App\Models\Module;
@@ -9,417 +9,225 @@ use App\Models\ModuleGrandChild;
 
 class ModuleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Caja
-        $petty_cash = Module::create([
-            'description' => 'Cajas',
-            'order' => '1'
-        ]);
+        $this->seedCaja();
+        $this->seedVentas();
+        $this->seedAbastecimiento();
+        $this->seedCuentas();
+        $this->seedInventario();
+        $this->seedMostradorMesero();
+        $this->seedCompras();
+        $this->seedReportes();
+        $this->seedMantenimiento();
+        $this->seedConsultas();
+    }
 
-        ModuleChild::create([
-            'module_id' => $petty_cash->id,
+    /* =========================
+        Helpers
+    ========================== */
+
+    private function createModule(string $description, int $order = 1, ?string $show = null): Module
+    {
+        return Module::create(compact('description', 'order', 'show'));
+    }
+
+    private function createChild(Module $module, array $data): ModuleChild
+    {
+        return ModuleChild::create(array_merge([
+            'module_id' => $module->id,
+            'order' => 2,
+        ], $data));
+    }
+
+    private function createGrandChild(ModuleChild $child, array $data): void
+    {
+        ModuleGrandChild::create(array_merge([
+            'module_child_id' => $child->id,
+            'order' => 3,
+        ], $data));
+    }
+
+    /* =========================
+        Seeds por módulo
+    ========================== */
+
+    private function seedCaja(): void
+    {
+        $module = $this->createModule('Cajas');
+
+        $this->createChild($module, [
             'description' => 'Caja',
-            'route_name' => 'cajas.caja',
-            'order' => '2'
+            'route_name' => 'cajas.cajas.index',
         ]);
 
-        ModuleChild::create([
-            'module_id' => $petty_cash->id,
+        $this->createChild($module, [
             'description' => 'Apertura/Cierre',
-            'route_name' => 'movimientos_caja.apertura_cierre',
-            'order' => '2'
+            'route_name' => 'cajas.apertura_cierre.index',
         ]);
 
-        ModuleChild::create([
-            'module_id' => $petty_cash->id,
+        $this->createChild($module, [
             'description' => 'Egresos',
-            'route_name' => 'cajas.egreso',
-            'order' => '2'
+            'route_name' => 'cajas.egresos.index',
+        ]);
+    }
+
+    private function seedVentas(): void
+    {
+        $module = $this->createModule('Ventas');
+
+        $this->createChild($module, [
+            'description' => 'Comprobante Venta',
+            'route_name' => 'ventas.comprobante_venta.index',
         ]);
 
-
-        // Taller
-        /*$taller = Module::create([
-            'description' => 'Taller',
-            'order' => '1'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $taller->id,
-            'description'   => 'Cotizaciones',
-            'route_name'    => 'taller.cotizaciones.index',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $taller->id,
-            'description'   => 'Ordenes Trabajo',
-            'route_name'    => 'taller.ordenes_trabajo.index',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $taller->id,
-            'description'   => 'Servicios',
-            'route_name'    => 'taller.servicios.index',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $taller->id,
-            'description'   => 'Colores',
-            'route_name'    => 'taller.colores.index',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $taller->id,
-            'description'   => 'Años',
-            'route_name'    => 'taller.years.index',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $taller->id,
-            'description'   => 'Marcas',
-            'route_name'    => 'taller.marcas.index',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $taller->id,
-            'description'   => 'Modelos',
-            'route_name'    => 'taller.modelos.index',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $taller->id,
-            'description'   => 'Vehiculos',
-            'route_name'    => 'taller.vehiculos.index',
-            'order'         => '2'
-        ]);*/
-
-        // Ventas
-        $sale = Module::create([
-            'description' => 'Ventas',
-            'order' => '1'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $sale->id,
-            'description'   => 'Comprobante Venta',
-            'route_name'    => 'ventas.comprobante_venta',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $sale->id,
+        $this->createChild($module, [
             'description' => 'Clientes',
-            'route_name' => 'ventas.cliente',
-            'order' => '2'
+            'route_name' => 'ventas.clientes.index',
         ]);
 
-        ModuleChild::create([
-            'module_id'     => $sale->id,
-            'description'   => 'Métodos Pago',
-            'route_name'    => 'ventas.metodo_pago',
-            'order'         => '2'
+        $this->createChild($module, [
+            'description' => 'Métodos Pago',
+            'route_name' => 'ventas.metodos_pago.index',
+        ]);
+    }
+
+    private function seedAbastecimiento(): void
+    {
+        $module = $this->createModule('Abastecimiento');
+
+        foreach (
+            [
+                ['Mesas', 'abastecimiento.mesas.index'],
+                ['Tipo Plato', 'abastecimiento.tipos_plato.index'],
+                ['Platos', 'abastecimiento.platos.index'],
+                ['Programación', 'abastecimiento.programacion.index'],
+            ] as [$desc, $route]
+        ) {
+            $this->createChild($module, [
+                'description' => $desc,
+                'route_name' => $route,
+            ]);
+        }
+    }
+
+    private function seedCuentas(): void
+    {
+        $module = $this->createModule('Cuentas');
+
+        $this->createChild($module, [
+            'description' => 'Cuentas Cliente',
+            'route_name' => 'cuentas.cliente.index',
         ]);
 
-        //Abastecimiento
-        $accounts = Module::create([
-            'description' => 'Abastecimiento',
-            'order' => '1'
+        $this->createChild($module, [
+            'description' => 'Cuentas Proveedor',
+            'route_name' => 'cuentas.proveedor.index',
         ]);
+    }
 
-        ModuleChild::create([
-            'module_id'     => $accounts->id,
-            'description'   => 'Mesas',
-            'route_name'    => 'abastecimiento.mesas.index',
-            'order'         => '2'
-        ]);
+    private function seedInventario(): void
+    {
+        $module = $this->createModule('Inventario');
 
-        ModuleChild::create([
-            'module_id'     => $accounts->id,
-            'description'   => 'Tipo Plato',
-            'route_name'    => 'abastecimiento.tipos_plato.index',
-            'order'         => '2'
-        ]);
+        foreach (
+            [
+                ['Categorías', 'inventario.categorias.index'],
+                ['Marcas', 'inventario.marcas.index'],
+                ['Productos', 'inventario.productos.index'],
+                ['Kardex', 'inventario.kardex.index'],
+                ['Inventario', 'inventario.inventario.index'],
+                ['Kardex Valorizado', 'inventario.kardex_valorizado.index'],
+                ['Nota Ingreso', 'inventario.nota_ingreso.index'],
+                ['Nota Salida', 'inventario.nota_salida.index'],
+            ] as [$desc, $route]
+        ) {
+            $this->createChild($module, [
+                'description' => $desc,
+                'route_name' => $route,
+            ]);
+        }
+    }
 
-        ModuleChild::create([
-            'module_id'     => $accounts->id,
-            'description'   => 'Platos',
-            'route_name'    => 'abastecimiento.platos.index',
-            'order'         => '2'
-        ]);
+    private function seedMostradorMesero(): void
+    {
+        $module = $this->createModule('Mostrador Mesero');
 
-
-        ModuleChild::create([
-            'module_id'     => $accounts->id,
-            'description'   => 'Programación',
-            'route_name'    => 'abastecimiento.programacion.index',
-            'order'         => '2'
-        ]);
-
-        //Cuentas
-        $accounts = Module::create([
-            'description' => 'Cuentas',
-            'order' => '1'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $accounts->id,
-            'description'   => 'Cuentas Cliente',
-            'route_name'    => 'cuentas.cliente.index',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $accounts->id,
-            'description'   => 'Cuentas Proveedor',
-            'route_name'    => 'cuentas.proveedor.index',
-            'order'         => '2'
-        ]);
-
-        // Inventario
-        $inventory = Module::create([
-            'description' => 'Inventario',
-            'order' => '1'
-        ]);
-
-        $product = ModuleChild::create([
-            'module_id' => $inventory->id,
-            'description' => 'Productos',
-            'order' => '2'
-        ]);
-
-        ModuleGrandchild::create([
-            'module_child_id' => $product->id,
-            'description' => 'Categorías',
-            'route_name' => 'inventarios.productos.categoria',
-            'order' => '3'
-        ]);
-
-        ModuleGrandchild::create([
-            'module_child_id' => $product->id,
-            'description' => 'Marca',
-            'route_name' => 'inventarios.productos.marca',
-            'order' => '3'
-        ]);
-
-        ModuleGrandchild::create([
-            'module_child_id' => $product->id,
-            'description' => 'Producto',
-            'route_name' => 'inventarios.productos.producto',
-            'order' => '3'
-        ]);
-
-        // ModuleChild::create([
-        //     'module_id' => $inventory->id,
-        //     'description' => 'Servicio',
-        //     'route_name' => 'inventarios.servicio',
-        //     'order' => '2'
-        // ]);
-
-        // ModuleChild::create([
-        //     'module_id' => $inventory->id,
-        //     'description' => 'Movimiento',
-        //     'route_name' => 'inventarios.movimiento',
-        //     'order' => '2'
-        // ]);
-
-        // // ModuleChild::create([
-        // //     'module_id' => $inventory->id,
-        // //     'description' => 'Devolución Proveedor',
-        // //     'route_name' => 'inventarios.devolucion_proveedor',
-        // //     'order' => '2'
-        // // ]);
-
-        ModuleChild::create([
-            'module_id' => $inventory->id,
-            'description' => 'Kardex',
-            'route_name' => 'inventory.kardex.index',
-            'order' => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $inventory->id,
-            'description' => 'Inventario',
-            'route_name' => 'inventarios.inventario',
-            'order' => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $inventory->id,
-            'description' => 'Kardex Valorizado',
-            'route_name' => 'inventarios.kardex_valorizado',
-            'order' => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $inventory->id,
-            'description'   => 'Nota Ingreso',
-            'route_name'    => 'inventarios.nota_ingreso',
-            'order'         => '2'
-        ]);
-
-        ModuleChild::create([
-            'module_id'     => $inventory->id,
-            'description'   => 'Nota Salida',
-            'route_name'    => 'inventarios.nota_salida',
-            'order'         => '2'
-        ]);
-
-        // Mosttrador mesero
-        $mostrador_mesero = Module::create([
-            'description' => 'Mostrador Mesero',
-            'order' => '1'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $mostrador_mesero->id,
+        $this->createChild($module, [
             'description' => 'Mostrador',
             'route_name' => 'mostrador_mesero.mostrador.index',
-            'order' => '2'
         ]);
+    }
 
+    private function seedCompras(): void
+    {
+        $module = $this->createModule('Compras');
 
-        // Compras
-        $purchase = Module::create([
-            'description' => 'Compras',
-            'order' => '1'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $purchase->id,
+        $this->createChild($module, [
             'description' => 'Proveedores',
-            'route_name' => 'compras.proveedor',
-            'order' => '2'
+            'route_name' => 'compras.proveedores.index',
         ]);
 
-        ModuleChild::create([
-            'module_id'     => $purchase->id,
-            'description'   => 'Documento de Compra',
-            'route_name'    => 'compras.documento_compra.index',
-            'order'         => '2'
+        $this->createChild($module, [
+            'description' => 'Documento de Compra',
+            'route_name' => 'compras.documento_compra.index',
+        ]);
+    }
+
+    private function seedReportes(): void
+    {
+        $module = $this->createModule('Reportes');
+
+        $this->createChild($module, [
+            'description' => 'Reporte de Venta',
+            'route_name' => 'reportes.ventas.index',
         ]);
 
-
-        // Reportes
-        $report = Module::create([
-            'description'   => 'Reportes',
-            'order'         => '1'
+        $this->createChild($module, [
+            'description' => 'Reporte Contable',
+            'route_name' => 'reportes.contable.index',
         ]);
+    }
 
-        ModuleChild::create([
-            'module_id'     => $report->id,
-            'description'   => 'Reporte de Venta',
-            'route_name'    => 'reportes.reporte_venta',
-            'order'         => '2'
-        ]);
+    private function seedMantenimiento(): void
+    {
+        $module = $this->createModule('Mantenimiento', 1, 'landlord');
 
-        ModuleChild::create([
-            'module_id'     => $report->id,
-            'description'   => 'Reporte Contable',
-            'route_name'    => 'reportes.reporte_contable',
-            'order'         => '2'
-        ]);
-
-
-        // Mantenimiento
-        $maintenance = Module::create([
-            'description' => 'Mantenimiento',
-            'order' => '1',
-            'show' => 'landlord'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $maintenance->id,
+        $this->createChild($module, [
             'description' => 'Empresa',
-            'route_name' => 'mantenimientos.empresa',
-            'order' => '2',
-            'show' => 'landlord'
+            'route_name' => 'mantenimiento.empresa.index',
+            'show' => 'landlord',
         ]);
 
-        ModuleChild::create([
-            'module_id' => $maintenance->id,
-            'description' => 'Cuentas',
-            'route_name' => 'mantenimientos.cuentas.index',
-            'order' => '2',
-            'show' => 'tenant'
+        foreach (
+            [
+                ['Cuentas', 'mantenimiento.cuentas.index'],
+                ['Cargos', 'mantenimiento.cargos.index'],
+                ['Colaboradores', 'mantenimiento.colaboradores.index'],
+                ['Usuarios', 'mantenimiento.usuario.index'],
+                ['Roles', 'mantenimiento.roles.index'],
+            ] as [$desc, $route]
+        ) {
+            $this->createChild($module, [
+                'description' => $desc,
+                'route_name' => $route,
+                'show' => 'tenant',
+            ]);
+        }
+
+        $this->createChild($module, [
+            'description' => 'Configuración',
+            'route_name' => 'mantenimiento.configuracion.index',
         ]);
+    }
 
-        /*ModuleChild::create([
-            'module_id' => $maintenance->id,
-            'description' => 'Planes',
-            'route_name' => 'mantenimientos.plan',
-            'order' => '2',
-            'show' => 'landlord'
-        ]);*/
+    private function seedConsultas(): void
+    {
+        $module = $this->createModule('Consultas');
 
-
-        ModuleChild::create([
-            'module_id' => $maintenance->id,
-            'description' => 'Cargos',
-            'route_name' => 'mantenimientos.cargos.index',
-            'order' => '2',
-            'show' => 'tenant'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $maintenance->id,
-            'description' => 'Colaboradores',
-            'route_name' => 'mantenimientos.colaboradores.index',
-            'order' => '2',
-            'show' => 'tenant'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $maintenance->id,
-            'description' => 'Usuarios',
-            'route_name' => 'mantenimientos.usuario.index',
-            'order' => '2',
-            'show' => 'tenant'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $maintenance->id,
-            'description' => 'Roles',
-            'route_name' => 'mantenimientos.rol',
-            'order' => '2',
-            'show' => 'tenant'
-        ]);
-
-        /*ModuleChild::create([
-            'module_id' => $maintenance->id,
-            'description' => 'Horario de atención',
-            'route_name' => 'mantenimientos.horario',
-            'order' => '2'
-        ]);*/
-
-        ModuleChild::create([
-            'module_id'     => $maintenance->id,
-            'description'   => 'Configuración',
-            'route_name'    => 'mantenimientos.configuracion',
-            'order'         => '2'
-        ]);
-
-        // Consultas
-        $consultas = Module::create([
-            'description' => 'Consultas',
-            'order' => '1'
-        ]);
-
-        ModuleChild::create([
-            'module_id' => $consultas->id,
-            'description' => 'Creditos',
-            'route_name' => 'consultas.creditos',
-            'order' => '2'
+        $this->createChild($module, [
+            'description' => 'Créditos',
+            'route_name' => 'consultas.creditos.index',
         ]);
     }
 }

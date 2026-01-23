@@ -125,7 +125,7 @@
         try {
             mostrarAnimacion1();
             toastr.clear();
-            const res = await axios.get(route('tenant.movimientos_caja.getConsolidated', {
+            const res = await axios.get(route('tenant.cajas.apertura_cierre.getConsolidated', {
                 id: cashBookId
             }));
 
@@ -182,7 +182,7 @@
                     const formData = new FormData();
                     formData.append('id', paramsMdlCloseCash.id);
 
-                    const res = await axios.post(route('tenant.movimientos_caja.closePettyCash',
+                    const res = await axios.post(route('tenant.cajas.apertura_cierre.closePettyCash',
                             paramsMdlCloseCash.id),
                         formData);
 

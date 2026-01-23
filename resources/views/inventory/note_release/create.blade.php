@@ -25,7 +25,7 @@
     </div>
     <div class="card-footer d-flex justify-content-between align-items-center">
         <span  style="color:rgb(219, 155, 35);font-size:14px;font-weight:bold;">Los campos con * son obligatorios</span>
-        
+
         <div style="display:flex;">
             <button class="btn btn-danger btnVolver" style="margin-right:5px;" type="button">
                 <i class="fa-solid fa-door-open"></i> VOLVER
@@ -77,12 +77,12 @@
                 toastr.error('PRODUCTO NO SELECCIONADO!!');
                 e.target.value  =   '';
                 document.querySelector('#producto').focus();
-                ocultarAnimacion1(); 
+                ocultarAnimacion1();
                 return;
             }
 
             if (isNaN(quantity) || quantity <= 0) {
-                ocultarAnimacion1(); 
+                ocultarAnimacion1();
                 e.target.focus();
                 return;
             }
@@ -94,25 +94,25 @@
                 ocultarAnimacion1();
                 return;
             }
-                    
+
             e.target.focus();
-            ocultarAnimacion1(); 
+            ocultarAnimacion1();
 
         })
 
         document.addEventListener('click',async (e)=>{
             if (e.target.closest('.btnVolver')) {
-                const rutaIndex         =   '{{route('tenant.inventarios.nota_salida')}}';
+                const rutaIndex         =   '{{route('tenant.inventario.nota_salida')}}';
                 window.location.href    =   rutaIndex;
             }
 
             if (e.target.closest('.btnAgregarProducto')) {
 
                 toastr.clear();
-                const inputCantidad =   document.querySelector('#cantidad'); 
+                const inputCantidad =   document.querySelector('#cantidad');
                 const product_id    =   product_selected.product_id;
                 const validacion    =   validationAddProduct();  //======== VALIDACIÓN FRONTEND ======
-                
+
                 if(validacion){
                     //====== VALIDACIÓN BACKEND ======
                     mostrarAnimacion1();
@@ -131,7 +131,7 @@
                     ocultarAnimacion1();
 
                 }
-              
+
             }
         })
 
@@ -142,7 +142,7 @@
             theme: "bootstrap-5",
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
-            allowClear: true  
+            allowClear: true
         } );
 
         $( '.select2_form_mdl' ).select2( {
@@ -150,22 +150,22 @@
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
             allowClear: true,
-            dropdownParent: $('#mdlProductos')  
+            dropdownParent: $('#mdlProductos')
         } );
     }
 
     function loadDataTableProducts(){
-        const urlGetProductos   =   @json(route('tenant.inventarios.nota_salida.getProducts'));
-        
+        const urlGetProductos   =   @json(route('tenant.inventario.nota_salida.getProducts'));
+
         dtProductos  =   new DataTable('#tbl_products',{
-            serverSide: true,  
-            processing: true,  
+            serverSide: true,
+            processing: true,
             ajax: {
-                url: urlGetProductos, 
-                type: 'GET',  
+                url: urlGetProductos,
+                type: 'GET',
                 data: function(d) {
-                    d.categoria_id  =   $('#categoria').val();  
-                    d.marca_id      =   $('#marca').val();  
+                    d.categoria_id  =   $('#categoria').val();
+                    d.marca_id      =   $('#marca').val();
                 },
             },
             columns: [
@@ -177,7 +177,7 @@
             ],
             createdRow: function(row, data, dataIndex) {
                 $(row).css('cursor', 'pointer');
-                
+
                 $(row).attr('onclick', 'selectProduct(' + data.id + ')');
             },
             language: {
@@ -231,13 +231,13 @@
     }
 
     function validationAddProduct(){
-        
+
         if(!product_selected.product_id){
             toastr.error('DEBE SELECCIONAR UN PRODUCTO!!');
             return false;
         }
 
-        const inputCantidad =   document.querySelector('#cantidad'); 
+        const inputCantidad =   document.querySelector('#cantidad');
         if(!inputCantidad.value){
             toastr.error('DEBE INGRESAR UNA CANTIDAD!!');
             return false;
@@ -300,7 +300,7 @@
         tbody.innerHTML =   filas;
     }
 
-    
+
     function destruirDataTableProductos(){
         if(dtProductos){
             dtProductos.destroy();
@@ -350,13 +350,13 @@
         reverseButtons: true
         }).then(async (result) => {
         if (result.isConfirmed) {
-           
+
             Swal.fire({
                 title: 'Cargando...',
                 html: 'Registrando nueva nota de salida...',
                 allowOutsideClick: false,
                 didOpen: () => {
-                    Swal.showLoading(); 
+                    Swal.showLoading();
                 }
             });
 
@@ -364,7 +364,7 @@
 
                 clearValidationErrors('msgError');
                 const token                             =   document.querySelector('input[name="_token"]').value;
-                const urlStoreNoteRelease               =   @json(route('tenant.inventarios.nota_salida.store'));
+                const urlStoreNoteRelease               =   @json(route('tenant.inventario.nota_salida.store'));
                 const formData                          =   new FormData();
                 formData.append('lstNoteRelease',JSON.stringify(lstNoteRelease));
                 formData.append('user_recorder_id',@json($colaborador_registrador->id));
@@ -374,15 +374,15 @@
                 const response  =   await fetch(urlStoreNoteRelease, {
                                         method: 'POST',
                                         headers: {
-                                            'X-CSRF-TOKEN': token 
+                                            'X-CSRF-TOKEN': token
                                         },
                                         body: formData
                                     });
 
                 const   res =   await response.json();
-                
+
                 console.log(res);
-                
+
                 if(response.status === 422){
                     if('errors' in res){
                         pintarErroresValidacion(res.errors);
@@ -390,9 +390,9 @@
                     Swal.close();
                     return;
                 }
-                
+
                 if(res.success){
-                    const note_release_index        =   @json(route('tenant.inventarios.nota_salida'));
+                    const note_release_index        =   @json(route('tenant.inventario.nota_salida'));
                     toastr.success(res.message,'OPERACIÓN COMPLETADA');
                     window.location.href            =   note_release_index;
                 }else{
@@ -400,12 +400,12 @@
                     Swal.close();
                 }
 
-              
+
             } catch (error) {
                 toastr.error(error,'ERROR EN LA PETICIÓN REGISTRAR NOTA DE SALIDA');
                 Swal.close();
             }
-          
+
 
         } else if (result.dismiss === Swal.DismissReason.cancel) {
             swalWithBootstrapButtons.fire({
@@ -428,13 +428,13 @@
         try {
 
             const token                         =   document.querySelector('input[name="_token"]').value;
-            const urlValidateStock              =   @json(route('tenant.inventarios.nota_salida.validateStock', ['product_id' => 'PRODUCT_ID', 'quantity' => 'QUANTITY']));
+            const urlValidateStock              =   @json(route('tenant.inventario.nota_salida.validateStock', ['product_id' => 'PRODUCT_ID', 'quantity' => 'QUANTITY']));
             const url                           = urlValidateStock.replace('PRODUCT_ID', product_id).replace('QUANTITY', quantity);
 
             const response  =   await fetch(url, {
                                     method: 'GET',
                                     headers: {
-                                        'X-CSRF-TOKEN': token 
+                                        'X-CSRF-TOKEN': token
                                     }
                                 });
 

@@ -70,7 +70,7 @@
         }
 
         function loadDtProducts() {
-            const urlGetProducts = '{{ route('tenant.inventarios.productos.producto.get-all') }}';
+            const urlGetProducts = '{{ route('tenant.inventario.productos.get-all') }}';
 
             dtProducts = new DataTable('#table-products', {
                 serverSide: true,
@@ -381,7 +381,7 @@
                     });
 
                     try {
-                        let url = `{{ route('tenant.inventarios.productos.destroy', ['id' => ':id']) }}`;
+                        let url = `{{ route('tenant.inventario.productos.destroy', ['id' => ':id']) }}`;
                         url = url.replace(':id', id);
                         const token = document.querySelector('input[name="_token"]').value;
 
@@ -424,12 +424,10 @@
             const categoriaId = document.getElementById('categoria').value;
             const marcaId = document.getElementById('marca').value;
 
-            const url = '{{ route('tenant.inventarios.productos.producto.export-excel') }}' +
+            const url = '{{ route('tenant.inventario.productos.export-excel') }}' +
                 `?categoriaId=${categoriaId}&marcaId=${marcaId}`;
 
             window.location.href = url;
         }
     </script>
-
-    {{-- <script src="{{ asset('assets/js/products.js') }}" type="module"></script> --}}
 @endsection

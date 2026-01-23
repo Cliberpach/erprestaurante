@@ -53,7 +53,7 @@
 
         try {
             mostrarAnimacion1();
-            const res = await axios.get(route('tenant.movimientos_caja.getOne', {
+            const res = await axios.get(route('tenant.cajas.apertura_cierre.getOne', {
                 id: paramsMdlEditBook.id
             }));
             if (res.data.success) {
@@ -240,7 +240,7 @@
                     formData.append('_method', 'PUT');
                     formData.append('lst_servers', JSON.stringify(lstServersEdit));
 
-                    const res = await axios.post(route('tenant.movimientos_caja.update', {
+                    const res = await axios.post(route('tenant.cajas.apertura_cierre.update', {
                         id: paramsMdlEditBook.id
                     }), formData);
 

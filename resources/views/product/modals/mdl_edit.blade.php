@@ -235,14 +235,7 @@
     }
 
     function updateProduct(formUpdateProduct) {
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-            },
-            buttonsStyling: false
-        });
-        swalWithBootstrapButtons.fire({
+        Swal.fire({
             title: "DESEA ACTUALIZAR EL PRODUCTO?",
             text: "Se actualizaran los datos del producto!",
             icon: "warning",
@@ -269,7 +262,7 @@
                     const formData = new FormData(formUpdateProduct);
                     formData.append('deleteImg', parameters.deleteImg);
 
-                    let url = `{{ route('tenant.inventarios.productos.update', ['id' => ':id']) }}`;
+                    let url = `{{ route('tenant.inventario.productos.update', ['id' => ':id']) }}`;
                     url = url.replace(':id', parameters.id);
 
                     const response = await fetch(url, {
@@ -306,7 +299,7 @@
                 }
 
             } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire({
+                Swal.fire({
                     title: "OPERACIÓN CANCELADA",
                     text: "NO SE REALIZARON ACCIONES",
                     icon: "error"

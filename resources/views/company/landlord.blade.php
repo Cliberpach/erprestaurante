@@ -13,7 +13,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">MANTENIMIENTO DE EMPRESAS</h5>
             <span class="float-end">
-                <a href="{{ route('landlord.mantenimientos.empresas.create') }}" class="btn btn-outline-primary me-1">Nueva
+                <a href="{{ route('landlord.mantenimiento.empresas.create') }}" class="btn btn-outline-primary me-1">Nueva
                     Empresa</a>
             </span>
         </div>
@@ -40,7 +40,7 @@
     }
 
     function startDataTableCompanies() {
-        const urlGetCompanies = '{{ route('landlord.mantenimientos.getCompanies') }}';
+        const urlGetCompanies = '{{ route('landlord.mantenimiento.getCompanies') }}';
 
         dtCompaniesLandlord = new DataTable('#tbl_landlord_companies', {
             serverSide: true,
@@ -76,7 +76,7 @@
                     data: null,
                     render: function (data) {
 
-                        const urlEditCompany = "{{ route('landlord.mantenimientos.empresas.edit', ':id') }}".replace(':id', data.id);
+                        const urlEditCompany = "{{ route('landlord.mantenimiento.empresas.edit', ':id') }}".replace(':id', data.id);
 
                         return `<div class="btn-group">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -171,7 +171,7 @@
                 const token                   =   document.querySelector('input[name="_token"]').value;
 
                 const formData                =   new FormData();
-                const urlResetPassword        =   @json(route('landlord.mantenimientos.empresas.resetearClave'));
+                const urlResetPassword        =   @json(route('landlord.mantenimiento.empresas.resetearClave'));
 
                 formData.append('company_id',company_id);
 
@@ -261,7 +261,7 @@
                 const token                     =   document.querySelector('input[name="_token"]').value;
 
                 const formData                  =   new FormData();
-                const urlDeleteTenant           =   "{{ route('landlord.mantenimientos.empresas.deleteTenant', ':id') }}".replace(':id', company_id);
+                const urlDeleteTenant           =   "{{ route('landlord.mantenimiento.empresas.deleteTenant', ':id') }}".replace(':id', company_id);
 
                 formData.append('company_id',company_id);
 

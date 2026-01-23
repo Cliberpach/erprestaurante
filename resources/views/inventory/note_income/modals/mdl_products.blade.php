@@ -63,7 +63,7 @@
     }
 
     function loadDataTableProducts() {
-        const urlGetProductos = @json(route('tenant.inventarios.nota_ingreso.getProducts'));
+        const urlGetProductos = @json(route('tenant.inventario.nota_ingreso.getProducts'));
 
         dtProductos = new DataTable('#tbl_products', {
             serverSide: true,

@@ -89,7 +89,7 @@
 
 
     function downloadFormatExcel() {
-        const ruta = @json(route('tenant.inventarios.productos.marca.get-format-excel'));
+        const ruta = @json(route('tenant.inventario.marcas.get-format-excel'));
         window.location.href = ruta;
     }
 
@@ -135,7 +135,7 @@
                     const token = document.querySelector('input[name="_token"]').value;
                     const formImportarMarcas = document.querySelector('#formImportarMarcas');
                     const formData = new FormData(formImportarMarcas);
-                    const urlImportBrands = @json(route('tenant.inventarios.productos.marca.import-excel'));
+                    const urlImportBrands = @json(route('tenant.inventario.marcas.import-excel'));
 
                     formData.append('marcas_import_excel', inputImportExcelMarcas.files[0]);
 

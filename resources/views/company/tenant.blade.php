@@ -31,12 +31,12 @@
                             <td>
                                 <div class="btn-group">
                                     <a class="btn btn-warning btn-sm" href="#">
-                                        <i class="fa fa-eye"></i> 
+                                        <i class="fa fa-eye"></i>
                                     </a>
-                                    <a class="btn btn-primary btn-sm" href="{{ route('tenant.mantenimientos.empresa.edit', $company->id) }}">
+                                    <a class="btn btn-primary btn-sm" href="{{ route('tenant.mantenimiento.empresa.edit', $company->id) }}">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    
+
                                 </div>
                             </td>
                         </tr>

@@ -54,7 +54,7 @@
         }
 
         function loadBrands() {
-            const url = '{{ route('tenant.inventarios.productos.marca.get-all') }}';
+            const url = '{{ route('tenant.inventario.marcas.get-all') }}';
 
             dtBrands = new DataTable('#tbl-list-brands', {
                 serverSide: true,
@@ -163,7 +163,7 @@
 
                     try {
                         let url =
-                            `{{ route('tenant.inventarios.productos.marca.destroy', ['id' => ':id']) }}`;
+                            `{{ route('tenant.inventario.marcas.destroy', ['id' => ':id']) }}`;
                         url = url.replace(':id', id);
                         const token = document.querySelector('input[name="_token"]').value;
 

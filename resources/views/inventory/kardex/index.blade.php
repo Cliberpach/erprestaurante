@@ -90,7 +90,7 @@
         }
 
         function startDataTableKardex() {
-            const urlGetKardex = '{{ route('tenant.inventory.kardex.getKardex') }}';
+            const urlGetKardex = '{{ route('tenant.inventario.kardex.getKardex') }}';
 
             dtKardex = new DataTable('#tbl_list_kardex', {
                 responsive: true,
@@ -234,7 +234,7 @@
 
         function downloadExcel() {
 
-            const url = @json(route('tenant.inventory.kardex.excel'));
+            const url = @json(route('tenant.inventario.kardex.excel'));
 
             const params = {
                 product_id: document.querySelector('#product_id').value,
@@ -251,7 +251,7 @@
 
         function downloadPdf() {
 
-            const url = @json(route('tenant.inventory.kardex.pdf'));
+            const url = @json(route('tenant.inventario.kardex.pdf'));
 
             const params = {
                 product_id: document.querySelector('#product_id').value,

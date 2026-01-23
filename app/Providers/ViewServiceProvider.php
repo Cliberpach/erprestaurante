@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
-use App\Models\Module;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Multitenancy\Models\Tenant;
@@ -22,174 +21,64 @@ class ViewServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('*', function ($view) {
+
             $base = Tenant::checkCurrent() ? 'tenant' : 'landlord';
-            $tenantId = Tenant::current()?->id ?? 'landlord';
 
-            $modules = Cache::remember(
-                "modules_menu_{$tenantId}_{$base}",
-                now()->addHours(6),
-                fn() => Module::where('show', $base)
-                    ->with([
-                        'children' => fn($q) => $q->where('show', $base),
-                        'children.grandchildren' => fn($q) => $q->where('show', $base),
-                    ])
-                    ->get()
-            );
+            if (!auth()->check()) {
+                return;
+            }
 
-            $view->with('modules', $modules);
+            $user = auth()->user();
+
+            $menu = app(\App\Services\MenuService::class)->getMenuForUser($user);
+
+            $view->with('modules', $menu);
             $view->with('base', $base . '.');
-            $view->with('lst_search_modules', $this->getLstSearchModules($base));
+            $view->with('lst_search_modules', $this->getLstSearchModules($base, $user));
         });
     }
 
-
-    public function ___boot(): void
+    public function getLstSearchModules(string $base, $user)
     {
-        if (!$this->app->runningInConsole() || $this->app->runningUnitTests()) {
-            $this->bootForHttpRequests();
-        }
-    }
+        $roleNames = $user->roles->pluck('name')->sort()->implode('_');
 
-    public function bootForHttpRequests(): void
-    {
-        $base = Tenant::checkCurrent() ? 'tenant' : 'landlord';
-        $tenantId = Tenant::current()?->id ?? 'landlord';
-
-        $modules = Cache::remember(
-            "modules_menu_{$tenantId}_{$base}",
+        return Cache::remember(
+            "search_modules_{$base}_{$roleNames}",
             now()->addHours(6),
-            function () use ($base) {
-                return Module::where('show', $base)
-                    ->with([
-                        'children' => fn($q) => $q->where('show', $base),
-                        'children.grandchildren' => fn($q) => $q->where('show', $base),
-                    ])
+            function () use ($user) {
+               
+                $permissions = $user->getAllPermissions()->pluck('name');
+                if ($permissions->isEmpty()) {
+                    return [];
+                }
+
+                $children = DB::table('module_children as mc')
+                    ->join('modules as m', 'm.id', '=', 'mc.module_id')
+                    ->whereNotNull('mc.route_name')
+                    ->whereIn('mc.route_name', $permissions)
+                    ->select([
+                        'mc.description as name',
+                        'mc.route_name as url',
+                        'm.description as category',
+                        DB::raw("'fi fi-rr-file' as icon"),
+                    ]);
+
+                $grandChildren = DB::table('module_grand_children as mgc')
+                    ->join('module_children as mc2', 'mc2.id', '=', 'mgc.module_child_id')
+                    ->join('modules as m2', 'm2.id', '=', 'mc2.module_id')
+                    ->whereNotNull('mgc.route_name')
+                    ->whereIn('mgc.route_name', $permissions)
+                    ->select([
+                        'mgc.description as name',
+                        'mgc.route_name as url',
+                        'm2.description as category',
+                        DB::raw("'fi fi-rr-file' as icon"),
+                    ]);
+
+                return $children
+                    ->unionAll($grandChildren)
                     ->get();
             }
         );
-
-        $lst_search_modules = Cache::remember(
-            "modules_search_{$tenantId}_{$base}",
-            now()->addHours(6),
-            fn() => $this->getLstSearchModules($base)
-        );
-
-        View::share('base', $base . '.');
-        View::share('modules', $modules);
-        View::share('lst_search_modules', $lst_search_modules);
-    }
-
-    public function __boot(): void
-    {
-        $host    = request()->getHost();
-        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
-
-        // Detectar landlord vs tenant
-        $isLandlord = $host === $appHost;
-        $base = $isLandlord ? 'landlord' : 'tenant';
-
-        // 🔌 Cambiar conexión por defecto (TU enfoque)
-        $databaseConnection = $isLandlord ? 'landlord' : 'tenant';
-        config(['database.default' => $databaseConnection]);
-        config(['permission.database.connection' => $databaseConnection]);
-
-        if (!$isLandlord) {
-            config([
-                'auth.providers.users.model' => \App\Models\Tenant\User::class,
-                'permission.database_connection' => 'tenant',
-            ]);
-            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-        }
-
-        if (!$isLandlord && Tenant::current()) {
-            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-        }
-
-        // 🔐 Tenant ID (solo para cache / lógica)
-        $tenantId = $isLandlord
-            ? 'landlord'
-            : (Tenant::current()?->id ?? 'tenant');
-
-        $modules = Cache::remember(
-            "modules_menu_{$tenantId}_{$base}",
-            now()->addHours(6),
-            function () use ($base) {
-                return Module::where('show', $base)
-                    ->with([
-                        'children' => fn($q) => $q->where('show', $base),
-                        'children.grandchildren' => fn($q) => $q->where('show', $base),
-                    ])
-                    ->get();
-            }
-        );
-
-        $lst_search_modules = Cache::remember(
-            "modules_search_{$tenantId}_{$base}",
-            now()->addHours(6),
-            fn() => $this->getLstSearchModules($base)
-        );
-
-        View::share('base', $base . '.');
-        View::share('modules', $modules);
-        View::share('lst_search_modules', $lst_search_modules);
-    }
-
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot_old(): void
-    {
-
-        $databaseConnection = (parse_url(config("app.url"), PHP_URL_HOST) === request()->getHost()) ? 'landlord' : 'tenant';
-        config(['database.default' => $databaseConnection]);
-
-        $base = ($databaseConnection === 'landlord') ? 'landlord' : 'tenant';
-        $modules = Module::where('show', $base)
-            ->with(['children' => function ($query) use ($base) {
-                $query->where('show', $base);
-            }, 'children.grandchildren' => function ($query) use ($base) {
-                $query->where('show', $base);
-            }])
-            ->get();
-
-        View::share('base', $base . '.');
-        View::share('modules', $modules);
-        View::share('lst_search_modules', $this->getLstSearchModules($base));
-    }
-
-    public function getLstSearchModules($base)
-    {
-        $lst_modules    =   DB::select(
-            'SELECT
-                                mc.description AS name,
-                                mc.route_name AS url,
-                                (
-                                    SELECT
-                                        m.description as category
-                                    FROM modules as m
-                                    WHERE m.id = mc.module_id
-                                ) AS category,
-                                "fi fi-rr-file" AS icon
-                            FROM module_children as mc
-                            WHERE mc.route_name IS NOT NULL
-
-                            UNION ALL
-
-                            SELECT
-                                mgc.description AS name,
-                                mgc.route_name AS url,
-                                (
-                                    SELECT
-                                        m2.description as category
-                                    FROM module_children as mc2
-                                    INNER JOIN modules as m2 ON m2.id = mc2.module_id
-                                    WHERE mc2.id = mgc.module_child_id
-                                ) AS category,
-                                "fi fi-rr-file" AS icon
-                            FROM module_grand_children  AS mgc
-                            WHERE mgc.route_name IS NOT NULL'
-        );
-
-        return $lst_modules;
     }
 }

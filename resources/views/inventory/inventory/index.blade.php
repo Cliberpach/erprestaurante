@@ -38,7 +38,7 @@
                    @include('inventory.inventory.tables.tbl_list_inventory')
                 </div>
             </div>
-          
+
         </div>
     </div>
 @endsection
@@ -63,12 +63,12 @@
             theme: "bootstrap-5",
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
-            allowClear: true 
+            allowClear: true
         } );
     }
 
     function startDataTableInventory(){
-        const urlGetInventory = '{{ route('tenant.inventarios.inventario.getInventory') }}';
+        const urlGetInventory = '{{ route('tenant.inventario.inventario.getInventory') }}';
 
         dtInventory  =   new DataTable('#tbl_list_inventory',{
             responsive:true,
@@ -83,7 +83,7 @@
             },
             order: [[0, 'desc']],
             columns: [
-                { data: 'id', name: 'id', visible: false }, 
+                { data: 'id', name: 'id', visible: false },
                 { data: 'product_name', name: 'product_name' },
                 { data: 'category_name', name: 'category_name' },
                 { data: 'brand_name', name: 'brand_name' },
@@ -144,7 +144,7 @@
     }
 
     function changeDateEnd(date_end){
-        
+
         toastr.clear();
         const date_start  =   document.querySelector('#date_start').value;
 
@@ -160,9 +160,9 @@
 
 
     function downloadExcel(){
-        
-        const url = @json(route('tenant.inventarios.inventario.excel'));
-    
+
+        const url = @json(route('tenant.inventario.inventario.excel'));
+
         const params = {
             filter_stock:   document.querySelector('#filter_stock').value
         };
@@ -175,9 +175,9 @@
     }
 
     function downloadPdf(){
-        
-        const url = @json(route('tenant.inventarios.inventario.pdf'));
-    
+
+        const url = @json(route('tenant.inventario.inventario.pdf'));
+
         const params = {
             filter_stock:   document.querySelector('#filter_stock').value
         };
@@ -185,12 +185,12 @@
         const queryString = new URLSearchParams(params).toString();
 
         const finalUrl = `${url}?${queryString}`;
-        window.open(finalUrl, '_blank'); 
+        window.open(finalUrl, '_blank');
 
     }
-  
-    
 
-</script> 
+
+
+</script>
 <script src="{{asset('assets/js/utils.js')}}"></script>
 @endsection

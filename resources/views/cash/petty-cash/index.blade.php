@@ -49,7 +49,7 @@
         function iniciarDtCash() {
             dtCash = new DataTable('#dt-cash', {
                 "processing": true,
-                "ajax": '{{ route('tenant.cajas.getListCash') }}',
+                "ajax": '{{ route('tenant.cajas.cajas.getListCash') }}',
                 "order": [
                     [0, "desc"]
                 ],
@@ -204,7 +204,7 @@
                     });
 
                     try {
-                        const res = await axios.delete(route('tenant.cajas.destroy', id));
+                        const res = await axios.delete(route('tenant.cajas.cajas.destroy', id));
                         if (res.data.success) {
                             toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
                             dtCash.ajax.reload();

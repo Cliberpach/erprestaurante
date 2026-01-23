@@ -91,7 +91,7 @@
                     toastr.clear();
 
                     const formData = new FormData(formCreateCash);
-                    const res = await axios.post(route('tenant.cajas.store'), formData);
+                    const res = await axios.post(route('tenant.cajas.cajas.store'), formData);
 
                     if (res.data.success) {
                         toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');

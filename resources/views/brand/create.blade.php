@@ -1,9 +1,9 @@
 <!-- Modal -->
-<div class="modal fade" id="createBrandModal" tabindex="-1" aria-hidden="true">    
+<div class="modal fade" id="createBrandModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            
-            <form id="createBrandForm" action="{{ route('tenant.inventarios.productos.marca.store') }}" method="POST">
+
+            <form id="createBrandForm" action="{{ route('tenant.inventario.productos.marca.store') }}" method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel1">Registrar Marca</h5>
@@ -14,7 +14,7 @@
                         <div class="form-group">
                             <label for="description" class="form-label">Nombre de la marca <span>*</span></label>
                             <input id="name" name="name"  type="text" class="form-control inputName" placeholder="Nombre de la categoría"  oninput="this.value = this.value.toUpperCase()">
-                            <p hidden class="msgError error">error</p> 
+                            <p hidden class="msgError error">error</p>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                     <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </form>
-            
+
         </div>
     </div>
 </div>

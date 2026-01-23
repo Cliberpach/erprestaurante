@@ -20,7 +20,7 @@ class SetDatabaseMiddleware
         $isTenant = Tenant::checkCurrent();
         $connection = $isTenant ? 'tenant' : 'landlord';
         Config::set('database.default', $connection);
-      
+        //dd(config('database.default'));
         return $next($request);
     }
 }

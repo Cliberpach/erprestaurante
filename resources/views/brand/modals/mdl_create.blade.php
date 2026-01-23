@@ -79,7 +79,7 @@
                     clearValidationErrors('msgError');
                     const token = document.querySelector('input[name="_token"]').value;
                     const formData = new FormData(form);
-                    const urlstoreBrand = @json(route('tenant.inventarios.productos.marca.store'));
+                    const urlstoreBrand = @json(route('tenant.inventario.marcas.store'));
 
                     const response = await fetch(urlstoreBrand, {
                         method: 'POST',

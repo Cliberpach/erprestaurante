@@ -5,7 +5,6 @@
 @endsection
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
 @endsection
 
@@ -64,7 +63,7 @@
 
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.btnVolver')) {
-                    const rutaIndex = '{{ route('tenant.inventarios.nota_ingreso') }}';
+                    const rutaIndex = '{{ route('tenant.inventario.nota_ingreso') }}';
                     window.location.href = rutaIndex;
                 }
 
@@ -255,7 +254,7 @@
                     const formRegistrarCotizacionCompra = document.querySelector(
                         '#formRegistrarCotizacionCompra');
                     const formData = new FormData();
-                    const urlStoreNoteIncome = @json(route('tenant.inventarios.nota_ingreso.store'));
+                    const urlStoreNoteIncome = @json(route('tenant.inventario.nota_ingreso.store'));
 
                     formData.append('lstNoteIncome', JSON.stringify(lstNoteIncome));
                     formData.append('user_recorder_id', @json($colaborador_registrador->id));
@@ -294,7 +293,7 @@
                         }
 
                         if (res.success) {
-                            const note_income_index = @json(route('tenant.inventarios.nota_ingreso'));
+                            const note_income_index = @json(route('tenant.inventario.nota_ingreso'));
                             toastr.success(res.message, 'OPERACIÓN COMPLETADA');
                             window.location.href = note_income_index;
                         } else {

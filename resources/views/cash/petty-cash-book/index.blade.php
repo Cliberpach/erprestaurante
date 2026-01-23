@@ -51,7 +51,7 @@
         function iniciarDtCash() {
             dtCash = new DataTable('#dt-cash-books', {
                 "processing": true,
-                "ajax": '{{ route('tenant.cajas.getCashBooks') }}',
+                "ajax": '{{ route('tenant.cajas.apertura_cierre.getCashBooks') }}',
                 "columns": [{
                         data: 'id',
                         className: "text-center",
@@ -138,7 +138,7 @@
                         className: "text-center",
                         render: function(data, type, row) {
 
-                            const pdfUrl = route('tenant.movimientos_caja.pdf', {
+                            const pdfUrl = route('tenant.cajas.apertura_cierre.pdf', {
                                 id: data.id
                             });
 
@@ -266,79 +266,6 @@
                     }
                 });
             }
-        }
-
-        function eliminar(id) {
-            const fila = getRowById(dtCash, id);
-            const name = fila.name;
-            const messageHtml = `
-                <div class="text-center" style="font-size: 15px;">
-                    <p class="mb-2">
-                        <i class="fas fa-tag text-primary me-2"></i>
-                        <strong>Nombre:</strong> ${name}
-                    </p>
-                </div>
-            `;
-
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success me-2',
-                    cancelButton: 'btn btn-danger',
-                    actions: 'd-flex justify-content-center gap-2 mt-3'
-                },
-                buttonsStyling: false // Necesario para que Bootstrap controle el estilo
-            });
-
-            swalWithBootstrapButtons.fire({
-                title: '¿Desea eliminar la caja?',
-                html: messageHtml,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'No, cancelar',
-                focusCancel: true,
-                reverseButtons: true
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Eliminando caja...',
-                        html: `
-                            <div style="display:flex; align-items:center; justify-content:center; flex-direction:column;">
-                                <i class="fa fa-spinner fa-spin fa-3x text-primary mb-3"></i>
-                                <p style="margin:0; font-weight:600;">Por favor, espere un momento</p>
-                            </div>
-                        `,
-                        allowOutsideClick: false,
-                        showConfirmButton: false
-                    });
-
-                    try {
-                        const res = await axios.delete(route('tenant.cajas.destroy', id));
-                        if (res.data.success) {
-                            toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
-                            dtCash.ajax.reload();
-                        } else {
-                            toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
-                        }
-                    } catch (error) {
-                        toastr.error(error, 'ERROR EN LA PETICIÓN ELIMINAR CAJA');
-                    } finally {
-                        Swal.close();
-                    }
-
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
-                        title: 'Cancelado',
-                        text: 'La solicitud ha sido cancelada.',
-                        icon: 'error',
-                        confirmButtonText: 'Entendido',
-                        customClass: {
-                            confirmButton: 'btn btn-secondary'
-                        },
-                        buttonsStyling: false
-                    });
-                }
-            });
         }
     </script>
 @endsection

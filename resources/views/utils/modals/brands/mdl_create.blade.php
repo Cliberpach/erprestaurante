@@ -57,14 +57,7 @@
     }
 
     function storeBrand(formStoreBrand) {
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-            },
-            buttonsStyling: false
-        });
-        swalWithBootstrapButtons.fire({
+        Swal.fire({
             title: "DESEA REGISTRAR LA MARCA?",
             text: "Se creará una nueva marca!",
             icon: "warning",
@@ -78,7 +71,7 @@
                 clearValidationErrors('msgError');
                 const token = document.querySelector('input[name="_token"]').value;
                 const formData = new FormData(formStoreBrand);
-                const urlStore = @json(route('tenant.inventarios.productos.marca.store'));
+                const urlStore = @json(route('tenant.inventario.marcas.store'));
 
                 Swal.fire({
                     title: 'Cargando...',
@@ -123,7 +116,7 @@
                 }
 
             } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire({
+                Swal.fire({
                     title: "OPERACIÓN CANCELADA",
                     text: "NO SE REALIZARON ACCIONES",
                     icon: "error"

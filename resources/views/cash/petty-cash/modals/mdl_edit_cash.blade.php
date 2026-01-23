@@ -64,7 +64,7 @@
         try {
             mostrarAnimacion1();
             toastr.clear();
-            const res = await axios.get(route('tenant.cajas.getCash', cashId));
+            const res = await axios.get(route('tenant.cajas.cajas.getCash', cashId));
 
             if (res.data.success) {
                 toastr.info(res.data.message, 'OPERACIÓN COMPLETADA');
@@ -127,7 +127,7 @@
                     const formData = new FormData(formUpdateCash);
                     formData.append('_method', 'PUT');
 
-                    const res = await axios.post(route('tenant.cajas.update', paramsMdlEditCash.id),
+                    const res = await axios.post(route('tenant.cajas.cajas.update', paramsMdlEditCash.id),
                         formData);
 
                     if (res.data.success) {

@@ -62,14 +62,14 @@
             const token                     =   document.querySelector('input[name="_token"]').value;
             const formPaymentMethod         =   document.querySelector('#formPaymentMethod');
             const formData                  =   new FormData(formPaymentMethod);
-            const urlStorePaymentMethod     =   @json(route('tenant.ventas.metodo_pago.store'));
+            const urlStorePaymentMethod     =   @json(route('tenant.ventas.metodos_pago.store'));
 
             Swal.fire({
                 title: 'Cargando...',
                 html: 'Registrando nuevo método de pago...',
                 allowOutsideClick: false,
                 didOpen: () => {
-                    Swal.showLoading(); 
+                    Swal.showLoading();
                 }
             });
 
@@ -77,13 +77,13 @@
                 const response  =   await fetch(urlStorePaymentMethod, {
                                         method: 'POST',
                                         headers: {
-                                            'X-CSRF-TOKEN': token 
+                                            'X-CSRF-TOKEN': token
                                         },
                                         body: formData
                                     });
 
                 const   res =   await response.json();
-                                
+
                 if(response.status === 422){
                     if('errors' in res){
                         paintValidationErrors(res.errors,'error')
@@ -91,7 +91,7 @@
                     Swal.close();
                     return;
                 }
-                
+
                 if(res.success){
                     dtPaymentMethods.draw();
                     $('#mdlCreatePaymentMethod').modal('hide');
@@ -102,12 +102,12 @@
                     Swal.close();
                 }
 
-              
+
             } catch (error) {
                 toastr.error(error,'ERROR EN LA PETICIÓN REGISTRAR MÉTODO DE PAGO');
                 Swal.close();
             }
-          
+
 
         } else if (result.dismiss === Swal.DismissReason.cancel) {
             swalWithBootstrapButtons.fire({
@@ -127,7 +127,7 @@
         }
     }
 
- 
+
 
 
 </script>

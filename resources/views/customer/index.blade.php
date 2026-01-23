@@ -5,7 +5,6 @@
 @endsection
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
 @endsection
 
@@ -14,7 +13,7 @@
         <x-slot name="headerCard">
             <h4 class="card-title">LISTA DE CLIENTES</h4>
             <div class="input-group-append">
-                <a href="{{ route('tenant.ventas.cliente.create') }}"><button type="button" class="btn btn-primary btn-add-new" >
+                <a href="{{ route('tenant.ventas.clientes.create') }}"><button type="button" class="btn btn-primary btn-add-new" >
                     <div class="d-flex align-items-center">
                         <i class="fas fa-plus pe-1"></i>
                         <p class="mb-0 ml-2">NUEVO</p>
@@ -42,7 +41,7 @@
         </x-slot>
     </x-card>
 
-    
+
 
 @endsection
 
@@ -55,10 +54,10 @@
             { data: 'name' },
             { data: 'phone' },
             {
-                data: 'id', 
+                data: 'id',
                 render: function (data, type, row) {
-                    var editUrl = '{{ route("tenant.ventas.cliente.edit", ":id") }}';
-                    var deleteUrl = '{{ route("tenant.ventas.cliente.delete", ":id") }}';
+                    var editUrl = '{{ route("tenant.ventas.clientes.edit", ":id") }}';
+                    var deleteUrl = '{{ route("tenant.ventas.clientes.delete", ":id") }}';
                     editUrl = editUrl.replace(':id', data);
                     deleteUrl = deleteUrl.replace(':id', data);
                     return `
@@ -81,7 +80,7 @@
         ];
 
         </script>
-    
+
     <script src="{{ asset('assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
     <script src="{{ asset('assets/js/customers.js') }}" type="module"></script>
 @endsection

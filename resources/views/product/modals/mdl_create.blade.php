@@ -122,7 +122,7 @@
                 clearValidationErrors('msgError');
                 const token = document.querySelector('input[name="_token"]').value;
                 const formData = new FormData(formRegistrarProducto);
-                const urlRegistrarProducto = @json(route('tenant.inventarios.productos.store'));
+                const urlRegistrarProducto = @json(route('tenant.inventario.productos.store'));
 
                 Swal.fire({
                     title: 'Cargando...',

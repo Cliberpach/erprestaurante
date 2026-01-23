@@ -6,7 +6,7 @@
           <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-      
+
         <div class="modal-body">
 
                 <form class="row" id="my-form" action="">
@@ -158,7 +158,7 @@
     let formData = $(this).serialize(); // Obtener los datos del formulario
     $.ajax({
         type: 'POST',
-        url: '{{ route("tenant.inventarios.productos.categoria.store") }}',
+        url: '{{ route("tenant.inventario.categorias.store") }}',
         data: formData,
         success: function(response) {
             console.log('Respuesta completa:', response); // Añade esto para ver la respuesta completa
@@ -193,7 +193,7 @@
         let formData = $(this).serialize();
         $.ajax({
             type: 'POST',
-            url: '{{ route("tenant.inventarios.productos.marca.store") }}', // Asegúrate de que la ruta esté correctamente definida
+            url: '{{ route("tenant.inventarios.marcas.store") }}', // Asegúrate de que la ruta esté correctamente definida
             data: formData,
             success: function(response) {
                 if (response.type === 'success') {

@@ -761,7 +761,7 @@
                     const url_open_pdf  = "{{ route('tenant.ventas.comprobante_venta.pdf_voucher', ['id' => '__id__']) }}".replace('__id__', res.data.sale_id);
                     window.open(url_open_pdf, 'Comprobante SISCOM', 'location=1, status=1, scrollbars=1,width=900, height=600');
 
-                    const sale_index        =   @json(route('tenant.ventas.comprobante_venta'));
+                    const sale_index        =   @json(route('tenant.ventas.comprobante_venta.index'));
 
                     window.location.href    =   sale_index;
 

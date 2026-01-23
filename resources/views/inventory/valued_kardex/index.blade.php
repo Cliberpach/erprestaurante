@@ -14,11 +14,11 @@
         @csrf
         <div class="card-header d-flex flex-row justify-content-between">
             <h4 class="card-title">KARDEX VALORIZADO</h4>
-            
+
             <div class="input-group-append">
-                
+
             </div>
-          
+
         </div>
         <div class="card-body">
             <div class="row">
@@ -41,7 +41,7 @@
                    @include('inventory.valued_kardex.tables.tbl_list_valued_kardex')
                 </div>
             </div>
-          
+
         </div>
     </div>
 @endsection
@@ -66,12 +66,12 @@
             theme: "bootstrap-5",
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
-            allowClear: true 
+            allowClear: true
         } );
     }
 
     function startDataTableInventory(){
-        const urlGetValuedKardex = '{{ route('tenant.inventarios.kardex_valorizado.getValuedKardex') }}';
+        const urlGetValuedKardex = '{{ route('tenant.inventario.kardex_valorizado.getValuedKardex') }}';
 
         dtValuedKardex  =   new DataTable('#tbl_list_valued_kardex',{
             responsive:true,
@@ -87,7 +87,7 @@
             },
             order: [[0, 'desc']],
             columns: [
-                { data: 'id', name: 'id', visible: false }, 
+                { data: 'id', name: 'id', visible: false },
                 { data: 'product_name', name: 'product_name' },
                 { data: 'category_name', name: 'category_name' },
                 { data: 'brand_name', name: 'brand_name' },
@@ -148,7 +148,7 @@
     }
 
     function changeDateEnd(date_end){
-        
+
         toastr.clear();
         const date_start  =   document.querySelector('#date_start').value;
 
@@ -163,23 +163,23 @@
     }
 
     function downloadPdf(){
-        
-        const url = @json(route('tenant.inventarios.kardex_valorizado.pdf'));
-    
+
+        const url = @json(route('tenant.inventario.kardex_valorizado.pdf'));
+
         const params = {
             date_start: document.querySelector('#date_start').value,
-            date_end: document.querySelector('#date_end').value        
+            date_end: document.querySelector('#date_end').value
         };
 
         const queryString = new URLSearchParams(params).toString();
 
         const finalUrl = `${url}?${queryString}`;
-        window.open(finalUrl, '_blank'); 
+        window.open(finalUrl, '_blank');
 
     }
-  
-    
 
-</script> 
+
+
+</script>
 <script src="{{asset('assets/js/utils.js')}}"></script>
 @endsection

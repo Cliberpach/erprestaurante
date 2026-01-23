@@ -18,16 +18,16 @@
         @csrf
         <div class="card-header d-flex flex-row justify-content-between">
             <h4 class="card-title">NOTAS DE INGRESO</h4>
-            
+
             <div class="input-group-append">
                 <button onclick="goToNoteIncomeCreate()"  type="button" data-bs-whatever="Nueva caja" class="btn btn-primary btn-add-new" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <div class="lign-items-center d-flex align-items-center">
                         <i class="fas fa-plus pe-1"></i>
                         <p class="mb-0 ml-2"> NUEVO</p>
                     </div>
-                </button>  
+                </button>
             </div>
-          
+
         </div>
         <div class="card-body">
             <div class="row">
@@ -54,7 +54,7 @@
                    @include('inventory.note_income.tables.table_list_note_income')
                 </div>
             </div>
-          
+
         </div>
     </div>
 @endsection
@@ -78,7 +78,7 @@ function loadSelect2(){
         theme: "bootstrap-5",
         width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
         placeholder: $( this ).data( 'placeholder' ),
-        allowClear: true 
+        allowClear: true
     } );
 }
 
@@ -89,7 +89,7 @@ function paintAlerts(){
 }
 
 function startDataTableNoteIncome(){
-    const urlGetNoteIncome = '{{ route('tenant.inventarios.nota_ingreso.getNoteIncome') }}';
+    const urlGetNoteIncome = '{{ route('tenant.inventario.nota_ingreso.getNoteIncome') }}';
 
     dtNoteIncome  =   new DataTable('#tbl_list_note_income',{
         responsive:true,
@@ -106,12 +106,12 @@ function startDataTableNoteIncome(){
         },
         order: [[0, 'desc']],
         columns: [
-            { data: 'id', name: 'id' }, 
+            { data: 'id', name: 'id' },
             { data: 'created_at', name: 'created_at' },
             { data: 'user_recorder_name', name: 'user_recorder_name' },
             { data: 'observation', name: 'observation' },
-            { 
-                data: null, 
+            {
+                data: null,
                 name: null,
                 render: function(data, type, row, meta) {
                     return `
@@ -154,7 +154,7 @@ function startDataTableNoteIncome(){
 
 
 function goToNoteIncomeCreate(){
-    const route =   @json(route('tenant.inventarios.nota_ingreso.create'));
+    const route =   @json(route('tenant.inventario.nota_ingreso.create'));
     window.location.href = route;
 }
 
@@ -178,7 +178,7 @@ function changeDateStart(date_start){
 }
 
 function changeDateEnd(date_end){
-    
+
     toatr.clear();
     const date_start  =   document.querySelector('#date_start').value;
 
@@ -194,7 +194,7 @@ function changeDateEnd(date_end){
 
 
 
-</script> 
+</script>
 <script src="{{asset('assets/js/utils.js')}}"></script>
 <script src="{{ asset('assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
 @endsection

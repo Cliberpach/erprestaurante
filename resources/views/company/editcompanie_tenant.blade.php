@@ -354,7 +354,7 @@
 
                         const id = @json($company->id);
                         let urlUpdateInvoiceCompany =
-                            `{{ route('tenant.mantenimientos.empresas.updateInvoice', ['id' => ':id']) }}`;
+                            `{{ route('tenant.mantenimiento.empresas.updateInvoice', ['id' => ':id']) }}`;
                         urlUpdateInvoiceCompany = urlUpdateInvoiceCompany.replace(':id', id);
 
                         const response = await fetch(urlUpdateInvoiceCompany, {

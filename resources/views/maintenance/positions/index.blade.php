@@ -13,10 +13,6 @@
             <h4 class="card-title mb-md-0 mb-2">CARGOS</h4>
 
             <div class="d-flex flex-wrap gap-2">
-                {{-- <button class="btn btn-warning" onclick="openMdlImportMarca()">
-                    <i class="fa-solid fa-upload"></i> IMPORTAR
-                </button> --}}
-
                 <a onclick="openMdlNuevoCargo()" class="btn btn-primary text-white">
                     <i class="fas fa-plus-circle"></i> Nuevo
                 </a>
@@ -32,8 +28,6 @@
             </div>
         </div>
     </div>
-
-    <!-- end card -->
 @endsection
 
 <style>

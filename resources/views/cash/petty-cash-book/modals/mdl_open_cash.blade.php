@@ -142,16 +142,7 @@
         const id = cashesAvailableSelect.getValue();
         const item = cashesAvailableSelect.options[id];
 
-
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-            },
-            buttonsStyling: false
-        });
-
-        swalWithBootstrapButtons.fire({
+        Swal.fire({
             title: "Desea aperturar la caja?",
             html: `
                 <div style="text-align: center; margin-top: 10px;">
@@ -185,7 +176,7 @@
 
                     const formData = new FormData(formOpenCash);
                     formData.append('lst_servers', JSON.stringify(lstServers));
-                    const res = await axios.post(route('tenant.movimientos_caja.abrirCaja'), formData);
+                    const res = await axios.post(route('tenant.cajas.apertura_cierre.abrirCaja'), formData);
 
                     if (res.data.success) {
                         toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
@@ -220,7 +211,7 @@
                 }
 
             } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire({
+                Swal.fire({
                     title: "Operación cancelada",
                     text: "No se realizaron acciones",
                     icon: "error"

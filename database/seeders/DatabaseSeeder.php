@@ -17,6 +17,7 @@ use Database\Seeders\landlord\IdentityDocumentSeeder;
 use Database\Seeders\landlord\InvoiceTypeSeeder;
 use Database\Seeders\landlord\ModelSeeder;
 use Database\Seeders\landlord\ModuleSeeder;
+use Database\Seeders\Landlord\PositionSeeder as LandlordPositionSeeder;
 use Database\Seeders\landlord\TypeIdentityDocumentSeeder;
 use Database\Seeders\landlord\YearSeeder;
 use Database\Seeders\tenant\CategorySeeder;
@@ -32,8 +33,8 @@ use Database\Seeders\tenant\ProvinceSeeder;
 use Database\Seeders\tenant\ShiftSeeder;
 use Database\Seeders\tenant\SupplierSeeder;
 use Database\Seeders\tenant\TypeFieldSeeder;
-use Database\Seeders\tenant\UserSeeder as TenantUserSeeder;
 use Database\Seeders\tenant\WarehouseSeeder;
+use Database\Seeders\landlord\UnitMeasurementSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -76,6 +77,7 @@ class DatabaseSeeder extends Seeder
         // note: no olvida llamar al seeder en use part
         $this->call(ModuleSeeder::class);
         $this->call(PermissionSeeder::class);
+        $this->call(LandlordPositionSeeder::class);
         $this->call(PlanSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
