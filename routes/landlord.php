@@ -20,9 +20,9 @@ Route::middleware(['auth:web', 'verified'])->group(function () {
     Route::group(["prefix" => "mantenimiento"], function () {
 
         Route::group(["prefix" => "empresa"], function () {
-            Route::get('index', [CompanyController::class, 'index'])->name('landlord.mantenimiento.empresa.index');
+            Route::get('index', [CompanyController::class, 'index'])->name('landlord.mantenimiento.empresas.index');
             Route::get('edit/{id}', [CompanyController::class, 'edit'])->name('landlord.mantenimiento.empresas.edit');
-            Route::get('getCompanies', [CompanyController::class, 'getCompanies'])->name('landlord.mantenimiento.getCompanies');
+            Route::get('getCompanies', [CompanyController::class, 'getCompanies'])->name('landlord.mantenimiento.empresas.getCompanies');
             Route::get('registrar', [CompanyController::class, 'create'])->name('landlord.mantenimiento.empresas.create');
             Route::post('store', [CompanyController::class, 'store'])->name('landlord.mantenimiento.empresas.store');
             Route::post('resetearClave', [CompanyController::class, 'resetearClave'])->name('landlord.mantenimiento.empresas.resetearClave');
