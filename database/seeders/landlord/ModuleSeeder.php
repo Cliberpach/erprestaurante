@@ -195,7 +195,7 @@ class ModuleSeeder extends Seeder
 
         $this->createChild($module, [
             'description' => 'Empresa',
-            'route_name' => 'mantenimiento.empresa.index',
+            'route_name' => 'mantenimiento.empresas.index',
             'show' => 'landlord',
         ]);
 
