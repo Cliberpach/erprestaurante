@@ -23,6 +23,7 @@ class ViewServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
 
             $base = Tenant::checkCurrent() ? 'tenant' : 'landlord';
+            $tenantId = Tenant::checkCurrent() ? Tenant::current()->id : null;
 
             if (!auth()->check()) {
                 return;
@@ -34,6 +35,7 @@ class ViewServiceProvider extends ServiceProvider
             $view->with('modules', $menu);
             $view->with('base', $base . '.');
             $view->with('lst_search_modules', $this->getLstSearchModules($base, $user));
+            $view->with('tenant_id', $tenantId);
         });
     }
 

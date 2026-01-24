@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\LandLord\Api;
 
+use App\Events\AlertAppEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Landlord\Api\AlertApp\AlertAppRequest;
 use App\Models\Landlord\Api\AlertApp;
@@ -23,14 +24,16 @@ class AlertAppController extends Controller
              * 1️⃣ GUARDAR EN LANDLORD
              * =========================
              */
-            DB::connection('landlord')->transaction(function () use ($data) {
+            $alert  =   DB::connection('landlord')->transaction(function () use ($data) {
 
-                AlertApp::create($data);
+                $item   =   AlertApp::create($data);
 
                 Log::channel('alerts_app')->info('Alerta guardada en landlord', [
                     'tenant_domain' => $data['tenant_domain'],
                     'content'       => $data['content'],
                 ]);
+
+                return $item;
             });
 
             /**
@@ -44,6 +47,8 @@ class AlertAppController extends Controller
             DB::connection('tenant')->transaction(function () use ($data) {
                 TenantAlertApp::create($data);
             });
+
+            event(new AlertAppEvent($alert));
 
             return response()->json([
                 'success' => true,

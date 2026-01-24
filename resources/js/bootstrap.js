@@ -8,6 +8,7 @@ import './libs/global/axios.js'
 import './libs/global/tomselect.js'
 import './libs/global/toastr.js'
 import './libs/global/swal.js'
+import './libs/global/echo.js'
 
 
 /*======== HOVERCSS =========*/

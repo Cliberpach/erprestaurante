@@ -63,12 +63,12 @@ const echoConfig = {
     encrypted: true,
     disableStats: true,
     enabledTransports: ['ws', 'wss'],
-    authEndpoint: '/broadcasting/auth',
-    auth: {
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        }
-    }
+    // authEndpoint: '/broadcasting/auth',
+    // auth: {
+    //     headers: {
+    //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+    //     }
+    // }
 };
 
 console.log('🔧 Configuración de Echo:', echoConfig);
