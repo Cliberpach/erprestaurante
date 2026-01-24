@@ -90,7 +90,7 @@
 
 
     function downloadFormatExcel() {
-        const ruta = @json(route('tenant.inventarios.productos.categoria.get-format-excel'));
+        const ruta = @json(route('tenant.inventario.categorias.get-format-excel'));
         window.location.href = ruta;
     }
 
