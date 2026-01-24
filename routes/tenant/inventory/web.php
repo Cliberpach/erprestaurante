@@ -11,7 +11,7 @@ use App\Http\Controllers\Tenant\ProductController;
 use App\Http\Controllers\Tenant\ValuedKardexController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(["prefix" => "inveantario"], function () {
+Route::group(["prefix" => "inventario"], function () {
 
     Route::group(["prefix" => "categorias"], function () {
         Route::get('index', [CategoryController::class, 'index'])->name('tenant.inventario.categorias.index');

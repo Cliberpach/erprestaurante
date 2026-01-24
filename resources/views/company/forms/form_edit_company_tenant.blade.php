@@ -103,6 +103,34 @@
             </select>
         </div>
 
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="required_field" for="department" style="font-weight: bold;">DEPARTAMENTO</label>
+            <select required name="department" required class="" id="department"
+                data-placeholder="Seleccionar" onchange="changeDepartment(this.value)">
+                <option></option>
+                @foreach ($departments as $department)
+                    <option @if ($company_invoice->department_id == $department->id) selected @endif value="{{ $department->id }}">
+                        {{ $department->name }}</option>
+                @endforeach
+            </select>
+            <span class="department_error_customer msgErrorCustomer" style="color:red;"></span>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="required_field" for="province" style="font-weight: bold;">PROVINCIA</label>
+            <select required name="province" required class="" id="province"
+                data-placeholder="Seleccionar" onchange="changeProvince(this.value)">
+                <option></option>
+            </select>
+            <span class="province_error_customer msgErrorCustomer" style="color:red;"></span>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="required_field" for="district" style="font-weight: bold;">DISTRITO</label>
+            <select required name="district" required class="" id="district"
+                data-placeholder="Seleccionar">
+                <option></option>
+            </select>
+            <span class="district_customer msgErrorCustomer" style="color:red;"></span>
+        </div>
     </div>
 
     <div class="row">

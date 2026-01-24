@@ -136,7 +136,7 @@
                     const token = document.querySelector('input[name="_token"]').value;
                     const formImportarCategorias = document.querySelector('#formImportarCategorias');
                     const formData = new FormData(formImportarCategorias);
-                    const urlImportarCategorias = @json(route('tenant.inventarios.productos.categoria.import-categories-excel'));
+                    const urlImportarCategorias = @json(route('tenant.inventario.categorias.import-categories-excel'));
 
                     formData.append('categorias_import_excel', inputImportExcelCategorias.files[0]);
 

@@ -78,7 +78,7 @@
                     clearValidationErrors('msgError');
                     const token             = document.querySelector('input[name="_token"]').value;
                     const formData          = new FormData(form);
-                    const urlstoreCategory  = @json(route('tenant.inventarios.productos.categoria.store'));
+                    const urlstoreCategory  = @json(route('tenant.inventario.categorias.store'));
 
                     const response = await fetch(urlstoreCategory, {
                         method: 'POST',

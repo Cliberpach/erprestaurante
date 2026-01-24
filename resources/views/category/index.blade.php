@@ -55,7 +55,7 @@
         }
 
         function loadDtCategories() {
-            const url = '{{ route('tenant.inventarios.productos.categoria.get-all') }}';
+            const url = '{{ route('tenant.inventario.productos.categorias.get-all') }}';
 
             dtCategories = new DataTable('#tbl-list-categories', {
                 serverSide: true,
@@ -164,7 +164,7 @@
 
                     try {
                         let url =
-                            `{{ route('tenant.inventarios.productos.categoria.destroy', ['id' => ':id']) }}`;
+                            `{{ route('tenant.inventario.categorias.destroy', ['id' => ':id']) }}`;
                         url = url.replace(':id', id);
                         const token = document.querySelector('input[name="_token"]').value;
 

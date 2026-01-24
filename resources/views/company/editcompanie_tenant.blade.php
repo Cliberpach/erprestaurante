@@ -169,6 +169,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             iniciarSelect2();
+            loadTomSelect();
             startDataTableNumeration();
             setUbigeoPreview();
             setMapa();
@@ -193,18 +194,90 @@
         }
 
         function iniciarSelect2() {
-            $('.select2_form').select2({
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder')
-            })
-
             $('.select2_form_numeration').select2({
                 theme: "bootstrap-5",
                 width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
                 placeholder: $(this).data('placeholder'),
                 dropdownParent: $('#mdlNumeration')
             })
+        }
+
+        function loadTomSelect() {
+
+            const departmentSelect = document.getElementById('department');
+            if (departmentSelect && !departmentSelect.tomselect) {
+                window.departmentSelect = new TomSelect(departmentSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
+
+            const provinceSelect = document.getElementById('province');
+            if (provinceSelect && !provinceSelect.tomselect) {
+                window.provinceSelect = new TomSelect(provinceSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
+
+            const districtSelect = document.getElementById('district');
+            if (districtSelect && !districtSelect.tomselect) {
+                window.districtSelect = new TomSelect(districtSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
         }
 
         function setMapa() {
@@ -311,20 +384,13 @@
                 departmentSelect.dispatchEvent(new Event("change"));
             }
 
-            $('#province').val("{{ $company_invoice->province_id }}").trigger('change');
-            $('#district').val("{{ $company_invoice->district_id }}").trigger('change');
+            window.provinceSelect.setValue("{{ $company_invoice->province_id }}");
+            window.districtSelect.setValue("{{ $company_invoice->district_id }}");
 
         }
 
         function updateInvoiceCompany() {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success",
-                    cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-            swalWithBootstrapButtons.fire({
+            Swal.fire({
                 title: "DESEA ACTUALIZAR LOS DATOS DE FACTURACIÓN DE LA EMPRESA?",
                 text: "Esto producirá cambios en la facturación!",
                 icon: "warning",
@@ -389,7 +455,7 @@
                     }
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: "OPERACIÓN CANCELADA",
                         text: "NO SE REALIZARON ACCIONES",
                         icon: "error"
@@ -413,19 +479,16 @@
                     return province.department_id == department_id;
                 })
 
-                $('#province').empty().trigger('change');
+                window.provinceSelect.clearOptions();
 
-                lstProvincesFiltered.forEach((province) => {
-                    $('#province').append(new Option(province.name, province.id, false, false));
-                })
-
-                $('#province').select2({
-                    theme: "bootstrap-5",
-                    placeholder: 'Seleccione una provincia',
-                    width: '100%'
+                lstProvincesFiltered.forEach(province => {
+                    window.provinceSelect.addOption({
+                        id: province.id,
+                        description: province.name
+                    });
                 });
 
-                $('#province').trigger('change');
+                window.provinceSelect.setValue(null);
             }
 
         }
@@ -444,17 +507,17 @@
                     return district.province_id == province_id;
                 })
 
-                $('#district').empty().trigger('change');
+                window.districtSelect.clearOptions();
 
-                lstDistrictsFiltered.forEach((district) => {
-                    $('#district').append(new Option(district.name, district.id, false, false));
-                })
-
-                $('#district').select2({
-                    theme: "bootstrap-5",
-                    placeholder: 'Seleccione un distrito',
-                    width: '100%'
+                lstDistrictsFiltered.forEach(district => {
+                    window.districtSelect.addOption({
+                        description: district.name,
+                        id: district.id
+                    });
                 });
+
+                window.districtSelect.setValue(null);
+
             }
 
         }

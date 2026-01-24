@@ -95,7 +95,7 @@
                     clearValidationErrors('msgError_edit');
                     const token             =   document.querySelector('input[name="_token"]').value;
                     const formData          =   new FormData(form);
-                    let url                 =   `{{ route('tenant.inventario.productos.marca.update', ['id' => ':id']) }}`;
+                    let url                 =   `{{ route('tenant.inventario.marcas.update', ['id' => ':id']) }}`;
                     url                     =   url.replace(':id', parameters.id);
 
                     const response = await fetch(url, {

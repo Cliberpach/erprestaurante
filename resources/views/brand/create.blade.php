@@ -3,7 +3,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
 
-            <form id="createBrandForm" action="{{ route('tenant.inventario.productos.marca.store') }}" method="POST">
+            <form id="createBrandForm" action="{{ route('tenant.inventario.marcas.store') }}" method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel1">Registrar Marca</h5>
