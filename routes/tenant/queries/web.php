@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Tenant\Consultas\ConsultasCreditosController;
 use App\Http\Controllers\Tenant\Consultas\QueryReservationController;
+use App\Http\Controllers\Tenant\Queries\QNotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "consultas"], function () {
@@ -14,6 +15,10 @@ Route::group(["prefix" => "consultas"], function () {
         Route::post('/creditos/generar-documento', [ConsultasCreditosController::class, 'generarDocumento'])->name('tenant.consultas.creditos.generar_documento');
     });
 
+    Route::group(["prefix" => "alerts"], function () {
+        Route::get('index', [QNotificationController::class, 'index'])->name('tenant.consultas.notificaciones.index');
+        Route::get('getAll', [QNotificationController::class, 'getAll'])->name('tenant.consultas.notificaciones.getAll');
+    });
 
     Route::group(["prefix" => "reservas"], function () {
         Route::get('index', [QueryReservationController::class, 'index'])->name('tenant.consultas.reservas.index');
