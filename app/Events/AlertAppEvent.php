@@ -3,7 +3,7 @@
 namespace App\Events;
 
 use App\Models\Landlord\Api\AlertApp;
-use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -41,12 +41,9 @@ class AlertAppEvent implements ShouldBroadcastNow
     }
 
 
-    /**
-     * Canal público por tenant
-     */
-    public function broadcastOn(): Channel
+    public function broadcastOn(): PrivateChannel
     {
-        return new Channel('alerts.' . $this->tenantId);
+        return new PrivateChannel('alerts.' . $this->tenantId);
     }
 
     /**
