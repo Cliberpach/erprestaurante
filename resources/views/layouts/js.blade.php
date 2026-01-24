@@ -29,6 +29,8 @@
 @stack('js-script')
 
 <script>
+    let audioEnabled = false;
+    let notificationCount = 0;
     document.addEventListener('DOMContentLoaded', () => {
         notificationAudio = new Audio('/assets/sounds/bell-notification-337658.mp3');
         notificationAudio.volume = 0.5;
@@ -81,6 +83,10 @@
             emitAlert(data.alert);
         });
 
+    }
+
+    function enableAudio() {
+        audioEnabled = true;
     }
 
     function emitAlert(alert) {
@@ -204,7 +210,7 @@
         `
         });
     }
-    
+
     function getAlertIcon(typeObject) {
         const icons = {
             'ORDEN_TRABAJO': 'info',
