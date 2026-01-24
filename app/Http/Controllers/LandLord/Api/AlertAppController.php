@@ -19,6 +19,13 @@ class AlertAppController extends Controller
         try {
 
             $data   =   $request->validated();
+
+            Log::channel('alerts_app')->info('Nueva alerta recibida', [
+                'tenant_domain' => $data['tenant_domain'],
+                'content'       => $data['content'],
+                'date_received' => now(),
+            ]);
+
             $alert  =   AlertApp::create($data);
 
             $tenant = Tenant::where('domain', $data['tenant_domain'])->firstOrFail();
@@ -26,11 +33,7 @@ class AlertAppController extends Controller
 
             $alert_tenant   =   TenantPermission::create($data);
 
-            Log::channel('alerts_app')->info('Nueva alerta recibida', [
-                'tenant_domain' => $data['tenant_domain'],
-                'content'       => $data['content'],
-                'date_received' => now(),
-            ]);
+
 
             DB::commit();
             return response()->json([
