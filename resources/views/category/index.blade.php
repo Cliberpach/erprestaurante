@@ -55,7 +55,7 @@
         }
 
         function loadDtCategories() {
-            const url = '{{ route('tenant.inventario.productos.categorias.get-all') }}';
+            const url = '{{ route('tenant.inventario.categorias.get-all') }}';
 
             dtCategories = new DataTable('#tbl-list-categories', {
                 serverSide: true,
