@@ -79,7 +79,7 @@
 
         channel.listen('.alert.created', (data) => {
             console.log('🔥 ALERTA RECIBIDA:', data);
-            emitAlert(data.alert);
+            emitAlert(data);
         });
 
     }
