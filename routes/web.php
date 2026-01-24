@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LandLord\ApiController;
+use App\Http\Controllers\Notifications\NotificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tenant\UserController;
 use App\Http\Controllers\Tenant\BookController;
@@ -32,11 +33,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Route::middleware(['auth:sanctum', config('jetstream.auth_session'),'verified',])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return view('dashboard');
-//     })->name('dashboard');
-// });
+
 
 Route::get('user/tenant', [UserController::class, 'index'])->name('tenant.users.index');
 Route::post('user/create', [UserController::class, 'store'])->name('tenant.users.create');
@@ -51,6 +48,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/reservas/pdf', [BookController::class, 'generatePDF'])->name('tenant.reservas.pdf');
         Route::get('/available-fields', [BookController::class, 'getAvailableFields'])->name('tenat.reservas.camposdisponibles');
     });
+
+    Route::get('/notifications', [NotificationController::class, 'getNotifications'])->name('notifications.index');
+    Route::get('/notifications/count', [NotificationController::class, 'getNotificationsCount'])->name('notifications.count');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    Route::post('/notifications/notified', [NotificationController::class, 'notified'])->name('notifications.notified');
+    Route::put('/notifications/finish/{id}', [NotificationController::class, 'finish'])->name('notifications.finish');
 
 
     require __DIR__ . '/tenant/taller/web.php';
