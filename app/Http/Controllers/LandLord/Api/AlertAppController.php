@@ -61,7 +61,7 @@ class AlertAppController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error procesando la notificación'
+                'message' => $th->getMessage()
             ], 500);
         } finally {
             Tenant::forgetCurrent();
