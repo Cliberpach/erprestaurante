@@ -70,7 +70,7 @@
         const channel = window.Echo.private(`alerts.${tenantId}`);
 
         channel.subscribed(() => {
-            console.log('✅ SUSCRITO AL CANAL PRIVADO user.' + tenantId);
+            console.log('✅ SUSCRITO AL CANAL PRIVADO tenant.' + tenantId);
         });
 
         channel.error((error) => {
