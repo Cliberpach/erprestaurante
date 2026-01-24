@@ -58,6 +58,12 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'alerts_app' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/alerts_app.log'),
+            'level' => 'info',
+        ],
+
         'alerts' => [
             'driver' => 'single',
             'path'   => storage_path('logs/alerts.log'),

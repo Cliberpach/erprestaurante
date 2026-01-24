@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers\LandLord\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Landlord\Api\AlertApp\AlertAppRequest;
+use App\Models\Landlord\Api\AlertApp;
+use App\Models\Tenant\TenantPermission;
+use Illuminate\Support\Facades\DB;
+use Spatie\Multitenancy\Models\Tenant;
+use Throwable;
+use Illuminate\Support\Facades\Log;
+
+class AlertAppController extends Controller
+{
+    public function store(AlertAppRequest $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $data   =   $request->validated();
+            $alert  =   AlertApp::create($data);
+
+            $tenant = Tenant::where('domain', $data['tenant_domain'])->firstOrFail();
+            $tenant->makeCurrent();
+
+            $alert_tenant   =   TenantPermission::create($data);
+
+            Log::channel('alerts_app')->info('Nueva alerta recibida', [
+                'tenant_domain' => $data['tenant_domain'],
+                'content'       => $data['content'],
+                'date_received' => now(),
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'NOTIFICACIÓN RECIBIDA'
+            ]);
+        } catch (Throwable $th) {
+            DB::rollBack();
+        }
+    }
+}
