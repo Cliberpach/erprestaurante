@@ -5,6 +5,7 @@ namespace App\Http\Controllers\LandLord\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Landlord\Api\AlertApp\AlertAppRequest;
 use App\Models\Landlord\Api\AlertApp;
+use App\Models\Tenant\Api\AlertApp as TenantAlertApp;
 use Illuminate\Support\Facades\DB;
 use Spatie\Multitenancy\Models\Tenant;
 use Throwable;
@@ -14,44 +15,56 @@ class AlertAppController extends Controller
 {
     public function store(AlertAppRequest $request)
     {
-        DB::beginTransaction();
+        $data = $request->validated();
+
         try {
+            /**
+             * =========================
+             * 1️⃣ GUARDAR EN LANDLORD
+             * =========================
+             */
+            DB::connection('landlord')->transaction(function () use ($data) {
 
-            $data   =   $request->validated();
+                AlertApp::create($data);
 
-            Log::channel('alerts_app')->info('Nueva alerta recibida', [
-                'tenant_domain' => $data['tenant_domain'],
-                'content'       => $data['content'],
-                'date_received' => now(),
-            ]);
+                Log::channel('alerts_app')->info('Alerta guardada en landlord', [
+                    'tenant_domain' => $data['tenant_domain'],
+                    'content'       => $data['content'],
+                ]);
+            });
 
-            $alert  =   AlertApp::create($data);
-
+            /**
+             * =========================
+             * 2️⃣ GUARDAR EN TENANT
+             * =========================
+             */
             $tenant = Tenant::where('domain', $data['tenant_domain'])->firstOrFail();
             $tenant->makeCurrent();
 
-            $alert_tenant   =   Tenant::create($data);
+            DB::connection('tenant')->transaction(function () use ($data) {
+                TenantAlertApp::create($data);
+            });
 
-            DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'NOTIFICACIÓN RECIBIDA'
-            ]);
+            ], 200);
         } catch (Throwable $th) {
-            DB::rollBack();
 
             Log::channel('alerts_app')->error('Error al procesar alerta', [
                 'error_message' => $th->getMessage(),
                 'file'          => $th->getFile(),
                 'line'          => $th->getLine(),
                 'trace'         => $th->getTraceAsString(),
-                'payload'       => $data ?? null,
+                'payload'       => $data,
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'Error procesando la notificación'
             ], 500);
+        } finally {
+            Tenant::forgetCurrent();
         }
     }
 }
