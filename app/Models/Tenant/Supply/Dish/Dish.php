@@ -2,6 +2,7 @@
 
 namespace App\Models\Tenant\Supply\Dish;
 
+use App\Models\Tenant\Supply\TypeDish\TypeDish;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,6 +10,7 @@ class Dish extends Model
 {
     use HasFactory;
     protected $table = 'dishes';
+    protected $connection   =   'tenant';
 
     protected $fillable = [
         'name',
@@ -30,6 +32,11 @@ class Dish extends Model
         'delete_user_id',
         'delete_user_name',
     ];
+
+    public function typeDish()
+    {
+        return $this->belongsTo(TypeDish::class, 'type_dish_id');
+    }
 
     protected static function boot()
     {

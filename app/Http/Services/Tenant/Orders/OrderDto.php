@@ -9,6 +9,9 @@ use App\Models\Landlord\Customer;
 use App\Models\Product;
 use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\TypeDish\TypeDish;
+use App\Models\Tenant\Warehouse;
+
+use function Laravel\Prompts\warning;
 
 class OrderDto
 {
@@ -36,10 +39,10 @@ class OrderDto
         $dto['payref_id']      =   $data['payref_id'] ?? null;
         $dto['payref_name']    =   $data['payref_name'] ?? null;
 
-        if(isset($data['voucher'])){
+        if (isset($data['voucher'])) {
             $files_route            =   Company::findOrFail(1)->files_route;
             $file_name              =   uniqid() . '_' . trim($data['voucher']->getClientOriginalName());
-            $dto['payref_img_url']  =   $files_route . '/orders/payrefs/'.$file_name;
+            $dto['payref_img_url']  =   $files_route . '/orders/payrefs/' . $file_name;
             $dto['payref_img_name'] =   $file_name;
         }
 
@@ -54,6 +57,10 @@ class OrderDto
             $dish       =   Dish::findOrFail($item->id);
             $type_dish  =   TypeDish::findOrFail($dish->type_dish_id);
 
+            /*if (isset($item->order_detail_id)) {
+                $_item['order_detail_id']   =   $item->order_detail_id;
+            }*/
+
             $_item['order_id']          =   $order_id;
             $_item['programming_id']    =   $item->programming_id;
             $_item['dish_id']           =   $dish->id;
@@ -64,7 +71,7 @@ class OrderDto
             $_item['total']             =   $dish->sale_price * $item->quantity;
             $_item['type_dish_id']      =   $dish->type_dish_id;
             $_item['type_dish_name']    =   $type_dish->name;
-            $_item['observation']       =   mb_strtoupper(trim($item->observation), 'UTF-8');
+            $_item['observation']       =   mb_strtoupper(trim($item->observation??null), 'UTF-8');
 
             $dto[]  =   $_item;
         }
@@ -80,11 +87,18 @@ class OrderDto
             $product    =   Product::findOrFail($item->id);
             $category   =   Category::findOrFail($product->category_id);
             $brand      =   Brand::findOrFail($product->brand_id);
+            $warehouse  =   Warehouse::findOrFail($item->warehouse_id);
+
+
+            /*if (isset($item->order_detail_id)) {
+                $_item['order_detail_id']   =   $item->order_detail_id;
+            }*/
 
             $_item['order_id']          =   $order_id;
             $_item['warehouse_id']      =   $item->warehouse_id;
             $_item['product_id']        =   $product->id;
             $_item['product_name']      =   $product->name;
+            $_item['warehouse_name']    =   $warehouse->descripcion;
             $_item['sale_price']        =   $product->sale_price;
             $_item['quantity']          =   $item->quantity;
             $_item['purchase_price']    =   $product->purchase_price;
@@ -93,7 +107,7 @@ class OrderDto
             $_item['brand_id']          =   $product->brand_id;
             $_item['category_name']     =   $category->name;
             $_item['brand_name']        =   $brand->name;
-            $_item['observation']       =   mb_strtoupper(trim($item->observation), 'UTF-8');
+            $_item['observation']       =   mb_strtoupper(trim($item->observation??null), 'UTF-8');
 
             $dto[]  =   $_item;
         }

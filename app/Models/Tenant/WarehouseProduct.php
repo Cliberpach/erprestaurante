@@ -10,6 +10,6 @@ class WarehouseProduct extends Model
     use HasFactory;
 
     protected $table = 'warehouse_products';
-
+    protected $connection   =   'tenant';
     protected $guarded = [''];
 }

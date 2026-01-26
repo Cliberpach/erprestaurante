@@ -38,7 +38,7 @@ return new class extends Migration
 
             /* 🔹 STATUS */
             $table->string('status', 255)->default('PENDIENTE');
-            $table->integer('delete_status')->default(1);
+            $table->boolean('delete_status')->default(false);
 
             /* 🔹 DESCRIPTION */
             $table->string('observation', 20)->nullable();

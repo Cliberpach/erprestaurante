@@ -188,7 +188,7 @@ class OrderValidation
             throw new Exception("ESTA PEDIDO LE PERTENECE A OTRO MESERO");
         }
 
-        $petty_cash_book    =   $this->s_cash_book->getCashBookUser($user->id);
+        $petty_cash_book    =   $this->s_cash_book->getCashBookWaiter($user->id);
         if (!$petty_cash_book) {
             throw new Exception('DEBES PERTENECER A UNA CAJA ABIERTA!!!');
         }
@@ -263,8 +263,8 @@ class OrderValidation
                     throw new Exception($item->name . ", NO EXISTE EN LA PROGRAMACIÓN");
                 }
 
-                $item_preview       =   $order_dishes->where('dish_id', $item->id)->first();
-                $quantity_preview   =   $item_preview ? $item_preview->quantity : 0;
+                $items_preview      =   $order_dishes->where('dish_id', $item->id)->where('status','<>','ANULADO')->where('delete_status',false);
+                $quantity_preview   =   $items_preview ? $items_preview->sum('quantity') : 0;
                 $stock              =   (int)$item_bd->stock + $quantity_preview;
                 if ($stock < $item->quantity) {
                     throw new Exception("STOCK INSUFICIENTE: " . $stock . " PARA LA CANT SOLICITADA: " . $item->quantity);
@@ -277,8 +277,8 @@ class OrderValidation
                     throw new Exception($item->name . ", NO EXISTE EN EL ALMACÉN");
                 }
 
-
-                $quantity_preview   =   (int)$order_products->where('product_id', $item->id)->first()->quantity;
+                $items_preview      =   $order_products->where('product_id', $item->id)->where('status','<>','ANULADO')->where('delete_status',false);
+                $quantity_preview   =   $items_preview ? $items_preview->sum('quantity') : 0;
                 $stock              =   (int)$item_bd->stock + $quantity_preview;
                 if ($stock < $item->quantity) {
                     throw new Exception("STOCK INSUFICIENTE: " . $stock . " PARA LA CANT SOLICITADA: " . $item->quantity);

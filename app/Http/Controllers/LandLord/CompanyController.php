@@ -11,6 +11,7 @@ use App\Models\ModuleChild;
 use App\Models\ModuleGrandChild;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Models\Tenant\Cash\PettyCashBook;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,7 @@ use App\Models\Tenant\Maintenance\Company\ModuleChild as CompanyModuleChild;
 use App\Models\Tenant\Maintenance\Company\ModuleGrandChild as CompanyModuleGrandChild;
 use App\Models\Tenant\Maintenance\Company\Plan as CompanyPlan;
 use App\Services\TenantPermissionCloner;
+use App\Services\TestService;
 
 class CompanyController extends Controller
 {
@@ -354,6 +356,9 @@ class CompanyController extends Controller
             'COCINERO',
             5
         );
+
+
+        app(TestService::class)->createTestData();
 
         DocumentSerialization::create([
             'company_id'        => $company->id,

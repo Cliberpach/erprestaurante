@@ -96,7 +96,7 @@
         }
 
         function loadDtDishes() {
-            const urlGetProductos = @json(route('tenant.utils.getDishesProgramming'));
+            const url = @json(route('tenant.utils.getDishesProgramming'));
 
             dtDishes = new DataTable('#tbl_dishes', {
                 serverSide: true,
@@ -105,7 +105,7 @@
                 lengthChange: false,
                 paging: false,
                 ajax: {
-                    url: urlGetProductos,
+                    url: url,
                     type: 'GET',
                     data: function(d) {
                         // d.type_dish_id = $('#type_dish_id').val();
@@ -122,7 +122,9 @@
                     },
                     {
                         data: 'name',
-                        name: 'd.name'
+                        name: 'd.name',
+                        searchable:true,
+                        orderable:true
                     },
                     {
                         data: 'type_dish_name',

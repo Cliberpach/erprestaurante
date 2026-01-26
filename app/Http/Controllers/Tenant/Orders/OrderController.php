@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Services\Tenant\Orders\OrderManager;
 use Illuminate\Support\Facades\Session;
 use Throwable;
-use Yajra\DataTables\Facades\DataTables;
 
 class OrderController extends Controller
 {

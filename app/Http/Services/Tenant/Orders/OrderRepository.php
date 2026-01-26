@@ -64,13 +64,13 @@ class OrderRepository
 
     public function getOrderProducts(int $id)
     {
-        $order_products =   OrderProduct::where('order_id', $id)->get();
+        $order_products =   OrderProduct::where('order_id', $id)->where('status','<>','ANULADO')->where('delete_status',false)->get();
         return $order_products;
     }
 
     public function getOrderDishes(int $id)
     {
-        $order_dishes =   OrderDish::where('order_id', $id)->get();
+        $order_dishes =   OrderDish::where('order_id', $id)->where('status','<>','ANULADO')->where('delete_status',false)->get();
         return $order_dishes;
     }
 
@@ -82,5 +82,21 @@ class OrderRepository
     public function deleteOrderDishes(int $order_id)
     {
         OrderDish::where('order_id', $order_id)->delete();
+    }
+
+    public function cancelOrderProducts(int $order_id)
+    {
+        OrderProduct::where('order_id', $order_id)->update([
+            'status' => 'ANULADO',
+            'delete_status' => true,
+        ]);
+    }
+
+    public function cancelOrderDishes(int $order_id)
+    {
+        OrderDish::where('order_id', $order_id)->update([
+            'status' => 'ANULADO',
+            'delete_status' => true,
+        ]);
     }
 }

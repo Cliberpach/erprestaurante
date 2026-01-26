@@ -9,6 +9,7 @@ class NoteIncome extends Model
 {
     use HasFactory;
     protected $table = 'notes_income';
+    protected $connection   =   'tenant';
 
     protected $fillable = [
         'user_recorder_id',

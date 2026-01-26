@@ -9,6 +9,7 @@ class NoteIncomeDetail extends Model
 {
     use HasFactory;
     protected $table = 'notes_income_detail';
+    protected $connection   =   'tenant';
 
     protected $fillable = [
         'note_income_id',

@@ -39,7 +39,7 @@ class OrderService
     {
         $data   =   $this->s_validation->validationStore($data);
         $dto    =   $this->s_dto->getDtoStore($data);
-     
+
         $order  =   $this->s_repository->store($dto);
 
         $collect_detail =   collect($data['lst_detail']);
@@ -89,18 +89,37 @@ class OrderService
         $dto_odish      =   $this->s_dto->getDtoOrderDish($lst_dishes, $order->id);
         $dto_oproduct   =   $this->s_dto->getDtoOrderProduct($lst_products, $order->id);
 
-        $this->s_repository->deleteOrderDishes($id);
-        $this->s_repository->deleteOrderProducts($id);
 
-        $this->s_pct->increaseLstStock($data['order_products']->toArray());
-        $this->s_pct->decreaseLstStock($dto_oproduct);
-
-        $this->s_programming->increaseLstStock($data['order_dishes']->toArray());
-        $this->s_programming->decreaseLstStock($dto_odish);
+        $this->operationStock($dto_odish, $dto_oproduct, $id);
+        $this->s_repository->cancelOrderDishes($id);
+        $this->s_repository->cancelOrderProducts($id);
 
         $this->s_repository->storeOrderProduct($dto_oproduct);
         $this->s_repository->storeOrderDish($dto_odish);
 
+        
         return $order;
+    }
+
+    public function operationStock(array $lst_dishes, array $lst_products, int $order_id)
+    {
+        $this->operationStockDish($lst_dishes, $order_id);
+        $this->operationStockProduct($lst_products, $order_id);
+    }
+
+    public function operationStockDish($lst_dishes, $order_id)
+    {
+        $dishes_ant     =   $this->s_repository->getOrderDishes($order_id);
+        $this->s_programming->increaseLstStock($dishes_ant->toArray());
+
+        $this->s_programming->decreaseLstStock($lst_dishes);
+    }
+
+    public function operationStockProduct($lst_products, $order_id)
+    {
+        $products_ant     =   $this->s_repository->getOrderProducts($order_id);
+        $this->s_pct->increaseLstStock($products_ant->toArray());
+
+        $this->s_pct->decreaseLstStock($lst_products);
     }
 }

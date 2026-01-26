@@ -16,7 +16,6 @@ return new class extends Migration
 
             $table->unsignedBigInteger('user_recorder_id');
             $table->foreign('user_recorder_id')->references('id')->on('users');
-
             $table->string('user_recorder_name',160);
 
             $table->string('observation',200)->nullable();

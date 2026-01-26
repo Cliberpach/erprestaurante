@@ -9,6 +9,7 @@ class Product extends Model
 {
     use HasFactory;
     protected $table = 'products';
+    protected $connection   =   'tenant';
 
     protected $fillable = [
         'category_id',

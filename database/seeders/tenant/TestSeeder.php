@@ -5,8 +5,6 @@ namespace Database\Seeders\tenant;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Tenant\NoteIncome;
-use App\Models\Tenant\NoteIncomeDetail;
 use Illuminate\Database\Seeder;
 use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\Table\Table;
@@ -96,13 +94,12 @@ class TestSeeder extends Seeder
         */
         foreach ($platos as $type => $listaPlatos) {
             $typeDishId = $typeDishMap[$type];
-            $count = count($listaPlatos);
 
-            for ($i = 0; $i < 50; $i++) {
+            foreach ($listaPlatos as $plato) {
                 Dish::create([
-                    'name' => $listaPlatos[$i % $count],
-                    'type_dish_id' => $typeDishId,
-                    'sale_price' => rand(12, 45),
+                    'name'            => $plato,
+                    'type_dish_id'    => $typeDishId,
+                    'sale_price'      => rand(12, 45),
                     'purchase_price' => rand(6, 25),
                 ]);
             }
@@ -223,64 +220,35 @@ class TestSeeder extends Seeder
         | CREAR 200 PRODUCTOS
         |--------------------------------------------------------------------------
         */
-        $totalProducts = 200;
-        $nameCount = count($productNames);
+        $productsPerCategory = 10;
+        $productNamesCollection = collect($productNames);
 
-        for ($i = 0; $i < $totalProducts; $i++) {
-            Product::create([
-                'category_id' => $categoryIds[$i % count($categoryIds)],
-                'brand_id' => $brandIds[$i % count($brandIds)],
-                'name' => $productNames[$i % $nameCount],
-                'description' => 'PRODUCTO DE CONSUMO MASIVO',
-                'sale_price' => rand(2, 15),
-                'purchase_price' => rand(1, 10),
-                'stock' => 0,
-                'stock_min' => 1,
-                'code_factory' => null,
-                'code_bar' => null,
-                'img_route' => null,
-                'img_name' => null,
-                'unit_id' => 124,
-                'unit_name' => 'UNIDAD',
-                'unit_symbol' => 'NIU',
-            ]);
+        foreach ($categoryIds as $categoryIndex => $categoryId) {
+
+            // tomar 10 nombres distintos para esta categoría
+            $namesForCategory = $productNamesCollection
+                ->slice($categoryIndex * $productsPerCategory, $productsPerCategory);
+
+            foreach ($namesForCategory as $nameIndex => $name) {
+
+                Product::create([
+                    'category_id' => $categoryId,
+                    'brand_id' => $brandIds[($categoryIndex + $nameIndex) % count($brandIds)],
+                    'name' => $name,
+                    'description' => 'PRODUCTO DE CONSUMO MASIVO',
+                    'sale_price' => rand(2, 15),
+                    'purchase_price' => rand(1, 10),
+                    'stock' => 0,
+                    'stock_min' => 1,
+                    'code_factory' => null,
+                    'code_bar' => null,
+                    'img_route' => null,
+                    'img_name' => null,
+                    'unit_id' => 124,
+                    'unit_name' => 'UNIDAD',
+                    'unit_symbol' => 'NIU',
+                ]);
+            }
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | NOTA DE INGRESO
-        |--------------------------------------------------------------------------
-        */
-        $noteIncome = NoteIncome::create([
-            'user_recorder_id' => 1,
-            'user_recorder_name' => 'ADMIN',
-            'observation' => 'INGRESO INICIAL DE PRODUCTOS',
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | DETALLE DE NOTA DE INGRESO (TODOS LOS PRODUCTOS)
-        |--------------------------------------------------------------------------
-        */
-        $products = Product::with(['brand', 'category'])->get();
-
-        foreach ($products as $product) {
-            NoteIncomeDetail::create([
-                'note_income_id' => $noteIncome->id,
-                'product_id' => $product->id,
-                'brand_id' => $product->brand_id,
-                'category_id' => $product->category_id,
-
-                'warehouse_id' => 1,
-                'warehouse_name' => 'CENTRAL',
-
-                'product_name' => $product->name,
-                'brand_name' => $product->brand->name ?? '',
-                'category_name' => $product->category->name ?? '',
-
-                'quantity' => 200,
-            ]);
-        }
-
     }
 }

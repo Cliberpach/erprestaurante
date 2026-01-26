@@ -53,6 +53,11 @@
     .swal2-container {
         z-index: 9999999;
     }
+
+    /*morado suave*/
+    .row-new-item {
+        background-color: rgba(108, 99, 255, 0.12) !important;
+    }
 </style>
 
 @section('js')

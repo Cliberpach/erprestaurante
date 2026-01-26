@@ -21,15 +21,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/send-message', [AlertAppController::class, 'store']);
 
 
-//Route::put('/reservations/{id}', [BookController::class, 'update']);
-
-Route::put('reservations/attachments', [BookController::class, 'attachments']);
-
-Route::apiResource('/reservations', BookController::class);
-
-Route::get('customers/{document_number}', [BookController::class, 'searchCustomer']);
-Route::get('customers/ruc/{ruc_number}', [BookController::class, 'searchCustomerByRuc']);
-
-Route::get('customer_record/{document_number}', [BookController::class, 'customer_record']);
+Route::get('ListarPedidosPendientesImprimir', 'ApiController@ListarPedidosPendientesImprimir');
+Route::get('ObtenerPedido_PorCodigo/{idpedido}', 'ApiController@ObtenerPedido_PorCodigo');
+Route::get('ActualizarPedidosPendientesImprimir/{idpedido}', 'ApiController@ActualizarPedidosPendientesImprimir');
+Route::get('ObtenerRecibo_PorCodigo/{idrecibo}', 'ApiController@ObtenerRecibo_PorCodigo');
+Route::get('ActualizarReciboPendienteImprimir/{idrecibo}', 'ApiController@ActualizarReciboPendienteImprimir');
+Route::get('ObtenerComanda_PorCodigo/{idpedido}', 'ApiController@ObtenerComanda_PorCodigo');
+Route::get('ActualizarComandaPendienteImprimir/{idpedido}', 'ApiController@ActualizarComandaPendienteImprimir');
 
 

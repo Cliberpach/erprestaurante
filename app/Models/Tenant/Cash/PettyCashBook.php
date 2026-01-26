@@ -11,6 +11,7 @@ class PettyCashBook extends Model
     use HasFactory;
     public $timestamps = false;
     protected $table = 'petty_cash_books';
+    protected $connection   =   'tenant';
 
     protected $fillable = [
         'petty_cash_id',

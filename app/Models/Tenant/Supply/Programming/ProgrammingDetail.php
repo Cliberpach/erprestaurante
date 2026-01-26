@@ -9,6 +9,7 @@ class ProgrammingDetail extends Model
 {
     use HasFactory;
     protected $table = 'programming_detail';
+    protected $connection   =   'tenant';
 
     protected $fillable = [
         'programming_id',
@@ -25,28 +26,4 @@ class ProgrammingDetail extends Model
         'status',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($quote) {
-            if (auth()->check()) {
-                $quote->creator_user_id = auth()->id();
-                $quote->creator_user_name = auth()->user()->name;
-            }
-        });
-
-        static::updating(function ($quote) {
-            if (auth()->check()) {
-                $quote->editor_user_id = auth()->id();
-                $quote->editor_user_name = auth()->user()->name;
-            }
-            if ($quote->isDirty('status') && $quote->status === 'ANULADO') {
-                if (auth()->check()) {
-                    $quote->delete_user_id = auth()->id();
-                    $quote->delete_user_name = auth()->user()->name;
-                }
-            }
-        });
-    }
 }

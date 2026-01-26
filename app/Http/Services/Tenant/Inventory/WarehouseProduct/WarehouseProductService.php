@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\Tenant\Inventory\WarehouseProduct;
 
-use App\Models\Tenant\NoteIncome;
 use App\Models\Tenant\WarehouseProduct;
 use Carbon\Carbon;
 use Exception;
@@ -37,7 +36,7 @@ class WarehouseProductService
     }
 
     public function increaseLstStock(array $lst_items)
-    {  
+    {
         foreach ($lst_items as $item) {
             $this->increaseStock($item['warehouse_id'], $item['product_id'], $item['quantity']);
         }

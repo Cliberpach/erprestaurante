@@ -116,14 +116,14 @@ export async function actionAddItem() {
 function addItem(item, cantidad) {
     item.quantity = cantidad;
 
-    const indiceItem = lstDetail.findIndex((i) => {
+    /*const indiceItem = lstDetail.findIndex((i) => {
         return i.id == item.id && i.type_item === i.type_item;
     })
 
     if (indiceItem !== -1) {
         toastr.error(`EL ${item.type_name} YA EXISTE EN EL DETALLE`);
         return;
-    }
+    }*/
 
     lstDetail.push(item);
 

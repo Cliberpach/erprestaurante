@@ -69,6 +69,7 @@ class FormatController extends Controller
 
         foreach ($items as $item) {
             $formatted[] = [
+                'order_detail_id'   =>  $item['id'],
                 'warehouse_id'      =>  $item['warehouse_id'],
                 'id'                =>  $item['product_id'],
                 'name'              =>  $item['product_name'],
@@ -78,7 +79,8 @@ class FormatController extends Controller
                 'stock'             =>  null,
                 'total'             =>  $item['total'],
                 'type_item'         =>  'PRODUCTO',
-                'type_name'         =>  $item['category_name'] . '-' . $item['brand_name']
+                'type_name'         =>  $item['category_name'] . '-' . $item['brand_name'],
+                'is_new'            =>  false
             ];
         }
 
@@ -91,6 +93,7 @@ class FormatController extends Controller
 
         foreach ($items as $item) {
             $formatted[] = [
+                'order_detail_id'   =>  $item['id'],
                 'programming_id'    =>  $item['programming_id'],
                 'id'                =>  $item['dish_id'],
                 'name'              =>  $item['dish_name'],
@@ -100,7 +103,8 @@ class FormatController extends Controller
                 'stock'             =>  null,
                 'total'             =>  $item['total'],
                 'type_item'         =>  'PLATO',
-                'type_name'         =>  $item['type_dish_name']
+                'type_name'         =>  $item['type_dish_name'],
+                'is_new'            =>  false
             ];
         }
 
