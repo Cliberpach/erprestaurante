@@ -45,8 +45,8 @@ return new class extends Migration
 
             /* 🔹 PRINT CONFIGURATION */
             $table->string('pending_print', 2)->default('NO')->nullable();
-            $table->string('pending_kitchen_print', 5)->default('NO')->nullable();
-            $table->string('kitchen_print_mode', 10)->default('TODO')->nullable();
+            $table->string('pending_order_printing', 5)->default('NO')->nullable();
+            $table->string('order_print_mode', 10)->default('TODO')->nullable();
 
             /* 🔹 WAITER DELETE INFO */
             $table->boolean('waiter_delete_status')->default(0)->nullable();

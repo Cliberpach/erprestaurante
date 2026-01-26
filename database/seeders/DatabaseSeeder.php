@@ -35,6 +35,7 @@ use Database\Seeders\tenant\SupplierSeeder;
 use Database\Seeders\tenant\TypeFieldSeeder;
 use Database\Seeders\tenant\WarehouseSeeder;
 use Database\Seeders\landlord\UnitMeasurementSeeder;
+use Database\Seeders\tenant\TestSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -67,6 +68,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SupplierSeeder::class);
         $this->call(ProofPaymentSeeder::class);
         $this->call(TypeFieldSeeder::class);
+        $this->call(TestSeeder::class);
 
         //$this->call(TenantUserSeeder::class);
     }

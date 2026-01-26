@@ -63,7 +63,7 @@
 
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.btnVolver')) {
-                    const rutaIndex = '{{ route('tenant.inventario.nota_ingreso') }}';
+                    const rutaIndex = '{{ route('tenant.inventario.nota_ingreso.index') }}';
                     window.location.href = rutaIndex;
                 }
 
@@ -293,9 +293,9 @@
                         }
 
                         if (res.success) {
-                            const note_income_index = @json(route('tenant.inventario.nota_ingreso'));
+                            const index = @json(route('tenant.inventario.nota_ingreso.index'));
                             toastr.success(res.message, 'OPERACIÓN COMPLETADA');
-                            window.location.href = note_income_index;
+                            window.location.href = index;
                         } else {
                             toastr.error(res.message, 'ERROR EN EL SERVIDOR');
                             Swal.close();

@@ -13,13 +13,20 @@ return new class extends Migration
     {
         Schema::create('orders_dishes', function (Blueprint $table) {
 
+            $table->id();
+
             /* 🔹 RELATIONS */
             $table->unsignedBigInteger('order_id')->index();
-            $table->unsignedBigInteger('dish_id');
             $table->foreign('order_id')->references('id')->on('orders');
-            $table->foreign('dish_id')->references('id')->on('dishes');
 
+            $table->unsignedBigInteger('dish_id');
+            $table->foreign('dish_id')->references('id')->on('dishes');
             $table->string('dish_name', 160);
+
+            $table->unsignedBigInteger('type_dish_id');
+            $table->string('type_dish_name', 160);
+
+            $table->unsignedBigInteger('programming_id');
 
             /* 🔹 DETAIL INFO */
             $table->decimal('sale_price', 16, 6);
@@ -33,22 +40,13 @@ return new class extends Migration
             $table->string('observation', 20)->nullable();
 
             /* 🔹 PRINT STATUS */
-            $table->enum('print_status', ['IMPRESO', 'SIN_IMPRIMIR'])
-                ->default('SIN_IMPRIMIR');
-
-            $table->enum('print_delivery_status', ['CREADO', 'ENTREGADO'])
-                ->default('CREADO');
-
-            $table->string('detail_printed', 5)->nullable();
+            $table->enum('print_status', ['IMPRESO', 'SIN_IMPRIMIR'])->default('SIN_IMPRIMIR');
+            $table->enum('print_delivery_status', ['CREADO', 'ENTREGADO'])->default('CREADO');
+            $table->enum('detail_printed', ['SI', 'NO'])->default('NO');
 
             /* 🔹 NUEVAS COLUMNAS */
             $table->decimal('purchase_price', 16, 6)->unsigned();
             $table->decimal('total', 16, 6);
-            $table->unsignedBigInteger('type_dish_id');
-            $table->string('type_dish_name', 160);
-            $table->unsignedBigInteger('programming_id');
-
-            $table->primary(['order_id', 'dish_id'], 'pk_order_dish');
 
             /* 🔹 TIMESTAMPS */
             $table->timestamps();
