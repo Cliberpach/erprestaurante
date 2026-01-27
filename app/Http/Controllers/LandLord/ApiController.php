@@ -101,9 +101,6 @@ success: true
         return $data;
     }
 
-
-
-
     //Modificado por JC: todas las funciones fueron agregadas por JC
     function ListarPedidosPendientesImprimir()
     {
