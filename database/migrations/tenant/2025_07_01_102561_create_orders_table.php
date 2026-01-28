@@ -58,7 +58,7 @@ return new class extends Migration
             /*FACTURACION*/
             $table->enum('status_invoice', ['FACTURADO', 'NO FACTURADO'])->default('NO FACTURADO');
             $table->unsignedBigInteger('sale_id')->nullable();
-            $table->varchar('sale_serie',100)->nullable();
+            $table->string('sale_serie',100)->nullable();
             $table->unsignedInteger('sale_correlative')->nullable();
 
             /* 🔹 CASHIER DELETE INFO */
