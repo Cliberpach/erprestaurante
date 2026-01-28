@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('sale_id');
-            $table->foreign('sale_id')->references('id')->on('sales_documents');
+            $table->foreign('sale_id')->references('id')->on('sales');
 
             $table->string('document_number')->nullable();
             $table->date('document_date')->nullable();

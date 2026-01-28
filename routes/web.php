@@ -64,6 +64,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     require __DIR__ . '/tenant/accounts/web.php';
     require __DIR__ . '/tenant/supply/web.php';
     require __DIR__ . '/tenant/waiter_counter/web.php';
+    require __DIR__ . '/tenant/cashier_counter/web.php';
     require __DIR__ . '/tenant/inventory/web.php';
     require __DIR__ . '/tenant/purchases/web.php';
     require __DIR__ . '/tenant/purchases/web.php';

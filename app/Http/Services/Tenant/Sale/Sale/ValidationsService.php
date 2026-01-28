@@ -2,18 +2,27 @@
 
 namespace App\Http\Services\Tenant\Sale\Sale;
 
+use App\Http\Services\Tenant\Cash\PettyCashBook\PettyCashBookService;
+use App\Http\Services\Tenant\Orders\OrderService;
 use App\Models\Company;
 use App\Models\Landlord\Customer;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
-use App\Models\Product;
+use App\Models\Tenant\Orders\Order;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ValidationsService
 {
+    private PettyCashBookService $s_cash;
+    private OrderService $s_order;
 
-    public function __construct() {}
+    public function __construct()
+    {
+        $this->s_cash   =   new PettyCashBookService();
+        $this->s_order  =   new OrderService();
+    }
 
     //====== RESPUESTA =======
     /*
@@ -126,7 +135,7 @@ class ValidationsService
         ];
     }
 
-    public static function validationLstPays(array $lstPays, object $amounts):array
+    public static function validationLstPays(array $lstPays, object $amounts): array
     {
 
         $methodPays =   array_column($lstPays, 'method_pay');
@@ -167,7 +176,7 @@ class ValidationsService
         return $lstPays;
     }
 
-       public static function validationStoreFromOrder($data): array
+    public static function validationStoreFromOrder($data): array
     {
         //======= VALIDACION TIPO DE VENTA Y CLIENTE =========
         $type_sale      =   $data['invoice_type'];
@@ -204,6 +213,48 @@ class ValidationsService
         $data['lst_services']   =   $lst_services;
         $data['type']           =   'PRODUCTOS';
 
+        return $data;
+    }
+
+    public function vStoreFromCOrder(array $data): array
+    {
+        $customer       =   Customer::findOrFail($data['customer_id']);
+        $invoice        =   GeneralTableDetail::findOrFail($data['invoice_id']);
+        $order          =   Order::findOrFail($data['order_id']);
+        $user           =   Auth::user();
+        $cash_book      =   $this->s_cash->getCashBookUser($user->id);
+
+        if ($order->status !== 'ACTIVO') {
+            throw new Exception("EL PEDIDO SE ENCUENTRA: " . $order->status);
+        }
+        if ($order->status_invoice !== 'NO FACTURADO') {
+            throw new Exception("EL PEDIDO YA FUE FACTURADO");
+        }
+
+        if (!$cash_book) {
+            throw new Exception("DEBES PERTENECER A UNA CAJA APERTURADA");
+        }
+
+        //======== RUC Y BOLETA ======
+        if ($customer->type_document_abbreviation === 'RUC' && $invoice->id == 65) {
+            throw new Exception("NO SE PERMITEN BOLETAS DE VENTA CON RUC!!!");
+        }
+
+        //======== DNI Y FACTURA ======
+        if ($customer->type_document_abbreviation === 'DNI' && $invoice->id == 66) {
+            throw new Exception("NO SE PERMITEN FACTURAS DE VENTA CON DNI!!!");
+        }
+
+        $order_dishes           =   $this->s_order->getOrderDishes($data['order_id']);
+        $order_products         =   $this->s_order->getOrderProducts($data['order_id']);
+
+        $data['order']          =   $order;
+        $data['customer']       =   $customer;
+        $data['invoice']        =   $invoice;
+        $data['cash_book']      =   $cash_book;
+        $data['user']           =   $user;
+        $data['order_dishes']   =   $order_dishes;
+        $data['order_products'] =   $order_products;
         return $data;
     }
 }

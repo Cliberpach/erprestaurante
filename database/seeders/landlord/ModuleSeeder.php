@@ -17,6 +17,7 @@ class ModuleSeeder extends Seeder
         $this->seedCuentas();
         $this->seedInventario();
         $this->seedMostradorMesero();
+        $this->seedMostradorCajero();
         $this->seedCompras();
         $this->seedReportes();
         $this->seedMantenimiento();
@@ -156,6 +157,16 @@ class ModuleSeeder extends Seeder
         $this->createChild($module, [
             'description' => 'Mostrador',
             'route_name' => 'mostrador_mesero.mostrador.index',
+        ]);
+    }
+
+    private function seedMostradorCajero(): void
+    {
+        $module = $this->createModule('Mostrador Cajero');
+
+        $this->createChild($module, [
+            'description' => 'Mostrador',
+            'route_name' => 'mostrador_cajero.mostrador.index',
         ]);
     }
 

@@ -11,8 +11,6 @@ use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\TypeDish\TypeDish;
 use App\Models\Tenant\Warehouse;
 
-use function Laravel\Prompts\warning;
-
 class OrderDto
 {
     public function getDtoStore(array $data): array
@@ -28,13 +26,14 @@ class OrderDto
         $dto['date']        =   now();
 
         //======== AMOUNTS ======
-        $dto_amounts        =   $this->calculateAmounts($data['lst_detail']);
-        $dto['total']       =   $dto_amounts['total'];
-        $dto['subtotal']    =   $dto_amounts['subtotal'];
-        $dto['igv']         =   $dto_amounts['igv'];
+        $dto_amounts            =   $this->calculateAmounts($data['lst_detail']);
+        $dto['igv_percentage']  =   $dto_amounts['igv_percentage'];
+        $dto['total']           =   $dto_amounts['total'];
+        $dto['subtotal']        =   $dto_amounts['subtotal'];
+        $dto['igv']             =   $dto_amounts['igv'];
 
-        $dto['table_id']    =   $data['table_id'];
-        $dto['observation'] =   mb_strtoupper(trim($data['observation']), 'UTF-8');
+        $dto['table_id']        =   $data['table_id'];
+        $dto['observation']     =   mb_strtoupper(trim($data['observation']), 'UTF-8');
 
         $dto['payref_id']      =   $data['payref_id'] ?? null;
         $dto['payref_name']    =   $data['payref_name'] ?? null;
@@ -71,7 +70,7 @@ class OrderDto
             $_item['total']             =   $dish->sale_price * $item->quantity;
             $_item['type_dish_id']      =   $dish->type_dish_id;
             $_item['type_dish_name']    =   $type_dish->name;
-            $_item['observation']       =   mb_strtoupper(trim($item->observation??null), 'UTF-8');
+            $_item['observation']       =   mb_strtoupper(trim($item->observation ?? null), 'UTF-8');
 
             $dto[]  =   $_item;
         }
@@ -107,7 +106,7 @@ class OrderDto
             $_item['brand_id']          =   $product->brand_id;
             $_item['category_name']     =   $category->name;
             $_item['brand_name']        =   $brand->name;
-            $_item['observation']       =   mb_strtoupper(trim($item->observation??null), 'UTF-8');
+            $_item['observation']       =   mb_strtoupper(trim($item->observation ?? null), 'UTF-8');
 
             $dto[]  =   $_item;
         }
@@ -120,19 +119,20 @@ class OrderDto
         $total = 0;
         $igv   = 0;
         $subtotal = 0;
-        $porcentaje_igv = Company::find(1)->igv;
+        $igv_percentage = Company::find(1)->igv;
 
         foreach ($lst_items as $item) {
             $total  +=  $item->total;
         }
 
-        $subtotal   =   $total / (1 + ($porcentaje_igv / 100));
+        $subtotal   =   $total / (1 + ($igv_percentage / 100));
         $igv        =   $total - $subtotal;
 
         return [
-            'total'     =>  $total,
-            'subtotal'  =>  $subtotal,
-            'igv'       =>  $igv
+            'total'             =>  $total,
+            'subtotal'          =>  $subtotal,
+            'igv'               =>  $igv,
+            'igv_percentage'    =>  $igv_percentage
         ];
     }
 }

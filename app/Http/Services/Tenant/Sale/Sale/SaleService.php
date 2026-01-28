@@ -6,7 +6,7 @@ use App\Http\Controllers\Tenant\NumberToLettersController;
 use App\Http\Services\Tenant\Maintenance\Company\CompanyManager;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Tenant\DocumentSerialization;
-use App\Models\Tenant\Sale;
+use App\Models\Tenant\Sales\Sale\Sale;
 use Exception;
 
 class SaleService
@@ -55,7 +55,7 @@ class SaleService
 
         //========= REGISTRAR DETALLE TYPE PRODUCTOS =======
         if ($validated_data->type === 'PRODUCTOS') {
-            $this->s_detail->storeDetail($sale, $validated_data);
+            //$this->s_detail->storeDetail($sale, $validated_data);
         }
 
         //========= REGISTRAR DETALLE TYPE RESERVAS =======
@@ -155,22 +155,20 @@ class SaleService
         return $data;
     }
 
-    public function storeFromOrder($data):Sale
+    public function storeFromCOrder(array $data): Sale
     {
-        $this->isActiveTypeSale($data['invoice_type']);
-        $data   =   $this->s_validations->validationStoreFromOrder($data);
-        $data   =   $this->calculateAmounts($data);
+        $this->isActiveTypeSale($data['invoice_id']);
+        $data           =   $this->s_validations->vStoreFromCOrder($data);
+        $dto            =   $this->s_dto->getDtoStoreFromOrder($data);
 
-        $dto    =   $this->s_dto->getDtoStoreFromOrder($data);
-        $sale   =   $this->s_repository->insertSale($dto);
+        $sale           =   $this->s_repository->store($dto);
 
-        $dto_services   =   $this->s_dto->getDtoServices($data['lst_services'],$sale);
-        $this->s_repository->insertSaleService($dto_services);
+        $dto_sdishes    =   $this->s_dto->getDtoSaleDish($data['order_dishes'], $sale);
+        $dto_s_products =   $this->s_dto->getDtoProducts($data['order_products'], $sale);
 
-        $dto_products   =   $this->s_dto->getDtoProducts($data['lst_products'],$sale);
-        $this->s_repository->insertSaleProduct($dto_products);
+        $this->s_repository->storeSaleDish($dto_sdishes);
+        $this->s_repository->storeSaleProduct($dto_s_products);
 
         return $sale;
-
     }
 }

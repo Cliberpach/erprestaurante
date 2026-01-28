@@ -10,7 +10,9 @@ use App\Models\Company;
 use App\Models\CompanyInvoice;
 use App\Models\Landlord\Customer;
 use App\Models\Tenant\PaymentMethod;
-use App\Models\Tenant\Sale;
+use App\Models\Tenant\Sales\Sale\Sale;
+use App\Models\Tenant\Sales\Sale\SaleDish;
+use App\Models\Tenant\Sales\Sale\SaleProduct;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
@@ -76,9 +78,9 @@ class SaleController extends Controller
         $districts      =   DB::select('select * from districts');
         $provinces      =   DB::select('select * from provinces');
 
-        $company_invoice                    =   CompanyInvoice::find(1);
-
+        $company_invoice    =   CompanyInvoice::find(1);
         $payment_methods    =   PaymentMethod::where('estado', 'ACTIVO')->get();
+        $invoice_types      =   UtilController::getInvoiceTypes();
 
         return view(
             'sales.sale_document.create',
@@ -215,35 +217,34 @@ array:3 [ // app\Http\Controllers\Tenant\SaleController.php:119
         try {
 
             $company                =   Company::find(1);
-            $sale_document          =   Sale::findOrFail($sale_id);
-            $sale_document_detail   =   DB::select('SELECT *
-                                        FROM sales_documents_details AS sdd
-                                        WHERE sdd.sale_document_id = ?', [$sale_id]);
+            $sale          =   Sale::findOrFail($sale_id);
+            $sale_products          =   SaleProduct::where('sale_id', $sale_id)->get();
+            $sale_dishes            =   SaleDish::where('sale_id', $sale_id)->get();
 
             $route_view             =   'sales.sale_document.pdf.pdf';
             $pdf_size               =   null;
 
             $data_qr                =   (object)[
                 'ruc_emisor'        =>  $company->ruc,
-                'tipo_comprobante'  =>  $sale_document->type_sale_code,
-                'serie'             =>  $sale_document->serie,
-                'correlativo'       =>  $sale_document->correlative,
-                'mto_total_igv'     =>  number_format($sale_document->igv_amount, 2, '.', ''),
-                'total'             =>  number_format($sale_document->total, 2, '.', ''),
-                'fecha_emision'     =>  \Carbon\Carbon::parse($sale_document->created_at)->format('Y-m-d'),
-                'tipo_documento_adquiriente'    =>  $sale_document->customer_document_code,
-                'nro_documento_adquieriente'    =>  $sale_document->customer_document_number
+                'tipo_comprobante'  =>  $sale->type_sale_code,
+                'serie'             =>  $sale->serie,
+                'correlativo'       =>  $sale->correlative,
+                'mto_total_igv'     =>  number_format($sale->igv_amount, 2, '.', ''),
+                'total'             =>  number_format($sale->total, 2, '.', ''),
+                'fecha_emision'     =>  \Carbon\Carbon::parse($sale->created_at)->format('Y-m-d'),
+                'tipo_documento_adquiriente'    =>  $sale->customer_document_code,
+                'nro_documento_adquieriente'    =>  $sale->customer_document_number
             ];
 
             $res_qr         =   QRController::generateQr(json_encode($data_qr));
             $res_qr         =   $res_qr->getData();
 
             if ($res_qr->success) {
-                $sale_document->ruta_qr =   $res_qr->data->ruta_qr;
-                $sale_document->update();
+                $sale->ruta_qr =   $res_qr->data->ruta_qr;
+                $sale->update();
             }
 
-            $customer       =   Customer::find($sale_document->customer_id);
+            $customer       =   Customer::find($sale->customer_id);
 
             if ((int)$size === 0) {
                 $pdf_size   =   [0, 0, 226.772, 651.95];
@@ -254,14 +255,15 @@ array:3 [ // app\Http\Controllers\Tenant\SaleController.php:119
 
             $pdf = PDF::loadview($route_view, [
                 'company'               =>  $company,
-                'sale_document'         =>  $sale_document,
+                'sale'                  =>  $sale,
                 'customer'              =>  $customer,
-                'sale_document_detail'  =>  $sale_document_detail
+                'sale_products'         =>  $sale_products,
+                'sale_dishes'           =>  $sale_dishes
             ]);
 
             $pdf->setPaper($pdf_size);
 
-            return $pdf->stream($sale_document->serie . '-' . $sale_document->correlative . '.pdf');
+            return $pdf->stream($sale->serie . '-' . $sale->correlative . '.pdf');
         } catch (Throwable $th) {
             return response()->json(['success' => false, 'message' => $th->getMessage(), 'line' => $th->getLine()]);
         }

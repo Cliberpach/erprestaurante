@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Tenant\Orders;
 
+use App\Http\Controllers\FormatController;
 use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Inventory\WarehouseProduct\WarehouseProductService;
 use App\Http\Services\Tenant\Reservation\ReservationService;
@@ -97,7 +98,7 @@ class OrderService
         $this->s_repository->storeOrderProduct($dto_oproduct);
         $this->s_repository->storeOrderDish($dto_odish);
 
-        
+
         return $order;
     }
 
@@ -121,5 +122,31 @@ class OrderService
         $this->s_pct->increaseLstStock($products_ant->toArray());
 
         $this->s_pct->decreaseLstStock($lst_products);
+    }
+
+    public function getOrderDetail(int $order_id)
+    {
+        $order_dishes       =   $this->s_repository->getOrderDishes($order_id)->toArray();
+        $order_products     =   $this->s_repository->getOrderProducts($order_id)->toArray();
+
+        $lst_products       =   FormatController::formatLstProducts($order_products);
+        $lst_dishes         =   FormatController::formatLstDishes($order_dishes);
+        $lst_detail         =   array_merge($lst_products, $lst_dishes);
+        return $lst_detail;
+    }
+
+    public function getOrderDishes(int $order_id)
+    {
+        return $this->s_repository->getOrderDishes($order_id);
+    }
+
+    public function getOrderProducts(int $order_id)
+    {
+        return $this->s_repository->getOrderProducts($order_id);
+    }
+
+    public function setStatusInvoice(int $id,string $status)
+    {
+        $this->s_repository->setStatusInvoice($id,$status);
     }
 }

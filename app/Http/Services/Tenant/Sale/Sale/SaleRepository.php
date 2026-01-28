@@ -2,24 +2,26 @@
 
 namespace App\Http\Services\Tenant\Sale\Sale;
 
-use App\Models\Tenant\Sale;
 use App\Models\Tenant\Sale\SaleService;
 use App\Models\Tenant\SaleDetail;
+use App\Models\Tenant\Sales\Sale\Sale;
+use App\Models\Tenant\Sales\Sale\SaleDish;
+use App\Models\Tenant\Sales\Sale\SaleProduct;
 
 class SaleRepository
 {
-    public function insertSale(array $dto): Sale
+    public function store(array $dto): Sale
     {
         return Sale::create($dto);
     }
 
-    public function insertSaleService(array $dto)
+    public function storeSaleDish(array $dto)
     {
-        SaleService::insert($dto);
+        SaleDish::insert($dto);
     }
 
-    public function insertSaleProduct(array $dto)
+    public function storeSaleProduct(array $dto)
     {
-        SaleDetail::insert($dto);
+        SaleProduct::insert($dto);
     }
 }

@@ -27,8 +27,8 @@ class CorrelativeService
         //======= CONTABILIZANDO SI HAY DOCUMENTOS DE VENTA EMITIDOS PARA EL TYPE SALE ======
         $sales_documents    =   DB::select('SELECT
                                 count(*) as cant
-                                from sales_documents as sd
-                                where sd.type_sale_code = ?', [$type_sale])[0];
+                                from sales as s
+                                where s.type_sale_code = ?', [$type_sale])[0];
 
         $document_serialization =   DocumentSerialization::where('company_id',1)->where('document_type_id',$type_sale)->first();
 

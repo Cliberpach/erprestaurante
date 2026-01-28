@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Tenant;
+namespace App\Models\Tenant\Sales\Sale;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +9,8 @@ class Sale extends Model
 {
     use HasFactory;
 
-    protected $table = 'sales_documents';
+    protected $table = 'sales';
+    protected $connection   =   'tenant';
 
     protected $fillable = [
         'customer_id',
@@ -45,7 +46,7 @@ class Sale extends Model
         'correlative',
         'serie',
 
-        'estado',
+        'status',
 
         'response_cdrZip',
         'response_success',
@@ -63,6 +64,6 @@ class Sale extends Model
         'ruta_qr',
 
         'type',
-        'work_order_id'
+        'order_id'
     ];
 }

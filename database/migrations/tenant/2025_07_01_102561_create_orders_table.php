@@ -29,12 +29,12 @@ return new class extends Migration
             $table->unsignedInteger('n_attempts_dishes')->nullable();
             $table->unsignedInteger('n_attempts_products')->nullable();
 
+            $table->decimal('igv_percentage', 16, 6)->unsigned();
             $table->decimal('total', 16, 6)->unsigned();
             $table->decimal('subtotal', 16, 6)->unsigned();
             $table->decimal('igv', 16, 6)->unsigned();
 
             $table->enum('status', ['ACTIVO', 'FINALIZADO', 'ANULADO'])->default('ACTIVO');
-            $table->enum('status_invoice', ['FACTURADO', 'NO FACTURADO'])->default('NO FACTURADO');
 
             $table->unsignedBigInteger('payref_id')->nullable()->comment('ID de la referencia de pago (payref)');
             $table->foreign('payref_id')->references('id')->on('payment_methods');
@@ -54,6 +54,12 @@ return new class extends Migration
             $table->unsignedInteger('waiter_delete_user_id')->nullable();
             $table->dateTime('waiter_delete_at')->nullable();
             $table->string('waiter_delete_observation', 300)->nullable();
+
+            /*FACTURACION*/
+            $table->enum('status_invoice', ['FACTURADO', 'NO FACTURADO'])->default('NO FACTURADO');
+            $table->unsignedBigInteger('sale_id')->nullable();
+            $table->varchar('sale_serie',100)->nullable();
+            $table->unsignedInteger('sale_correlative')->nullable();
 
             /* 🔹 CASHIER DELETE INFO */
             $table->boolean('cashier_delete_status')->default(0)->nullable();

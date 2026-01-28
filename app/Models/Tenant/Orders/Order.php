@@ -42,6 +42,8 @@ class Order extends Model
         'delete_user_id',
         'delete_user_name',
         'code',
+
+        'igv_percentage',
         'subtotal',
         'total',
         'igv',
@@ -49,7 +51,11 @@ class Order extends Model
         'payref_id',
         'payref_img_url',
         'payref_img_name',
-        'payref_name'
+        'payref_name',
+
+        'sale_id',
+        'sale_serie',
+        'sale_correlative'
     ];
 
     protected $guarded = ['code'];

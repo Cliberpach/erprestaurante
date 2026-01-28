@@ -31,10 +31,11 @@ return new class extends Migration
             $table->unsignedBigInteger('brand_id');
             $table->string('brand_name', 255);
 
-
             /* 🔹 DETAIL INFO */
+            $table->decimal('purchase_price', 16, 6)->unsigned();
             $table->decimal('sale_price', 16, 6);
             $table->integer('quantity');
+            $table->decimal('total', 16, 6);
 
             /* 🔹 STATUS */
             $table->string('status', 255)->default('PENDIENTE');
@@ -47,10 +48,6 @@ return new class extends Migration
             $table->enum('print_status', ['IMPRESO', 'SIN_IMPRIMIR'])->default('SIN_IMPRIMIR');
             $table->enum('print_delivery_status', ['CREADO', 'ENTREGADO'])->default('CREADO');
             $table->enum('detail_printed', ['SI', 'NO'])->default('NO');
-
-            /* 🔹 NUEVAS COLUMNAS */
-            $table->decimal('purchase_price', 16, 6)->unsigned();
-            $table->decimal('total', 16, 6);
 
             /* 🔹 TIMESTAMPS */
             $table->timestamps();

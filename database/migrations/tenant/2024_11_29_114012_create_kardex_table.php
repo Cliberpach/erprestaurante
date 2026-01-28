@@ -38,7 +38,7 @@ return new class extends Migration
             $table->string('category_name',160);
 
             $table->unsignedBigInteger('sale_document_id')->nullable()->comment('VENTA');
-            $table->foreign('sale_document_id')->references('id')->on('sales_documents');
+            $table->foreign('sale_document_id')->references('id')->on('sales');
 
             $table->unsignedBigInteger('note_income_id')->nullable()->comment('NOTA INGRESO');
             $table->foreign('note_income_id')->references('id')->on('notes_income');

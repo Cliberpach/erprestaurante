@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders_dishes', function (Blueprint $table) {
+        Schema::create('sales_dishes', function (Blueprint $table) {
 
-            $table->id();
-
-            /* 🔹 RELATIONS */
-            $table->unsignedBigInteger('order_id')->index();
-            $table->foreign('order_id')->references('id')->on('orders');
+            $table->unsignedBigInteger('sale_id');
+            $table->foreign('sale_id')->references('id')->on('sales');
 
             $table->unsignedBigInteger('dish_id');
             $table->foreign('dish_id')->references('id')->on('dishes');
@@ -27,29 +24,27 @@ return new class extends Migration
             $table->string('type_dish_name', 160);
 
             $table->unsignedBigInteger('programming_id');
-
-            /* 🔹 DETAIL INFO */
             $table->decimal('purchase_price', 16, 6)->unsigned();
             $table->decimal('sale_price', 16, 6);
             $table->integer('quantity');
             $table->decimal('total', 16, 6);
 
-            /* 🔹 STATUS */
-            $table->string('status', 255)->default('PENDIENTE');
-            $table->boolean('delete_status')->default(false);
-
-            /* 🔹 DESCRIPTION */
             $table->string('observation', 20)->nullable();
 
-            /* 🔹 PRINT STATUS */
-            $table->enum('print_status', ['IMPRESO', 'SIN_IMPRIMIR'])->default('SIN_IMPRIMIR');
-            $table->enum('print_delivery_status', ['CREADO', 'ENTREGADO'])->default('CREADO');
-            $table->enum('detail_printed', ['SI', 'NO'])->default('NO');
+            // ===== SUNAT =====
+            $table->decimal('mto_valor_unitario', 16, 6);
+            $table->decimal('mto_valor_venta', 16, 6);
+            $table->decimal('mto_base_igv', 16, 6);
+            $table->decimal('porcentaje_igv', 16, 6);
+            $table->decimal('igv', 16, 6);
+            $table->unsignedBigInteger('tip_afe_igv');
+            $table->decimal('total_impuestos', 16, 6);
+            $table->decimal('mto_precio_unitario', 16, 6);
 
-            /* 🔹 NUEVAS COLUMNAS */
+            $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
 
+            $table->primary(['sale_id', 'dish_id'], 'pk_s_d');
 
-            /* 🔹 TIMESTAMPS */
             $table->timestamps();
         });
     }
@@ -59,6 +54,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders_dishes');
+        Schema::dropIfExists('sales_dishes');
     }
 };

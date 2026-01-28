@@ -44,6 +44,11 @@
     "isEntry": true,
     "src": "resources/js/app.js"
   },
+  "resources/js/cashier_counter/counter/charge/main.js": {
+    "file": "assets/main-0ad92769.js",
+    "isEntry": true,
+    "src": "resources/js/cashier_counter/counter/charge/main.js"
+  },
   "resources/js/global/main.js": {
     "file": "assets/main-86b96090.js",
     "isEntry": true,

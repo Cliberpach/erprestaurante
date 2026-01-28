@@ -11,33 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales_documents_details', function (Blueprint $table) {
+        Schema::create('sales_products', function (Blueprint $table) {
 
-            $table->unsignedBigInteger('sale_document_id');
-            $table->foreign('sale_document_id')->references('id')->on('sales_documents');
+            $table->unsignedBigInteger('sale_id');
+            $table->foreign('sale_id')->references('id')->on('sales');
 
             $table->unsignedBigInteger('warehouse_id');
-            $table->foreign('warehouse_id')->references('id')->on('warehouses');
+            $table->string('warehouse_name', 120);
 
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products');
+            $table->string('product_name', 160);
 
             $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('categories');
+            $table->string('category_name', 255);
 
             $table->unsignedBigInteger('brand_id');
-            $table->foreign('brand_id')->references('id')->on('brands');
+            $table->string('brand_name', 255);
 
-            $table->string('product_code', 100);
-            $table->string('product_unit', 100);
-            $table->string('product_description', 400);
-            $table->string('product_name', 200);
-            $table->string('category_name', 200);
-            $table->string('brand_name', 200);
+            $table->decimal('purchase_price', 16, 6)->unsigned();
+            $table->decimal('sale_price', 16, 6);
+            $table->integer('quantity');
+            $table->decimal('total', 16, 6);
 
-            $table->decimal('quantity', 10, 2)->unsigned();
-            $table->decimal('price_sale', 10, 2);
-            $table->decimal('amount', 10, 2);
+            $table->string('observation', 20)->nullable();
 
             // ===== SUNAT =====
             $table->decimal('mto_valor_unitario', 16, 6);
@@ -49,9 +46,9 @@ return new class extends Migration
             $table->decimal('total_impuestos', 16, 6);
             $table->decimal('mto_precio_unitario', 16, 6);
 
-            $table->enum('estado', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
+            $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
 
-            $table->primary(['sale_document_id', 'warehouse_id', 'product_id'], 'pk_sd_wh_pr');
+            $table->primary(['sale_id','product_id'], 'pk_s_pr');
 
             $table->timestamps();
         });
@@ -62,6 +59,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sales_documents_details');
+        Schema::dropIfExists('sales_products');
     }
 };

@@ -6,11 +6,8 @@ use App\Http\Controllers\Tenant\NumberToLettersController;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Tenant\Cash\PettyCash;
-use App\Models\Tenant\Cash\PettyCashBook;
-use App\Models\Tenant\Sale;
+use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\WorkShop\Service;
-use Illuminate\Support\Facades\Auth;
 
 class SaleDto
 {
@@ -34,35 +31,28 @@ class SaleDto
         $dto['customer_document_code']      =   $customer->type_document_code;
         $dto['customer_phone']              =   $customer->phone;
 
-        $user_recorder                      =   Auth::user();
-        $dto['user_recorder_id']           =   $user_recorder->id;
+        $user_recorder                      =   $data['user'];
+        $dto['user_recorder_id']            =   $user_recorder->id;
         $dto['user_recorder_name']          =   $user_recorder->name;
 
-        $petty_cash                         =   PettyCash::where('type', 'FICTICIO')->first();
-        $dto['petty_cash_id']               =   $petty_cash->id;
-        $dto['petty_cash_name']             =   $petty_cash->name;
+        $cash_book                          =   $data['cash_book'];
+        $dto['petty_cash_id']               =   $cash_book->petty_cash_id;
+        $dto['petty_cash_name']             =   $cash_book->petty_cash_name;
+        $dto['petty_cash_book_id']          =   $cash_book->petty_cash_book_id;
 
-        $petty_cash_book                    =   PettyCashBook::where('type', 'FICTICIO')->first();
-        $dto['petty_cash_book_id']          =   $petty_cash_book->id;
+        $invoice                            =   $data['invoice'];
+        $dto['type_sale_id']                =   $invoice->id;
+        $dto['type_sale_code']              =   $invoice->symbol;
+        $dto['type_sale_name']              =   $invoice->name;
 
-        $invoice_type                       =   $data['invoice_type'];
-        $dto['type_sale_id']                =   $invoice_type->id;
-        $dto['type_sale_code']              =   $invoice_type->symbol;
-        $dto['type_sale_name']              =   $invoice_type->name;
+        $dto['igv_percentage']              =   $data['order']->igv_percentage;
+        $dto['subtotal']                    =   $data['order']->subtotal;
+        $dto['igv_amount']                  =   $data['order']->igv;
+        $dto['total']                       =   $data['order']->total;
 
-        $dto['igv_percentage']              =   $data['igv_percentage'];
-        $dto['subtotal']                    =   $data['subtotal'];
-        $dto['igv_amount']                  =   $data['igv_amount'];
-        $dto['total']                       =   $data['total'];
-
-        $legend                 =   NumberToLettersController::numberToLetters($data['total']);
+        $legend                 =   NumberToLettersController::numberToLetters($dto['total']);
         $dto['legend']          =   $legend;
 
-        $dto['method_pay_id_1'] =   1;
-        $dto['amount_pay_1']    =   0;
-
-        $dto['method_pay_id_2'] =   null;
-        $dto['amount_pay_2']    =   null;
 
         $data_correlative       =   $this->s_correlative->getCorrelative($dto['type_sale_id']);
         $dto['correlative']     =   $data_correlative->correlative;
@@ -70,8 +60,7 @@ class SaleDto
 
         $dto['type']            =   "PRODUCTOS";
 
-
-        $dto['work_order_id']   =   $data['work_order_id']??null;
+        $dto['order_id']        =   $data['order'] ? $data['order']->id : null;
 
         return $dto;
     }
@@ -89,7 +78,7 @@ class SaleDto
             $s_dto['service_description']     =     $service->id;
             $s_dto['service_name']            =     $service->name;
             $s_dto['quantity']                =     $item->quantity;
-            $s_dto['price_sale']              =     $item->sale_price;
+            $s_dto['sale_price']              =     $item->sale_price;
             $s_dto['amount']                  =     $item->quantity * $item->sale_price;
 
             $s_dto['mto_valor_unitario']     =   (float)($item->sale_price / 1.18);
@@ -107,41 +96,71 @@ class SaleDto
         return $dto;
     }
 
-     public function getDtoProducts(array $data, Sale $sale)
+    public function getDtoProducts($data, Sale $sale)
     {
         $dto    =   [];
 
         foreach ($data as $item) {
-            $product                            =     Product::findOrFail($item->id);
-            $category                           =     Category::findOrFail($product->category_id);
-            $brand                              =     Brand::findOrFail($product->brand_id);
 
-            $s_dto['sale_document_id']        =     $sale->id;
+            $s_dto['sale_id']                   =     $sale->id;
             $s_dto['warehouse_id']              =     $item->warehouse_id;
-            $s_dto['product_id']                =     $item->id;
-            $s_dto['category_id']               =     $product->category_id;
-            $s_dto['brand_id']                  =     $product->brand_id;
-            $s_dto['product_code']              =     'P-'.$product->id;
-            $s_dto['product_unit']              =     'NIU';
-            $s_dto['product_description']       =     $product->name;
-            $s_dto['product_name']              =     $product->name;
-            $s_dto['category_name']             =     $category->name;
-            $s_dto['brand_name']                =     $brand->name;
-            $s_dto['quantity']                  =     $item->quantity;
+            $s_dto['warehouse_name']            =     $item->warehouse_name;
+            $s_dto['product_id']                =     $item->product_id;
+            $s_dto['category_id']               =     $item->category_id;
+            $s_dto['brand_id']                  =     $item->brand_id;
+            $s_dto['product_name']              =     $item->product_name;
+            $s_dto['category_name']             =     $item->category_name;
+            $s_dto['brand_name']                =     $item->brand_name;
 
-            $s_dto['price_sale']                =     $item->sale_price;
-            $s_dto['amount']                    =     $item->quantity * $item->sale_price;
+            $s_dto['quantity']                  =   $item->quantity;
+            $s_dto['purchase_price']            =   $item->purchase_price;
+            $s_dto['sale_price']                =   $item->sale_price;
+            $s_dto['total']                     =   $item->total;
 
             $s_dto['mto_valor_unitario']     =   (float)($item->sale_price / 1.18);
-            $s_dto['mto_valor_venta']        =   (float)($s_dto['amount'] / 1.18);
-            $s_dto['mto_base_igv']           =   (float)($s_dto['amount'] / 1.18);
+            $s_dto['mto_valor_venta']        =   (float)($sale->total / 1.18);
+            $s_dto['mto_base_igv']           =   (float)($sale->total / 1.18);
             $s_dto['porcentaje_igv']         =   $sale->igv_percentage;
-            $s_dto['igv']                    =   (float)($s_dto['amount']) - (float)($s_dto['amount'] / 1.18);
+            $s_dto['igv']                    =   (float)($sale->total) - (float)($sale->total / 1.18);
             $s_dto['tip_afe_igv']            =   10;
-            $s_dto['total_impuestos']        =   (float)($s_dto['amount']) - (float)($s_dto['amount'] / 1.18);
+            $s_dto['total_impuestos']        =   (float)($sale->total) - (float)($sale->total / 1.18);
             $s_dto['mto_precio_unitario']    =   (float)($item->sale_price);
 
             $dto[]  =   $s_dto;
+        }
+
+        return $dto;
+    }
+
+
+    public function getDtoSaleDish($lst_items, Sale $sale): array
+    {
+        $dto    =   [];
+        foreach ($lst_items as $item) {
+            $_item      =   [];
+
+            $_item['sale_id']           =   $sale->id;
+            $_item['programming_id']    =   $item->programming_id;
+            $_item['dish_id']           =   $item->dish_id;
+            $_item['dish_name']         =   $item->dish_name;
+            $_item['sale_price']        =   $item->sale_price;
+            $_item['quantity']          =   $item->quantity;
+            $_item['purchase_price']    =   $item->purchase_price;
+            $_item['total']             =   $item->total;
+            $_item['type_dish_id']      =   $item->type_dish_id;
+            $_item['type_dish_name']    =   $item->type_dish_name;
+            $_item['observation']       =   mb_strtoupper(trim($item->observation ?? null), 'UTF-8');
+
+            $_item['mto_valor_unitario']     =   (float)($item->sale_price / 1.18);
+            $_item['mto_valor_venta']        =   (float)($sale->total / 1.18);
+            $_item['mto_base_igv']           =   (float)($sale->total / 1.18);
+            $_item['porcentaje_igv']         =   $sale->igv_percentage;
+            $_item['igv']                    =   (float)($sale->total) - (float)($sale->total / 1.18);
+            $_item['tip_afe_igv']            =   10;
+            $_item['total_impuestos']        =   (float)($sale->total) - (float)($sale->total / 1.18);
+            $_item['mto_precio_unitario']    =   (float)($item->sale_price);
+
+            $dto[]  =   $_item;
         }
 
         return $dto;

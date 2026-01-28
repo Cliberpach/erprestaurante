@@ -11,60 +11,61 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales_documents', function (Blueprint $table) {
+        Schema::create('sales', function (Blueprint $table) {
             $table->id();
 
             //======== CLIENTE Y SUS DATOS HISTÓRICO =======
             $table->unsignedBigInteger('customer_id');
             //$table->foreign('customer_id')->references('id')->on('customers');
 
-            $table->string('customer_name',160);
+            $table->string('customer_name', 160);
             $table->enum('customer_type_document', ['DNI', 'RUC']);
-            $table->string('customer_document_number',20);
-            $table->string('customer_document_code',4);
-            $table->string('customer_phone',20)->nullable();
+            $table->string('customer_document_number', 20);
+            $table->string('customer_document_code', 4);
+            $table->string('customer_phone', 20)->nullable();
 
             //====== USUARIO REGISTRADOR Y SUS DATOS HISTÓRICOS =======
             $table->unsignedBigInteger('user_recorder_id');
             $table->foreign('user_recorder_id')->references('id')->on('users');
 
-            $table->string('user_recorder_name',160);
+            $table->string('user_recorder_name', 160);
 
             //========== CAJA EN LA QUE SE ESTÁ CREANDO LA VENTA =====
             $table->unsignedBigInteger('petty_cash_id');
             $table->foreign('petty_cash_id')->references('id')->on('petty_cashes');
-
-            $table->string('petty_cash_name',160);
+            $table->string('petty_cash_name', 160);
 
             //========= MOVIMIENTO DE LA CAJA EN LA CUAL SE GENERA LA VENTA =======
             $table->unsignedBigInteger('petty_cash_book_id');
             $table->foreign('petty_cash_book_id')->references('id')->on('petty_cash_books');
 
             //========= TIPO DE VENTA, CODIGO Y NOMBRE =======
-            $table->string('type_sale_code',160);
-            $table->string('type_sale_name',160);
+            $table->unsignedBigInteger('type_sale_id');
+            $table->string('type_sale_code', 160);
+            $table->string('type_sale_name', 160);
 
             //====== MONTOS =========
             $table->decimal('igv_percentage', 14, 6)->unsigned();
             $table->decimal('subtotal', 14, 6)->unsigned();
             $table->decimal('igv_amount', 14, 6)->unsigned();
             $table->decimal('total', 14, 6)->unsigned();
-            $table->string('legend',260);
+            $table->string('legend', 260);
 
             //======== PAGOS ======
-            $table->unsignedBigInteger('method_pay_id_1');
-            $table->foreign('method_pay_id_1')->references('id')->on('payment_methods');
-            $table->decimal('amount_pay_1', 14, 6);
+            // $table->unsignedBigInteger('method_pay_id_1');
+            // $table->foreign('method_pay_id_1')->references('id')->on('payment_methods');
+            // $table->decimal('amount_pay_1', 14, 6);
 
-            $table->unsignedBigInteger('method_pay_id_2')->nullable();
-            $table->foreign('method_pay_id_2')->references('id')->on('payment_methods');
-            $table->decimal('amount_pay_2', 14, 6)->nullable();
+            // $table->unsignedBigInteger('method_pay_id_2')->nullable();
+            // $table->foreign('method_pay_id_2')->references('id')->on('payment_methods');
+            // $table->decimal('amount_pay_2', 14, 6)->nullable();
 
             //========= SERIE Y CORRELATIVO =======
             $table->unsignedInteger('correlative');
-            $table->string('serie',100);
+            $table->string('serie', 100);
 
-            $table->enum('estado', ['ACEPTADO','PENDIENTE', 'ENVIADO', 'RECHAZADO'])->default('PENDIENTE');
+            $table->enum('sunat_status', ['ACEPTADO','PENDIENTE', 'ENVIADO', 'RECHAZADO','ANULADO','ANULADO PARCIAL'])->default('PENDIENTE');
+            $table->enum('status', ['ACTIVO','ANULADO'])->default('ACTIVO');
 
             //======= FACTURACIÓN ========
             $table->tinyInteger('response_cdrZip')->nullable();
@@ -82,6 +83,18 @@ return new class extends Migration
 
             $table->enum('type', ['PRODUCTOS', 'RESERVAS']);
 
+            $table->unsignedBigInteger('order_id')->nullable();
+
+            // $table->unsignedBigInteger('payment_condition_id');
+            // $table->foreign('payment_condition_id')->references('id')->on('payment_conditions');
+
+            // $table->string('payment_condition_name', 100);
+            // $table->unsignedInteger('payment_condition_days');
+            // $table->enum('payment_status',['PAGADO','PENDIENTE'])->default('PENDIENTE');
+
+            // $table->date('registration_date');
+            // $table->date('expiration_date');
+
             $table->timestamps();
         });
     }
@@ -91,6 +104,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sales_documents');
+        Schema::dropIfExists('sales');
     }
 };
