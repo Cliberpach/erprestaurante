@@ -28,7 +28,11 @@ class CategoryUpdateRequest extends FormRequest
             'name_edit' => [
                 'required',
                 'string',
-                Rule::unique('categories', 'name')->ignore($this->route('id')),
+                Rule::unique('categories', 'name')
+                    ->ignore($this->route('id'))
+                    ->where(function ($query) {
+                        $query->where('status', '!=', 'INACTIVE');
+                    }),
             ],
         ];
     }

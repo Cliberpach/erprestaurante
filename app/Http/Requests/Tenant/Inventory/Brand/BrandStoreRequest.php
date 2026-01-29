@@ -5,6 +5,7 @@ namespace App\Http\Requests\Tenant\Inventory\Brand;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\Rule;
 
 class BrandStoreRequest extends FormRequest
 {
@@ -24,7 +25,13 @@ class BrandStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:brands,name',
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('brands')->where(function ($query) {
+                    $query->where('status', '!=', 'INACTIVE');
+                }),
+            ],
         ];
     }
 

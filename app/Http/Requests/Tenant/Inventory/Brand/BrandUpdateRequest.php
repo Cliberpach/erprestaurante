@@ -25,10 +25,14 @@ class BrandUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name_edit' => [
+           'name_edit' => [
                 'required',
                 'string',
-                Rule::unique('brands', 'name')->ignore($this->route('id')),
+                Rule::unique('brands', 'name')
+                    ->ignore($this->route('id'))
+                    ->where(function ($query) {
+                        $query->where('status', '!=', 'INACTIVE');
+                    }),
             ],
         ];
     }

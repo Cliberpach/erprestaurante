@@ -5,6 +5,7 @@ namespace App\Http\Requests\Tenant\Inventory\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\Rule;
 
 class CategoryStoreRequest extends FormRequest
 {
@@ -24,7 +25,13 @@ class CategoryStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:categories,name',
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('categories')->where(function ($query) {
+                    $query->where('status', '!=', 'INACTIVE');
+                }),
+            ],
         ];
     }
 
