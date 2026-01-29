@@ -135,7 +135,7 @@ export async function actionFormCharge(e) {
             const res = await axios.post(route('tenant.mostrador_cajero.mostrador.storeInvoice'), formData);
 
             if (res.data.success) {
-                window.open(res.data.pdf_url, '_blank');
+                //window.open(res.data.pdf_url, '_blank');
                 toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
 
                 redirect('tenant.mostrador_cajero.mostrador.index');

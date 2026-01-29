@@ -90,13 +90,13 @@ array:4 [ // app\Http\Services\Tenant\CCounter\Counter\CounterService.php:29
         try {
 
             $invoice    =   $this->s_manager->storeInvoice($request->toArray());
-            $pdf_url    =   route('tenant.ventas.comprobante_venta.pdf_voucher', ['id' => $invoice->id]);
+            //$pdf_url    =   route('tenant.ventas.comprobante_venta.pdf_voucher', ['id' => $invoice->id]);
 
             DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'COMPROBANTE GENERADO CON ÉXITO',
-                'pdf_url' => $pdf_url
+                //'pdf_url' => $pdf_url
             ]);
         } catch (Throwable $th) {
             DB::rollBack();
