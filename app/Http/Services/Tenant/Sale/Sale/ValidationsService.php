@@ -223,6 +223,7 @@ class ValidationsService
         $order          =   Order::findOrFail($data['order_id']);
         $user           =   Auth::user();
         $cash_book      =   $this->s_cash->getCashBookUser($user->id);
+        $lst_pays       =   json_decode($data['lst_pays']);
 
         if ($order->status !== 'ACTIVO') {
             throw new Exception("EL PEDIDO SE ENCUENTRA: " . $order->status);
@@ -245,6 +246,33 @@ class ValidationsService
             throw new Exception("NO SE PERMITEN FACTURAS DE VENTA CON DNI!!!");
         }
 
+        //======== PAGO =========
+        $c_pays         =   collect($lst_pays);
+        $payTotal       =   $c_pays->sum('amount');
+        $has_negative   =   $c_pays->where('amount', '<', 0)->first();
+        $has_repeats    =   $c_pays->groupBy('paymentId')->filter(fn($items) => $items->count() > 1)->isNotEmpty();
+        if ($payTotal == 0) {
+            throw new Exception('NO INGRESASTE NINGÚN PAGO');
+        }
+        if ($payTotal < 0) {
+            throw new Exception("NO SE ACEPTAN PAGOS NEGATIVOS");
+        }
+        if ((float)$payTotal < (float)$order->total) {
+            throw new Exception("EL PAGO ES MENOR AL TOTAL DEL PEDIDO");
+        }
+        if ($has_negative) {
+            throw new Exception("NO SE ADMITEN MONTOS MENORES A 0");
+        }
+        if ($has_repeats) {
+            throw new Exception("NO DETECTARON PAGOS REPETIDOS");
+        }
+
+        //========= VUELTO ========
+        $change =   (float)$payTotal - (float)$order->total;
+        if($change < 0){
+            throw new Exception("EL VUELTO NO PUEDE SER NEGATIVO");
+        }
+
         $order_dishes           =   $this->s_order->getOrderDishes($data['order_id']);
         $order_products         =   $this->s_order->getOrderProducts($data['order_id']);
 
@@ -255,6 +283,9 @@ class ValidationsService
         $data['user']           =   $user;
         $data['order_dishes']   =   $order_dishes;
         $data['order_products'] =   $order_products;
+        $data['lst_pays']       =   $lst_pays;
+        $data['totalPay']       =   $payTotal;
+        $data['change']         =   $change;
         return $data;
     }
 }

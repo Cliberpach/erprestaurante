@@ -16,16 +16,27 @@
                 </div>
             </div>
 
-            {{-- <div class="row">
+            <div class="row">
 
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 mb-2">
+                <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 mb-2">
                     <label class="form-label fw-bold">
                         <i class="fas fa-user text-primary mr-1"></i> Cliente:
                     </label>
-                    <select class="form-control" id="client_id" name="client_id">
+                    <select class="form-control" id="customer_id" name="customer_id">
                         <option value="">Seleccione un cliente</option>
                     </select>
-                    <p class="client_id_error msgError mb-0"></p>
+                    <p class="customer_id_error msgError mb-0"></p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12 mb-2">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-circle-check text-primary mr-1"></i> Estado:
+                    </label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="OCUPADO">OCUPADO</option>
+                        <option value="FINALIZADO">FINALIZADO</option>
+                    </select>
+                    <p class="status_error msgError mb-0"></p>
                 </div>
 
                 <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mb-2">
@@ -48,7 +59,7 @@
                     </button>
                 </div>
 
-            </div> --}}
+            </div>
 
         </div>
         <div class="card-body p-0 pb-2">
@@ -69,14 +80,14 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadDtList();
-            //loadTomSelect();
+            loadTomSelect();
             events();
         })
 
         function events() {}
 
         function loadTomSelect() {
-            window.clientSelect = new TomSelect('#client_id', {
+            window.clientSelect = new TomSelect('#customer_id', {
                 valueField: 'id',
                 labelField: 'full_name',
                 searchField: ['full_name'],
@@ -85,9 +96,9 @@
                 maxOptions: 20,
                 create: false,
                 preload: false,
-                onType: (str) => {
-                    lastCustomerQuery = str;
-                },
+                // onType: (str) => {
+                //     lastCustomerQuery = str;
+                // },
                 load: async (query, callback) => {
                     if (!query.length) return callback();
                     try {
@@ -97,12 +108,10 @@
                         const data = await response.json();
                         const results = data.data ?? [];
                         callback(results);
-                        if (results.length === 0) {
-                            customerParams.documentSearchCustomer = lastCustomerQuery;
-                            console.log("No se encontró en BD. Guardado:", window.typedCustomer);
-                        }
+                        // if (results.length === 0) {
+                        //     customerParams.documentSearchCustomer = lastCustomerQuery;
+                        // }
                     } catch (error) {
-                        console.error('Error cargando clientes:', error);
                         callback();
                     }
                 },
@@ -127,10 +136,16 @@
                 ajax: {
                     url: '{{ route('tenant.mostrador_cajero.mostrador.getAll') }}',
                     data: function(d) {
-                        d.customer_id = $('#client_id').val();
+                        d.customer_id = $('#customer_id').val();
                         d.start_date = $('#start_date').val();
                         d.end_date = $('#end_date').val();
+                        d.status = $('#status').val();
                     }
+                },
+                initComplete: function() {
+                    $('.dt-search')
+                        .append(
+                            '<small class="text-muted d-block mt-1" style="text-align:start;">Busca por: Mesa, Usuario, Cliente</small>');
                 },
                 "columns": [{
                         data: 'order_id',
@@ -148,7 +163,10 @@
                         data: 'created_at',
                         name: 'o.created_at',
                         "searchable": false,
-                        "orderable": true
+                        "orderable": true,
+                        render: function(data) {
+                            return formatDateTime(data);
+                        }
                     },
                     {
                         data: 'creator_user_name',
@@ -173,16 +191,13 @@
                             let label = data ?? '';
 
                             switch (data) {
-                                case 'ACTIVO':
+                                case 'FINALIZADO':
                                     badgeClass = 'badge bg-primary';
                                     break;
-                                case 'ANULADO':
+                                case 'OCUPADO':
                                     badgeClass = 'badge bg-danger';
                                     break;
-                                case 'CONVERTIDO':
-                                    badgeClass = 'badge bg-warning';
-                                    break;
-                                case 'EXPIRADO':
+                                case 'ANULADO':
                                     badgeClass = 'badge bg-dark';
                                     break;
                                 default:
@@ -209,23 +224,24 @@
                         orderable: false,
                         data: null,
                         render: function(data) {
-
-                            return `
+                            let actions = `
                                 <div class="dropdown text-center">
                                     <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                         <i class="fa fa-cog"></i>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
+                                    <ul class="dropdown-menu dropdown-menu-end">`;
+
+                            if (data.status === 'OCUPADO') {
+                                actions += `<li>
                                             <a class="dropdown-item generarPDF"
                                                 href="${route('tenant.mostrador_cajero.mostrador.cobrar', data.order_id)}"
                                                 title="PDF" role="button" aria-label="Cobrar">
                                                 <i class="fas fa-cash-register me-2 text-danger"></i> Cobrar
                                             </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                `;
+                                        </li>`;
+                            }
+                            actions += `</ul></div>`;
+                            return actions;
                         }
                     }
                 ],

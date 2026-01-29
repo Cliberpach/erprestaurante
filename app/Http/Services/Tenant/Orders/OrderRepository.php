@@ -100,10 +100,14 @@ class OrderRepository
         ]);
     }
 
-    public function setStatusInvoice(int $id, string $status)
+    public function setStatusInvoice(int $id, string $status, $invoice)
     {
-        $order                  =   Order::findOrFail($id);
-        $order->status_invoice  =   $status;
+        $order                      =   Order::findOrFail($id);
+        $order->status_invoice      =   $status;
+        $order->status              =   'FINALIZADO';
+        $order->sale_id             =   $invoice->id;
+        $order->sale_serie          =   $invoice->serie;
+        $order->sale_correlative    =   $invoice->correlative;
         $order->save();
     }
 }

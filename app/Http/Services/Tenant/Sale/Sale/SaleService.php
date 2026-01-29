@@ -160,7 +160,7 @@ class SaleService
         $this->isActiveTypeSale($data['invoice_id']);
         $data           =   $this->s_validations->vStoreFromCOrder($data);
         $dto            =   $this->s_dto->getDtoStoreFromOrder($data);
-
+      
         $sale           =   $this->s_repository->store($dto);
 
         $dto_sdishes    =   $this->s_dto->getDtoSaleDish($data['order_dishes'], $sale);
@@ -169,6 +169,11 @@ class SaleService
         $this->s_repository->storeSaleDish($dto_sdishes);
         $this->s_repository->storeSaleProduct($dto_s_products);
 
+        $dto_pays       =   $this->s_dto->getDtoPays($data['lst_pays'], $sale);
+        $this->s_repository->storeSalePay($dto_pays);
+
         return $sale;
     }
+
+
 }

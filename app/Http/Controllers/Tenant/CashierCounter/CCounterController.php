@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Tenant\CashierCounter;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenant\CashierCounter\InvoiceStoreRequest;
-use App\Http\Requests\Tenant\WaiterCounter\WaiterCounterStoreRequest;
 use App\Http\Services\Tenant\CCounter\Counter\CounterManager;
 use App\Models\Tenant\Reservation\Reservation;
 use Illuminate\Contracts\View\View;
@@ -30,17 +29,25 @@ class CCounterController extends Controller
 
     public function chargeCreate(int $order)
     {
-        $view   =   $this->s_manager->chargeCreate($order);
-
-        return $view;
+        try {
+            $view   =   $this->s_manager->chargeCreate($order);
+            return $view;
+        } catch (Throwable $th) {
+            Session::flash('message_error', $th->getMessage());
+            return back();
+        }
     }
 
     public function getAll(Request $request)
     {
+        $filter_status      =   $request->get('status');
+        $filter_customer    =   $request->get('customer_id');
+        $filter_start_date  =   $request->get('start_date');
+        $filter_end_date    =   $request->get('end_date');
+
         $items =    Reservation::from('reservations as r')
             ->join('orders as o', 'o.id', 'r.order_id')
             ->join('tables as t', 't.id', 'o.table_id')
-            ->where('r.status', 'OCUPADO')
             ->select(
                 'o.id as order_id',
                 't.name as table_name',
@@ -49,8 +56,22 @@ class CCounterController extends Controller
                 'o.creator_user_name',
                 'o.customer_name',
                 'r.status',
-                'o.total'
+                'o.total',
+                'o.customer_id'
             );
+
+        if ($filter_status) {
+            $items->where('r.status', $filter_status);
+        }
+        if ($filter_customer) {
+            $items->where('o.customer_id', $filter_customer);
+        }
+        if ($filter_start_date) {
+            $items->whereDate('o.created_at', '>=', $filter_start_date);
+        }
+        if ($filter_end_date) {
+            $items->whereDate('o.created_at', '<=', $filter_end_date);
+        }
 
         return DataTables::of($items)->make(true);
     }

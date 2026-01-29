@@ -45,10 +45,11 @@ return new class extends Migration
             $table->string('type_sale_name', 160);
 
             //====== MONTOS =========
-            $table->decimal('igv_percentage', 14, 6)->unsigned();
-            $table->decimal('subtotal', 14, 6)->unsigned();
-            $table->decimal('igv_amount', 14, 6)->unsigned();
-            $table->decimal('total', 14, 6)->unsigned();
+            $table->decimal('igv_percentage', 16, 6)->unsigned();
+            $table->decimal('subtotal', 16, 6)->unsigned();
+            $table->decimal('igv_amount', 16, 6)->unsigned();
+            $table->decimal('total', 16, 6)->unsigned();
+            $table->decimal('change_pay', 16, 6)->default(0)->unsigned();
             $table->string('legend', 260);
 
             //======== PAGOS ======
@@ -64,8 +65,9 @@ return new class extends Migration
             $table->unsignedInteger('correlative');
             $table->string('serie', 100);
 
-            $table->enum('sunat_status', ['ACEPTADO','PENDIENTE', 'ENVIADO', 'RECHAZADO','ANULADO','ANULADO PARCIAL'])->default('PENDIENTE');
-            $table->enum('status', ['ACTIVO','ANULADO'])->default('ACTIVO');
+            $table->enum('sunat_status', ['ACEPTADO', 'PENDIENTE', 'ENVIADO', 'RECHAZADO', 'ANULADO', 'ANULADO PARCIAL'])->default('PENDIENTE');
+            $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
+            $table->enum('pay_status', ['PAGADO', 'PENDIENTE'])->default('PENDIENTE');
 
             //======= FACTURACIÓN ========
             $table->tinyInteger('response_cdrZip')->nullable();

@@ -293,3 +293,10 @@ function setText(selectInstance, text) {
         }
     }
 }
+
+function formatDateTime(data) {
+    return data
+        .replace('T', ' ')
+        .replace('Z', '')
+        .replace(/\.\d+$/, '');
+}

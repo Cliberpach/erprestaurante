@@ -82,7 +82,7 @@ array:8 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:89
 ]
 */
     public function store(WaiterCounterStoreRequest $request)
-    {   
+    {
         DB::beginTransaction();
         try {
 
@@ -130,8 +130,13 @@ array:8 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:89
 
     public function edit(int $id)
     {
-        $view   =   $this->s_manager->edit($id);
-        return $view;
+        try {
+            $view   =   $this->s_manager->edit($id);
+            return $view;
+        } catch (Throwable $th) {
+            Session::flash('message_error', $th->getMessage());
+            return back();
+        }
     }
 
     /*

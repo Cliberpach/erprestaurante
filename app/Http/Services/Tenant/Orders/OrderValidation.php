@@ -83,17 +83,22 @@ class OrderValidation
         $categories         =   Category::all();
         $brands             =   Brand::all();
         $types_dish         =   UtilController::getTypesDish();
-
         $user               =   Auth::user();
+        $igv                =   round(Company::find(1)->igv, 2);
+        $customer_formatted =   FormatController::getFormatInitialCustomer($order->customer_id);
+        $petty_cash_book    =   $this->s_cash_book->getCashBookWaiter($user->id);
+        $programming        =   $this->s_cash_book->hasProgrammingActive($petty_cash_book->petty_cash_book_id);
+
+        if ($order->status !== 'ACTIVO') {
+            throw new Exception('EL PEDIDO SE ENCUENTRA CON ESTADO: ' . $order->status);
+        }
+        if ($order->invoice_status !== 'NO FACTURADO') {
+            throw new Exception('EL PEDIDO YA FUE FACTURADO');
+        }
+
         if (!$user->hasRole('MESERO')) {
             throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
         }
-
-        $petty_cash_book    =   $this->s_cash_book->getCashBookWaiter($user->id);
-
-
-        $igv                =   round(Company::find(1)->igv, 2);
-        $customer_formatted =   FormatController::getFormatInitialCustomer($order->customer_id);
 
         if (Auth::user()->id != $order->creator_user_id) {
             throw new Exception("ESTE PEDIDO LE PERTENECE A OTRO MESERO");
@@ -103,7 +108,7 @@ class OrderValidation
             throw new Exception('DEBES PERTENECER A UNA CAJA ABIERTA!!!');
         }
 
-        $programming    =   $this->s_cash_book->hasProgrammingActive($petty_cash_book->petty_cash_book_id);
+
         if ($programming === false) {
             throw new Exception('SE DETECTÓ MÁS DE 1 PROGRAMACIÓN ACTIVA EN LA CAJA!!!');
         }
@@ -263,7 +268,7 @@ class OrderValidation
                     throw new Exception($item->name . ", NO EXISTE EN LA PROGRAMACIÓN");
                 }
 
-                $items_preview      =   $order_dishes->where('dish_id', $item->id)->where('status','<>','ANULADO')->where('delete_status',false);
+                $items_preview      =   $order_dishes->where('dish_id', $item->id)->where('status', '<>', 'ANULADO')->where('delete_status', false);
                 $quantity_preview   =   $items_preview ? $items_preview->sum('quantity') : 0;
                 $stock              =   (int)$item_bd->stock + $quantity_preview;
                 if ($stock < $item->quantity) {
@@ -277,7 +282,7 @@ class OrderValidation
                     throw new Exception($item->name . ", NO EXISTE EN EL ALMACÉN");
                 }
 
-                $items_preview      =   $order_products->where('product_id', $item->id)->where('status','<>','ANULADO')->where('delete_status',false);
+                $items_preview      =   $order_products->where('product_id', $item->id)->where('status', '<>', 'ANULADO')->where('delete_status', false);
                 $quantity_preview   =   $items_preview ? $items_preview->sum('quantity') : 0;
                 $stock              =   (int)$item_bd->stock + $quantity_preview;
                 if ($stock < $item->quantity) {

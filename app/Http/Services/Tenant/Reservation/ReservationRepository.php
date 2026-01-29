@@ -2,9 +2,6 @@
 
 namespace App\Http\Services\Tenant\Reservation;
 
-use App\Models\Tenant\Orders\Order;
-use App\Models\Tenant\Orders\OrderDish;
-use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\Reservation\Reservation;
 
 class ReservationRepository
@@ -14,13 +11,10 @@ class ReservationRepository
         return Reservation::create($dto);
     }
 
-    public function storeOrderProduct(array $dto): void
+    public function setStatusByOrder(int $order_id, string $status)
     {
-        OrderProduct::insert($dto);
-    }
-
-    public function storeOrderDish(array $dto): void
-    {
-        OrderDish::insert($dto);
+        $item           =   Reservation::where('order_id', $order_id)->first();
+        $item->status   =   $status;
+        $item->save();
     }
 }

@@ -145,8 +145,9 @@ class OrderService
         return $this->s_repository->getOrderProducts($order_id);
     }
 
-    public function setStatusInvoice(int $id,string $status)
+    public function setStatusInvoice(int $id, string $status,$invoice)
     {
-        $this->s_repository->setStatusInvoice($id,$status);
+        $this->s_repository->setStatusInvoice($id, $status,$invoice);
+        $this->s_reservation->setStatusByOrder($id, 'FINALIZADO');
     }
 }

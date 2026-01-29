@@ -9,14 +9,12 @@ use Illuminate\Contracts\View\View;
 
 class ReservationService
 {
-    private ReservationValidation $s_validation;
     private ReservationDto $s_dto;
     private ReservationRepository $s_repository;
     private TableService $s_table;
 
     public function __construct()
     {
-        $this->s_validation =   new ReservationValidation();
         $this->s_dto        =   new ReservationDto();
         $this->s_repository =   new ReservationRepository();
         $this->s_table      =   new TableService();
@@ -30,5 +28,9 @@ class ReservationService
         $item           =   $this->s_repository->store($dto);
         $this->s_table->setStatus($item->table_id, 'OCUPADO');
         return $item;
+    }
+
+    public function setStatusByOrder(int $order_id,string $status){
+        $this->s_repository->setStatusByOrder($order_id,$status);
     }
 }

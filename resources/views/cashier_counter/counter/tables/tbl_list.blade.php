@@ -3,7 +3,7 @@
         <tr>
             <th class="minw-100px">#</th>
             <th class="minw-100px">Mesa</th>
-            <th class="minw-200px">Hora</th>
+            <th class="minw-200px">Fecha</th>
             <th class="minw-200px">Mesero</th>
             <th class="minw-100px">Cliente</th>
             <th class="minw-100px">Estado</th>

@@ -35,6 +35,7 @@ class Sale extends Model
         'subtotal',
         'igv_amount',
         'total',
+        'change_pay',
 
         'legend',
 
@@ -47,6 +48,8 @@ class Sale extends Model
         'serie',
 
         'status',
+        'sunat_status',
+        'pay_status',
 
         'response_cdrZip',
         'response_success',

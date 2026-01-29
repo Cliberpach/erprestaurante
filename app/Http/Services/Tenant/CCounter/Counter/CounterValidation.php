@@ -26,6 +26,13 @@ class CounterValidation
             throw new Exception('PEDIDO NO DISPONIBLE');
         }
 
+        if ($order->order_status !== 'ACTIVO') {
+            throw new Exception("EL PEDIDO SE ENCUENTRA: " . $order->status);
+        }
+        if ($order->status_invoice !== 'NO FACTURADO') {
+            throw new Exception("EL PEDIDO YA FUE FACTURADO");
+        }
+
         $lst_detail         =   $this->s_order->getOrderDetail($order_id);
         $payment_methods    =   UtilController::getPaymentMethods();
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
@@ -35,11 +42,10 @@ class CounterValidation
             'order'             =>  $order,
             'lst_detail'        =>  $lst_detail,
             'payment_methods'   =>  $payment_methods,
-            'customer_formatted'=>  $customer_formatted,
+            'customer_formatted' =>  $customer_formatted,
             'invoice_types'     =>  $invoice_types
         ];
 
         return $vars;
     }
-
 }

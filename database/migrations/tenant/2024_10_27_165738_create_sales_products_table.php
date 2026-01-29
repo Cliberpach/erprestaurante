@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('sales_products', function (Blueprint $table) {
 
+            $table->id();
+
             $table->unsignedBigInteger('sale_id');
             $table->foreign('sale_id')->references('id')->on('sales');
 
@@ -47,8 +49,6 @@ return new class extends Migration
             $table->decimal('mto_precio_unitario', 16, 6);
 
             $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
-
-            $table->primary(['sale_id','product_id'], 'pk_s_pr');
 
             $table->timestamps();
         });

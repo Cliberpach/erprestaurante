@@ -27,11 +27,10 @@ class CounterService
         return view('cashier_counter.counter.charge', $vars);
     }
 
-
     public function storeInvoice(array $data): Sale
     {
         $invoice    =   $this->s_sale->storeFromCOrder($data);
-        $this->s_order->setStatusInvoice($data['order_id'], 'FACTURADO');
+        $this->s_order->setStatusInvoice($data['order_id'], 'FACTURADO',$invoice);
         return $invoice;
     }
 }

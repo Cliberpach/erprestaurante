@@ -6,6 +6,7 @@ use App\Http\Controllers\Tenant\NumberToLettersController;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\WorkShop\Service;
 
@@ -61,6 +62,8 @@ class SaleDto
         $dto['type']            =   "PRODUCTOS";
 
         $dto['order_id']        =   $data['order'] ? $data['order']->id : null;
+        $dto['pay_status']      =   'PAGADO';
+        $dto['change_pay']      =   $data['change'];
 
         return $dto;
     }
@@ -163,6 +166,23 @@ class SaleDto
             $dto[]  =   $_item;
         }
 
+        return $dto;
+    }
+
+    public function getDtoPays(array $lst_pays, Sale $sale): array
+    {
+        $dto    =   [];
+        foreach ($lst_pays as $item) {
+            $_item  =   [];
+
+            $payment    =   PaymentMethod::findOrFail($item->paymentId);
+
+            $_item['payment_method_id']     =   $payment->id;
+            $_item['payment_method_name']   =   $payment->description;
+            $_item['amount']                =   $item->amount;
+            $_item['sale_id']               =   $sale->id;
+            $dto[]                          =   $_item;
+        }
         return $dto;
     }
 }
