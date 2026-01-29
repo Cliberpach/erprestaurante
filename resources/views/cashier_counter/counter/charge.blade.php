@@ -6,6 +6,7 @@
 
 @section('content')
     @include('cashier_counter.counter.modals.mdl_charge')
+    @include('utils.modals.customer.mdl_create_customer')
     <div class="card">
 
         <div class="card-header">
@@ -134,7 +135,10 @@
         window.app = {
             order: @json($order),
             lstDetail: @json($lst_detail),
-            customerFormatted:@json($customer_formatted)
+            customerFormatted: @json($customer_formatted),
+            eventsAdd: function() {
+                eventsMdlCreateCustomer();
+            }
         };
     </script>
     @vite(['resources/js/cashier_counter/counter/charge/main.js'])

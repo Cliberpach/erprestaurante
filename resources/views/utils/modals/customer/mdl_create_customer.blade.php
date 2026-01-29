@@ -39,18 +39,95 @@
         documentSearchCustomer: null
     };
 
-    function iniciarSelect2() {
-        $('.select2_form_customer').select2({
-            theme: "bootstrap-5",
-            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-            placeholder: $(this).data('placeholder'),
-            dropdownParent: $('#mdlCreateCustomer'),
-        });
+    function loadSelectMdlCustomer() {
+        const departmentSelect = document.getElementById('department');
+        if (departmentSelect && !departmentSelect.tomselect) {
+            window.departmentSelect = new TomSelect(departmentSelect, {
+                valueField: 'id',
+                labelField: 'description',
+                searchField: ['description', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                }
+            });
+        }
+
+        const provinceSelect = document.getElementById('province');
+        if (provinceSelect && !provinceSelect.tomselect) {
+            window.provinceSelect = new TomSelect(provinceSelect, {
+                valueField: 'id',
+                labelField: 'description',
+                searchField: ['description', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                }
+            });
+        }
+
+        const districtSelect = document.getElementById('district');
+        if (districtSelect && !districtSelect.tomselect) {
+            window.districtSelect = new TomSelect(districtSelect, {
+                valueField: 'id',
+                labelField: 'description',
+                searchField: ['description', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                }
+            });
+        }
     }
 
     function eventsMdlCreateCustomer() {
-        iniciarSelect2();
+
+        loadSelectMdlCustomer();
         setDefaultData();
+
+        window.departmentSelect.on('change', function(value) {
+            changeDepartment(value);
+        });
+
+        window.provinceSelect.on('change', function(value) {
+            changeProvince(value);
+        });
 
         document.querySelector('#formStoreCustomer').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -72,7 +149,7 @@
 
             $('#type_identity_document').val('1').trigger('change');
 
-            customerParams.documentSearchCustomer   =   null;
+            customerParams.documentSearchCustomer = null;
             clearValidationErrors('msgErrorCustomer');
 
         });
@@ -238,11 +315,9 @@
             btnSearchNroDocument.classList.add('d-none');
 
         }
-
     }
 
     function changeDepartment(department_id) {
-
         const lstProvinces = @json($provinces);
         const lstDistricts = @json($districts);
         let lstProvincesFiltered = [];
@@ -254,22 +329,24 @@
             lstProvincesFiltered = lstProvinces.filter((province) => {
                 return province.department_id == department_id;
             })
-            $('#province').empty().trigger('change');
 
             lstProvincesFiltered.forEach((province) => {
                 $('#province').append(new Option(province.name, province.id, false, false));
             })
 
-            $('#province').select2({
-                theme: "bootstrap-5",
-                placeholder: 'Seleccione una provincia',
-                width: '100%',
-                dropdownParent: $('#mdlCreateCustomer'),
-            });
+            window.provinceSelect.clear();
+            window.provinceSelect.clearOptions();
+            window.provinceSelect.addOptions(
+                lstProvincesFiltered.map(province => ({
+                    id: province.id,
+                    description: province.name,
+                }))
+            );
+            window.provinceSelect.refreshOptions(false);
 
-            $('#province').trigger('change');
+            window.districtSelect.clear();
+            window.districtSelect.clearOptions();
         }
-
     }
 
     function changeProvince(province_id) {
@@ -286,31 +363,21 @@
                 return district.province_id == province_id;
             })
 
-            $('#district').empty().trigger('change');
-
-            lstDistrictsFiltered.forEach((district) => {
-                $('#district').append(new Option(district.name, district.id, false, false));
-            })
-
-            $('#district').select2({
-                theme: "bootstrap-5",
-                placeholder: 'Seleccione un distrito',
-                width: '100%',
-                dropdownParent: $('#mdlCreateCustomer')
-            });
+            window.districtSelect.clear();
+            window.districtSelect.clearOptions();
+            window.districtSelect.addOptions(
+                lstDistrictsFiltered.map(district => ({
+                    id: district.id,
+                    description: district.name,
+                }))
+            );
+            window.districtSelect.refreshOptions(false);
         }
-
     }
 
     function storeCustomer() {
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-            },
-            buttonsStyling: false
-        });
-        swalWithBootstrapButtons.fire({
+
+        Swal.fire({
             title: "DESEA REGISTRAR EL CLIENTE?",
             text: "Se creará un nuevo Cliente!",
             icon: "warning",
@@ -376,7 +443,7 @@
 
 
             } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire({
+                Swal.fire({
                     title: "OPERACIÓN CANCELADA",
                     text: "NO SE REALIZARON ACCIONES",
                     icon: "error"
@@ -393,27 +460,38 @@
             email: customerNew.email ?? ''
         };
 
-        if (!window.clientSelect.options[option.id]) {
-            window.clientSelect.addOption(option);
+        let instanceSelect = null;
+        const customerSelect = getCustomerSelect();
+
+        if (window.clientSelect) {
+            instanceSelect = window.clienteSelect;
+        }
+        if (customerSelect) {
+            instanceSelect = customerSelect;
         }
 
-        window.clientSelect.setValue(option.id);
+        console.log('instance',instanceSelect);
 
+        if(!instanceSelect.options[option.id]) {
+            instanceSelect.addOption(option);
+        }
+        instanceSelect.setValue(option.id);
     }
 
     function setDefaultData() {
-        const department_id = parseInt(@json($company_invoice->department_id));
-        const province_id = parseInt(@json($company_invoice->province_id));
-        const district_id = parseInt(@json($company_invoice->district_id));
+        const departmentId = parseInt(@json($company_invoice->department_id));
+        const provinceId = parseInt(@json($company_invoice->province_id));
+        const districtId = parseInt(@json($company_invoice->district_id));
 
-        if (department_id && province_id && district_id) {
-            $('#department').val(department_id).trigger('change');
-            changeDepartment(department_id);
+        if (departmentId && provinceId && districtId) {
 
-            $('#province').val(province_id).trigger('change');
-            changeProvince(province_id);
+            window.departmentSelect.setValue(departmentId);
+            changeDepartment(departmentId);
 
-            $('#district').val(district_id).trigger('change');
+            window.provinceSelect.setValue(provinceId);
+            changeProvince(provinceId);
+
+            window.districtSelect.setValue(districtId);
         }
     }
 </script>

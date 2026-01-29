@@ -1,8 +1,9 @@
 import { amounts } from "../charge/state";
-import { change, invoiceId, lstPays, paymentMethodSelect, setChange, setInvoiceId } from "./state";
+import { change, customerSelect, invoiceId, lstPays, paymentMethodSelect, setChange, setInvoiceId } from "./state";
 import { desactiveBtnsInvoice, disabledInputsPayment, enabledInputsPayment, paintChange, setDataFormCharge } from "./ui";
 
 export function openMdlCharge() {
+    setConfigDefault();
     setDataFormCharge(amounts);
     $('#mdl_charge').modal('show');
 }
@@ -12,13 +13,24 @@ export function actionPaymentMethod(value) {
     if (value !== 'MIXTO') {
         const inputPayment = document.querySelector(`.input-payment-${value}`);
         inputPayment.disabled = false;
+        inputPayment.value = formatSoles(amounts.totalPay);
+        inputPayment.dispatchEvent(new Event('input', { bubbles: true }));
     } else {
         enabledInputsPayment();
     }
 }
 
 export function setConfigDefault() {
-    paymentMethodSelect.setValue(1);
+    paymentMethodSelect.setValue(2);
+    customerSelect.setValue(1);
+    const invoiceCard = document.querySelector('#invoice-type-67');
+    if (invoiceCard) {
+        invoiceCard.dispatchEvent(new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        }));
+    }
 }
 
 export function actionInputPayment(e) {
@@ -30,7 +42,6 @@ export function actionInputPayment(e) {
         if (indexPay !== -1) {
             lstPays.splice(indexPay, 1);
         }
-        console.log(lstPays);
         calculateChange();
     }
 
@@ -46,7 +57,6 @@ export function actionInputPayment(e) {
     } else {
         lstPays[indexPay].amount = amount;
     }
-    console.log(lstPays);
 
     calculateChange();
     paintChange(change);
@@ -61,10 +71,6 @@ function calculateChange() {
     let _change = totalPay - totalOrder;
     if (_change < 0) _change = 0;
     setChange(_change);
-}
-
-function clearLstPays() {
-    lstPays = [];
 }
 
 export function actionBtnInvoice(card) {
@@ -122,7 +128,9 @@ export async function actionFormCharge(e) {
             const formData = new FormData(e.target);
             formData.append('lst_pays', JSON.stringify(lstPays));
             formData.append('order_id', app.order.order_id);
-            formData.append('invoice_id',invoiceId);
+            if (invoiceId) {
+                formData.append('invoice_id', invoiceId);
+            }
 
             const res = await axios.post(route('tenant.mostrador_cajero.mostrador.storeInvoice'), formData);
 
@@ -140,7 +148,7 @@ export async function actionFormCharge(e) {
             Swal.close();
             if (error.response && error.response.status === 422) {
                 const errors = error.response.data.errors;
-                paintValidationErrors(errors, 'error');
+                paintValidationErrors(errors, 'mdlcharge_error');
                 return;
             }
         }

@@ -5,6 +5,10 @@ namespace App\Http\Services\Tenant\CCounter\Counter;
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Orders\OrderService;
+use App\Models\CompanyInvoice;
+use App\Models\Department;
+use App\Models\District;
+use App\Models\Province;
 use Exception;
 
 class CounterValidation
@@ -38,13 +42,17 @@ class CounterValidation
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
         $invoice_types      =   UtilController::getInvoiceTypes();
 
+        $vars_mdl_customer  =   UtilController::getVarsMdlCustomer();
+
         $vars   =   [
             'order'             =>  $order,
             'lst_detail'        =>  $lst_detail,
             'payment_methods'   =>  $payment_methods,
-            'customer_formatted' =>  $customer_formatted,
+            'customer_formatted' => $customer_formatted,
             'invoice_types'     =>  $invoice_types
         ];
+
+        $vars = array_merge($vars, $vars_mdl_customer);
 
         return $vars;
     }

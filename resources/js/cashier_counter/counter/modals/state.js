@@ -19,4 +19,8 @@ export function setChange(instance) {
 export function setInvoiceId(instance) {
     invoiceId = instance
 }
+export function getCustomerSelect() {
+    return customerSelect;
+}
 
+window.getCustomerSelect = getCustomerSelect;

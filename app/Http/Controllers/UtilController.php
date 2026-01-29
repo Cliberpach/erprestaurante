@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\CompanyInvoice;
+use App\Models\Department;
+use App\Models\District;
 use App\Models\Landlord\Company;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Landlord\TypeIdentityDocument;
 use App\Models\Landlord\Year;
+use App\Models\Province;
 use App\Models\Tenant\DocumentSerialization;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Supply\TypeDish\TypeDish;
@@ -273,5 +277,22 @@ class UtilController extends Controller
     {
         $data   =   GeneralTableDetail::where('general_table_id', 5)->get();
         return $data;
+    }
+
+    public static function getVarsMdlCustomer(): array
+    {
+        $types_identity_documents   =   UtilController::getIdentityDocuments();
+        $departments                =   Department::all();
+        $districts                  =   District::all();
+        $provinces                  =   Province::all();
+        $company_invoice            =   CompanyInvoice::find(1);
+
+        return [
+            'types_identity_documents' => $types_identity_documents,
+            'departments'              => $departments,
+            'districts'                => $districts,
+            'provinces'                => $provinces,
+            'company_invoice'           => $company_invoice,
+        ];
     }
 }

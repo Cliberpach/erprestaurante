@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mainMdlCharge();
     loadDataPreview();
     eventsCCounter();
+    app.eventsAdd();
 })
 
 

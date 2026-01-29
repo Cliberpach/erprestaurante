@@ -63,7 +63,7 @@
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-2">
                     <label class="required_field" for="department" style="font-weight: bold;">DEPARTAMENTO</label>
-                    <select required name="department" required class="form-select select2_form_customer" id="department" data-placeholder="Seleccionar" onchange="changeDepartment(this.value)">
+                    <select required name="department" required class="form-select select2_form_customer" id="department" data-placeholder="Seleccionar">
                         <option></option>
                         @foreach ($departments as $department)
                             <option value="{{$department->id}}">{{$department->name}}</option>

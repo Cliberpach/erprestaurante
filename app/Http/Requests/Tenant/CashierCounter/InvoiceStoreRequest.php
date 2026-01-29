@@ -26,8 +26,7 @@ class InvoiceStoreRequest extends FormRequest
                 'required',
                 Rule::exists('landlord.general_table_details', 'id')
                     ->where('status', 'ACTIVO'),
-            ],
-
+            ]
         ];
     }
 
@@ -37,8 +36,8 @@ class InvoiceStoreRequest extends FormRequest
             'customer_id.required' => 'El cliente es obligatorio.',
             'customer_id.exists'   => 'El cliente seleccionado no existe o no está activo.',
 
-            'invoice_id.required' => 'El cliente es obligatorio.',
-            'invoice_id.exists'   => 'El cliente seleccionado no existe o no está activo.',
+            'invoice_id.required' => 'El tipo de comprobante es obligatorio.',
+            'invoice_id.exists'   => 'El tipo de comprobante no existe o no está activo.',
         ];
     }
 

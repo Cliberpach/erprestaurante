@@ -37,8 +37,7 @@
 
                         <input disabled type="number" step="0.01" min="0"
                             class="form-control input-payment input-payment-{{ $payment_method->id }}"
-                            placeholder="Ingrese un monto"
-                            data-id="{{ $payment_method->id }}">
+                            placeholder="Ingrese un monto" data-id="{{ $payment_method->id }}">
                     </div>
                 @endforeach
 
@@ -79,6 +78,7 @@
                                 </div>
                             </div>
                         @endforeach
+                        <p class="invoice_id_mdlcharge_error msgError mb-0"></p>
                     </div>
 
                 </div>
@@ -89,7 +89,9 @@
                         <i class="fas fa-user text-info me-1"></i>
                         Cliente
                     </label>
+                    <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlNewCustomer();" style="margin-left:4px;"></i>
                     <select class="form-control" id="customer_id_mdlcharge" name="customer_id"></select>
+                    <p class="customer_id_mdlcharge_error msgError mb-0"></p>
                 </div>
 
                 <!-- COBRAR -->
