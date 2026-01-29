@@ -225,7 +225,7 @@
                         <i class="fas fa-qrcode text-success me-1"></i> Voucher Pago
                     </label>
 
-                    <input type="file" class="form-control" name="voucher" id="voucher"
+                    <input capture="environment" type="file" class="form-control" name="voucher" id="voucher"
                         accept=".jpg,.jpeg,.png,image/jpeg,image/png">
 
                     <small class="text-secondary fst-italic">
