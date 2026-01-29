@@ -92,7 +92,7 @@ class OrderValidation
         if ($order->status !== 'ACTIVO') {
             throw new Exception('EL PEDIDO SE ENCUENTRA CON ESTADO: ' . $order->status);
         }
-        if ($order->invoice_status !== 'NO FACTURADO') {
+        if ($order->status_invoice !== 'NO FACTURADO') {
             throw new Exception('EL PEDIDO YA FUE FACTURADO');
         }
 
@@ -191,6 +191,13 @@ class OrderValidation
 
         if ($user->id != $order->creator_user_id) {
             throw new Exception("ESTA PEDIDO LE PERTENECE A OTRO MESERO");
+        }
+
+        if ($order->status !== 'ACTIVO') {
+            throw new Exception('EL PEDIDO SE ENCUENTRA CON ESTADO: ' . $order->status);
+        }
+        if ($order->status_invoice !== 'NO FACTURADO') {
+            throw new Exception('EL PEDIDO YA FUE FACTURADO');
         }
 
         $petty_cash_book    =   $this->s_cash_book->getCashBookWaiter($user->id);

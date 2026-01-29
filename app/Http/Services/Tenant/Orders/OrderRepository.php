@@ -57,7 +57,7 @@ class OrderRepository
         return $item;
     }
 
-    public function findOrder(int $id)
+    public function findOrder(int $id):Order
     {
         return Order::findOrFail($id);
     }

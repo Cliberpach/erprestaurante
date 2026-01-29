@@ -107,7 +107,7 @@
 
                     <!-- BOTÓN VOLVER -->
                     <button type="button" class="btn btn-danger me-1"
-                        onclick="redirect('tenant.taller.cotizaciones.index')">
+                        onclick="redirect('tenant.mostrador_cajero.mostrador.index')">
                         <i class="fas fa-arrow-left"></i> Volver
                     </button>
 

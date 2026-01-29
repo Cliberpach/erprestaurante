@@ -226,10 +226,11 @@
 
             //======= SETTEAR PRODUCTO =======
             const item = fila;
-            document.querySelector('#producto').value = item.name;
+            document.querySelector('#producto').value =     item.name;
             //document.querySelector('#purchase_price').value = formatSoles(item.purchase_price);
-            document.querySelector('#sale_price').value = formatSoles(item.sale_price);
-            document.querySelector('#item_stock').value = formatQuantity(item.stock);
+            document.querySelector('#sale_price').value =   formatSoles(item.sale_price);
+            document.querySelector('#item_stock').value =   formatQuantity(item.stock);
+            document.querySelector('#cantidad').value   =   1;
 
             dishSelected.id = item.id;
             dishSelected.name = item.name;

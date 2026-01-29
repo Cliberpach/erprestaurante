@@ -224,6 +224,7 @@
             //document.querySelector('#purchase_price').value = formatSoles(product.purchase_price);
             document.querySelector('#sale_price').value = formatSoles(product.sale_price);
             document.querySelector('#item_stock').value = product.stock;
+            document.querySelector('#cantidad').value   =   1;
 
             productSelected.id = product.id;
             productSelected.name = product.name;

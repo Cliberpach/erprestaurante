@@ -52,8 +52,8 @@ class ProductStoreRequest extends FormRequest
             'purchase_price' => 'required|numeric|min:1|max:999999',
             'stock' => 'required|integer|min:0|max:9999',
             'stock_min' => 'required|integer|min:0|max:9999',
-            'code_factory' => 'nullable|alpha_num|size:10',
-            'code_bar' => 'nullable|alpha_num|min:6|max:20',
+            'code_factory' => 'nullable|alpha_num|max:20',
+            'code_bar' => 'nullable|alpha_num|max:20',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'category_id' => [
                 'required',
@@ -101,10 +101,9 @@ class ProductStoreRequest extends FormRequest
             'stock_min.max' => 'El stock mínimo no debe exceder 8 dígitos.',
 
             'code_factory.alpha_num' => 'El código de fábrica debe ser alfanumérico.',
-            'code_factory.size' => 'El código de fábrica debe tener exactamente 10 caracteres.',
+            'code_factory.max' => 'El código de fábrica no debe exceder los 20 caracteres.',
 
             'code_bar.alpha_num' => 'El código de barras debe ser alfanumérico.',
-            'code_bar.min' => 'El código de barras debe tener al menos 6 caracteres.',
             'code_bar.max' => 'El código de barras no debe exceder los 20 caracteres.',
 
             'image.image' => 'El archivo debe ser una imagen.',
