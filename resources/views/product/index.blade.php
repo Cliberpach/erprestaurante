@@ -4,16 +4,11 @@
     Productos
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-@endsection
-
 @push('js-head')
     @vite(['resources/js/libs/filepond.js'])
 @endpush
 
 @section('content')
-    @include('utils.lightbox.lightbox')
     @include('product.modals.mdl_create')
     @include('product.modals.mdl_edit')
     @include('product.modals.mdl_import')
@@ -298,13 +293,13 @@
                     plugins: ['clear_button'],
                     render: {
                         option: (item, escape) => `
-                        <div>
+                        <div style="text-align:start;">
                             <i class="fas fa-bullseye" style="margin-right:6px; color:#0d6efd;"></i>
                             ${escape(item.description)}
                         </div>
                     `,
                         item: (item, escape) => `
-                        <div>
+                        <div style="text-align:start;">
                             <i class="fas fa-bullseye" style="margin-right:6px; color:#0d6efd;"></i>
                             ${escape(item.description)}
                         </div>

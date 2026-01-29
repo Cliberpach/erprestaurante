@@ -31,170 +31,172 @@
     </div>
 </div>
 
-<script>
-    let pondImg = null;
+@push('js-script')
+    <script>
+        let pondImg = null;
 
-    function openMdlCreate() {
-        $('#mdl-create-product').modal('show');
-    }
+        function openMdlCreate() {
+            $('#mdl-create-product').modal('show');
+        }
 
-    function eventsMdlCreateProduct() {
-        loadFilePound();
+        function eventsMdlCreateProduct() {
+            loadFilePound();
 
-        document.querySelector('#form-create-product').addEventListener('submit', (e) => {
-            e.preventDefault();
-            registrarProducto(e.target);
-        })
+            document.querySelector('#form-create-product').addEventListener('submit', (e) => {
+                e.preventDefault();
+                registrarProducto(e.target);
+            })
 
-        document.querySelector('#image').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            if (file) {
+            document.querySelector('#image').addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                if (file) {
 
-                reader.onload = function(e) {
-                    document.getElementById('img_vista_previa').src = e.target.result;
-                };
+                    reader.onload = function(e) {
+                        document.getElementById('img_vista_previa').src = e.target.result;
+                    };
 
-                reader.readAsDataURL(file);
-            } else {
-                document.getElementById('img_vista_previa').src = @json(asset('assets/img/products/img_default.png'));
-            }
-        });
+                    reader.readAsDataURL(file);
+                } else {
+                    document.getElementById('img_vista_previa').src = @json(asset('assets/img/products/img_default.png'));
+                }
+            });
 
-        document.addEventListener('click', (e) => {
-            //======== LIMPIAR IMAGEN =======
-            if (e.target.closest('.btnSetImgDefault')) {
-                const inputImgPreview = document.querySelector('#img_vista_previa');
-                inputImgPreview.src = @json(asset('assets/img/products/img_default.png'));
+            document.addEventListener('click', (e) => {
+                //======== LIMPIAR IMAGEN =======
+                if (e.target.closest('.btnSetImgDefault')) {
+                    const inputImgPreview = document.querySelector('#img_vista_previa');
+                    inputImgPreview.src = @json(asset('assets/img/products/img_default.png'));
 
-                const inputCargarImg = document.querySelector('#image');
-                inputCargarImg.value = '';
-            }
-        })
+                    const inputCargarImg = document.querySelector('#image');
+                    inputCargarImg.value = '';
+                }
+            })
 
-        $('#mdl-create-product').on('hidden.bs.modal', function() {
-            clearMdlCreateProduct();
-        });
-    }
+            $('#mdl-create-product').on('hidden.bs.modal', function() {
+                clearMdlCreateProduct();
+            });
+        }
 
-    function loadFilePound() {
-        const inputImg = document.querySelector('#image');
+        function loadFilePound() {
+            const inputImg = document.querySelector('#image');
 
-        pondImg = FilePond.create(inputImg, {
-            allowImagePreview: true,
-            imagePreviewHeight: 120,
-            imageCropAspectRatio: '1:1',
-            styleLayout: 'compact',
-            stylePanelAspectRatio: 0.5,
-            storeAsFile: true,
+            pondImg = FilePond.create(inputImg, {
+                allowImagePreview: true,
+                imagePreviewHeight: 120,
+                imageCropAspectRatio: '1:1',
+                styleLayout: 'compact',
+                stylePanelAspectRatio: 0.5,
+                storeAsFile: true,
 
-            maxFileSize: '2MB',
-            acceptedFileTypes: [
-                'image/jpeg',
-                'image/png',
-                'image/webp',
-                'image/avif'
-            ],
-            labelFileTypeNotAllowed: 'Formato no permitido',
-            labelMaxFileSizeExceeded: 'El archivo supera los 2 MB',
-        });
-    }
+                maxFileSize: '2MB',
+                acceptedFileTypes: [
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                    'image/avif'
+                ],
+                labelFileTypeNotAllowed: 'Formato no permitido',
+                labelMaxFileSizeExceeded: 'El archivo supera los 2 MB',
+            });
+        }
 
-    function registrarProducto(formRegistrarProducto) {
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-            },
-            buttonsStyling: false
-        });
-        swalWithBootstrapButtons.fire({
-            title: "DESEA REGISTRAR EL PRODUCTO?",
-            text: "Se creará un nuevo producto!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "SÍ, REGISTRAR!",
-            cancelButtonText: "NO, CANCELAR!",
-            reverseButtons: true
-        }).then(async (result) => {
-            if (result.isConfirmed) {
+        function registrarProducto(formRegistrarProducto) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            swalWithBootstrapButtons.fire({
+                title: "DESEA REGISTRAR EL PRODUCTO?",
+                text: "Se creará un nuevo producto!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "SÍ, REGISTRAR!",
+                cancelButtonText: "NO, CANCELAR!",
+                reverseButtons: true
+            }).then(async (result) => {
+                if (result.isConfirmed) {
 
-                clearValidationErrors('msgError');
-                const token = document.querySelector('input[name="_token"]').value;
-                const formData = new FormData(formRegistrarProducto);
-                const urlRegistrarProducto = @json(route('tenant.inventario.productos.store'));
+                    clearValidationErrors('msgError');
+                    const token = document.querySelector('input[name="_token"]').value;
+                    const formData = new FormData(formRegistrarProducto);
+                    const urlRegistrarProducto = @json(route('tenant.inventario.productos.store'));
 
-                Swal.fire({
-                    title: 'Cargando...',
-                    html: 'Registrando nuevo producto...',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                try {
-                    const response = await fetch(urlRegistrarProducto, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': token
-                        },
-                        body: formData
+                    Swal.fire({
+                        title: 'Cargando...',
+                        html: 'Registrando nuevo producto...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
                     });
 
-                    const res = await response.json();
+                    try {
+                        const response = await fetch(urlRegistrarProducto, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': token
+                            },
+                            body: formData
+                        });
 
-                    console.log(res);
+                        const res = await response.json();
 
-                    if (response.status === 422) {
-                        if ('errors' in res) {
-                            paintValidationErrors(res.errors, 'error');
+                        console.log(res);
+
+                        if (response.status === 422) {
+                            if ('errors' in res) {
+                                paintValidationErrors(res.errors, 'error');
+                            }
+                            Swal.close();
+                            return;
                         }
+
+                        if (res.success) {
+                            dtProducts.ajax.reload();
+                            toastr.success(res.message, 'OPERACIÓN COMPLETADA');
+                            $('#mdl-create-product').modal('hide');
+                        } else {
+                            toastr.error(res.message, 'ERROR EN EL SERVIDOR');
+                        }
+
+                    } catch (error) {
+                        toastr.error(error, 'ERROR EN LA PETICIÓN REGISTRAR PRODUCTO');
+                    } finally {
                         Swal.close();
-                        return;
                     }
 
-                    if (res.success) {
-                        dtProducts.ajax.reload();
-                        toastr.success(res.message, 'OPERACIÓN COMPLETADA');
-                        $('#mdl-create-product').modal('hide');
-                    } else {
-                        toastr.error(res.message, 'ERROR EN EL SERVIDOR');
-                    }
-
-                } catch (error) {
-                    toastr.error(error, 'ERROR EN LA PETICIÓN REGISTRAR PRODUCTO');
-                } finally {
-                    Swal.close();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "OPERACIÓN CANCELADA",
+                        text: "NO SE REALIZARON ACCIONES",
+                        icon: "error"
+                    });
                 }
-
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire({
-                    title: "OPERACIÓN CANCELADA",
-                    text: "NO SE REALIZARON ACCIONES",
-                    icon: "error"
-                });
-            }
-        });
-    }
-
-    function clearMdlCreateProduct() {
-        document.querySelector('#name').value = '';
-        document.querySelector('#description').value = '';
-        document.querySelector('#sale_price').value = '1';
-        document.querySelector('#purchase_price').value = '1';
-        document.querySelector('#stock').value = '0';
-        document.querySelector('#stock_min').value = '1';
-        document.querySelector('#code_factory').value = '';
-        document.querySelector('#code_bar').value = '';
-        window.categorySelect.clear();
-        window.brandSelect.clear();
-        window.unitSelect.clear();
-        setText(window.categorySelect, 'REPUESTO');
-        setText(window.brandSelect, 'NACIONAL');
-        setText(window.unitSelect, 'NIU-UNIDAD');
-        if (pondImg) {
-            pondImg.removeFiles();
+            });
         }
-    }
-</script>
+
+        function clearMdlCreateProduct() {
+            document.querySelector('#name').value = '';
+            document.querySelector('#description').value = '';
+            document.querySelector('#sale_price').value = '1';
+            document.querySelector('#purchase_price').value = '1';
+            document.querySelector('#stock').value = '0';
+            document.querySelector('#stock_min').value = '1';
+            document.querySelector('#code_factory').value = '';
+            document.querySelector('#code_bar').value = '';
+            window.categorySelect.clear();
+            window.brandSelect.clear();
+            window.unitSelect.clear();
+            setText(window.categorySelect, 'REPUESTO');
+            setText(window.brandSelect, 'NACIONAL');
+            setText(window.unitSelect, 'NIU-UNIDAD');
+            if (pondImg) {
+                pondImg.removeFiles();
+            }
+        }
+    </script>
+@endpush
