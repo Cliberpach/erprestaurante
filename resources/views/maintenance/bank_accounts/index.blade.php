@@ -3,7 +3,9 @@
 @section('title')
     Cuentas Bancarias
 @endsection
-
+@push('js-head')
+    @vite(['resources/js/libs/filepond.js'])
+@endpush
 @section('content')
     @include('maintenance.bank_accounts.modals.mdl_cuenta_create')
     @include('maintenance.bank_accounts.modals.mdl_cuenta_edit')
