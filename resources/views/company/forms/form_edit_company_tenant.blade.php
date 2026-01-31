@@ -95,6 +95,14 @@
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
             <label class="form-label fw-bold">
+                <i class="fas fa-percent text-primary me-1"></i> IGV
+            </label>
+            <input type="number" class="form-control input-fill inputDecimalPositivo" name="igv"
+                value="{{ number_format($company->igv, 2, '.', '') }}" min="0" max="99" step="0.01">
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+            <label class="form-label fw-bold">
                 <i class="fas fa-file-invoice-dollar text-primary me-1"></i> Estado de Facturación
             </label>
             <select class="form-select" name="invoicing_status">
@@ -117,16 +125,15 @@
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
             <label class="required_field" for="province" style="font-weight: bold;">PROVINCIA</label>
-            <select required name="province" required class="" id="province"
-                data-placeholder="Seleccionar" onchange="changeProvince(this.value)">
+            <select required name="province" required class="" id="province" data-placeholder="Seleccionar"
+                onchange="changeProvince(this.value)">
                 <option></option>
             </select>
             <span class="province_error_customer msgErrorCustomer" style="color:red;"></span>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
             <label class="required_field" for="district" style="font-weight: bold;">DISTRITO</label>
-            <select required name="district" required class="" id="district"
-                data-placeholder="Seleccionar">
+            <select required name="district" required class="" id="district" data-placeholder="Seleccionar">
                 <option></option>
             </select>
             <span class="district_customer msgErrorCustomer" style="color:red;"></span>

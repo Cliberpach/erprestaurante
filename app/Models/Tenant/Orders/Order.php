@@ -55,7 +55,11 @@ class Order extends Model
 
         'sale_id',
         'sale_serie',
-        'sale_correlative'
+        'sale_correlative',
+
+        'petty_cash_book_id',
+        'petty_cash_id',
+        'petty_cash_name'
     ];
 
     protected $guarded = ['code'];

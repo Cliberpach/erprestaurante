@@ -320,6 +320,7 @@ array:16 [▼ // app\Http\Controllers\Tenant\CompanyController.php:223
         $company->invoicing_status          =   $request->invoicing_status;
         $company->lat                       =   $request->get('lat');
         $company->lng                       =   $request->get('lng');
+        $company->igv                       =   $request->get('igv');
         $company->save();
 
         return redirect()->route('tenant.mantenimiento.empresas.index')->with('success', 'Empresa actualizada correctamente');

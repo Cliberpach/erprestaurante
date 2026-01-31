@@ -18,8 +18,13 @@ class PettyCashBookValidation
 
     public function validateOpenCash(array $data)
     {
-        $petty_cash_id  =   $data['cash_available_id'];
+        $petty_cash_id      =   $data['cash_available_id'];
 
+        $user               =   Auth::user();
+        if(!$user->hasRole('CAJERO')){
+            throw new Exception("SOLO CAJEROS PUEDEN ABRIR UNA CAJA");
+        }
+        
         $petty_cash_open    =   $this->s_repository->pettyCashIsOpen($petty_cash_id);
 
         if ($petty_cash_open) {
