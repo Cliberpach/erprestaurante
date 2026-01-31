@@ -20,10 +20,9 @@ class TypeDishStoreRequest extends FormRequest
     protected function prepareForValidation()
     {
         $data = $this->all();
-        
+
         foreach ($data as $key => $value) {
             if (str_ends_with($key, '_mdltypedish')) {
-                // Reemplazamos el campo original con el nombre limpio
                 $newKey = str_replace('_mdltypedish', '', $key);
                 $data[$newKey] = $value;
                 unset($data[$key]);

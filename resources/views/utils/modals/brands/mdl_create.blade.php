@@ -103,7 +103,7 @@
 
                     if (res.success) {
                         toastr.success(res.message, 'OPERACIÓN COMPLETADA');
-                        setNewBrand(res.brand);
+                        setNewBrand(res.item);
                         $('#mdlCreateBrand').modal('hide');
                     } else {
                         toastr.error(res.message, 'ERROR EN EL SERVIDOR');

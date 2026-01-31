@@ -103,7 +103,7 @@
 
                     if (res.success) {
                         toastr.success(res.message, 'OPERACIÓN COMPLETADA');
-                        setNewCategory(res.category);
+                        setNewCategory(res.item);
                         $('#mdlCreateCategory').modal('hide');
                     } else {
                         toastr.error(res.message, 'ERROR EN EL SERVIDOR');
