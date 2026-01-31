@@ -225,14 +225,7 @@
         }
 
         function registrarColaborador() {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success",
-                    cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-            swalWithBootstrapButtons.fire({
+            Swal.fire({
                 title: "DESEA REGISTRAR EL COLABORADOR?",
                 text: "Se creará un nuevo colaborador!",
                 icon: "warning",
@@ -296,7 +289,7 @@
 
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: "OPERACIÓN CANCELADA",
                         text: "NO SE REALIZARON ACCIONES",
                         icon: "error"

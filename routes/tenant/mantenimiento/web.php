@@ -47,6 +47,7 @@ Route::group(["prefix" => "mantenimiento"], function () {
         Route::delete('destroy/{id}', [CollaboratorController::class, 'destroy'])->name('tenant.mantenimiento.colaboradores.destroy');
         Route::get('create', [CollaboratorController::class, 'create'])->name('tenant.mantenimiento.colaboradores.create');
         Route::post('store', [CollaboratorController::class, 'store'])->name('tenant.mantenimiento.colaboradores.store');
+        Route::get('search-document', [CollaboratorController::class, 'searchDocument'])->name('tenant.mantenimiento.colaboradores.searchDocument');
     });
 
     Route::group(["prefix" => "plan"], function () {
