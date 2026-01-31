@@ -100,7 +100,7 @@ class ProgrammingDto
 
     public function getDtoLstAuto(Programming $programming)
     {
-        $dishes =   Dish::with('typeDish')->get();
+        $dishes =   Dish::with('typeDish')->where('status','ACTIVO')->get();
         $dto    =   [];
         foreach ($dishes as $dish) {
 
