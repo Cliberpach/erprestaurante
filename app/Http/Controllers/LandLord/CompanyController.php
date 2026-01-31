@@ -31,7 +31,6 @@ use Throwable;
 use Spatie\Permission\Models\Role;
 use App\Models\Tenant\Maintenance\Company\Module as CompanyModule;
 use App\Models\Tenant\Maintenance\Company\ModuleChild as CompanyModuleChild;
-use App\Models\Tenant\Maintenance\Company\ModuleGrandChild as CompanyModuleGrandChild;
 use App\Models\Tenant\Maintenance\Company\Plan as CompanyPlan;
 use App\Services\TenantPermissionCloner;
 use App\Services\TestService;
@@ -326,14 +325,14 @@ class CompanyController extends Controller
         $role = Role::where('name', 'admin')->first();
         $user->assignRole($role);
 
-        $this->createUserWithRole(
+        /*$this->createUserWithRole(
             'CAJERO 1',
             'cajero@gmail.com',
             '123456789',
             'CAJERO',
             2
-        );
-        for ($i = 1; $i <= 20; $i++) {
+        );*/
+        /*for ($i = 1; $i <= 20; $i++) {
             $this->createUserWithRole(
                 "MESERO {$i}",
                 "mesero{$i}@gmail.com",
@@ -341,24 +340,24 @@ class CompanyController extends Controller
                 'MESERO',
                 3
             );
-        }
-        $this->createUserWithRole(
+        }*/
+        /*$this->createUserWithRole(
             'CONTADOR',
             'contador@gmail.com',
             '123456789',
             'CONTADOR',
             4
-        );
-        $this->createUserWithRole(
+        );*/
+        /*$this->createUserWithRole(
             'COCINERO',
             'cocinero@gmail.com',
             '123456789',
             'COCINERO',
             5
-        );
+        );*/
 
 
-        app(TestService::class)->createTestData();
+        //app(TestService::class)->createTestData();
 
         DocumentSerialization::create([
             'company_id'        => $company->id,
@@ -369,6 +368,27 @@ class CompanyController extends Controller
             'default'           => 'NO',
             'final_number'      => 0,
             'description'       => 'NOTA DE VENTA',
+        ]);
+
+        DocumentSerialization::create([
+            'company_id'        =>  $company->id,
+            'document_type_id'  =>  65,
+            'serie'             =>  'B001',
+            'number_limit'      =>  8,
+            'destiny'           =>  'BOLETA ELECTRÓNICA',
+            'default'           =>  'NO',
+            'final_number'      =>  0,
+            'description'       =>  'BOLETA ELECTRÓNICA',
+        ]);
+        DocumentSerialization::create([
+            'company_id'        =>  $company->id,
+            'document_type_id'  =>  66,
+            'serie'             =>  'F001',
+            'number_limit'      =>  8,
+            'destiny'           =>  'FACTURA ELECTRÓNICA',
+            'default'           =>  'NO',
+            'final_number'      =>  0,
+            'description'       =>  'FACTURA ELECTRÓNICA',
         ]);
 
 
