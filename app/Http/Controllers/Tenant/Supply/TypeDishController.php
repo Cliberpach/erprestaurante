@@ -62,10 +62,10 @@ array:4 [ // app\Http\Controllers\Tenant\WorkShop\ModelController.php:79
 
         try {
 
-            $modelo  =   $this->s_type_dish->store($request->toArray());
+            $item  =   $this->s_type_dish->store($request->toArray());
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'MESA REGISTRADA CON ÉXITO']);
+            return response()->json(['success' => true, 'message' => 'TIPO DE PLATO REGISTRADO CON ÉXITO', 'item' => $item]);
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
@@ -97,7 +97,7 @@ array:4 [ // app\Http\Controllers\Tenant\WorkShop\ModelController.php:102
 
             DB::commit();
 
-            return response()->json(['success' => true, 'message' => 'MESA ACTUALIZADA CON ÉXITO']);
+            return response()->json(['success' => true, 'message' => 'TIPO DE PLATO ACTUALIZADO CON ÉXITO']);
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);

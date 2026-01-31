@@ -17,6 +17,22 @@ class TypeDishStoreRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $data = $this->all();
+        
+        foreach ($data as $key => $value) {
+            if (str_ends_with($key, '_mdltypedish')) {
+                // Reemplazamos el campo original con el nombre limpio
+                $newKey = str_replace('_mdltypedish', '', $key);
+                $data[$newKey] = $value;
+                unset($data[$key]);
+            }
+        }
+
+        $this->replace($data);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -39,10 +55,10 @@ class TypeDishStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'El campo "descripción" es obligatorio.',
-            'name.string'   => 'El campo "descripción" debe ser una cadena de texto.',
-            'name.max'      => 'El campo "descripción" no debe exceder los 191 caracteres.',
-            'name.unique'   => 'Ya existe una mesa con este nombre en estado ACTIVO.',
+            'name.required' => 'El campo "nombre" es obligatorio.',
+            'name.string'   => 'El campo "nombre" debe ser una cadena de texto.',
+            'name.max'      => 'El campo "nombre" no debe exceder los 191 caracteres.',
+            'name.unique'   => 'Ya existe un tipo de plato con este nombre en estado ACTIVO.',
         ];
     }
 

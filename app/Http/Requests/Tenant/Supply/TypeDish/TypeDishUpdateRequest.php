@@ -65,7 +65,7 @@ class TypeDishUpdateRequest extends FormRequest
             'name_edit.required' => 'El campo "nombre" es obligatorio.',
             'name_edit.string'   => 'El campo "nombre" debe ser una cadena de texto.',
             'name_edit.max'      => 'El campo "nombre" no debe exceder los 191 caracteres.',
-            'name_edit.unique'   => 'Ya existe una mesa con este nombre en estado ACTIVO.',
+            'name_edit.unique'   => 'Ya existe un tipo de plato con este nombre en estado ACTIVO.',
         ];
     }
 

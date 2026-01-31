@@ -9,6 +9,7 @@
 @endpush
 
 @section('content')
+    @include('utils.modals.types_dish.mdl_create');
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
             <h4 class="card-title mb-md-0 mb-2">REGISTRAR PLATO</h4>
@@ -60,9 +61,11 @@
             loadTomSelect();
             loadFilePound();
             events();
+            eventsMdlTypeDish();
         })
 
         function events() {
+
             document.querySelector('#form_create').addEventListener('submit', (e) => {
                 e.preventDefault();
                 store(e.target);
@@ -101,7 +104,7 @@
                                 <span>${escape(item.name)}</span>
                             </div>
                         `,
-                                            item: (item, escape) => `
+                        item: (item, escape) => `
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-${item.icon ?? 'utensils'} me-1 text-primary"></i>
                                 <span>${escape(item.name)}</span>

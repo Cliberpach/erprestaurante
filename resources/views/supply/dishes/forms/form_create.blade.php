@@ -10,7 +10,7 @@
         <!-- Tipo Plato -->
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <label for="type_dish_id" class="form-label fw-bold required_field">TIPO PLATO:</label><i
-                class="fas fa-add btn btn-warning" onclick="openMdlNewCustomer();"
+                class="fas fa-add btn btn-warning" onclick="openMdlTypeDish();"
                 style="margin-left:4px;margin-bottom:4px;"></i>
             <select class="form-control" id="type_dish_id" name="type_dish_id" required>
                 <option value="">Seleccionar</option>
