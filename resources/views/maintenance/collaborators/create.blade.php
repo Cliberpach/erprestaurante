@@ -45,6 +45,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadTomSelect();
             events();
+            configCollaborator();
         })
 
         function events() {
@@ -212,7 +213,7 @@
                                 <span>${escape(item.name)}</span>
                             </div>
                         `,
-                                    item: (item, escape) => `
+                        item: (item, escape) => `
                             <div class="d-flex align-items-center gap-2">
                                 <i class="fa-solid fa-user-tie text-primary"></i>
                                 <span>${escape(item.name)}</span>
@@ -364,6 +365,10 @@
 
             document.querySelector('#full_name').value = nombre_completo;
             document.querySelector('#address').value = direccion;
+        }
+
+        function configCollaborator() {
+            window.documentTypeSelect.setValue(1);
         }
     </script>
 @endsection
