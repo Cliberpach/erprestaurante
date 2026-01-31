@@ -10,10 +10,13 @@ use App\Http\Requests\CompanyStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\CompanyInvoice;
+use App\Models\Department;
+use App\Models\District;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Module;
 use App\Models\ModuleChild;
 use App\Models\ModuleGrandChild;
+use App\Models\Province;
 use App\Models\Tenant;
 use App\Models\Tenant\DocumentSerialization;
 use App\Models\User;
@@ -56,7 +59,7 @@ class CompanyController extends Controller
     public function edit($id)
     {
         // Encuentra la empresa por su ID
-        $company            = Company::findOrFail($id);
+        $company            =   Company::findOrFail($id);
 
         $departments        =   DB::select('select * from departments');
         $districts          =   DB::select('select * from districts');
@@ -250,33 +253,13 @@ array:16 [▼ // app\Http\Controllers\Tenant\CompanyController.php:223
         $company_invoice->province_id       =   $request->get('province');
         $company_invoice->district_id       =   $request->get('district');
 
-        $department     =   DB::select(
-            'select
-                        d.name,
-                        d.zone
-                        from departments as d
-                        where d.id = ?',
-            [$request->get('department')]
-        )[0];
+        $department     =   Department::findOrFail($request->get('department'));
+        $province       =   Province::findOrFail($request->get('province'));
+        $district       =   District::findOrFail($request->get('district'));
 
         $company_invoice->department_name   =   $department->name;
-
-        $company_invoice->province_name     =   DB::select(
-            'select
-                                            p.name
-                                            from provinces as p
-                                            where p.id = ?',
-            [$request->get('province')]
-        )[0]->name;
-
-        $company_invoice->district_name     =   DB::select(
-            'select
-                                            d.name
-                                            from districts as d
-                                            where d.id = ?',
-            [$request->get('district')]
-        )[0]->name;
-
+        $company_invoice->province_name     =   $province->name;
+        $company_invoice->district_name     =   $district->name;
         $company_invoice->update();
 
 
@@ -315,13 +298,10 @@ array:16 [▼ // app\Http\Controllers\Tenant\CompanyController.php:223
             $file                   =   $request->file('logo');
             $fileName               =   $company->ruc . '.' . $file->getClientOriginalExtension();
 
-            $base64_logo            = 'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
-            $company->base64_logo   = $base64_logo; // Guardar en la columna logo_base64
-
-            // $file               = $request->file('logo');
-            // $path               = $file->store('logos', 'public'); // Guardar el archivo en el directorio 'logos' en storage/public
-            $company->logo      = 'storage/' . $company->files_route . '/logo/' . $fileName; // Guardar la ruta en la base de datos
-            $company->logo_url  = 'storage/' . $company->files_route . '/logo/' . $fileName;
+            $base64_logo            =   'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
+            $company->base64_logo   =   $base64_logo; // Guardar en la columna logo_base64
+            $company->logo          =   'storage/' . $company->files_route . '/logo/' . $fileName; // Guardar la ruta en la base de datos
+            $company->logo_url      =   'storage/' . $company->files_route . '/logo/' . $fileName;
 
             $file->move($route_logo_tenant, $fileName);
         }
@@ -342,7 +322,7 @@ array:16 [▼ // app\Http\Controllers\Tenant\CompanyController.php:223
         $company->lng                       =   $request->get('lng');
         $company->save();
 
-        return redirect()->route('tenant.mantenimientos.empresa')->with('success', 'Empresa actualizada correctamente');
+        return redirect()->route('tenant.mantenimiento.empresas.index')->with('success', 'Empresa actualizada correctamente');
     }
 
 
@@ -470,9 +450,9 @@ array:3 [ // app\Http\Controllers\Tenant\CompanyController.php:395
         try {
 
             //====== VALIDANDO QUE NO EXISTA NUMERACIÓN PREVIA PARA ESTE TIPO DE DOCUMENTO =========
-            $numeration_exists  =   DocumentSerialization::where('document_type_id',$request->get('billing_type_document'))->first();
+            $numeration_exists  =   DocumentSerialization::where('document_type_id', $request->get('billing_type_document'))->first();
 
-            if ($numeration_exists){
+            if ($numeration_exists) {
                 throw new Exception("ESTE DOCUMENTO YA TIENE NUMERACIÓN!!!");
             }
 

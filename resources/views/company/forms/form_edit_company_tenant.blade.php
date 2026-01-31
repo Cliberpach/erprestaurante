@@ -162,7 +162,7 @@
     <!-- BOTONES -->
     <div class="d-flex justify-content-end gap-2">
         <button type="submit" class="btn btn-primary">
-            <i class="fas fa-save me-1"></i> Guardar Cambios
+            <i class="fas fa-save me-1"></i> Guardar
         </button>
         <a href="{{ route('tenant.mantenimiento.empresas.index') }}" class="btn btn-secondary">
             <i class="fas fa-times me-1"></i> Cancelar

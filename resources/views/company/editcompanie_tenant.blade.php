@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 @endpush
 
+@push('js-head')
+    @vite(['resources/js/libs/filepond.js'])
+@endpush
+
 @section('content')
     @include('company.modals.modal_numeration')
 
@@ -162,15 +166,14 @@
     </script>
 
     <script>
+        let fpLogo = null;
         let map;
         let onemarker = 0;
 
-
-
         document.addEventListener('DOMContentLoaded', function() {
-            iniciarSelect2();
             loadTomSelect();
-            startDataTableNumeration();
+            loadFpTenant();
+            loadDtNumeration();
             setUbigeoPreview();
             setMapa();
             events();
@@ -193,13 +196,29 @@
 
         }
 
-        function iniciarSelect2() {
-            $('.select2_form_numeration').select2({
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                dropdownParent: $('#mdlNumeration')
-            })
+        function loadFpTenant() {
+            const inputImg = document.querySelector('#input-logo');
+            fpLogo = FilePond.create(inputImg, {
+                allowImagePreview: true,
+                imagePreviewHeight: 120,
+                imageCropAspectRatio: '1:1',
+                styleLayout: 'compact',
+                stylePanelAspectRatio: 0.5,
+                storeAsFile: true,
+
+                maxFileSize: '4MB',
+                acceptedFileTypes: [
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                    'image/avif'
+                ],
+                labelFileTypeNotAllowed: 'Formato no permitido',
+                labelMaxFileSizeExceeded: 'El archivo supera los 2 MB',
+            });
+
+            companyLogo = @json(asset($company->logo_url));
+            fpLogo.addFile(companyLogo);
         }
 
         function loadTomSelect() {
