@@ -9,7 +9,6 @@
 
     <div class="card overflow-hidden">
         <div class="card-header">
-            <!-- Fila 1: Título + Botón -->
             <div class="row align-items-center mb-3">
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <h6 class="card-title mb-0">Mostrador Cajero</h6>

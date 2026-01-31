@@ -5,8 +5,8 @@ namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Cash\PettyCash;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Cash\PettyCashServer;
+use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\Supply\Programming\Programming;
-use Exception;
 use Illuminate\Support\Facades\DB;
 
 class PettyCashBookRepository
@@ -117,7 +117,6 @@ class PettyCashBookRepository
             ->join('petty_cash_books as pcb', 'pcb.id', 'pcs.petty_cash_book_id')
             ->join('petty_cashes as pc', 'pc.id', 'pcb.petty_cash_id')
             ->select(
-                'pc.name',
                 'pcb.id as petty_cash_book_id',
                 'pc.id as petty_cash_id',
                 'pc.name as petty_cash_name'
@@ -185,6 +184,18 @@ class PettyCashBookRepository
         PettyCashServer::where('petty_cash_book_id', $id)->delete();
     }
 
+    public function getPettyCashServers(int $id)
+    {
+        return PettyCashServer::where('petty_cash_book_id', $id)->get();
+    }
+
+    public function getDeletedPettyCashServers(int $id, array $lst_servers)
+    {
+        return PettyCashServer::where('petty_cash_book_id', $id)
+            ->whereNotIn('user_id', $lst_servers)
+            ->get();
+    }
+
     public function getOne(int $id): array
     {
         $petty_cash_book    = PettyCashBook::findOrFail($id);
@@ -204,5 +215,11 @@ class PettyCashBookRepository
         }
 
         return $programming->first();
+    }
+
+    public function hasOrdersPending(int $id)
+    {
+        $has    =   Order::where('petty_cash_book_id', $id)->where('status', 'ACTIVO')->where('status_invoice', 'NO FACTURADO')->exists();
+        return $has;
     }
 }

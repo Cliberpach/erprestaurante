@@ -2,8 +2,8 @@
   "_index-dd82ac63.js": {
     "file": "assets/index-dd82ac63.js"
   },
-  "_ui-5600d415.js": {
-    "file": "assets/ui-5600d415.js",
+  "_ui-51802614.js": {
+    "file": "assets/ui-51802614.js",
     "imports": [
       "_index-dd82ac63.js"
     ]
@@ -46,7 +46,7 @@
     "css": [
       "assets/app-d4213a05.css"
     ],
-    "file": "assets/app-db81e4d5.js",
+    "file": "assets/app-228ef8b6.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   },
@@ -95,18 +95,18 @@
     "src": "resources/js/libs/lightgalery.js"
   },
   "resources/js/orders/create/main.js": {
-    "file": "assets/main-2b85b10e.js",
+    "file": "assets/main-3c50e57a.js",
     "imports": [
-      "_ui-5600d415.js",
+      "_ui-51802614.js",
       "_index-dd82ac63.js"
     ],
     "isEntry": true,
     "src": "resources/js/orders/create/main.js"
   },
   "resources/js/orders/edit/main.js": {
-    "file": "assets/main-63504da5.js",
+    "file": "assets/main-11e05a10.js",
     "imports": [
-      "_ui-5600d415.js",
+      "_ui-51802614.js",
       "_index-dd82ac63.js"
     ],
     "isEntry": true,

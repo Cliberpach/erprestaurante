@@ -8,8 +8,10 @@ use App\Models\Company;
 use App\Models\ExitMoney;
 use App\Models\Tenant\Accounts\CustomerAccountDetail;
 use App\Models\Tenant\Cash\PettyCashBook;
+use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\PaymentMethod;
-use App\Models\Tenant\Sale;
+use App\Models\Tenant\Sales\Sale\Sale;
+use App\Models\Tenant\Sales\Sale\SalePay;
 use App\Models\Tenant\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -68,7 +70,7 @@ class PettyCashBookService
         $customer_pays      =   CustomerAccountDetail::from('customer_accounts_details as cad')
             ->join('customer_accounts as ca', 'ca.id', 'cad.customer_account_id')
             ->leftJoin('work_orders as wo', 'wo.id', '=', 'ca.work_order_id')
-            ->leftJoin('sales_documents as sd', 'sd.id', '=', 'ca.sale_id')
+            ->leftJoin('sales as sd', 'sd.id', '=', 'ca.sale_id')
             ->where('cad.petty_cash_book_id', $id)
             ->select(
                 'ca.document_number',
@@ -141,7 +143,8 @@ class PettyCashBookService
         return $this->s_repository->getCashBookUser($user_id);
     }
 
-    public function getCashBookCash(int $cash_id){
+    public function getCashBookCash(int $cash_id)
+    {
         return $this->s_repository->getCashBookCash($cash_id);
     }
 
@@ -171,24 +174,28 @@ class PettyCashBookService
 
     public function getReportSales($payment_methods, int $id)
     {
-        $sales  =   Sale::where('petty_cash_book_id', $id)->where('estado', '<>', 'ANULADO')->get();
+        $sales  =   Sale::where('petty_cash_book_id', $id)
+            ->where('status', '<>', 'ANULADO')
+            ->whereNull('converted_from_id')
+            ->with('pays')
+            ->get();
+
         $report_sales   =   [];
         foreach ($payment_methods as $payment_method) {
             $item   =   [];
 
-            $amount_1   =   $sales->where('method_pay_id_1', $payment_method->id)->sum('amount_pay_1');
-            $amount_2   =   $sales->where('method_pay_id_2', $payment_method->id)->sum('amount_pay_2');
+            $amount     =   SalePay::where('payment_method_id', $payment_method->id)->sum('amount');
 
             $item       =   [
-                'payment_method_id' =>  $payment_method->id,
-                'payment_method_name' => $payment_method->description,
-                'amount'            =>  $amount_1 + $amount_2
+                'payment_method_id'     =>  $payment_method->id,
+                'payment_method_name'   =>  $payment_method->description,
+                'amount'                =>  $amount
             ];
 
             $report_sales[] =   $item;
         }
 
-        $total  =   $sales->sum('amount_pay_1') + $sales->sum('amount_pay_2');
+        $total  =   $sales->sum('total');
 
         return ['total' => $total, 'report' => $report_sales];
     }
@@ -301,12 +308,14 @@ class PettyCashBookService
         return $petty_cash_book;
     }
 
-    public function hasProgrammingActive(int $petty_cash_book_id) {
+    public function hasProgrammingActive(int $petty_cash_book_id)
+    {
         return $this->s_repository->hasProgrammingActive($petty_cash_book_id);
     }
 
     public function waiterInCash(int $user_id)
     {
-       return $this->s_repository->waiterInCash($user_id);
+        return $this->s_repository->waiterInCash($user_id);
     }
+
 }

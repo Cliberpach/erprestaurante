@@ -1,7 +1,9 @@
 <div class="container">
     <div class="row g-2">
         <div class="col-lg-6 col-md-7 text-md-start text-center">
-            <p class="mb-0">© <span class="currentYear">2025</span> SISCOM <a href="javascript:void(0);">ErpTaller</a>.
+            <p class="mb-0">
+                © {{ date('Y') }} SISCOM <a href="javascript:void(0);">ComandaPro</a>.
+            </p>
             </p>
         </div>
         <div class="col-lg-6 col-md-5">

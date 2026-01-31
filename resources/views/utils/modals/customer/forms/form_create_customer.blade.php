@@ -73,7 +73,7 @@
                 </div>
                 <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-2">
                     <label class="required_field" for="province" style="font-weight: bold;">PROVINCIA</label>
-                    <select required name="province" required class="form-select select2_form_customer" id="province" data-placeholder="Seleccionar" onchange="changeProvince(this.value)">
+                    <select required name="province" required class="form-select select2_form_customer" id="province" data-placeholder="Seleccionar">
                         <option></option>
                     </select>
                     <span class="province_error_customer msgErrorCustomer"  style="color:red;"></span>

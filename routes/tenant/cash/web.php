@@ -32,7 +32,7 @@ Route::group(["prefix" => "cajas"], function () {
         Route::get('create', [ExitMoneyController::class, 'create'])->name('tenant.cajas.egresos.create');
         Route::get('getEgresos', [ExitMoneyController::class, 'getExitMoneys'])->name('tenant.cajas.egresos.getExitMoneys');
         Route::post('store', [ExitMoneyController::class, 'store'])->name('tenant.cajas.egresos.store');
-        Route::get('pdf-one/{id}', [ExitMoneyController::class, 'showPDF'])->name('tenant.egreso.pdf');
+        Route::get('pdf-one/{id}', [ExitMoneyController::class, 'showPDF'])->name('tenant.cajas.egresos.pdf');
         Route::put('update/{id}', [ExitMoneyController::class, 'updateExit'])->name('tenant.cajas.egresos.update');
         Route::get('edit/{id}', [ExitMoneyController::class, 'editExit'])->name('tenant.cajas.egresos.edit');
         Route::delete('destroy/{id}', [ExitMoneyController::class, 'destroy'])->name('tenant.cajas.egresos.destroy');

@@ -18,7 +18,7 @@ export function loadTomSelect() {
         load: async (query, callback) => {
             if (query.length < 3) return callback();
             try {
-                const url = `{{ route('tenant.utils.searchCustomer') }}?q=${encodeURIComponent(query)}`;
+                const url = route('tenant.utils.searchCustomer', { q: query });
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Error al buscar clientes');
                 const data = await response.json();

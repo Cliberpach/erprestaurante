@@ -3,23 +3,12 @@
 namespace App\Http\Services\Tenant\Sale\Sale;
 
 use App\Http\Controllers\Tenant\NumberToLettersController;
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Product;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\WorkShop\Service;
 
 class SaleDto
 {
-
-    private CorrelativeService $s_correlative;
-
-    public function __construct()
-    {
-        $this->s_correlative    =   new CorrelativeService();
-    }
-
     public function getDtoStoreFromOrder(array $data)
     {
         $dto    =   [];
@@ -31,10 +20,6 @@ class SaleDto
         $dto['customer_document_number']    =   $customer->document_number;
         $dto['customer_document_code']      =   $customer->type_document_code;
         $dto['customer_phone']              =   $customer->phone;
-
-        $user_recorder                      =   $data['user'];
-        $dto['user_recorder_id']            =   $user_recorder->id;
-        $dto['user_recorder_name']          =   $user_recorder->name;
 
         $cash_book                          =   $data['cash_book'];
         $dto['petty_cash_id']               =   $cash_book->petty_cash_id;
@@ -55,7 +40,7 @@ class SaleDto
         $dto['legend']          =   $legend;
 
 
-        $data_correlative       =   $this->s_correlative->getCorrelative($dto['type_sale_id']);
+        $data_correlative       =   $data['correlative'];
         $dto['correlative']     =   $data_correlative->correlative;
         $dto['serie']           =   $data_correlative->serie;
 
@@ -175,6 +160,7 @@ class SaleDto
         foreach ($lst_pays as $item) {
             $_item  =   [];
 
+            if ($item->amount == 0) continue;
             $payment    =   PaymentMethod::findOrFail($item->paymentId);
 
             $_item['payment_method_id']     =   $payment->id;
@@ -184,5 +170,65 @@ class SaleDto
             $dto[]                          =   $_item;
         }
         return $dto;
+    }
+
+    public function getDtoConvert(array $data): array
+    {
+        $dto                =   $data['sale']->toArray();
+        $data_correlative   =   $data['correlative'];
+        $invoice            =   $data['invoice'];
+        $customer           =   $data['customer'];
+
+        unset(
+            $dto['id'],
+            $dto['sunat_status'],
+            $dto['response_cdrZip'],
+            $dto['response_success'],
+            $dto['response_error_code'],
+            $dto['response_error_message'],
+            $dto['cdr_response_id'],
+            $dto['cdr_response_code'],
+            $dto['cdr_response_description'],
+            $dto['cdr_response_notes'],
+            $dto['cdr_response_reference'],
+            $dto['ruta_cdr'],
+            $dto['ruta_xml'],
+            $dto['ruta_qr'],
+            $dto['change_pay'],
+            $dto['created_at'],
+            $dto['updated_at']
+        );
+        $dto['status']                          =   'ACTIVO';
+
+        $dto['type_sale_id']                    =   $invoice->id;
+        $dto['type_sale_code']                  =   $invoice->symbol;
+        $dto['type_sale_name']                  =   $invoice->name;
+
+        $dto['customer_id']                 =   $customer->id;
+        $dto['customer_name']               =   $customer->name;
+        $dto['customer_type_document']      =   $customer->type_document_abbreviation;
+        $dto['customer_document_number']    =   $customer->document_number;
+        $dto['customer_document_code']      =   $customer->type_document_code;
+        $dto['customer_phone']              =   $customer->phone;
+
+        $dto['correlative']    =   $data_correlative->correlative;
+        $dto['serie']          =   $data_correlative->serie;
+
+        return $dto;
+    }
+
+    public function getDtoDetailConvert(array $data, int $sale_id): array
+    {
+        return array_map(function ($item) use ($sale_id) {
+            $item['sale_id'] = $sale_id;
+
+            unset(
+                $item['id'],
+                $item['created_at'],
+                $item['updated_at']
+            );
+
+            return $item;
+        }, $data);
     }
 }

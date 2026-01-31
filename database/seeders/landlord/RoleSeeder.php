@@ -62,7 +62,9 @@ class RoleSeeder extends Seeder
         $permissions = $this->permissionsLike([
             'cajas.',
             'movimientos_caja.',
-            'mostrador_cajero.'
+            'mostrador_cajero.',
+            'ventas.clientes.',
+            'ventas.comprobante_venta.'
         ]);
 
         $this->createRole('CAJERO', $permissions);

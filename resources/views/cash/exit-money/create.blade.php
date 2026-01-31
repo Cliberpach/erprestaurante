@@ -4,11 +4,6 @@
     Egresos
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-@endsection
-
 @section('content')
     @if (session('datos'))
         <div class="alert alert-warning alert-dismissible" role="alert">
@@ -295,11 +290,11 @@
                     });
 
                     const formData = new FormData(formStoreExitMoney);
-                    const res = await axios.post(route('tenant.egreso.store'), formData);
+                    const res = await axios.post(route('tenant.cajas.egresos.store'), formData);
 
                     if (res.data.success) {
                         toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
-                        redirect('tenant.cajas.egreso');
+                        redirect('tenant.cajas.egresos.index');
                     } else {
                         toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
                         Swal.close();

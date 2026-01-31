@@ -1,5 +1,5 @@
 <div class="modal fade" id="mdl_close_cash" tabindex="-1" aria-labelledby="mdl_close_cash_label" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
             <div class="modal-header">
@@ -78,6 +78,7 @@
 
         salesContainer.innerHTML = "";
         expensesContainer.innerHTML = "";
+        customerAccountsContainer.innerHTML = "";
 
         sales.report.forEach(item => {
             const html = `

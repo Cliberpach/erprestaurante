@@ -13,15 +13,26 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+
+            //===== CODIGO =========
             $table->string('code', 20)->unique()->nullable();
 
+            //======= MESA ==========
             $table->unsignedBigInteger('table_id');
             $table->foreign('table_id')->references('id')->on('tables');
 
+            //======== CLIENTE
             $table->unsignedBigInteger('customer_id');
             $table->string('customer_name', 160);
             $table->string('customer_type_document_abbreviation', 20);
             $table->string('customer_document_number', 20);
+
+            //========== CAJA =========
+            $table->unsignedBigInteger('petty_cash_id');
+            $table->foreign('petty_cash_id')->references('id')->on('petty_cashes');
+            $table->string('petty_cash_name', 160);
+            $table->unsignedBigInteger('petty_cash_book_id');
+            $table->foreign('petty_cash_book_id')->references('id')->on('petty_cash_books');
 
             $table->date('date');
             $table->string('place')->default('LOCAL');
@@ -58,7 +69,7 @@ return new class extends Migration
             /*FACTURACION*/
             $table->enum('status_invoice', ['FACTURADO', 'NO FACTURADO'])->default('NO FACTURADO');
             $table->unsignedBigInteger('sale_id')->nullable();
-            $table->string('sale_serie',100)->nullable();
+            $table->string('sale_serie', 100)->nullable();
             $table->unsignedInteger('sale_correlative')->nullable();
 
             /* 🔹 CASHIER DELETE INFO */

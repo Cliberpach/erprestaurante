@@ -5,7 +5,7 @@ toastr.options = {
     closeButton: true,
     progressBar: true,
     positionClass: 'toast-top-right',
-    timeOut: 3000,
+    timeOut: 30000,
 };
 
 window.toastr = toastr;

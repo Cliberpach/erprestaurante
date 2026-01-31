@@ -9,6 +9,7 @@
 @endpush
 
 @section('content')
+    @include('utils.modals.customer.mdl_create_customer')
     @include('orders.modals.mdl_dishes')
     @include('orders.modals.mdl_products')
     @include('orders.modals.mdl_edit_item')
@@ -66,6 +67,7 @@
                 eventsMdlDishes();
                 eventsMdlProductos();
                 eventsMdlEditItem();
+                eventsMdlCreateCustomer();
             }
         };
     </script>

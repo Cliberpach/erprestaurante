@@ -1,3 +1,5 @@
+let lastCustomerQuery = null;
+
 export let itemSelected = {
     id: null,
     warehouse_id: null,
@@ -22,6 +24,14 @@ export function setItemSelected(instance) {
 }
 export function getAmounts() {
     return amounts;
+}
+
+export function setLastCustomerQuery(instance) {
+    lastCustomerQuery = instance;
+}
+
+export function getLastCustomerQuery() {
+    return lastCustomerQuery;
 }
 
 window.setItemSelected = setItemSelected;

@@ -53,7 +53,7 @@
         let dtYears = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            iniciarTomSelect();
+            loadTomSelect();
             events();
         })
 
@@ -70,7 +70,7 @@
             })
         }
 
-        function iniciarTomSelect() {
+        function loadTomSelect() {
 
             window.clientSelect = new TomSelect('#client_id', {
                 valueField: 'id',

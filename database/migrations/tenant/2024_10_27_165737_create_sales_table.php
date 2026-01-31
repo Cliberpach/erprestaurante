@@ -24,12 +24,6 @@ return new class extends Migration
             $table->string('customer_document_code', 4);
             $table->string('customer_phone', 20)->nullable();
 
-            //====== USUARIO REGISTRADOR Y SUS DATOS HISTÓRICOS =======
-            $table->unsignedBigInteger('user_recorder_id');
-            $table->foreign('user_recorder_id')->references('id')->on('users');
-
-            $table->string('user_recorder_name', 160);
-
             //========== CAJA EN LA QUE SE ESTÁ CREANDO LA VENTA =====
             $table->unsignedBigInteger('petty_cash_id');
             $table->foreign('petty_cash_id')->references('id')->on('petty_cashes');
@@ -86,6 +80,20 @@ return new class extends Migration
             $table->enum('type', ['PRODUCTOS', 'RESERVAS']);
 
             $table->unsignedBigInteger('order_id')->nullable();
+
+            $table->unsignedBigInteger('converted_to_id')->nullable();
+            $table->string('converted_to_serie', 20)->nullable();
+
+            $table->unsignedBigInteger('converted_from_id')->nullable();
+            $table->string('converted_from_serie', 20)->nullable();
+
+            $table->unsignedBigInteger('creator_user_id')->nullable();
+            $table->unsignedBigInteger('editor_user_id')->nullable();
+            $table->unsignedBigInteger('deletor_user_id')->nullable();
+
+            $table->string('deletor_user_name')->nullable();
+            $table->string('editor_user_name')->nullable();
+            $table->string('creator_user_name')->nullable();
 
             // $table->unsignedBigInteger('payment_condition_id');
             // $table->foreign('payment_condition_id')->references('id')->on('payment_conditions');

@@ -4,16 +4,12 @@
     Egresos
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-@endsection
-
 @section('content')
     <div class="card overflow-hidden">
         <div class="card-header d-flex align-items-center justify-content-between">
             <h6 class="card-title mb-0">LISTA DE EGRESOS</h6>
             <div class="input-group-append">
-                <a href="{{ route('tenant.egreso.create') }}" class="btn btn-primary">
+                <a href="{{ route('tenant.cajas.egresos.create') }}" class="btn btn-primary">
                     <div class="lign-items-center d-flex align-items-center">
                         <i class="fas fa-plus pe-1"></i>
                         <p class="mb-0 ml-2">NUEVO</p>
@@ -22,7 +18,7 @@
             </div>
         </div>
         <div class="card-body p-0 pb-2">
-            <form action="{{ route('tenant.cajas.egreso') }}" method="GET">
+            <form action="{{ route('tenant.cajas.egresos.index') }}" method="GET">
                 <div class="d-flex justify-content-center align-items-center mb-3">
                     <div class="form-group me-3">
                         <label for="from_date">Desde</label>
@@ -58,7 +54,7 @@
         function iniciarDtExitMoneys() {
             dtExitMoneys = new DataTable('#dt-exit-moneys', {
                 processing: true,
-                ajax: '{{ route('tenant.egreso.getExitMoneys') }}',
+                ajax: '{{ route('tenant.cajas.egresos.getExitMoneys') }}',
                 columns: [{
                         data: 'id',
                         className: "text-center",
@@ -108,9 +104,9 @@
                         searchable: false,
                         className: "text-center",
                         render: function(data) {
-                            const pdfUrl = `{{ route('tenant.egreso.pdf', ':id') }}`.replace(':id', data
+                            const pdfUrl = `{{ route('tenant.cajas.egresos.pdf', ':id') }}`.replace(':id', data
                                 .id);
-                            const editUrl = `{{ route('tenant.egreso.edit', ':id') }}`.replace(':id', data
+                            const editUrl = `{{ route('tenant.cajas.egresos.edit', ':id') }}`.replace(':id', data
                                 .id);
 
                             return `
@@ -166,36 +162,27 @@
             const supplier = fila.supplier_name;
 
             const messageHtml = `
-        <div class="text-center" style="font-size: 15px;">
-            <p class="mb-2">
-                <i class="fas fa-calendar-alt text-primary me-2"></i>
-                <strong>Fecha:</strong> ${date}
-            </p>
-            <p class="mb-2">
-                <i class="fas fa-user text-primary me-2"></i>
-                <strong>Proveedor:</strong> ${supplier}
-            </p>
-            <p class="mb-2">
-                <i class="fas fa-receipt text-primary me-2"></i>
-                <strong>Motivo:</strong> ${reason}
-            </p>
-            <p class="mb-0">
-                <i class="fas fa-dollar-sign text-success me-2"></i>
-                <strong>Total:</strong> S/ ${total}
-            </p>
-        </div>
-    `;
+                <div class="text-center" style="font-size: 15px;">
+                    <p class="mb-2">
+                        <i class="fas fa-calendar-alt text-primary me-2"></i>
+                        <strong>Fecha:</strong> ${date}
+                    </p>
+                    <p class="mb-2">
+                        <i class="fas fa-user text-primary me-2"></i>
+                        <strong>Proveedor:</strong> ${supplier}
+                    </p>
+                    <p class="mb-2">
+                        <i class="fas fa-receipt text-primary me-2"></i>
+                        <strong>Motivo:</strong> ${reason}
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-dollar-sign text-success me-2"></i>
+                        <strong>Total:</strong> S/ ${total}
+                    </p>
+                </div>
+            `;
 
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success me-2',
-                    cancelButton: 'btn btn-danger',
-                    actions: 'd-flex justify-content-center gap-2 mt-3'
-                },
-                buttonsStyling: false
-            });
-
-            swalWithBootstrapButtons.fire({
+            Swal.fire({
                 title: '¿Desea anular este egreso?',
                 html: messageHtml,
                 icon: 'warning',
@@ -219,7 +206,7 @@
                     });
 
                     try {
-                        const res = await axios.delete(route('tenant.egreso.destroy', id), {
+                        const res = await axios.delete(route('tenant.cajas.egresos.destroy', id), {
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             }
@@ -239,7 +226,7 @@
                     }
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: 'Cancelado',
                         text: 'La solicitud ha sido cancelada.',
                         icon: 'error',

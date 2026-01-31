@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\FormatController;
 use App\Http\Controllers\UtilController;
 use App\Http\Requests\Sale\SaleStoreRequest;
+use App\Http\Requests\Tenant\Sale\SaleConvertRequest;
 use App\Http\Services\Tenant\Sale\Sale\SaleManager;
 use App\Models\Company;
 use App\Models\CompanyInvoice;
@@ -33,33 +35,75 @@ class SaleController extends Controller
 
     public function index()
     {
-
-        return view('sales.sale_document.index');
+        $invoice_types      =   UtilController::getInvoiceTypes()->where('name', '<>', 'NOTA DE VENTA');
+        $customer_formatted =   FormatController::getFormatInitialCustomer(1);
+        return view('sales.sale_document.index', compact(
+            'invoice_types',
+            'customer_formatted'
+        ));
     }
 
-    public function getSales()
+    public function getSales(Request $request)
     {
+        $filter_customer    =   $request->get('customer_id');
+        $filter_start_date  =   $request->get('start_date');
+        $filter_end_date    =   $request->get('end_date');
+        $filter_sunat       =   $request->get('status');
 
-        $sales    =   DB::table('sales_documents as sd')
+        $sales    =   DB::table('sales as s')
             ->select(
-                'sd.id',
-                'sd.created_at as fecha_registro',
-                'sd.customer_name',
-                'sd.serie',
-                'sd.correlative',
-                DB::raw("CONCAT(sd.serie, '-', sd.correlative) AS doc"),
-                'sd.type_sale_name',
-                DB::raw("FORMAT(sd.total, 2) AS total"),
-                'sd.estado',
-                'sd.type_sale_code',
-                'sd.ruta_xml',
-                'sd.ruta_cdr'
+                's.id',
+                's.created_at as fecha_registro',
+                's.customer_id',
+                's.customer_name',
+                DB::raw('CONCAT(s.customer_type_document,":",s.customer_document_number,"-",s.customer_name) as customer_full_name'),
+                's.serie',
+                's.correlative',
+                DB::raw("CONCAT(s.serie, '-', s.correlative) AS doc"),
+                's.type_sale_name',
+                DB::raw("FORMAT(s.total, 2) AS total"),
+                's.status',
+                's.type_sale_code',
+                's.ruta_xml',
+                's.ruta_cdr',
+                's.sunat_status',
+                's.converted_to_id',
+                's.converted_from_id'
             )
-            ->where('sd.estado', '!=', 'ANULADO')
-            ->get();
+            ->where('s.status', '!=', 'ANULADO');
 
+        if ($filter_customer) {
+            $sales->where('customer_id', $filter_customer);
+        }
+        if ($filter_start_date) {
+            $sales->whereDate('s.created_at', '>=', $filter_start_date);
+        }
+        if ($filter_end_date) {
+            $sales->whereDate('s.created_at', '<=', $filter_end_date);
+        }
+        if ($filter_sunat) {
+            $sales->where('s.sunat_status', $filter_sunat);
+        }
 
-        return DataTables::of($sales)->make(true);
+        return DataTables::of($sales)
+            ->filterColumn('customer_full_name', function ($query, $keyword) {
+                $query->whereRaw("
+                    CONCAT(
+                            s.customer_type_document, ':',
+                            s.customer_document_number, '-',
+                            s.customer_name
+                        ) LIKE ?
+                    ", ["%{$keyword}%"]);
+            })
+            ->filterColumn('doc', function ($query, $keyword) {
+                $query->whereRaw("
+                    CONCAT(
+                            s.serie,'-',
+                            s.correlative
+                        ) LIKE ?
+                    ", ["%{$keyword}%"]);
+            })
+            ->make(true);
     }
 
     public function create()
@@ -269,26 +313,6 @@ array:3 [ // app\Http\Controllers\Tenant\SaleController.php:119
         }
     }
 
-    public function saleNote()
-    {
-        //
-    }
-
-    public function electronicReceipt()
-    {
-        //
-    }
-
-    public function quotation()
-    {
-        //
-    }
-
-    public function customer()
-    {
-        //
-    }
-
     public function downloadXml($sale_document_id)
     {
 
@@ -350,5 +374,23 @@ sale_document_id:1
         ]);
         $res    =   InvoiceController::send_sunat($request);
         return $res;
+    }
+
+    public function convert(SaleConvertRequest $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $invoice    =   $this->s_sale->convert($request->toArray());
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'VENTA CONVERTIDA CON ÉXITO EN: ' . $invoice->sale . '-' . $invoice->correlative
+            ]);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
     }
 }

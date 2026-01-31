@@ -8,20 +8,23 @@ use App\Models\Company;
 use App\Models\Landlord\Customer;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Tenant\Orders\Order;
+use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class ValidationsService
+class SaleValidation
 {
     private PettyCashBookService $s_cash;
     private OrderService $s_order;
+    private SaleRepository $s_repository;
 
-    public function __construct()
+    public function __construct($sale_repository)
     {
-        $this->s_cash   =   new PettyCashBookService();
-        $this->s_order  =   new OrderService();
+        $this->s_cash           =   new PettyCashBookService();
+        $this->s_order          =   new OrderService();
+        $this->s_repository     =   $sale_repository;
     }
 
     //====== RESPUESTA =======
@@ -247,7 +250,7 @@ class ValidationsService
         }
 
         //======== PAGO =========
-        $c_pays         =   collect($lst_pays);
+        $c_pays         =   collect($lst_pays)->where('amount','>',0);
         $payTotal       =   $c_pays->sum('amount');
         $has_negative   =   $c_pays->where('amount', '<', 0)->first();
         $has_repeats    =   $c_pays->groupBy('paymentId')->filter(fn($items) => $items->count() > 1)->isNotEmpty();
@@ -269,7 +272,7 @@ class ValidationsService
 
         //========= VUELTO ========
         $change =   (float)$payTotal - (float)$order->total;
-        if($change < 0){
+        if ($change < 0) {
             throw new Exception("EL VUELTO NO PUEDE SER NEGATIVO");
         }
 
@@ -286,6 +289,45 @@ class ValidationsService
         $data['lst_pays']       =   $lst_pays;
         $data['totalPay']       =   $payTotal;
         $data['change']         =   $change;
+        return $data;
+    }
+
+    public function validationConvert(array $data): array
+    {
+        $customer       =   Customer::findOrFail($data['customer_id']);
+        $invoice        =   GeneralTableDetail::findOrFail($data['invoice_id']);
+        $sale           =   Sale::findOrFail($data['sale_id']);
+
+        if ($sale->type_sale_id !== 67) {
+            throw new Exception("SOLO SE PERMITE CONVERSIÓN DE NOTAS DE VENTA A BOLETA O FACTURA");
+        }
+
+        if ($sale->converted_to_id) {
+            throw new Exception("ESTA VENTA YA FUE CONVERTIDA A: " . $sale->converted_to_serie . ", NO SE PUEDE RECONVERTIR");
+        }
+        if ($sale->converted_from_id) {
+            throw new Exception("ESTA VENTA FUE CONVERTIDA DE: " . $sale->converted_from_id . ", NO SE PUEDE RECONVERTIR");
+        }
+
+        //======== RUC Y BOLETA ======
+        if ($customer->type_document_abbreviation === 'RUC' && $invoice->id == 65) {
+            throw new Exception("NO SE PERMITEN BOLETAS DE VENTA CON RUC!!!");
+        }
+
+        //======== DNI Y FACTURA ======
+        if ($customer->type_document_abbreviation === 'DNI' && $invoice->id == 66) {
+            throw new Exception("NO SE PERMITEN FACTURAS DE VENTA CON DNI!!!");
+        }
+
+        $sale_products      =   $this->s_repository->getSaleProducts($data['sale_id']);
+        $sale_dishes        =   $this->s_repository->getSaleDishes($data['sale_id']);
+
+        $data['sale']           =   $sale;
+        $data['customer']       =   $customer;
+        $data['invoice']        =   $invoice;
+        $data['sale_dishes']    =   $sale_dishes;
+        $data['sale_products']  =   $sale_products;
+
         return $data;
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Models\Tenant;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Tenant\Orders\Order;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -71,5 +73,23 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'creator_user_id');
+    }
+
+    public function scopeWithPendingOrders($query)
+    {
+        return $query->whereHas('orders', function ($q) {
+            $q->where('status', 'ACTIVO')
+                ->where('status_invoice', 'NO FACTURADO');
+        });
+    }
+
+    public function hasPendingOrders()
+    {
+        return $this->orders()->where('status', 'PENDIENTE')->where('status_invoice', 'NO FACTURADO')->exists();
     }
 }

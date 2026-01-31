@@ -11,22 +11,20 @@ use Exception;
 
 class SaleService
 {
-    private ValidationsService $s_validations;
+    private SaleValidation $s_validations;
     private CalculationsService $s_calculations;
     private CorrelativeService  $s_correlative;
-    private SaleDetailService $s_detail;
     private SaleRepository $s_repository;
     private SaleDto $s_dto;
     private CompanyManager $s_company;
 
     public function __construct()
     {
-        $this->s_validations    =   new ValidationsService();
+        $this->s_repository     =   new SaleRepository();
+        $this->s_validations    =   new SaleValidation($this->s_repository);
         $this->s_calculations   =   new CalculationsService();
         $this->s_correlative    =   new CorrelativeService();
-        $this->s_detail         =   new SaleDetailService();
         $this->s_company        =   new CompanyManager();
-        $this->s_repository     =   new SaleRepository();
         $this->s_dto            =   new SaleDto();
     }
 
@@ -158,13 +156,17 @@ class SaleService
     public function storeFromCOrder(array $data): Sale
     {
         $this->isActiveTypeSale($data['invoice_id']);
-        $data           =   $this->s_validations->vStoreFromCOrder($data);
-        $dto            =   $this->s_dto->getDtoStoreFromOrder($data);
-      
-        $sale           =   $this->s_repository->store($dto);
+        $data                   =   $this->s_validations->vStoreFromCOrder($data);
 
-        $dto_sdishes    =   $this->s_dto->getDtoSaleDish($data['order_dishes'], $sale);
-        $dto_s_products =   $this->s_dto->getDtoProducts($data['order_products'], $sale);
+        $correlative            =   $this->s_correlative->getCorrelative($data['invoice_id']);
+        $data['correlative']    =   $correlative;
+
+        $dto                    =   $this->s_dto->getDtoStoreFromOrder($data);
+
+        $sale                   =   $this->s_repository->store($dto);
+
+        $dto_sdishes            =   $this->s_dto->getDtoSaleDish($data['order_dishes'], $sale);
+        $dto_s_products         =   $this->s_dto->getDtoProducts($data['order_products'], $sale);
 
         $this->s_repository->storeSaleDish($dto_sdishes);
         $this->s_repository->storeSaleProduct($dto_s_products);
@@ -175,5 +177,27 @@ class SaleService
         return $sale;
     }
 
+    public function convert(array $data): Sale
+    {
+        $data                   =   $this->s_validations->validationConvert($data);
+        $this->isActiveTypeSale($data['invoice']->id);
 
+        $correlative            =   $this->s_correlative->getCorrelative($data['invoice']->id);
+        $data['correlative']    =   $correlative;
+
+        $dto                    =   $this->s_dto->getDtoConvert($data);
+        $sale                   =   $this->s_repository->store($dto);
+
+        $lst_products           =   $data['sale_products']->toArray();
+        $lst_dishes             =   $data['sale_dishes']->toArray();
+
+        $dto_products           =   $this->s_dto->getDtoDetailConvert($lst_products, $sale->id);
+        $dto_dishes             =   $this->s_dto->getDtoDetailConvert($lst_dishes, $sale->id);
+
+        $this->s_repository->storeSaleDish($dto_dishes);
+        $this->s_repository->storeSaleProduct($dto_products);
+
+        $this->s_repository->setConverted($data['sale'], $sale);
+        return $sale;
+    }
 }

@@ -54,6 +54,8 @@ class OrderValidation
             throw new Exception('NO EXISTE NINGUNA PROGRAMACIÓN ACTIVA EN LA CAJA!!!');
         }
 
+        $vars_mdlcustomer   =   UtilController::getVarsMdlCustomer();
+
         $vars   =   [
             'types_dish'            =>  $types_dish,
             'petty_cash_book'       =>  $petty_cash_book,
@@ -65,6 +67,8 @@ class OrderValidation
             'customer_formatted'    =>  $customer_formatted,
             'payment_methods'       =>  $payment_methods
         ];
+
+        $vars   =   array_merge($vars,$vars_mdlcustomer);
 
         return $vars;
     }
@@ -172,10 +176,11 @@ class OrderValidation
             throw new Exception("EL DETALLE DEL PEDIDO ESTÁ VACÍO!!!");
         }
 
-        $data['table']      =   $table;
-        $data['lst_detail'] =   $lst_detail;
-        $data['payref_id']  =   $payref_id;
-        $data['payref_name'] =   $payref_name;
+        $data['table']              =   $table;
+        $data['lst_detail']         =   $lst_detail;
+        $data['payref_id']          =   $payref_id;
+        $data['payref_name']        =   $payref_name;
+        $data['petty_cash_book']    =   $petty_cash_book;
 
         $this->validationLstDetail($lst_detail, $programming->id);
 

@@ -3,7 +3,7 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <h4 class="card-title mb-0">Registrar Egreso</h4>
         <div>
-            <a href="{{ route('tenant.cajas.egreso') }}" class="btn btn-secondary me-2">Cancelar</a>
+            <a href="{{ route('tenant.cajas.egresos.store') }}" class="btn btn-secondary me-2">Cancelar</a>
             <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
     </div>

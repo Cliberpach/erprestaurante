@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('proof_payment_id');
             $table->unsignedBigInteger('supplier_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('payment_type');
             $table->string('number', 15);
             $table->date('date');
             $table->enum('reason', ['GASTO', 'DEVOLUCION','COMPRAS','LIMPIEZA','ENVIO']);

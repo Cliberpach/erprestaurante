@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte Movimiento petty_cash_book</title>
+    <title>Reporte Caja</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -173,7 +173,8 @@
 
         <table class="table-info" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
             <tr>
-                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">CAJERO:</td>
+                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">
+                    CAJERO:</td>
                 <td style="width: 50%; padding: 2px; text-align: left; border: 1px solid #ddd;">{{ $cajero->name }}</td>
             </tr>
             <tr>
@@ -183,23 +184,27 @@
                     {{ $petty_cash_book->petty_cash_name }}</td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">TURNO:</td>
+                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">
+                    TURNO:</td>
                 <td style="width: 50%; padding: 2px; text-align: left; border: 1px solid #ddd;">
                     {{ $petty_cash_book->shift->time }}
                 </td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">MONTO INICIAL:</td>
+                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">MONTO
+                    INICIAL:</td>
                 <td style="width: 50%; padding: 2px; text-align: left; border: 1px solid #ddd;">
                     {{ $petty_cash_book->initial_amount }}</td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">FECHA APERTURA:</td>
+                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">FECHA
+                    APERTURA:</td>
                 <td style="width: 50%; padding: 2px; text-align: left; border: 1px solid #ddd;">
                     {{ \Carbon\Carbon::parse($petty_cash_book->initial_date)->format('d/m/Y H:i') }}</td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">FECHA CIERRE:</td>
+                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">FECHA
+                    CIERRE:</td>
                 <td style="width: 50%; padding: 2px; text-align: left; border: 1px solid #ddd;">
                     {{ \Carbon\Carbon::parse($petty_cash_book->close_date)->format('d/m/Y H:i') }}</td>
             </tr>
@@ -227,13 +232,17 @@
                         <td style="text-align: right;">{{ number_format($sale->total, 2) }}</td>
 
                         @foreach ($payment_methods as $payment_method)
-                            <td style="text-align: right;">
-                                @if ($sale->method_pay_id_1 == $payment_method->id)
-                                    {{ number_format($sale->amount_pay_1, 2) }}
-                                @elseif ($sale->method_pay_id_2 == $payment_method->id)
-                                    {{ number_format($sale->amount_pay_2, 2) }}
+                            @php
+                                $amount = $sale->paidByMethod($payment_method->id);
+                            @endphp
+
+                            <td class="text-end">
+                                @if ($amount > 0)
+                                    <span class="fw-semibold text-success">
+                                        {{ number_format($amount, 2, '.', ',') }}
+                                    </span>
                                 @else
-                                    0.00
+                                    <span class="text-muted">—</span>
                                 @endif
                             </td>
                         @endforeach

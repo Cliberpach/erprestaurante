@@ -34,6 +34,8 @@ class SaleService extends Model
         'total_impuestos',
         'mto_precio_unitario',
 
-        'estado',
+        'status',
     ];
+
+  
 }

@@ -1,29 +1,191 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="280" height="60" viewBox="0 0 280 60">
-  <defs>
-    <!-- Degradado metálico -->
-    <linearGradient id="bellGradient" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#00b0f0" stop-opacity="0.9"></stop>
-      <stop offset="100%" stop-color="#005f80"></stop>
-    </linearGradient>
-
-    <!-- Sombra sutil -->
-    <filter id="bellShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-opacity="0.25"></feDropShadow>
-    </filter>
-  </defs>
-
-  <!-- Campana de recepción (angosta) -->
-  <g filter="url(#bellShadow)" stroke="#004c66" stroke-width="1" fill="url(#bellGradient)">
-    <!-- Cuerpo -->
-    <path d="M18 40c0-8 12-18 24-18s24 10 24 18H18z" rx="3"></path>
-    <!-- Base -->
-    <rect x="18" y="40" width="48" height="4" rx="2" fill="#004c66"></rect>
-    <!-- Botón superior -->
-    <circle cx="42" cy="22" r="4" fill="#0077a3"></circle>
-  </g>
-
-  <!-- Texto -->
-  <text x="75" y="38" font-family="Georgia, serif" font-size="24" font-weight="bold" letter-spacing="1" fill="#00b0f0">
-    ComandaPro
-  </text>
+<!-- Logo ComandaPro - FINAL (Campanilla y texto alineados, cromado con toque celeste) -->
+<svg width="350" height="70" viewBox="0 0 480 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Gradiente cromado con toque celeste -->
+        <linearGradient id="chromeCeleste" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#F0F9FF;stop-opacity:1" />
+            <stop offset="15%" style="stop-color:#FFFFFF;stop-opacity:1" />
+            <stop offset="35%" style="stop-color:#E0F2FE;stop-opacity:1" />
+            <stop offset="55%" style="stop-color:#BAE6FD;stop-opacity:1" />
+            <stop offset="75%" style="stop-color:#7DD3FC;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#38BDF8;stop-opacity:1" />
+        </linearGradient>
+        
+        <!-- Gradiente para brillos -->
+        <radialGradient id="shineWhite">
+            <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#F0F9FF;stop-opacity:0.8" />
+            <stop offset="100%" style="stop-color:#BAE6FD;stop-opacity:0" />
+        </radialGradient>
+        
+        <!-- Gradiente para sombras con toque azul -->
+        <linearGradient id="shadowCeleste" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#7DD3FC;stop-opacity:0.3" />
+            <stop offset="100%" style="stop-color:#0284C7;stop-opacity:0.6" />
+        </linearGradient>
+        
+        <!-- Gradiente para el botón -->
+        <radialGradient id="buttonChrome">
+            <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+            <stop offset="40%" style="stop-color:#E0F2FE;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#7DD3FC;stop-opacity:1" />
+        </radialGradient>
+        
+        <!-- Gradiente celeste para texto Pro -->
+        <linearGradient id="textGradientPro" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+        </linearGradient>
+        
+        <!-- Sombra suave -->
+        <filter id="softShadow">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2.5"/>
+            <feOffset dx="0" dy="3" result="offsetblur"/>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.2"/>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        
+        <!-- Brillo metálico -->
+        <filter id="metallicGlow">
+            <feGaussianBlur stdDeviation="1.2" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+    
+    <!-- Campanilla cromada con toque celeste - ALINEADA CON EL TEXTO -->
+    <g transform="translate(20, 20)" filter="url(#softShadow)">
+        <!-- Sombra proyectada -->
+        <ellipse cx="30" cy="58" rx="25" ry="2.5" fill="#000000" opacity="0.12"/>
+        
+        <!-- Base negra -->
+        <ellipse cx="30" cy="54" rx="27" ry="2.8" fill="#1a1a1a" opacity="0.7"/>
+        <path d="M 6 52 Q 6 50.8 8 50.8 L 52 50.8 Q 54 50.8 54 52 L 54 54.5 Q 54 55.7 52 55.7 L 8 55.7 Q 6 55.7 6 54.5 Z" 
+              fill="#1a1a1a"/>
+        
+        <!-- Anillo de la base con toque celeste -->
+        <ellipse cx="30" cy="52" rx="25" ry="2.3" fill="#0EA5E9" opacity="0.2"/>
+        
+        <!-- Cuerpo de la campana - CROMADO CON CELESTE -->
+        <path d="M 30 15 Q 17 16.5 12 35 L 12 48.5 Q 12 50.5 14 50.5 L 46 50.5 Q 48 50.5 48 48.5 L 48 35 Q 43 16.5 30 15 Z" 
+              fill="url(#chromeCeleste)" 
+              stroke="#38BDF8" 
+              stroke-width="0.4"
+              filter="url(#metallicGlow)"/>
+        
+        <!-- Capa interna para profundidad -->
+        <path d="M 30 17.5 Q 20 18.8 17 33 L 17 46.5 Q 17 48 18.5 48 L 41.5 48 Q 43 48 43 46.5 L 43 33 Q 40 18.8 30 17.5 Z" 
+              fill="url(#chromeCeleste)" 
+              opacity="0.35"/>
+        
+        <!-- Brillo principal intenso -->
+        <ellipse cx="23" cy="27" rx="8" ry="13" 
+                 fill="url(#shineWhite)" 
+                 opacity="1"
+                 transform="rotate(-32 23 27)"/>
+        
+        <!-- Reflejo secundario -->
+        <ellipse cx="37" cy="30" rx="5.5" ry="9" 
+                 fill="white" 
+                 opacity="0.7"
+                 transform="rotate(28 37 30)"/>
+        
+        <!-- Micro reflejos -->
+        <ellipse cx="26" cy="39" rx="2.5" ry="4.5" 
+                 fill="white" 
+                 opacity="0.55"
+                 transform="rotate(-22 26 39)"/>
+        
+        <!-- Sombras internas con toque celeste -->
+        <path d="M 15 30 Q 13.5 34 12.5 43" 
+              stroke="url(#shadowCeleste)" 
+              stroke-width="1.3" 
+              opacity="0.5" 
+              fill="none"/>
+        <path d="M 45 30 Q 46.5 34 47.5 43" 
+              stroke="#0284C7" 
+              stroke-width="1.1" 
+              opacity="0.35" 
+              fill="none"/>
+        
+        <!-- Highlight brillante superior -->
+        <path d="M 18 18.5 Q 30 16.8 42 18.5" 
+              stroke="white" 
+              stroke-width="1.6" 
+              opacity="0.85" 
+              fill="none"
+              stroke-linecap="round"/>
+        
+        <!-- Botón superior cromado -->
+        <circle cx="30" cy="12" r="5.5" 
+                fill="url(#buttonChrome)" 
+                stroke="#7DD3FC" 
+                stroke-width="0.45"
+                filter="url(#metallicGlow)"/>
+        <circle cx="30" cy="12" r="4.2" fill="#F0F9FF"/>
+        
+        <!-- Brillo del botón -->
+        <ellipse cx="27.8" cy="10.2" rx="2.2" ry="1.8" 
+                 fill="white" 
+                 opacity="0.95"/>
+        <circle cx="31.5" cy="13" r="0.9" fill="white" opacity="0.65"/>
+        
+        <!-- Anillo del botón -->
+        <circle cx="30" cy="12" r="5" 
+                fill="none" 
+                stroke="white" 
+                stroke-width="0.7" 
+                opacity="0.6"/>
+        
+        <!-- Reflejo celeste en el botón -->
+        <ellipse cx="30" cy="13.5" rx="3" ry="0.8" fill="#BAE6FD" opacity="0.3"/>
+        
+        <!-- Sombra interna inferior -->
+        <ellipse cx="30" cy="49.5" rx="17" ry="1.4" fill="#0284C7" opacity="0.25"/>
+        
+        <!-- Reflejo brillante inferior -->
+        <path d="M 14 49 Q 30 48.5 46 49" 
+              stroke="white" 
+              stroke-width="1.4" 
+              opacity="0.75" 
+              fill="none"
+              stroke-linecap="round"/>
+        
+        <!-- Toque celeste en el reflejo inferior -->
+        <path d="M 18 49.2 Q 30 48.8 42 49.2" 
+              stroke="#BAE6FD" 
+              stroke-width="0.8" 
+              opacity="0.5" 
+              fill="none"
+              stroke-linecap="round"/>
+        
+        <!-- Líneas de reflejo vertical -->
+        <path d="M 17 29 L 16.2 34" stroke="white" stroke-width="0.9" opacity="0.45" stroke-linecap="round"/>
+        <path d="M 43 29 L 43.8 34" stroke="#E0F2FE" stroke-width="0.9" opacity="0.35" stroke-linecap="round"/>
+        
+        <!-- Detalles de luz ambiental celeste -->
+        <ellipse cx="13" cy="35" rx="1.3" ry="3.5" fill="#BAE6FD" opacity="0.4"/>
+        <ellipse cx="47" cy="35" rx="1.3" ry="3.5" fill="#7DD3FC" opacity="0.3"/>
+    </g>
+    
+    <!-- Texto "Comanda" - ALINEADO -->
+    <text x="80" y="70" 
+          font-family="Arial, Helvetica, sans-serif" 
+          font-size="55" 
+          font-weight="700" 
+          fill="#1E3A8A">Comanda</text>
+    
+    <!-- Texto "Pro" - BIEN SEPARADO -->
+    <text x="328" y="70" 
+          font-family="Arial, Helvetica, sans-serif" 
+          font-size="55" 
+          font-weight="700" 
+          fill="url(#textGradientPro)">Pro</text>
 </svg>

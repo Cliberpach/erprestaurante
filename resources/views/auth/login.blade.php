@@ -62,7 +62,7 @@
 
                         {{-- TITLE --}}
                         <div class="mb-4 text-center">
-                            <h5 class="mb-1">Bienvenido a ComandaPro</h5>
+                            <h5 class="mb-1">Bienvenido(a)</h5>
                             <p>Inicia Sesión para acceder al panel</p>
                         </div>
 
@@ -106,12 +106,12 @@
                                         Recordar
                                     </label>
                                 </div>
-
+{{--
                                 @if (Route::has('password.request'))
                                     <a href="{{ route('password.request') }}">
                                         Olvidaste tu contraseña?
                                     </a>
-                                @endif
+                                @endif --}}
                             </div>
 
                             <div class="mb-3">

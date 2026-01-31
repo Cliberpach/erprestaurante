@@ -19,31 +19,30 @@ class CorrelativeService
   +"serie": "NV01"
 }
 */
-    public static function getCorrelative($type_sale):object
+    public static function getCorrelative($type_sale_id):object
     {
         $correlative        =   null;
         $serie              =   null;
 
         //======= CONTABILIZANDO SI HAY DOCUMENTOS DE VENTA EMITIDOS PARA EL TYPE SALE ======
         $sales_documents    =   DB::select('SELECT
-                                count(*) as cant
-                                from sales as s
-                                where s.type_sale_code = ?', [$type_sale])[0];
+                                count(*) AS cant
+                                FROM sales AS s
+                                WHERE s.type_sale_id = ?', [$type_sale_id])[0];
 
-        $document_serialization =   DocumentSerialization::where('company_id',1)->where('document_type_id',$type_sale)->first();
+        $serialization      =   DocumentSerialization::where('company_id',1)->where('document_type_id',$type_sale_id)->first();
 
         //==== SI LA CANT ES 0 =====
         if ($sales_documents->cant === 0) {
 
             //====== INICIAR DESDE EL STARTING NUMBER =======
-            $correlative        =   $document_serialization->start_number;
-            $serie              =   $document_serialization->serie;
+            $correlative        =   $serialization->start_number;
+            $serie              =   $serialization->serie;
         } else {
             //======= EN CASO YA EXISTAN DOCUMENTOS DE VENTA DEL TYPE SALE ======
             $correlative        =   $sales_documents->cant  +   1;
-            $serie              =   $document_serialization->serie;
+            $serie              =   $serialization->serie;
         }
-
 
         return (object)['correlative' => $correlative, 'serie' => $serie];
     }

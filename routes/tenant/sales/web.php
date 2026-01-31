@@ -19,6 +19,7 @@ Route::group(["prefix" => "ventas"], function () {
         Route::get('pdf_voucher/{id}/{size?}', [SaleController::class, 'pdf_voucher'])->name('tenant.ventas.comprobante_venta.pdf_voucher')->middleware('validar.plan:ventas');
         Route::get('downloadXml/{id}', [SaleController::class, 'downloadXml'])->name('tenant.ventas.comprobante_venta.downloadXml')->middleware('validar.plan:ventas');
         Route::get('downloadCdr/{id}', [SaleController::class, 'downloadCdr'])->name('tenant.ventas.comprobante_venta.downloadCdr')->middleware('validar.plan:ventas');
+        Route::post('convert', [SaleController::class, 'convert'])->name('tenant.ventas.comprobante_venta.convert')->middleware('validar.plan:ventas');
 
         Route::get('comprobante-electronico', [SaleController::class, 'electronicReceipt'])->name('tenant.ventas.comprobante_electronico');
         Route::get('cotizacion', [SaleController::class, 'quotation'])->name('tenant.ventas.cotizacion');
@@ -28,11 +29,12 @@ Route::group(["prefix" => "ventas"], function () {
         Route::get('index', [CustomerController::class, 'index'])->name('tenant.ventas.clientes.index');
         Route::get('create', [CustomerController::class, 'create'])->name('tenant.ventas.clientes.create');
         Route::post('store', [CustomerController::class, 'store'])->name('tenant.ventas.clientes.store');
-        Route::get('edit', [CustomerController::class, 'edit'])->name('tenant.ventas.clientes.edit');
+        Route::get('edit/{id}', [CustomerController::class, 'edit'])->name('tenant.ventas.clientes.edit');
         Route::put('update/{id}', [CustomerController::class, 'update'])->name('tenant.ventas.clientes.update');
-        Route::delete('cliente/{id}/eliminar', [CustomerController::class, 'destroy'])->name('tenant.ventas.clientes.delete');
+        Route::delete('destroy/{id}', [CustomerController::class, 'destroy'])->name('tenant.ventas.clientes.destroy');
         Route::get('consult_document', [CustomerController::class, 'consult_document'])->name('tenant.ventas.clientes.consult_document');
         Route::get('getListCustomers', [CustomerController::class, 'getListCustomers'])->name('tenant.ventas.clientes.getListCustomers');
+        Route::get('getAll', [CustomerController::class, 'getAll'])->name('tenant.ventas.clientes.getAll');
     });
 
     Route::group(["prefix" => "metodos_pago"], function () {

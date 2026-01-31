@@ -17,6 +17,12 @@ class OrderDto
     {
         $dto    =   [];
 
+        $petty_cash_book                            =   $data['petty_cash_book'];
+
+        $dto['petty_cash_book_id']                  =   $petty_cash_book->petty_cash_book_id;
+        $dto['petty_cash_id']                       =   $petty_cash_book->petty_cash_id;
+        $dto['petty_cash_name']                     =   $petty_cash_book->petty_cash_name;
+
         $customer                                   =   Customer::findOrFail($data['client_id']);
         $dto['customer_id']                         =   $customer->id;
         $dto['customer_type_document_abbreviation'] =   $customer->type_document_abbreviation;

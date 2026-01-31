@@ -6,6 +6,8 @@ export let dtDetail = null;
 
 export let fpVoucher = null;
 
+export let customerSelect = null;
+
 export const elementsUI = {
     inputQuantity: document.querySelector('#cantidad'),
     inputProduct: document.querySelector('#producto'),
@@ -40,7 +42,16 @@ export function getFpVoucher() {
     return fpVoucher;
 }
 
+export function setCustomerSelect(instance){
+    customerSelect  =   instance;
+}
+
+export function getCustomerSelect(){
+    return customerSelect;
+}
+
 window.getLstDetail = getLstDetail;
 window.setDtDetail = setDtDetail;
 window.getDtDetail  =   getDtDetail;
 window.setLstDetail = setLstDetail;
+window.getCustomerSelect = getCustomerSelect;

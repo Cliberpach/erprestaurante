@@ -17,4 +17,7 @@ class SaleManager
         return $this->s_sale->store($data);
     }
 
+    public function convert(array $data):Sale{
+        return $this->s_sale->convert($data);
+    }
 }

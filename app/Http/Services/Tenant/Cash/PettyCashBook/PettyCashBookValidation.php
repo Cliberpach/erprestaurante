@@ -57,16 +57,22 @@ class PettyCashBookValidation
         if (Auth::user()->id !== $petty_cash_book->user_id) {
             throw new Exception("No tienes permiso para cerrar esta caja. Solo el usuario asignado puede realizar esta acción.");
         }
+
+        $has_orders_pending =   $this->s_repository->hasOrdersPending($petty_cash_book_id);
+        if ($has_orders_pending) {
+            throw new Exception("AÚN TIENES PEDIDOS PENDIENTES POR COBRAR, NO PERMITIDO CERRAR CAJA");
+        }
     }
 
 
-     public function validateUpdateCash(array $data,int $id)
+    public function validateUpdateCash(array $data, int $id)
     {
-        $petty_cash_id      =   $id;
         $petty_cash_book    =   $this->s_repository->getPettyCashBook($id);
-
         $petty_cash_open    =   $this->s_repository->pettyCashIsOpen($petty_cash_book->petty_cash_id);
 
+        if (Auth::user()->id !== $petty_cash_book->user_id) {
+            throw new Exception("ESTA CAJA NO TE PERTENECE, NO PUEDES EDITARLA");
+        }
         if (!$petty_cash_open) {
             throw new Exception("LA CAJA ESTÁ CERRADA, NO PUEDE EDITARSE!!!");
         }
@@ -76,8 +82,27 @@ class PettyCashBookValidation
             throw new Exception("DEBE SELECCIONAR AL MENOS UN MESERO PARA LA CAJA");
         }
 
+        $servers_deleted        =   $this->s_repository->getDeletedPettyCashServers($id, $lst_servers);
+        $servers_orders_pending =   User::whereIn('id', $servers_deleted->pluck('user_id'))
+                                    ->withPendingOrders()
+                                    ->get();
+
+        if ($servers_orders_pending->isNotEmpty()) {
+
+            $names = $servers_orders_pending
+                ->pluck('name')
+                ->unique()
+                ->implode(', ');
+
+            throw new Exception(
+                "No se puede continuar con la operación.\n" .
+                    "Los siguientes meseros tienen órdenes pendientes:\n" .
+                    $names
+            );
+        }
+
         foreach ($lst_servers as $user_id) {
-            $server_assigned   =   $this->s_repository->serverIsAssigned($user_id,$id);
+            $server_assigned   =   $this->s_repository->serverIsAssigned($user_id, $id);
             if ($server_assigned) {
                 $user   =   User::findOrFail($user_id);
                 throw new Exception("EL MESERO " . $user->name . " YA ESTÁ ASIGNADO A OTRA CAJA ABIERTA");
