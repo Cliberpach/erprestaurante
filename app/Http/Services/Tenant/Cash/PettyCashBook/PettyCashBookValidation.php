@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 
-use App\Models\Tenant\Cash\PettyCash;
 use App\Models\Tenant\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +23,7 @@ class PettyCashBookValidation
         if(!$user->hasRole('CAJERO')){
             throw new Exception("SOLO CAJEROS PUEDEN ABRIR UNA CAJA");
         }
-        
+
         $petty_cash_open    =   $this->s_repository->pettyCashIsOpen($petty_cash_id);
 
         if ($petty_cash_open) {
@@ -118,4 +117,5 @@ class PettyCashBookValidation
         $data['petty_cash_id']  =   $petty_cash_book->petty_cash_id;
         return $data;
     }
+
 }

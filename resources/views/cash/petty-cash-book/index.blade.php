@@ -5,7 +5,6 @@
 @endsection
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
     <style>
         .my-swal {
             z-index: 3000 !important;
@@ -38,7 +37,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             iniciarDtCash();
-            iniciarTomSelect();
+            loadSelectCashBook();
             events();
         })
 
@@ -142,41 +141,46 @@
                                 id: data.id
                             });
 
-                            const optionCerrar = data.status === 'ABIERTO' ?
-                                `
+                            let actions = `<div class="dropdown">
+                                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-cog"></i>
+                                            </button>
+
+                                            <ul class="dropdown-menu dropdown-menu-end">`;
+
+                            if (data.status === 'ABIERTO') {
+                                actions += `
                                     <li>
                                         <button class="dropdown-item text-primary fw-semibold"
                                                 onclick="openMdlCloseCash(${data.id})">
-                                            <i class="fas fa-lock me-2"></i> Cerrar caja
+                                            <i class="fas fa-lock me-1"></i> Cerrar caja
                                         </button>
                                     </li>
                                     <li>
                                         <button class="dropdown-item text-primary fw-semibold"
                                                 onclick="openMdlEditBook(${data.id})">
-                                            <i class="fas fa-edit me-2"></i> Editar
+                                            <i class="fas fa-edit me-1"></i> Editar
                                         </button>
                                     </li>
-                                ` : '';
+                                `;
+                            }
 
-                            return `
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        <i class="fas fa-cog"></i>
-                                    </button>
-
-                                    <ul class="dropdown-menu dropdown-menu-end">
-
-                                        ${optionCerrar}
-
-                                        <li>
+                            actions += `<li>
                                             <a class="dropdown-item text-danger fw-semibold" target="_blank" href="${pdfUrl}">
-                                                <i class="far fa-file-pdf me-2"></i> PDF
+                                                <i class="far fa-file-pdf me-1"></i> PDF
                                             </a>
-                                        </li>
+                                        </li>`;
 
-                                    </ul>
-                                </div>
-                            `;
+                            actions += `<li>
+                                            <a class="dropdown-item fw-semibold text-primary" href="javascript:void(0);" onclick="programmingAuto(${data.id})">
+                                                <i class="fas fa-utensils text-primary me-1"></i> Programación
+                                            </a>
+                                        </li>`;
+
+
+                            actions += `</ul></div>`;
+
+                            return actions;
                         }
                     }
                 ],
@@ -218,7 +222,7 @@
 
         }
 
-        function iniciarTomSelect() {
+        function loadSelectCashBook() {
 
             const cashesAvailable = document.getElementById('cash_available_id');
             if (cashesAvailable && !cashesAvailable.tomselect) {
@@ -266,6 +270,81 @@
                     }
                 });
             }
+        }
+
+        function programmingAuto(id) {
+            toastr.clear();
+            let row = getRowById(dtCash, id);
+
+            let message = `
+                <div class="text-center">
+                    <p class="mb-2">
+                        <i class="fas fa-receipt text-primary me-2"></i>
+                        <strong>Código:</strong> ${row.code}
+                    </p>
+                    <p class="mb-2">
+                        <i class="fas fa-cash-register text-success me-2"></i>
+                        <strong>Caja:</strong> ${row.petty_cash_name}
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-user text-secondary me-2"></i>
+                        <strong>Cajero:</strong> ${row.user_name}
+                    </p>
+                </div>
+            `;
+
+            Swal.fire({
+                title: 'Generar programación auto?',
+                html: message,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, eliminar!",
+                cancelButtonText: "No, cancelar!",
+                reverseButtons: true
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+
+                    Swal.fire({
+                        title: 'Cargando...',
+                        html: 'Generando programación...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    try {
+
+                        const formData = new FormData();
+                        formData.append('id', id);
+
+                        const res = await axios.post(route('tenant.cajas.apertura_cierre.programming'),
+                            formData);
+
+                        if (res.data.success) {
+                            dtCash.ajax.reload();
+                            toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
+                        } else {
+                            toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
+                        }
+
+                    } catch (error) {
+                        toastr.error(error, 'ERROR EN LA PETICIÓN GENERAR PROGRAMACIÓN AUTO');
+                    } finally {
+                        Swal.close();
+                    }
+
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    Swal.fire({
+                        title: "Operación cancelada",
+                        text: "No se realizaron acciones",
+                        icon: "error"
+                    });
+                }
+            });
         }
     </script>
 @endsection

@@ -25,6 +25,7 @@ Route::group(["prefix" => "cajas"], function () {
         Route::post('close-cash', [PettyCashBookController::class, 'closePettyCash'])->name('tenant.cajas.apertura_cierre.closePettyCash');
         Route::get('get-one/{id}', [PettyCashBookController::class, 'getOne'])->name('tenant.cajas.apertura_cierre.getOne');
         Route::put('update/{id}', [PettyCashBookController::class, 'update'])->name('tenant.cajas.apertura_cierre.update');
+        Route::post('programming', [PettyCashBookController::class, 'programming'])->name('tenant.cajas.apertura_cierre.programming');
     });
 
     Route::group(["prefix" => "egresos"], function () {

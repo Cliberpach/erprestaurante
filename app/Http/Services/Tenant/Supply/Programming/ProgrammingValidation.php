@@ -3,8 +3,8 @@
 namespace App\Http\Services\Tenant\Supply\Programming;
 
 use App\Http\Services\Tenant\Cash\PettyCashBook\PettyCashBookService;
+use App\Models\Tenant\Cash\PettyCashBook;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 
 class ProgrammingValidation
 {
@@ -24,7 +24,6 @@ class ProgrammingValidation
         if (!$petty_cash_book) {
             throw new Exception("Debes seleccionar una caja abierta.");
         }
-
 
         $programming    =   $this->pcb_service->hasProgrammingActive($petty_cash_book->petty_cash_book_id);
         if ($programming === false) {
@@ -46,5 +45,16 @@ class ProgrammingValidation
         $datos['lst_detail']    =   $lst_detail;
 
         return $datos;
+    }
+
+    public function validationAuto(PettyCashBook $petty_cash_book)
+    {
+        $programming    =   $this->pcb_service->hasProgrammingActive($petty_cash_book->id);
+        if ($programming === false) {
+            throw new Exception("EL MOVIMIENTO DE CAJA: CM-" . $petty_cash_book->id . ", TIENE MÁS DE UNA PROGRAMACIÓN ACTIVA");
+        }
+        if ($programming) {
+            throw new Exception("EL MOVIMIENTO DE CAJA: CM-" . $petty_cash_book->id . " YA TIENE UNA PROGRAMACIÓN ACTIVA");
+        }
     }
 }

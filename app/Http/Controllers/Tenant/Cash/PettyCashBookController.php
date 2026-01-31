@@ -46,7 +46,7 @@ class PettyCashBookController extends Controller
     {
         $cashes = DB::connection('tenant')
             ->table('petty_cash_books as c')
-            ->join('users as u','u.id','c.user_id')
+            ->join('users as u', 'u.id', 'c.user_id')
             ->select(
                 DB::raw("CONCAT('CM-', LPAD(c.id, 8, '0')) as code"),
                 'c.id',
@@ -174,11 +174,24 @@ array:3 [ // app\Http\Controllers\Tenant\Cash\PettyCashBookController.php:112
         DB::beginTransaction();
         try {
 
-            $petty_cash_book    =   $this->s_pettycashbook->update($request->toArray(),$id);
+            $petty_cash_book    =   $this->s_pettycashbook->update($request->toArray(), $id);
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'MOVIMIENTO DE CAJA ACTUALIZADO']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
 
+    public function programming(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $programming    =   $this->s_pettycashbook->programming($request->toArray());
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'PROGRAMACIÓN GENERADA CON ÉXITO']);
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);

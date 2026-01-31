@@ -8,10 +8,10 @@ use App\Models\Company;
 use App\Models\ExitMoney;
 use App\Models\Tenant\Accounts\CustomerAccountDetail;
 use App\Models\Tenant\Cash\PettyCashBook;
-use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\Sales\Sale\SalePay;
+use App\Models\Tenant\Supply\Programming\Programming;
 use App\Models\Tenant\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -44,6 +44,11 @@ class PettyCashBookService
         $this->s_repository->insertPettyCashServers($dto_servers);
 
         $this->s_cash->setStatus($dto['petty_cash_id'], 'ABIERTO');
+
+        if (array_key_exists('programming_auto', $data)) {
+            $this->s_programming =   new ProgrammingService();
+            $this->s_programming->auto($petty_cash_book);
+        }
         return $petty_cash_book;
     }
 
@@ -274,7 +279,7 @@ class PettyCashBookService
         $this->s_repository->deletePettyCashServers($data['id']);
 
         $programming            =   $this->s_repository->hasProgrammingActive($data['id']);
-        if ($programming == false) {
+        if ($programming === false) {
             throw new Exception("EL MOVIMIENTO DE CAJA: CM-" . $data['id'] . "TIENE MÁS DE UNA PROGRAMACIÓN ACTIVA");
         }
         if ($programming) {
@@ -318,4 +323,13 @@ class PettyCashBookService
         return $this->s_repository->waiterInCash($user_id);
     }
 
+    public function programming(array $data): Programming
+    {
+        $cash_book              =   $this->s_repository->getPettyCashBook($data['id']);
+
+        $this->s_programming    =   new ProgrammingService();
+        $programming            =   $this->s_programming->auto($cash_book);
+
+        return $programming;
+    }
 }

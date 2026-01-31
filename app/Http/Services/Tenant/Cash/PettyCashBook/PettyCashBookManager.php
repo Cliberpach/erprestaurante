@@ -3,6 +3,7 @@
 namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 
 use App\Models\Tenant\Cash\PettyCashBook;
+use App\Models\Tenant\Supply\Programming\Programming;
 
 class PettyCashBookManager
 {
@@ -35,6 +36,10 @@ class PettyCashBookManager
 
     public function update(array $data,int $id):PettyCashBook{
         return $this->s_cashbook->update($data,$id);
+    }
+
+    public function programming(array $data):Programming{
+        return $this->s_cashbook->programming($data);
     }
 
 }

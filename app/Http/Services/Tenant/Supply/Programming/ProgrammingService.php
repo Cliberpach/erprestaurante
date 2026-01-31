@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Tenant\Supply\Programming;
 
+use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Supply\Programming\Programming;
 
 class ProgrammingService
@@ -62,5 +63,15 @@ class ProgrammingService
     public function decreaseLstStock(array $lst_items)
     {
         $this->s_repository->decreaseLstStock($lst_items);
+    }
+
+    public function auto(PettyCashBook $petty_cash_book):Programming
+    {
+        $this->s_validation->validationAuto($petty_cash_book);
+        $dto        =   $this->s_dto->getDtoAuto($petty_cash_book);
+        $item       =   $this->s_repository->insert($dto);
+        $dto_lst    =   $this->s_dto->getDtoLstAuto($item);
+        $this->s_repository->insertDetail($dto_lst);
+        return $item;
     }
 }
