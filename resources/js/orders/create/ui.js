@@ -1,26 +1,24 @@
 export function paintTblDetail(lstItems) {
     let filas = ``;
-    lstItems.forEach((item) => {
+    lstItems.forEach((item,index) => {
         filas += `<tr>
                             <th>
                                 <div class="d-flex justify-content-center gap-1">
 
                                     <button class="btn btn-info btn-sm btnEditItem" type="button"
-                                    data-producto-id="${item.id}">
+                                    data-producto-id="${item.id}" data-index="${index}">
                                         <i class="fas fa-edit"></i>
                                     </button>
 
 
                                     <button class="btn btn-danger btn-sm btnDeleteItem" type="button"
-                                    data-producto-id="${item.id}">
+                                    data-producto-id="${item.id}" data-index="${index}">
                                         <i class="fas fa-trash"></i>
                                     </button>
 
                                 </div>
                             </th>
                             <td>${item.name}</td>
-                            <td>${item.type_item}</td>
-                            <td>${item.type_name}</td>
                             <td>${formatSoles(item.sale_price)}</td>
                             <td>${item.quantity}</td>
                             <td>${formatSoles(item.total)}</td>

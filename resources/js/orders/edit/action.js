@@ -116,15 +116,6 @@ export async function actionAddItem() {
 function addItem(item, cantidad) {
     item.quantity = cantidad;
 
-    /*const indiceItem = lstDetail.findIndex((i) => {
-        return i.id == item.id && i.type_item === i.type_item;
-    })
-
-    if (indiceItem !== -1) {
-        toastr.error(`EL ${item.type_name} YA EXISTE EN EL DETALLE`);
-        return;
-    }*/
-
     lstDetail.push(item);
 
     if (isDesktop()) {
@@ -161,9 +152,9 @@ function calculateAmounts(_amounts) {
 export function actionDeleteItem(btn) {
     toastr.clear();
 
-    const itemId = btn.getAttribute('data-producto-id');
+    const index = btn.getAttribute('data-index');
 
-    const res = deleteItem(itemId);
+    const res = deleteItem(index);
     if (res) {
 
         if (isDesktop()) {
@@ -181,20 +172,14 @@ export function actionDeleteItem(btn) {
     }
 }
 
-function deleteItem(itemId) {
-
-    const indiceItem = lstDetail.findIndex((lcd) => {
-        return lcd.id == itemId;
-    })
-
-    if (indiceItem === -1) {
+function deleteItem(index) {
+    if (index === -1) {
         toastr.error('NO SE ENCONTRÓ EL ITEM EN EL DETALLE!!!');
         return false;
     }
 
-    lstDetail.splice(indiceItem, 1);
+    lstDetail.splice(index, 1);
     return true;
-
 }
 
 async function validationAddItem() {

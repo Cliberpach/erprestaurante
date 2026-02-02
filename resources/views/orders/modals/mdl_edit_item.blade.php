@@ -29,7 +29,7 @@
 
 <script>
     const paramsMdlItem = {
-        id: null
+        index: null
     };
 
     function eventsMdlEditItem() {
@@ -39,14 +39,14 @@
             if (btnEdit) {
                 toastr.clear();
 
-                const producto_id = btnEdit.getAttribute('data-producto-id');
+                const productIndex = btnEdit.getAttribute('data-index');
 
-                if (!producto_id) {
+                if (!productIndex) {
                     toastr.error('ERROR AL SETEAR PRODUCTO');
                     return;
                 }
 
-                setProducto(producto_id);
+                setProducto(productIndex);
                 openMdlEditItem();
             }
 
@@ -65,9 +65,7 @@
     function updateItem(dataFormEdit, lstDetail) {
 
         //======= GRABANDO =========
-        const indiceItem = lstDetail.findIndex((lcd) => {
-            return lcd.id == paramsMdlItem.id;
-        })
+        const indiceItem = paramsMdlItem.index;
 
         if (indiceItem === -1) {
             toastr.error('NO SE ENCONTRÓ EL ITEM A EDITAR');
@@ -133,19 +131,15 @@
         return true;
     }
 
-    function setProducto(itemId) {
+    function setProducto(itemIndex) {
         const lstDetail = getLstDetail();
-        const itemIndice = lstDetail.findIndex((lcd) => {
-            return lcd.id == itemId;
-        })
 
-        if (itemIndice === -1) {
+        if (itemIndex === -1) {
             toastr.error('NO SE ENCUENTRA EL ITEM EN EL DETALLE!!');
             return;
         }
-        0
 
-        const itemFind = lstDetail[itemIndice];
+        const itemFind = lstDetail[itemIndex];
 
         document.querySelector('#item_nombre_edit').textContent = itemFind.name;
         document.querySelector('#item_tipo_plato_edit').textContent = itemFind.type_name;
@@ -153,7 +147,7 @@
         document.querySelector('#item_precio_venta_edit').textContent = formatSoles(itemFind.sale_price);
 
         document.querySelector('#item_cantidad_edit').value = itemFind.quantity;
-        paramsMdlItem.id = itemFind.id;
+        paramsMdlItem.index =  itemIndex;
     }
 
     async function actionFormEditItem(e) {
@@ -161,7 +155,7 @@
         mostrarAnimacion1();
 
         const lstDetail = getLstDetail();
-        const itemUpdate = lstDetail.find(lcd => lcd.id == paramsMdlItem.id);
+        const itemUpdate = lstDetail[paramsMdlItem.index];
 
         const dataFormEdit = getDataFormEdit();
         const validationForm = await validationFormEdit(dataFormEdit, itemUpdate);
