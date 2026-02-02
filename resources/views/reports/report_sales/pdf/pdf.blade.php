@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,9 +23,10 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .details p, .totals p {
+        .details p,
+        .totals p {
             margin: 5px 0;
-            font-size: 16px;
+            font-size: 12px;
         }
 
         table {
@@ -48,7 +50,7 @@
         }
 
         .info-table-custom td {
-            font-size: 12px;
+            font-size: 11px;
             border: 1px solid #d4f1ff;
         }
 
@@ -71,31 +73,36 @@
             text-align: left;
             padding: 6px;
             border: 1px solid #ccc;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .tbl-report-sale td {
             padding: 6px;
             border: 1px solid #ccc;
-            font-size: 12px;
+            font-size: 11px;
         }
 
+        @page {
+            margin-bottom: 40px;
+        }
 
         .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 15px 0;
-            background-color: #f8f9fa;
-            color: #6c757d;
-            font-size: 12px;
-            border-top: 1px solid #e9ecef;
-        }
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
 
-        .footer p {
-            margin: 0;
+            height: 50px;
+            text-align: center;
+            font-size: 10px;
+            color: #555;
+            border-top: 1px solid #ccc;
+            background-color: #f8f9fa;
+            padding-top: 4px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
 
@@ -104,7 +111,8 @@
             <tr>
                 <!-- Columna 1: Imagen -->
                 <td style="width: 20%; text-align: left;">
-                    <img src="{{ $company->logo_url }}" alt="Logo" style="height: 100px; object-fit: contain; max-width: 120px;">
+                    <img src="{{ $company->logo_url }}" alt="Logo"
+                        style="height: 100px; object-fit: contain; max-width: 120px;">
                 </td>
 
                 <!-- Columna 2: Información de la empresa -->
@@ -137,11 +145,18 @@
             </tr>
             <tr>
                 <td class="label">FECHA INICIO:</td>
-                <td>{{ $filters->get('start_date') }}</td>
+                <td>{{ $filters->get('date_start') }}</td>
             </tr>
             <tr>
                 <td class="label">FECHA FIN:</td>
-                <td>{{ $filters->get('end_date') }}</td>
+                <td>{{ $filters->get('date_end') }}</td>
+            </tr>
+            <tr>
+                <td style="background-color: yellow; font-weight: bold;" class="label"><strong>TOTAL:</strong>
+                </td>
+                <td style="background-color: yellow; font-weight: bold;">
+                    {{ number_format($filters->get('total'), 2, '.', ',') }}
+                </td>
             </tr>
         </table>
 
@@ -150,25 +165,21 @@
             <thead>
                 <tr>
                     <th>DOC</th>
-                    <th>PRODUCTO</th>
-                    <th>CATEGORÍA</th>
-                    <th>MARCA</th>
+                    <th>ITEM</th>
                     <th>CANT</th>
                     <th>P. VENTA</th>
                     <th>IMPORTE</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($report_sale as $sale)
-                <tr>
-                    <td>{{ $sale->document }}</td>
-                    <td>{{ $sale->product_name }}</td>
-                    <td>{{ $sale->category_name }}</td>
-                    <td>{{ $sale->brand_name }}</td>
-                    <td>{{ $sale->quantity }}</td>
-                    <td>{{ $sale->price_sale }}</td>
-                    <td>{{ $sale->amount }}</td>
-                </tr>
+                @foreach ($report_sale as $sale)
+                    <tr>
+                        <td>{{ $sale->document }}</td>
+                        <td>{{ $sale->item_name }}</td>
+                        <td>{{ $sale->quantity }}</td>
+                        <td>{{ number_format($sale->sale_price, 2, '.', ',') }}</td>
+                        <td>{{ number_format($sale->total, 2, '.', ',') }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
@@ -179,4 +190,5 @@
         </div>
     </div>
 </body>
+
 </html>

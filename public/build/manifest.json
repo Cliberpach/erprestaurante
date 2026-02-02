@@ -2,8 +2,8 @@
   "_index-dd82ac63.js": {
     "file": "assets/index-dd82ac63.js"
   },
-  "_ui-51802614.js": {
-    "file": "assets/ui-51802614.js",
+  "_ui-e79cd951.js": {
+    "file": "assets/ui-e79cd951.js",
     "imports": [
       "_index-dd82ac63.js"
     ]
@@ -95,18 +95,18 @@
     "src": "resources/js/libs/lightgalery.js"
   },
   "resources/js/orders/create/main.js": {
-    "file": "assets/main-c014af96.js",
+    "file": "assets/main-de56be18.js",
     "imports": [
-      "_ui-51802614.js",
+      "_ui-e79cd951.js",
       "_index-dd82ac63.js"
     ],
     "isEntry": true,
     "src": "resources/js/orders/create/main.js"
   },
   "resources/js/orders/edit/main.js": {
-    "file": "assets/main-bc3a842d.js",
+    "file": "assets/main-235a6806.js",
     "imports": [
-      "_ui-51802614.js",
+      "_ui-e79cd951.js",
       "_index-dd82ac63.js"
     ],
     "isEntry": true,

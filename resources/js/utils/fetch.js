@@ -10,7 +10,7 @@ export async function validateProductStock({ warehouseId, productId, quantity, o
         }));
 
         if (res.data.success) {
-            toastr.info(res.data.message, 'OPERACIÓN COMPLETADA');
+            //toastr.info(res.data.message, 'OPERACIÓN COMPLETADA');
             return res;
         } else {
             toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
@@ -32,7 +32,7 @@ export async function validateDishStock({ programmingId, dishId, quantity, order
         }));
 
         if (res.data.success) {
-            toastr.info(res.data.message, 'OPERACIÓN COMPLETADA');
+            //toastr.info(res.data.message, 'OPERACIÓN COMPLETADA');
             return res;
         } else {
             toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');

@@ -10,7 +10,7 @@
 
                     <div class="row text-sm">
 
-                        <div class="col-md-6 mb-2 d-flex align-items-center">
+                        <div class="col-md-6 d-flex align-items-center mb-2">
                             <i class="fas fa-utensils text-primary me-2"></i>
                             <div>
                                 <small class="text-muted d-block">Nombre</small>
@@ -18,7 +18,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mb-2 d-flex align-items-center">
+                        <div class="col-md-6 d-flex align-items-center mb-2">
                             <i class="fas fa-layer-group text-secondary me-2"></i>
                             <div>
                                 <small class="text-muted d-block">Info</small>
@@ -26,7 +26,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mb-2 d-flex align-items-center">
+                        <div class="col-md-6 d-flex align-items-center mb-2">
                             <i class="fas fa-money-bill-wave text-success me-2"></i>
                             <div>
                                 <small class="text-muted d-block">Precio Compra</small>
@@ -34,7 +34,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mb-2 d-flex align-items-center">
+                        <div class="col-md-6 d-flex align-items-center mb-2">
                             <i class="fas fa-tag text-warning me-2"></i>
                             <div>
                                 <small class="text-muted d-block">Precio Venta</small>
@@ -53,14 +53,19 @@
             <label class="required_field fw-bold" for="item_cantidad_edit">
                 Cantidad
             </label>
-            <input
-                required
-                type="text"
-                id="item_cantidad_edit"
-                class="form-control inputEnteroPositivo"
-                placeholder="Ingrese la cantidad"
-            >
+            <input required type="text" id="item_cantidad_edit" class="form-control inputEnteroPositivo input-fill"
+                placeholder="Ingrese la cantidad">
         </div>
-
+        <div class="col-12">
+            <label class="required_field fw-bold" for="item_obs_edit">
+                Observación
+            </label>
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fa-solid fa-comment-dots"></i>
+                </span>
+                <textarea class="input-fill form-control" name="item_obs_edit" id="item_obs_edit" rows="2" maxlength="500" maxlength="20"></textarea>
+            </div>
+        </div>
     </div>
 </form>

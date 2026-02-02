@@ -50,7 +50,6 @@
                 openMdlEditItem();
             }
 
-
         })
 
         document.querySelector('#formEditItem').addEventListener('submit', async (e) => {
@@ -74,13 +73,17 @@
 
         lstDetail[indiceItem].quantity = dataFormEdit.cantidad;
         lstDetail[indiceItem].total = lstDetail[indiceItem].sale_price * parseFloat(dataFormEdit.cantidad);
+        lstDetail[indiceItem].observation = dataFormEdit.obs;
+
         return true;
     }
 
     function getDataFormEdit() {
         const cantidad = document.querySelector('#item_cantidad_edit').value;
+        const obs = document.querySelector('#item_obs_edit').value;
         const data = {
-            cantidad
+            cantidad,
+            obs
         };
         return data;
     }
@@ -145,9 +148,10 @@
         document.querySelector('#item_tipo_plato_edit').textContent = itemFind.type_name;
         document.querySelector('#item_precio_compra_edit').textContent = formatSoles(itemFind.purchase_price);
         document.querySelector('#item_precio_venta_edit').textContent = formatSoles(itemFind.sale_price);
+        document.querySelector('#item_obs_edit').value = itemFind.observation;
 
         document.querySelector('#item_cantidad_edit').value = itemFind.quantity;
-        paramsMdlItem.index =  itemIndex;
+        paramsMdlItem.index = itemIndex;
     }
 
     async function actionFormEditItem(e) {

@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Route;
 Route::group(["prefix" => "reportes"], function () {
 
     Route::group(["prefix" => "ventas"], function () {
-        Route::get('venta', [ReportSaleController::class, 'index'])->name('tenant.reportes.ventas.index');
-        Route::get('venta/getReporteVenta', [ReportSaleController::class, 'getReporteVenta'])->name('tenant.reportes.ventas.getReporteVenta');
-        Route::get('venta/excel', [ReportSaleController::class, 'excel'])->name('tenant.reportes.ventas.excel');
-        Route::get('venta/pdf', [ReportSaleController::class, 'pdf'])->name('tenant.reportes.ventas.pdf');
+        Route::get('index', [ReportSaleController::class, 'index'])->name('tenant.reportes.ventas.index');
+        Route::get('getReporteVenta', [ReportSaleController::class, 'getReporteVenta'])->name('tenant.reportes.ventas.getReporteVenta');
+        Route::get('excel', [ReportSaleController::class, 'excel'])->name('tenant.reportes.ventas.excel');
+        Route::get('pdf', [ReportSaleController::class, 'pdf'])->name('tenant.reportes.ventas.pdf');
     });
 
     Route::group(["prefix" => "contable"], function () {

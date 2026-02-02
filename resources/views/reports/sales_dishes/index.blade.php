@@ -23,19 +23,17 @@
                     </select>
                     <p class="dish_id_error msgError mb-0"></p>
                 </div>
-
                 <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
-                    <label for="fecha_inicio fw-bold">Fecha Inicio</label>
-                    <input type="date" class="form-control" id="fecha_inicio">
+                    <label for="date_start" style="font-weight:bold;">FECHA INICIO</label>
+                    <input type="date" class="form-control" id="fecha_inicio" value="{{ date('Y-m-01') }}">
                 </div>
                 <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
-                    <label for="fecha_fin" class="fw-bold">Fecha Fin</label>
-                    <input type="date" class="form-control" id="fecha_fin">
+                    <label for="date_end" style="font-weight:bold;">FECHA FIN</label>
+                    <input type="date" class="form-control" id="fecha_fin" value="{{ date('Y-m-t') }}">
                 </div>
                 <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12" style="text-align: end;margin-top:auto;">
                     <button class="btn btn-primary btnFiltrar"><i class="fas fa-search"></i> FILTRAR</button>
                 </div>
-
             </div>
 
             <div class="row">

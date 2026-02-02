@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Tenant\Reports;
 use App\Exports\Tenant\Reports\RSaleDish\RSaleDishExport;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\Product;
 use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\TypeDish\TypeDish;
 use Carbon\Carbon;
