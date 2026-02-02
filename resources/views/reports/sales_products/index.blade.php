@@ -158,9 +158,6 @@
                         return json.data;
                     }
                 },
-                "order": [
-                    [1, 'desc']
-                ],
                 initComplete: function() {
                     const input = $('#dt-search-0');
 
