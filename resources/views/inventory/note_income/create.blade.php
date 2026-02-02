@@ -4,10 +4,6 @@
     NOTAS INGRESO
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-@endsection
-
 @section('content')
     @include('utils.spinners.spinner_1')
     @include('inventory.note_income.modals.mdl_products')
@@ -34,7 +30,6 @@
             </div>
         </div>
     </div>
-    <!-- end card -->
 @endsection
 
 @section('js')
@@ -230,16 +225,8 @@
             tbody.innerHTML = filas;
         }
 
-
         function storeNoteIncome() {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success",
-                    cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-            swalWithBootstrapButtons.fire({
+            Swal.fire({
                 title: "DESEA REGISTRAR LA NOTA DE INGRESO?",
                 text: "Ingreso de stock en almacén central!",
                 icon: "warning",
@@ -264,7 +251,7 @@
 
                     Swal.fire({
                         title: 'Cargando...',
-                        html: 'Registrando nueva nota de ingreso...',
+                        html: 'Registrando nota de ingreso...',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
@@ -286,7 +273,7 @@
 
                         if (response.status === 422) {
                             if ('errors' in res) {
-                                pintarErroresValidacion(res.errors);
+                                paintValidationErrors(res.errors);
                             }
                             Swal.close();
                             return;
@@ -309,7 +296,7 @@
 
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: "OPERACIÓN CANCELADA",
                         text: "NO SE REALIZARON ACCIONES",
                         icon: "error"
@@ -317,14 +304,5 @@
                 }
             });
         }
-
-        function pintarErroresValidacion(objErroresValidacion) {
-            for (let clave in objErroresValidacion) {
-                const pError = document.querySelector(`.${clave}_error`);
-                pError.textContent = objErroresValidacion[clave][0];
-            }
-        }
     </script>
-    <script src="{{ asset('assets/js/utils.js') }}"></script>
-    <script src="{{ asset('assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
 @endsection

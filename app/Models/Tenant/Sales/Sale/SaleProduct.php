@@ -43,5 +43,6 @@ class SaleProduct extends Model
 
         'status',
         'observation',
+        'created_at'
     ];
 }

@@ -4,25 +4,19 @@
     DOCUMENTO DE COMPRA
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-@endsection
 
 @section('content')
-    @include('utils.spinners.spinner_1')
     @include('purchases.purchase_document.modals.mdl_products')
     @include('purchases.purchase_document.modals.mdl_edit_item')
     @include('utils.modals.suppliers.mdl_create_supplier')
 
+    <div class="card">
 
-
-    <div class="card-style settings-card-1 mb-30">
-        <div class="title mb-30 d-flex justify-content-between align-items-center">
+        <div class="card-header">
             <h6>Datos del Documento de Compra <i class="fa-solid fa-toolbox"></i></h6>
         </div>
         <div class="card-body">
-            @include('purchases.purchase_document.forms.form_create_purchase_document')
+            @include('purchases.purchase_document.forms.form_create')
         </div>
         <div class="card-footer d-flex justify-content-between align-items-center">
             <span style="color:rgb(219, 155, 35);font-size:14px;font-weight:bold;">Los campos con * son obligatorios</span>
@@ -37,7 +31,6 @@
             </div>
         </div>
     </div>
-    <!-- end card -->
 @endsection
 
 @section('js')
@@ -47,9 +40,9 @@
         const lstPurchaseDocument = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadSelect2();
-            loadDataTableProducts();
+            loadSelectPurchases();
             iniciarDataTableCompraDetalle();
+            configPurchases();
             events();
         })
 
@@ -57,6 +50,7 @@
 
             eventsMdlEditItem();
             eventsMdlCreateProveedor();
+            eventsMdlProducts();
 
             document.querySelector('#igv_chk').addEventListener('change', (e) => {
                 toastr.clear();
@@ -107,93 +101,60 @@
 
         }
 
-        function loadSelect2() {
-            $('.select2_form').select2({
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                allowClear: true
-            });
+        function loadSelectPurchases() {
+            const typeInvoiceSelect = document.getElementById('tipo_doc');
+            if (typeInvoiceSelect && !typeInvoiceSelect.tomselect) {
+                window.typeInvoiceSelect = new TomSelect(typeInvoiceSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
 
-            $('.select2_form_mdl').select2({
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                allowClear: true,
-                dropdownParent: $('#mdlProducts')
-            });
-
-            $('.select2_form_mdl_supplier').select2({
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                allowClear: true,
-                dropdownParent: $('#mdlCreateProveedor')
-            });
+            const supplierSelect = document.getElementById('proveedor');
+            if (supplierSelect && !supplierSelect.tomselect) {
+                window.supplierSelect = new TomSelect(supplierSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
         }
 
-        function loadDataTableProducts() {
-            const urlGetProductos = @json(route('tenant.compras.documento_compra.getProducts'));
-
-            dtProductos = new DataTable('#tbl_purchase_documents_products', {
-                serverSide: true,
-                processing: true,
-                ajax: {
-                    url: urlGetProductos,
-                    type: 'GET',
-                    data: function(d) {
-                        d.categoria_id = $('#categoria').val();
-                        d.marca_id = $('#marca').val();
-                    },
-                },
-                columns: [{
-                        data: 'id',
-                        name: 'id'
-                    },
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'brand_name',
-                        name: 'brand_name'
-                    },
-                    {
-                        data: 'category_name',
-                        name: 'category_name'
-                    },
-                    {
-                        data: 'stock',
-                        name: 'Stock'
-                    }
-                ],
-                createdRow: function(row, data, dataIndex) {
-                    $(row).css('cursor', 'pointer');
-
-                    $(row).attr('onclick', 'selectProduct(' + data.id + ')');
-                },
-                language: {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "zeroRecords": "No se encontraron resultados",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "search": "Buscar:",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    },
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "emptyTable": "No hay datos disponibles en la tabla",
-                    "aria": {
-                        "sortAscending": ": activar para ordenar la columna de manera ascendente",
-                        "sortDescending": ": activar para ordenar la columna de manera descendente"
-                    }
-                }
-            });
+        function configPurchases() {
+            window.typeInvoiceSelect.setValue('BOLETA');
         }
 
         function iniciarDataTableCompraDetalle() {
@@ -298,10 +259,25 @@
             let filas = ``;
             lstItems.forEach((producto) => {
                 filas += `<tr>
-                            <th>
-                                <div style="display:flex;justify-content:center;gap:5px;">
-                                    <i class="fas fa-edit btn btn-warning btnEditItem" data-producto-id="${producto.product_id}"></i>
-                                    <i class="fas fa-trash-alt btn btn-danger btnDeleteItem" data-producto-id="${producto.product_id}"></i>
+                           <th>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <button
+                                        type="button"
+                                        class="btn btn-warning btn-sm btnEditItem"
+                                        data-producto-id="${producto.product_id}"
+                                        title="Editar"
+                                    >
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-danger btn-sm btnDeleteItem"
+                                        data-producto-id="${producto.product_id}"
+                                        title="Eliminar"
+                                    >
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             </th>
                             <td>${producto.product_name}</td>
@@ -337,14 +313,7 @@
 
 
         function storePurchaseDocument() {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success",
-                    cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-            swalWithBootstrapButtons.fire({
+            Swal.fire({
                 title: "DESEA REGISTRAR EL DOCUMENTO DE COMPRA?",
                 text: "Se registrará la compra e ingresará stock!",
                 icon: "warning",
@@ -413,7 +382,7 @@
 
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: "OPERACIÓN CANCELADA",
                         text: "NO SE REALIZARON ACCIONES",
                         icon: "error"
@@ -479,6 +448,4 @@
             }).format(amount);
         }
     </script>
-    <script src="{{ asset('assets/js/utils.js') }}"></script>
-    <script src="{{ asset('assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
 @endsection

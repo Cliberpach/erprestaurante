@@ -285,4 +285,11 @@ array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:128
             ]);
         }
     }
+
+    public function searchDish(Request $request)
+    {
+        $data   =   $this->s_manager->searchDish($request->toArray());
+
+        return response()->json(['data' => $data]);
+    }
 }

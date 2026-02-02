@@ -34,4 +34,8 @@ class DishManagement
         return $this->s_manager->destroy($id);
     }
 
+    public function searchDish(array $data)
+    {
+        return $this->s_manager->searchDish($data);
+    }
 }

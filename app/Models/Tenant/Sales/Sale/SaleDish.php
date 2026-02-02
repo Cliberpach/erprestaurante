@@ -11,7 +11,7 @@ class SaleDish extends Model
 
     protected $table        =   'sales_dishes';
     protected $connection   =   'tenant';
-    
+
     protected $fillable = [
         'sale_id',
         'dish_id',
@@ -35,5 +35,6 @@ class SaleDish extends Model
 
         'status',
         'observation',
+        'created_at'
     ];
 }

@@ -26,6 +26,7 @@ class OrderDish extends Model
         'purchase_price',
         'total',
         'type_dish_id',
-        'type_dish_name'
+        'type_dish_name',
+        'created_at'
     ];
 }

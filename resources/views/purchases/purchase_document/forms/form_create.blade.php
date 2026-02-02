@@ -1,7 +1,7 @@
-<form action="" id="formStorePurchaseDocument" method="post">    
+<form action="" id="formStorePurchaseDocument" method="post">
     <div class="row">
-        @csrf     
-        
+        @csrf
+
         <div class="row">
             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <label for="fecha_registro" class="required_field" style="font-weight: bold;">FECHA REGISTRO</label>
@@ -18,10 +18,10 @@
                     <span class="input-group-text" id="basic-addon1">
                         <i class="fa-solid fa-calendar-days"></i>
                     </span>
-                    <input value="{{ date('Y-m-d') }}"  required id="fecha_entrega" name="fecha_entrega" type="date" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    <input value="{{ date('Y-m-d') }}"  required id="fecha_entrega" name="fecha_entrega" type="date" class="form-control input-fill" aria-label="Username" aria-describedby="basic-addon1">
                 </div>
             </div>
-    
+
             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <label for="usuario" class="required_field" style="font-weight: bold;">REGISTRADOR</label>
                 <div class="input-group mb-3">
@@ -66,17 +66,17 @@
                     <span class="input-group-text" id="basic-addon1">
                         <i class="fa-solid fa-envelopes-bulk"></i>
                     </span>
-                    <input required id="serie" name="serie" type="text" class="form-control" placeholder="Serie" aria-label="Username" aria-describedby="basic-addon1">
+                    <input required id="serie" name="serie" type="text" class="form-control input-fill" placeholder="Serie" aria-label="Username" aria-describedby="basic-addon1">
                 </div>
             </div>
-            
+
             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 mb-3">
                 <label class="required_field" for="numero" style="font-weight: bold;">N°</label>
                 <div class="input-group">
                     <span class="input-group-text" id="basic-addon1">
                         <i class="fa-solid fa-hashtag"></i>
                     </span>
-                    <input required id="numero" name="numero" type="text" class="form-control inputEnteroPositivo" placeholder="Número" aria-label="Username" aria-describedby="basic-addon1">
+                    <input required id="numero" name="numero" type="text" class="form-control inputEnteroPositivo input-fill" placeholder="Número" aria-label="Username" aria-describedby="basic-addon1">
                 </div>
             </div>
 
@@ -87,9 +87,9 @@
                         <i class="fas fa-text-width"></i>
                     </span>
                     <div class="form-floating">
-                        <textarea class="form-control" placeholder="Escribir..." id="observation" name="observation"></textarea>
+                        <textarea class="form-control input-fill" placeholder="Escribir..." id="observation" name="observation"></textarea>
                         <label for="observation">Máximo 200 caracteres</label>
-                    </div>                
+                    </div>
                 </div>
             </div>
 
@@ -138,7 +138,7 @@
                                 <label for="precio" style="font-weight: bold;">PRECIO</label>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" id="basic-addon1">
-                                        <i class="fa-solid fa-money-bill-1-wave"></i>                                    
+                                        <i class="fa-solid fa-money-bill-1-wave"></i>
                                     </span>
                                     <input id="precio" name="precio" type="text" class="form-control inputDecimalPositivo" placeholder="Precio" aria-label="Username" aria-describedby="basic-addon1">
                                   </div>
@@ -147,7 +147,7 @@
                                 <label for="categoria" style="font-weight: bold;">CANTIDAD</label>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" id="basic-addon1">
-                                        <i class="fa-solid fa-box-open"></i>                                    
+                                        <i class="fa-solid fa-box-open"></i>
                                     </span>
                                     <input id="cantidad" name="cantidad" type="text" class="form-control inputDecimalPositivo" placeholder="Cantidad" aria-label="Username" aria-describedby="basic-addon1">
                                 </div>
@@ -157,15 +157,15 @@
                         <div class="row justify-content-end">
                             <div class="col-3 d-flex justify-content-end">
                                 <button class="btn btn-primary btnAgregarProducto" type="button">
-                                    <i class="fa-solid fa-cart-plus"></i> AGREGAR 
+                                    <i class="fa-solid fa-cart-plus"></i> AGREGAR
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>  
-        
+        </div>
+
         <div class="row mt-3">
             <div class="col-12 mt-3 mb-3">
                 <div class="card">
@@ -183,9 +183,9 @@
                         </div>
                         <div class="row justify-content-end">
                             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                                
+
                                 @include('purchases.purchase_document.tables.tbl_purchase_document_amounts')
-                                   
+
                             </div>
                         </div>
                     </div>
@@ -194,6 +194,6 @@
         </div>
 
 
-           
+
     </div>
-</form> 
+</form>

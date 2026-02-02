@@ -80,9 +80,8 @@ class UtilController extends Controller
             $estado     =   $response->getStatusCode();
             $data       =   json_decode($response->getBody()->getContents());
 
-
             return response()->json(['success' => true, 'data' => $data]);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             return response()->json(['success' => false, 'data' => $th->getMessage()]);
         }
     }

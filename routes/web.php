@@ -39,7 +39,7 @@ Route::get('user/tenant', [UserController::class, 'index'])->name('tenant.users.
 Route::post('user/create', [UserController::class, 'store'])->name('tenant.users.create');
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
- 
+
     Route::get('/dashboard', [ModuleController::class, 'home'])->name('tenant.home');
 
 
@@ -84,6 +84,7 @@ Route::group(["prefix" => "utils"], function () {
 
     Route::get('cash-open-search', [PettyCashController::class, 'searchCashOpen'])->name('tenant.utils.searchCashOpen');
 
+    Route::get('dish-search', [DishController::class, 'searchDish'])->name('tenant.utils.searchDish');
     Route::get('service-search', [ServiceController::class, 'searchService'])->name('tenant.utils.searchService');
     Route::get('product-search', [ProductController::class, 'searchProduct'])->name('tenant.utils.searchProduct');
     Route::get('product-search/stock', [ProductController::class, 'searchProductStock'])->name('tenant.utils.searchProductStock');

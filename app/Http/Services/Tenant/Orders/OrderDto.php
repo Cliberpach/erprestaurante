@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\TypeDish\TypeDish;
 use App\Models\Tenant\Warehouse;
+use Carbon\Carbon;
 
 class OrderDto
 {
@@ -66,6 +67,7 @@ class OrderDto
                 $_item['order_detail_id']   =   $item->order_detail_id;
             }*/
 
+            $_item['created_at']        =   Carbon::now();
             $_item['order_id']          =   $order_id;
             $_item['programming_id']    =   $item->programming_id;
             $_item['dish_id']           =   $dish->id;
@@ -99,6 +101,7 @@ class OrderDto
                 $_item['order_detail_id']   =   $item->order_detail_id;
             }*/
 
+            $_item['created_at']        =   Carbon::now();
             $_item['order_id']          =   $order_id;
             $_item['warehouse_id']      =   $item->warehouse_id;
             $_item['product_id']        =   $product->id;

@@ -16,7 +16,6 @@ use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Product;
 use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\WarehouseProduct;
-use App\Models\Tenant\WorkShop\WorkOrder\WorkOrderProduct;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -303,7 +302,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
             'name'  =>  $p->name,
             'category_name' =>  $p->category_name,
             'brand_name'    =>  $p->brand_name,
-            'stock'         =>  $p->stock
+            'stock'         =>  $p->stock,
         ]);
 
         return response()->json([

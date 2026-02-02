@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Tenant\Reports\ReportContableController;
 use App\Http\Controllers\Tenant\Reports\ReportSaleController;
+use App\Http\Controllers\Tenant\Reports\RSaleDishController;
+use App\Http\Controllers\Tenant\Reports\RSaleProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "reportes"], function () {
@@ -20,4 +22,17 @@ Route::group(["prefix" => "reportes"], function () {
         Route::get('contable/pdf', [ReportContableController::class, 'pdf'])->name('tenant.reportes.contable.pdf');
     });
 
+    Route::group(["prefix" => "ventas_productos"], function () {
+        Route::get('index', [RSaleProductController::class, 'index'])->name('tenant.reportes.ventas_productos.index');
+        Route::get('getAll', [RSaleProductController::class, 'getAll'])->name('tenant.reportes.ventas_productos.getAll');
+        Route::get('excel', [RSaleProductController::class, 'excel'])->name('tenant.reportes.ventas_productos.excel');
+        Route::get('pdf', [RSaleProductController::class, 'pdf'])->name('tenant.reportes.ventas_productos.pdf');
+    });
+
+    Route::group(["prefix" => "ventas_platos"], function () {
+        Route::get('index', [RSaleDishController::class, 'index'])->name('tenant.reportes.ventas_platos.index');
+        Route::get('getAll', [RSaleDishController::class, 'getAll'])->name('tenant.reportes.ventas_platos.getAll');
+        Route::get('excel', [RSaleDishController::class, 'excel'])->name('tenant.reportes.ventas_platos.excel');
+        Route::get('pdf', [RSaleDishController::class, 'pdf'])->name('tenant.reportes.ventas_platos.pdf');
+    });
 });

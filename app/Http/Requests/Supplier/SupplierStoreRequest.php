@@ -26,18 +26,18 @@ class SupplierStoreRequest extends FormRequest
     {
         $rules = [
             'tipo_documento' => [
-                'required', 
-                'exists:types_identity_documents,id'
+                'required',
+                'exists:landlord.types_identity_documents,id'
             ],
            'nro_documento' => [
-                'required', 
-                'numeric', 
+                'required',
+                'numeric',
                 function ($attribute, $value, $fail) {
                     $tipoDocumento = $this->input('tipo_documento');
                     if ($tipoDocumento == 1 && strlen($value) != 8) {
                         $fail('El número de documento debe tener 8 dígitos si el tipo de documento es DNI.');
                     }
-                    if ($tipoDocumento == 2 && strlen($value) != 11) {
+                    if ($tipoDocumento == 3 && strlen($value) != 11) {
                         $fail('El número de documento debe tener 11 dígitos si el tipo de documento es RUC.');
                     }
                 },
@@ -46,8 +46,8 @@ class SupplierStoreRequest extends FormRequest
             'nombre' => 'required|max:200',
             'direccion' => 'nullable|max:150',
             'telefono' => [
-                'nullable', 
-                'max:20', 
+                'nullable',
+                'max:20',
                 'regex:/^[0-9]+$/'
             ],
             'correo' => 'nullable|email|max:150',
@@ -61,21 +61,21 @@ class SupplierStoreRequest extends FormRequest
         return [
             'tipo_documento.required'   => 'El tipo de documento es obligatorio.',
             'tipo_documento.exists'     => 'El tipo de documento seleccionado no es válido o no está activo.',
-            
+
             'nro_documento.required'    => 'El número de documento es obligatorio.',
             'nro_documento.numeric'     => 'El número de documento debe ser numérico.',
-            
+
             'nombre.required'           => 'El nombre es obligatorio.',
             'nombre.max'                => 'El nombre no puede exceder de 200 caracteres.',
-            
+
             'direccion.max'             => 'La dirección no puede exceder de 150 caracteres.',
-            
+
             'telefono.max'              => 'El teléfono no puede exceder de 20 caracteres.',
             'telefono.regex'            => 'El teléfono solo puede contener números.',
-            
+
             'correo.email'              => 'El correo electrónico debe tener un formato válido.',
             'correo.max'                => 'El correo electrónico no puede exceder de 150 caracteres.',
-            
+
         ];
     }
 

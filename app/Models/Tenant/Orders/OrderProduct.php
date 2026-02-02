@@ -30,6 +30,7 @@ class OrderProduct extends Model
         'category_name',
         'brand_name',
         'warehouse_id',
-        'warehouse_name'
+        'warehouse_name',
+        'created_at'
     ];
 }

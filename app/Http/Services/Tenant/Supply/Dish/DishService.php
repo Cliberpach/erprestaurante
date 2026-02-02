@@ -77,4 +77,35 @@ class DishService
     {
         $this->s_repository->setStatus($id, $status);
     }
+
+    public function searchDish(array $data)
+    {
+        $query = trim($data['q'] ?? '');
+
+        if (empty($query)) {
+            return [];
+        }
+
+        $items = Dish::from('dishes as d')
+            ->join('types_dish as td', 'td.id', 'd.type_dish_id')
+            ->where(function ($q) use ($query) {
+                $q->where('d.name', 'LIKE', "%{$query}%")
+                    ->orWhere('td.name', 'LIKE', "%{$query}%");
+            })->limit(20)
+            ->get(
+                [
+                    'd.id',
+                    'd.name',
+                    'td.name as type_name'
+                ]
+            );
+
+        $data = $items->map(fn($s) => [
+            'id' => $s->id,
+            'text' => "{$s->name}",
+            'subtext'    => $s->type_name
+        ]);
+
+        return $data;
+    }
 }

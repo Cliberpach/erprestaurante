@@ -190,6 +190,16 @@ class ModuleSeeder extends Seeder
         $module = $this->createModule('Reportes');
 
         $this->createChild($module, [
+            'description' => 'Ventas Productos',
+            'route_name' => 'reportes.ventas_productos.index'
+        ]);
+
+        $this->createChild($module, [
+            'description' => 'Ventas Platos',
+            'route_name' => 'reportes.ventas_platos.index'
+        ]);
+
+        $this->createChild($module, [
             'description' => 'Reporte de Venta',
             'route_name' => 'reportes.ventas.index',
         ]);

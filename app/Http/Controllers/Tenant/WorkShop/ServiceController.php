@@ -133,7 +133,7 @@ array:5 [ // app\Http\Controllers\Tenant\WorkShop\ServiceController.php:94
     }
 
     /**
-     * Buscar clientes (para TomSelect server-side)
+     * Buscar servicios (para TomSelect server-side)
      */
     public function searchService(Request $request)
     {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Tenant\NumberToLettersController;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\WorkShop\Service;
+use Carbon\Carbon;
 
 class SaleDto
 {
@@ -90,15 +91,16 @@ class SaleDto
 
         foreach ($data as $item) {
 
-            $s_dto['sale_id']                   =     $sale->id;
-            $s_dto['warehouse_id']              =     $item->warehouse_id;
-            $s_dto['warehouse_name']            =     $item->warehouse_name;
-            $s_dto['product_id']                =     $item->product_id;
-            $s_dto['category_id']               =     $item->category_id;
-            $s_dto['brand_id']                  =     $item->brand_id;
-            $s_dto['product_name']              =     $item->product_name;
-            $s_dto['category_name']             =     $item->category_name;
-            $s_dto['brand_name']                =     $item->brand_name;
+            $s_dto['created_at']                =   Carbon::now();
+            $s_dto['sale_id']                   =   $sale->id;
+            $s_dto['warehouse_id']              =   $item->warehouse_id;
+            $s_dto['warehouse_name']            =   $item->warehouse_name;
+            $s_dto['product_id']                =   $item->product_id;
+            $s_dto['category_id']               =   $item->category_id;
+            $s_dto['brand_id']                  =   $item->brand_id;
+            $s_dto['product_name']              =   $item->product_name;
+            $s_dto['category_name']             =   $item->category_name;
+            $s_dto['brand_name']                =   $item->brand_name;
 
             $s_dto['quantity']                  =   $item->quantity;
             $s_dto['purchase_price']            =   $item->purchase_price;
@@ -127,6 +129,7 @@ class SaleDto
         foreach ($lst_items as $item) {
             $_item      =   [];
 
+            $_item['created_at']        =   Carbon::now();
             $_item['sale_id']           =   $sale->id;
             $_item['programming_id']    =   $item->programming_id;
             $_item['dish_id']           =   $item->dish_id;

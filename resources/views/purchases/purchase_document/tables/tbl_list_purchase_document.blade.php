@@ -1,17 +1,17 @@
-<table class="table table-hover table-striped table-bordered" id="tbl_list_purchase_document">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">FECHA ENTREGA</th>
-        <th scope="col">PROVEEDOR</th>
-        <th scope="col">CONDICIÓN</th>
-        <th scope="col">MONEDA</th>
-        <th scope="col">DOCUMENTO</th>
-        <th scope="col">OBSERVACIÓN</th>
-        <th scope="col">ACCIONES</th>
-      </tr>
+<table class="table-hover table-striped table-bordered table" id="tbl_list_purchase_document">
+    <thead class="table-light">
+        <tr>
+            <th class="minw-100px">#</th>
+            <th class="minw-100px">Fecha Entrega</th>
+            <th class="minw-200px">Proveedor</th>
+            <th class="minw-100px">Condición</th>
+            <th class="minw-100px">Moneda</th>
+            <th class="minw-100px">Documento</th>
+            <th class="minw-100px">Observación</th>
+            <th class="minw-100px">Acción</th>
+        </tr>
     </thead>
     <tbody>
-     
+
     </tbody>
 </table>
