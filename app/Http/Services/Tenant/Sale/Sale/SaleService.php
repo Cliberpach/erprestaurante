@@ -3,6 +3,8 @@
 namespace App\Http\Services\Tenant\Sale\Sale;
 
 use App\Http\Controllers\Tenant\NumberToLettersController;
+use App\Http\Services\Tenant\CreditNote\CreditNoteService;
+use App\Http\Services\Tenant\Invoicing\InvoicingManager;
 use App\Http\Services\Tenant\Maintenance\Company\CompanyManager;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Tenant\DocumentSerialization;
@@ -199,5 +201,29 @@ class SaleService
 
         $this->s_repository->setConverted($data['sale'], $sale);
         return $sale;
+    }
+
+    public function sendSunat(int $sale_id): Sale
+    {
+        $sale           =   $this->s_repository->findSale($sale_id);
+        $this->s_validations->validationSend($sale);
+        $this->isActiveTypeSale($sale->type_sale_id);
+
+        $lst_detail     =   $this->s_repository->getDetail($sale_id);
+        $dto            =   $this->s_dto->getDtoInvoicing($sale, $lst_detail);
+
+        $s_invoice      =   new InvoicingManager();
+        $data           =   $s_invoice->sendInvoice($dto);
+        $sale           =   $this->s_repository->saveSunatData($data, $sale);
+        return $sale;
+    }
+
+    public function annular(array $data)
+    {   
+        $sale           =   $this->s_repository->findSale($data['sale_id']);
+        $data['sale']   =   $sale;
+        $this->s_validations->validationAnnular($sale);
+        $s_credit_note  =   new CreditNoteService();
+        $s_credit_note->storeFromSale($data);
     }
 }

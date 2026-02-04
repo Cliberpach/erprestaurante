@@ -1,19 +1,34 @@
 <?php
 
-namespace App\Models\Tenant\Sales\Sale;
+namespace App\Models\Tenant\Sales\CreditNote;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
-class Sale extends Model
+class CreditNote extends Model
 {
     use HasFactory;
 
-    protected $table = 'sales';
+    protected $table = 'credit_notes';
     protected $connection   =   'tenant';
 
     protected $fillable = [
+
+        // 🔹 Documento afectado
+        'sale_id',
+        'type_doc_affected',
+        'num_doc_affected',
+        'code_motive',
+        'description_motive',
+        'type_money',
+
+        // 🔹 Almacén / tipo de comprobante
+        'warehouse_id',
+        'type_sale_id',
+        'type_sale_code',
+        'type_sale_name',
+
+        // 🔹 Cliente
         'customer_id',
         'customer_name',
         'customer_type_document',
@@ -21,82 +36,55 @@ class Sale extends Model
         'customer_document_code',
         'customer_phone',
 
-        'petty_cash_id',
-        'petty_cash_name',
-        'petty_cash_book_id',
+        //====
+        'type_invoice_id',
+        'type_invoice_name',
+        'type_invoice_code',
 
-        'type_sale_id',
-        'type_sale_code',
-        'type_sale_name',
-
+        // 🔹 Montos
         'igv_percentage',
         'subtotal',
         'igv_amount',
         'total',
-        'change_pay',
-
         'legend',
 
-        'method_pay_id_1',
-        'amount_pay_1',
-        'method_pay_id_2',
-        'amount_pay_2',
+        // 🔹 Totales SUNAT / UBL
+        'mto_oper_taxed',
+        'mto_igv',
+        'total_taxes',
+        'mto_imp_sale',
+        'ubl_version',
 
+        // 🔹 Serie y correlativo
         'correlative',
         'serie',
 
-        'status',
+        // 🔹 Observaciones / estado
+        'observation',
         'sunat_status',
-        'pay_status',
 
+        // 🔹 Respuesta SUNAT
         'response_cdrZip',
         'response_success',
         'response_error_code',
         'response_error_message',
-
         'cdr_response_id',
         'cdr_response_code',
         'cdr_response_description',
         'cdr_response_notes',
         'cdr_response_reference',
-
-        'last_send_message',
-
         'ruta_cdr',
         'ruta_xml',
         'ruta_qr',
 
-        'type',
-        'order_id',
-
+        // 🔹 Auditoría
         'creator_user_id',
-        'editor_user_id',
-        'deletor_user_id',
-
-        'deletor_user_name',
-        'editor_user_name',
         'creator_user_name',
+        'editor_user_id',
+        'editor_user_name',
+        'delete_user_id',
+        'delete_user_name',
     ];
-
-
-    public function pays()
-    {
-        return $this->hasMany(SalePay::class)
-            ->select(
-                'sale_id',
-                'payment_method_id',
-                DB::raw('SUM(amount) as total')
-            )
-            ->where('status', 'ACTIVO')
-            ->groupBy('sale_id', 'payment_method_id');
-    }
-
-    public function paidByMethod(int $paymentMethodId): float
-    {
-        return $this->pays
-            ->where('payment_method_id', $paymentMethodId)
-            ->sum('total');
-    }
 
     protected static function boot()
     {

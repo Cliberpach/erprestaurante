@@ -250,7 +250,7 @@ class SaleValidation
         }
 
         //======== PAGO =========
-        $c_pays         =   collect($lst_pays)->where('amount','>',0);
+        $c_pays         =   collect($lst_pays)->where('amount', '>', 0);
         $payTotal       =   $c_pays->sum('amount');
         $has_negative   =   $c_pays->where('amount', '<', 0)->first();
         $has_repeats    =   $c_pays->groupBy('paymentId')->filter(fn($items) => $items->count() > 1)->isNotEmpty();
@@ -329,5 +329,34 @@ class SaleValidation
         $data['sale_products']  =   $sale_products;
 
         return $data;
+    }
+
+    public function validationSend(Sale $sale)
+    {
+        if ($sale->sunat_status === 'ACEPTADO') {
+            throw new Exception('DOCUMENTO DE VENTA: ' . $sale->serie . '-' . $sale->correlative . ', YA FUE ACEPTADO POR SUNAT');
+        }
+        if ($sale->sunat_status === 'ANULADO') {
+            throw new Exception('DOCUMENTO DE VENTA: ' . $sale->serie . '-' . $sale->correlative . ', SE ENCUENTRA ANULADO');
+        }
+        if ($sale->sunat_status === 'ANULADO PARCIAL') {
+            throw new Exception('DOCUMENTO DE VENTA: ' . $sale->serie . '-' . $sale->correlative . ', SE ENCUENTRA ANULADO PARCIALMENTE');
+        }
+    }
+
+    public function validationAnnular(Sale $sale)
+    {
+        if ($sale->sunat_status === 'PENDIENTE') {
+            throw new Exception('DOCUMENTO DE VENTA: ' . $sale->serie . '-' . $sale->correlative . ', AÚN NO HA SIDO ENVIADO A SUNAT');
+        }
+        if ($sale->sunat_status === 'RECHAZADO') {
+            throw new Exception('DOCUMENTO DE VENTA: ' . $sale->serie . '-' . $sale->correlative . ', AÚN NO HA SIDO ACEPTADO EN SUNAT');
+        }
+        if ($sale->sunat_status === 'ANULADO') {
+            throw new Exception('DOCUMENTO DE VENTA: ' . $sale->serie . '-' . $sale->correlative . ', YA FUE ANULADO');
+        }
+        if ($sale->sunat_status === 'ANULADO PARCIAL') {
+            throw new Exception('DOCUMENTO DE VENTA: ' . $sale->serie . '-' . $sale->correlative . ', YA FUE ANULADO');
+        }
     }
 }

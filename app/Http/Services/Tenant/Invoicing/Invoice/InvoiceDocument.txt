@@ -1,0 +1,438 @@
+Greenter\Model\Sale\Invoice {#2309 // app\Http\Services\Tenant\Invoicing\Invoice\InvoiceService.php:89
+  #ublVersion: "2.1"
+  #tipoDoc: "09"
+  #serie: "B001"
+  #correlativo: "2"
+  #fechaEmision: DateTime @1769810884 {#2316
+    date: 2026-01-30 17:08:04.0 America/Lima (-05:00)
+  }
+  #company:
+Greenter\Model\Company
+\
+Company {#2315
+    -ruc: "22211133344"
+    -razonSocial: "LDRESTAURANTS"
+    -nombreComercial: "LDRESTAURANTS"
+    -address:
+Greenter\Model\Company
+\
+Address {#2318
+      -ubigueo: "130101"
+      -codigoPais: "PE"
+      -departamento: "AMAZONAS"
+      -provincia: "UTCUBAMBA"
+      -distrito: "EL MILAGRO"
+      -urbanizacion: "PALERMO"
+      -direccion: "LDRESTAURANTS"
+      -codLocal: "0000"
+    }
+    -email: "admin@gmail.com"
+    -telephone: null
+  }
+  #client:
+Greenter\Model\Client
+\
+Client {#2312
+    -tipoDoc: "1"
+    -numDoc: "99999999"
+    -rznSocial: "VARIOS"
+    -address:
+Greenter\Model\Company
+\
+Address {#2313
+      -ubigueo: null
+      -codigoPais: "PE"
+      -departamento: null
+      -provincia: null
+      -distrito: null
+      -urbanizacion: null
+      -direccion: null
+      -codLocal: "0000"
+    }
+    -email: null
+    -telephone: "99999999"
+  }
+  #tipoMoneda: "PEN"
+  #sumOtrosCargos: null
+  #mtoOperGravadas: 376.271186
+  #mtoOperInafectas: null
+  #mtoOperExoneradas: null
+  #mtoOperExportacion: null
+  #mtoOperGratuitas: null
+  #mtoIGVGratuitas: null
+  #mtoIGV: 67.73
+  #mtoBaseIvap: null
+  #mtoIvap: null
+  #mtoBaseIsc: null
+  #mtoISC: null
+  #mtoBaseOth: null
+  #mtoOtrosTributos: null
+  #icbper: null
+  #totalImpuestos: 67.728814
+  #redondeo: null
+  #mtoImpVenta: 444.0
+  #details: array:2 [
+    0 =>
+Greenter\Model\Sale
+\
+SaleDetail {#2329
+      -unidad: "NIU"
+      -cantidad: 12.0
+      -codProducto: "6-CHOCOLATE PRINCESA"
+      -codProdSunat: null
+      -codProdGS1: null
+      -descripcion: "CHOCOLATE PRINCESA"
+      -mtoValorUnitario: 9.322034
+      -cargos: null
+      -descuentos: null
+      -descuento: null
+      -mtoBaseIgv: 376.271186
+      -porcentajeIgv: 18.0
+      -igv: 67.728814
+      -tipAfeIgv: "10"
+      -mtoBaseIsc: null
+      -porcentajeIsc: null
+      -isc: null
+      -tipSisIsc: null
+      -mtoBaseOth: null
+      -porcentajeOth: null
+      -otroTributo: null
+      -icbper: null
+      -factorIcbper: 0.3
+      -totalImpuestos: 67.728814
+      -mtoPrecioUnitario: 11.0
+      -mtoValorVenta: 376.271186
+      -mtoValorGratuito: null
+      -atributos: null
+    }
+    1 =>
+Greenter\Model\Sale
+\
+SaleDetail {#2325
+      -unidad: "NIU"
+      -cantidad: 13.0
+      -codProducto: "32-Arroz con Leche"
+      -codProdSunat: null
+      -codProdGS1: null
+      -descripcion: "Arroz con Leche"
+      -mtoValorUnitario: 20.338983
+      -cargos: null
+      -descuentos: null
+      -descuento: null
+      -mtoBaseIgv: 376.271186
+      -porcentajeIgv: 18.0
+      -igv: 67.728814
+      -tipAfeIgv: "10"
+      -mtoBaseIsc: null
+      -porcentajeIsc: null
+      -isc: null
+      -tipSisIsc: null
+      -mtoBaseOth: null
+      -porcentajeOth: null
+      -otroTributo: null
+      -icbper: null
+      -factorIcbper: 0.3
+      -totalImpuestos: 67.728814
+      -mtoPrecioUnitario: 24.0
+      -mtoValorVenta: 376.271186
+      -mtoValorGratuito: null
+      -atributos: null
+    }
+  ]
+  #legends: array:1 [
+    0 =>
+Greenter\Model\Sale
+\
+Legend {#2319
+      -code: "1000"
+      -value: "SON CUATROCIENTOS CUARENTA Y CUATRO CON 00/100 SOLES"
+    }
+  ]
+  #guias: null
+  #relDocs: null
+  #compra: null
+  #formaPago:
+Greenter\Model\Sale\FormaPagos
+\
+FormaPagoContado {#2317
+    #moneda: null
+    #tipo: "Contado"
+    #monto: null
+  }
+  #cuotas: null
+  -tipoOperacion: "0101"
+  -fecVencimiento: DateTime @1769810884 {#2314
+    date: 2026-01-30 17:08:04.0 America/Lima (-05:00)
+  }
+  -sumDsctoGlobal: null
+  -mtoDescuentos: null
+  -sumOtrosDescuentos: null
+  -descuentos: null
+  -cargos: null
+  -mtoCargos: null
+  -totalAnticipos: null
+  -perception: null
+  -guiaEmbebida: null
+  -anticipos: null
+  -detraccion: null
+  -seller: null
+  -valorVenta: 376.271186
+  -subTotal: 444.0
+  -observacion: null
+  -direccionEntrega: null
+}
+
+
+//=========== RESPUESTA EXITOSA =======
+Greenter\Model\Response\BillResult {#2324 // app\Http\Services\Tenant\Invoicing\Invoice\InvoiceService.php:89
+  #success: true
+  #error: null
+  #cdrZip: b"PK
+\x03\x04\x14\x00\x02\x00\x08\x00
+O{C\
+\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00
+dummy/
+\x03\x00
+PK
+\x03\x04\x14\x00\x02\x00\x08\x00
+O{C\»Ê*o4
+\x04\x00\x00\x15
+\x00\x00\e\x00\x00\x00
+R-22211133344-03-B001-3.xmlÁW▀oÔ8
+\x10
+~▀┐"ó
+\x0F
++¡.u~@Yóö
+\x15
+-W
+\x1D
+]ÂÛBÚÝÝøø©┴"▒S█ü¶■·
+\e
+'$
+\x04
+ÜjaÑS¹Ó╠|¾═╠þ▒-³/y
+\x12\e
+k"$Õý▓cƒ[
+\x1D
+â░ÇçöEùØ┼├ì¨╣¾e°┴Ã┬
+\e
+ÑiL
+\x03
+¼
+\x00
+8#2ÕL
+\x12\x03
+éÖ╝ýdéy
+\x1C
+K*=å
+\x13
+"=ÖÆÇ>o┴^÷
+\x14
+{2XÆ
+\x04
+{╣
+\f
+¢
+\t
+[s
+\x1A\x10
+ËÚöß
+\x1E\x16
+'2┤T▓c#╣:æ¯Ü'
+\t
+g
+\x7F
+µè0¡
+\x02
+|
+\x02
+%aJ¯HâºÓÀH»
+\x00\x1E
+┤
+\x12
+Ô▀#
+\x1C
+Eæ
+\x11
+Vñì4ä¡X*òz
+\x08
+m6ø¾ì{╬Eä
+\x1C
+╦▓É5@Ç
+\t
+%ì╬*┤õ8¡±e"y
+\x0E
+.m/
+\x02
+§
+\x02\x11
+Â&1O
+\t
+¬ô@‗:îõ2V
+\x05
+XøÑëYh*
+¢ÈI¬>eã░zÀ¤öê¼┘ý\ú█zÁ+Ô³¢^m¶Ò█t^PUX`!y┌R48▓
+\x18\v\x13
+╝éH¢¨▓3¶aé╝┼ı┤
+\x1E\x08
+Yìyï»┤4fç┴J
+²9ìáâLÈGõê}ücª├H8a¤|°┴0³k╠8
+\x03
+Øb·oíı7óû<4Fq─
+\x05
+U╦õ]
+\t
+lKËB_ü
+\x19
+Ï]v÷7á§
+\x00
+i
+;¿Ó«+<ÜÈÛVÁÜ
+\t\x17
+õLHl╩%¯┘╬ûrF×ëÇ█â
+\x18
+ï┘D╦
+\x05
+F0?
+\x08
+╠õ3
+\x17
+ë,
+MË/Ë¯IT
+ch╩¬·2§ëñÃ
+\x08\x04
+äÞ░r
+\x7F
+L#"ıëèü"gMØj×G
+\x1C
+gdÏu│h·Ø«║
+\x7F
+¡║}¨¾¹Ý·Ù
+D:yv]+w0y\Õï,ÁãÀ/«=
+‗(\¦l■
+\x11
+lp¾¶
+\x12
+═×║+║\dÒ¨¤DÏTMÃ/À9ÆËÐÕÑÅÜY¶■ázâ`Èð■¼5'óî°t/Þ
+\x1A
+Nƒ▒"»ãÃ+ó­=
+\x1C
+U©╬êP
+\x1F
+ãòæÑƒJÜFö ò╝
+\x16
+£■Å×5
+\x18
+cà╦òÄ*¤<0▀┴5
+\x10\x1A
+┴╬┤Õ/
+\x13\x02
+Câ 0©`øHÖ
+\x11
+1'éÔ©iÐ─ºË7b
+\v
+«Æ¸.K×ê8Øm/║Öá*
+\x17
+ÝöAÁZ;
+\x1D
+a¦~ºáÀù¤
+\e
+ô
+\x1C
+·­ViËc¨ªOãCþ▄‗Ð
+\e
+kü╗╬ñÔ╔÷v
+\x01
+ú]A
+\x0F\x1D\x05
+Z
+\x03
+·}╦¯Y¯└
+\x1E
+XN
+\t
+¡¢║╔▒Ì"Ãr.L╦1-¸┴¯yÄÕ9²-┤åý"
+\x1E
+Ó╣
+\x18
+ZûW³7`à¢ÇUo³
+\x01
+wë¦s¯┴
+\v\x02
+Ø ┬sÝ}­û
+\e\x07
+^C§m/┌2_▄ì
+\x1E\x1A
+¦ı@.^´▒P»Ñ¡XNBÏ£·5½i
+\x1C
+╦vß¤
+\x19
+¶z;"¶~TÕ(ºP
+\x07\x14
+½F%Ñ
+\x07\x1D
+ Ð{┼┴ßº
+Ãuâ#Ñp░LèIÊ~=2éßxw'öô3ø
+\f
+¤
+\x0E
+4ðÂ2QK
+\x10
+·U2t¿│■$,$Ô æ
+\x12
+Á&ÿæÇð§±9
+\x1D
+ÃÂmÎu╗¦úsÂñ
+\x18
+¾ Ë*TâWıR
+\x7F\x15
+C╣ı
+\x12
+R\┴½aÍô¢│´
+÷5
+\x0F
+ß─ýOta+Pc"
+\x03
+AËó«)6«x
+\f
+ùò┴á
+\f
+┴ìÆ
+\x0F
+cë
+ICnÓÇñ
+ç©$kåV-5ÙÌu│72
+\x07
+uÎJÁ┴KÖhJ┴~õV\ÿ²Ìà§╣▀sO┘ë¢
+\x14
+¿}/P¹»Üß
+\x7F
+PK
+\x01\x02\x00\x00\x14\x00\x02\x00\x08\x00
+O{C\
+\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00
+dummy/PK
+\x01\x02\x00\x00\x14\x00\x02\x00\x08\x00
+O{C\»Ê*o4
+\x04\x00\x00\x15
+\x00\x00\e\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00
+&
+\x00\x00\x00
+R-22211133344-03-B001-3.xmlPK
+\x05\x06\x00\x00\x00\x00\x02\x00\x02\x00
+}
+\x00\x00\x00
+ô
+\x04\x00\x00\x00\x00
+"
+  #cdrResponse:
+Greenter\Model\Response
+\
+CdrResponse {#2350
+    #id: "B001-3"
+    #code: "0"
+    #description: "La Boleta numero B001-3, ha sido aceptada"
+    #notes: []
+    #reference: null
+  }
+}

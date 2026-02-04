@@ -17,9 +17,9 @@ Route::group(["prefix" => "reportes"], function () {
 
     Route::group(["prefix" => "contable"], function () {
         Route::get('index', [ReportContableController::class, 'index'])->name('tenant.reportes.contable.index');
-        Route::get('contable/getReporteContable', [ReportContableController::class, 'getReporteContable'])->name('tenant.reportes.contable.getReporteContable');
-        Route::get('contable/excel', [ReportContableController::class, 'excel'])->name('tenant.reportes.contable.excel');
-        Route::get('contable/pdf', [ReportContableController::class, 'pdf'])->name('tenant.reportes.contable.pdf');
+        Route::get('getAll', [ReportContableController::class, 'getAll'])->name('tenant.reportes.contable.getAll');
+        Route::get('excel', [ReportContableController::class, 'excel'])->name('tenant.reportes.contable.excel');
+        Route::get('pdf', [ReportContableController::class, 'pdf'])->name('tenant.reportes.contable.pdf');
     });
 
     Route::group(["prefix" => "ventas_productos"], function () {

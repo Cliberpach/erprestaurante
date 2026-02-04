@@ -8,16 +8,28 @@ class SaleManager
 {
     protected SaleService $s_sale;
 
-     public function __construct()
+    public function __construct()
     {
         $this->s_sale    =   new SaleService();
     }
 
-    public function store(array $data):Sale{
+    public function store(array $data): Sale
+    {
         return $this->s_sale->store($data);
     }
 
-    public function convert(array $data):Sale{
+    public function convert(array $data): Sale
+    {
         return $this->s_sale->convert($data);
+    }
+
+    public function sendSunat(int $sale_id): Sale
+    {
+        return $this->s_sale->sendSunat($sale_id);
+    }
+
+    public function annular(array $data)
+    {
+        $this->s_sale->annular($data);
     }
 }

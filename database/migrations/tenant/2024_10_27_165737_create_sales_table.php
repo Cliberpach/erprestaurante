@@ -16,8 +16,6 @@ return new class extends Migration
 
             //======== CLIENTE Y SUS DATOS HISTÓRICO =======
             $table->unsignedBigInteger('customer_id');
-            //$table->foreign('customer_id')->references('id')->on('customers');
-
             $table->string('customer_name', 160);
             $table->enum('customer_type_document', ['DNI', 'RUC']);
             $table->string('customer_document_number', 20);
@@ -76,6 +74,7 @@ return new class extends Migration
             $table->longText('ruta_cdr')->nullable();
             $table->longText('ruta_xml')->nullable();
             $table->longText('ruta_qr')->nullable();
+            $table->longText('last_send_message');
 
             $table->enum('type', ['PRODUCTOS', 'RESERVAS']);
 

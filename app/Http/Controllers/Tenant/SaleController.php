@@ -61,6 +61,10 @@ class SaleController extends Controller
                 's.correlative',
                 DB::raw("CONCAT(s.serie, '-', s.correlative) AS doc"),
                 's.type_sale_name',
+                's.type_sale_code',
+                DB::raw("FORMAT(s.igv_percentage, 2) AS igv_percentage"),
+                DB::raw("FORMAT(s.subtotal, 2) AS subtotal"),
+                DB::raw("FORMAT(s.igv_amount, 2) AS igv_amount"),
                 DB::raw("FORMAT(s.total, 2) AS total"),
                 's.status',
                 's.type_sale_code',
@@ -68,7 +72,10 @@ class SaleController extends Controller
                 's.ruta_cdr',
                 's.sunat_status',
                 's.converted_to_id',
-                's.converted_from_id'
+                's.converted_from_id',
+                's.pay_status',
+                's.petty_cash_book_id',
+                's.petty_cash_name'
             )
             ->where('s.status', '!=', 'ANULADO');
 
@@ -347,33 +354,29 @@ array:3 [ // app\Http\Controllers\Tenant\SaleController.php:119
     }
 
     /*
-sale_document_id:1
+sale_id:1
 */
     public function send_sunat(Request $request)
     {
 
         try {
+            $sale_id   =   $request->get('sale_id');
 
-            $sale_document_id   =   $request->get('sale_document_id');
-
-            if (!$sale_document_id) {
+            if (!$sale_id) {
                 throw new Exception("NO SE ENCONTRÓ EL ID DEL COMPROBANTE DE PAGO");
             }
 
-            $sale_document = Sale::find($sale_document_id);
+            $res            =   $this->s_sale->sendSunat($sale_id);
 
-            if (!$sale_document) {
-                throw new Exception("COMPROBANTE DE RESERVA NO ENCONTRADO EN LA BD");
-            }
+            return response()->json(['success' => true, 'message' => $res->last_send_message]);
         } catch (Throwable $th) {
-            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ]);
         }
-
-        $request->merge([
-            'type' => "SALE_DOCUMENT"
-        ]);
-        $res    =   InvoiceController::send_sunat($request);
-        return $res;
     }
 
     public function convert(SaleConvertRequest $request)
@@ -391,6 +394,26 @@ sale_document_id:1
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    /*
+array:1 [ // app\Http\Controllers\Tenant\SaleController.php:403
+  "sale_id" => "12"
+]
+*/
+    public function annular(Request $request)
+    {
+        try {
+            $credit_note    =   $this->s_sale->annular($request->toArray());
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ]);
         }
     }
 }

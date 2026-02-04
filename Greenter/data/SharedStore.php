@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Greenter\Data;
+namespace Greenter\Data;
 
-use Illuminate\Http\Request;
+use App\Models\Company as TenantCompany;
+use App\Models\Tenant\Maintenance\Company\CompanyInvoice;
 use Greenter\Model\Company\Company;
 use Greenter\Model\Client\Client;
 use Greenter\Model\Company\Address;
-use Illuminate\Support\Facades\DB;
 
 class SharedStore
 {
     public function getCompany(): Company
     {
         //======= OBTENIENDO DATA DE EMPRESA =========
-        $company    =   DB::select('select * from companies as c where c.id=1')[0];
-        $company_invoice    =   DB::select('select * from company_invoices as ci where ci.company_id = 1')[0];
+        $company    =           TenantCompany::findOrFail(1);
+        $company_invoice    =   CompanyInvoice::findOrFail(1);
         //====== NOTA COD LOCAL POR DEFECTO 0000 DE LA CENTRAL ======= //
 
         return (new Company())

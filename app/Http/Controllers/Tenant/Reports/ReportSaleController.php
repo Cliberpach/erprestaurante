@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Tenant\Reports;
 
 use App\Exports\Tenant\Reports\RSale\RSaleExport;
-use App\Exports\Tenant\ReportSaleExport;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Barryvdh\DomPDF\Facade\Pdf;

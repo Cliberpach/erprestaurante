@@ -40,7 +40,7 @@ class CounterValidation
         $lst_detail         =   $this->s_order->getOrderDetail($order_id);
         $payment_methods    =   UtilController::getPaymentMethods();
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
-        $invoice_types      =   UtilController::getInvoiceTypes();
+        $invoice_types      =   UtilController::getInvoiceTypes()->whereIn('id', [65, 66,67]);
 
         $vars_mdl_customer  =   UtilController::getVarsMdlCustomer();
 

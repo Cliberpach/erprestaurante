@@ -3,6 +3,8 @@
 namespace App\Http\Services\Tenant\Sale\Sale;
 
 use App\Http\Controllers\Tenant\NumberToLettersController;
+use App\Models\Company;
+use App\Models\Landlord\Customer;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\WorkShop\Service;
@@ -91,6 +93,9 @@ class SaleDto
 
         foreach ($data as $item) {
 
+            $s_dto      =   [];
+            $factor     =   (100 + $sale->igv_percentage) / 100;
+
             $s_dto['created_at']                =   Carbon::now();
             $s_dto['sale_id']                   =   $sale->id;
             $s_dto['warehouse_id']              =   $item->warehouse_id;
@@ -107,13 +112,13 @@ class SaleDto
             $s_dto['sale_price']                =   $item->sale_price;
             $s_dto['total']                     =   $item->total;
 
-            $s_dto['mto_valor_unitario']     =   (float)($item->sale_price / 1.18);
-            $s_dto['mto_valor_venta']        =   (float)($sale->total / 1.18);
-            $s_dto['mto_base_igv']           =   (float)($sale->total / 1.18);
+            $s_dto['mto_valor_unitario']     =   (float)($item->sale_price / $factor);
+            $s_dto['mto_valor_venta']        =   (float)($item->total / $factor);
+            $s_dto['mto_base_igv']           =   (float)($item->total / $factor);
             $s_dto['porcentaje_igv']         =   $sale->igv_percentage;
-            $s_dto['igv']                    =   (float)($sale->total) - (float)($sale->total / 1.18);
+            $s_dto['igv']                    =   (float)($item->total) - (float)($item->total / $factor);
             $s_dto['tip_afe_igv']            =   10;
-            $s_dto['total_impuestos']        =   (float)($sale->total) - (float)($sale->total / 1.18);
+            $s_dto['total_impuestos']        =   (float)($item->total) - (float)($item->total / $factor);
             $s_dto['mto_precio_unitario']    =   (float)($item->sale_price);
 
             $dto[]  =   $s_dto;
@@ -128,6 +133,7 @@ class SaleDto
         $dto    =   [];
         foreach ($lst_items as $item) {
             $_item      =   [];
+            $factor     =   (100 + $sale->igv_percentage) / 100;
 
             $_item['created_at']        =   Carbon::now();
             $_item['sale_id']           =   $sale->id;
@@ -142,13 +148,13 @@ class SaleDto
             $_item['type_dish_name']    =   $item->type_dish_name;
             $_item['observation']       =   mb_strtoupper(trim($item->observation ?? null), 'UTF-8');
 
-            $_item['mto_valor_unitario']     =   (float)($item->sale_price / 1.18);
-            $_item['mto_valor_venta']        =   (float)($sale->total / 1.18);
-            $_item['mto_base_igv']           =   (float)($sale->total / 1.18);
+            $_item['mto_valor_unitario']     =   (float)($item->sale_price / $factor);
+            $_item['mto_valor_venta']        =   (float)($item->total / $factor);
+            $_item['mto_base_igv']           =   (float)($item->total / $factor);
             $_item['porcentaje_igv']         =   $sale->igv_percentage;
-            $_item['igv']                    =   (float)($sale->total) - (float)($sale->total / 1.18);
+            $_item['igv']                    =   (float)($item->total) - (float)($item->total / $factor);
             $_item['tip_afe_igv']            =   10;
-            $_item['total_impuestos']        =   (float)($sale->total) - (float)($sale->total / 1.18);
+            $_item['total_impuestos']        =   (float)($item->total) - (float)($item->total / $factor);
             $_item['mto_precio_unitario']    =   (float)($item->sale_price);
 
             $dto[]  =   $_item;
@@ -233,5 +239,67 @@ class SaleDto
 
             return $item;
         }, $data);
+    }
+
+    public function getDtoInvoicing(Sale $sale, $lst_detail): array
+    {
+        $dto            =   [];
+        $customer_dto   =   [];
+        $company        =   Company::findOrFail(1);
+
+        //======== CUSTOMER DATA ==========
+        $customer_dto['tipoDoc']     =   $sale->customer_document_code;
+        $customer_dto['numDoc']      =   $sale->customer_document_number;
+        $customer_dto['rznSocial']   =   $sale->customer_name;
+        $customer_dto['telephone']   =   $sale->customer_phone;
+
+        $customer                    =   Customer::findOrFail($sale->customer_id);
+        $customer_dto['address']     =   $customer->address;
+        $customer_dto['email']       =   $customer->email;
+
+        //========= FACTURA MASTER =========
+        $dto['ublVersion']      =   '2.1';
+        $dto['fecVencimiento']  =   $sale->created_at;
+        $dto['tipoOperacion']   =   '0101';
+        $dto['tipoDoc']         =   $sale->type_sale_code;
+        $dto['serie']           =   $sale->serie;
+        $dto['correlativo']     =   $sale->correlative;
+        $dto['fechaEmision']    =   $sale->created_at;
+        $dto['formaPago']       =   'CONTADO';
+        $dto['tipoMoneda']      =   'PEN';
+        $dto['company']         =   1;
+        $dto['client']          =   $customer_dto;
+        $dto['mtoOperGravadas'] =   $sale->subtotal;
+        $dto['mtoIGV']          =   $sale->igv_amount;
+        $dto['totalImpuestos']  =   $sale->igv_amount;
+        $dto['valorVenta']      =   $sale->subtotal;
+        $dto['subTotal']        =   $sale->total;
+        $dto['mtoImpVenta']     =   $sale->total;
+
+        //======= DETAIL ===========
+        $details =   [];
+        foreach ($lst_detail as $item) {
+            $_item  =   [];
+            $_item['codProducto']       =   $item->item_id . '-' . $item->item_name;
+            $_item['unidad']            =   'NIU';
+            $_item['descripcion']       =   $item->item_name;
+            $_item['cantidad']          =   $item->quantity;
+            $_item['mtoValorUnitario']  =   $item->mto_valor_unitario;
+            $_item['mtoValorVenta']     =   $item->mto_valor_venta;
+            $_item['mtoBaseIgv']        =   $item->mto_base_igv;
+            $_item['porcentajeIgv']     =   $item->porcentaje_igv;
+            $_item['igv']               =   $item->igv;
+            $_item['tipAfeIgv']         =   $item->tip_afe_igv;
+            $_item['totalImpuestos']    =   $item->total_impuestos;
+            $_item['mtoPrecioUnitario'] =   $item->mto_precio_unitario;
+
+            $details[]   =   $_item;
+        }
+
+        $dto['details'] =   $details;
+        $dto['legends'] =   $sale->legend;
+
+        $dto['company'] =   $company;
+        return $dto;
     }
 }

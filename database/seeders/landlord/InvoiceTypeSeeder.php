@@ -32,7 +32,7 @@ class InvoiceTypeSeeder extends Seeder
         $tipo_doc->general_table_id =   $master->id;
         $tipo_doc->name             =   'BOLETA ELECTRÓNICA';
         $tipo_doc->description      =   'BOLETA ELECTRÓNICA';
-        $tipo_doc->symbol           =   '09';
+        $tipo_doc->symbol           =   '03';
         $tipo_doc->parameter        =   'B';
         $tipo_doc->editable         =   false;
         $tipo_doc->save();
@@ -52,6 +52,24 @@ class InvoiceTypeSeeder extends Seeder
         $tipo_doc->description      =   'NOTA DE VENTA';
         $tipo_doc->symbol           =   'NV';
         $tipo_doc->parameter        =   'NV';
+        $tipo_doc->editable         =   false;
+        $tipo_doc->save();
+
+        $tipo_doc                   =   new GeneralTableDetail();
+        $tipo_doc->general_table_id =   $master->id;
+        $tipo_doc->name             =   'NOTA DE CREDITO BOLETA';
+        $tipo_doc->description      =   'NOTA DE CREDITO BOLETA';
+        $tipo_doc->symbol           =   '07';
+        $tipo_doc->parameter        =   'BB';
+        $tipo_doc->editable         =   false;
+        $tipo_doc->save();
+
+        $tipo_doc                   =   new GeneralTableDetail();
+        $tipo_doc->general_table_id =   $master->id;
+        $tipo_doc->name             =   'NOTA DE CREDITO FACTURA';
+        $tipo_doc->description      =   'NOTA DE CREDITO FACTURA';
+        $tipo_doc->symbol           =   '07';
+        $tipo_doc->parameter        =   'FF';
         $tipo_doc->editable         =   false;
         $tipo_doc->save();
     }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,7 +23,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .details p, .totals p {
+        .details p,
+        .totals p {
             margin: 5px 0;
             font-size: 16px;
         }
@@ -81,21 +83,27 @@
         }
 
 
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 15px 0;
-            background-color: #f8f9fa;
-            color: #6c757d;
-            font-size: 12px;
-            border-top: 1px solid #e9ecef;
+        @page {
+            margin-bottom: 40px;
         }
 
-        .footer p {
-            margin: 0;
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+
+            height: 50px;
+            text-align: center;
+            font-size: 10px;
+            color: #555;
+            border-top: 1px solid #ccc;
+            background-color: #f8f9fa;
+            padding-top: 4px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
 
@@ -104,7 +112,8 @@
             <tr>
                 <!-- Columna 1: Imagen -->
                 <td style="width: 20%; text-align: left;">
-                    <img src="{{ $company->logo_url }}" alt="Logo" style="height: 100px; object-fit: contain; max-width: 120px;">
+                    <img src="{{ $company->logo_url }}" alt="Logo"
+                        style="height: 100px; object-fit: contain; max-width: 120px;">
                 </td>
 
                 <!-- Columna 2: Información de la empresa -->
@@ -149,34 +158,44 @@
         <table class="tbl-report-sale">
             <thead>
                 <tr>
+                    <th>FECHA</th>
+                    <th>TIPO</th>
+                    <th>CÓDIGO</th>
+                    <th>SERIE</th>
+                    <th>CORRELATIVO</th>
+                    <th>USER</th>
+                    <th>CLIENTE TIPO DOC</th>
+                    <th>CL COD DOC</th>
+                    <th>CL DOC</th>
                     <th>CLIENTE</th>
-                    <th>TIPO DOC</th>
-                    <th>DOC</th>
-                    <th>FEC</th>
                     <th>SUBTOTAL</th>
                     <th>IGV</th>
                     <th>%IGV</th>
                     <th>TOTAL</th>
-                    <th>PRODUCTO</th>
-                    <th>CATEGORÍA</th>
-                    <th>ESTADO</th>
+                    <th>SUNAT</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($report_contable as $item)
-                <tr>
-                    <td>{{ $item->customer_name }}</td>
-                    <td>{{ $item->type_sale_name }}</td>
-                    <td>{{ $item->document }}</td>
-                    <td>{{ $item->created_at }}</td>
-                    <td>{{ $item->subtotal }}</td>
-                    <td>{{ $item->igv_amount }}</td>
-                    <td>{{ $item->igv_percentage }}</td>
-                    <td>{{ $item->total }}</td>
-                    <td>{{ $item->product_name }}</td>
-                    <td>{{ $item->category_name }}</td>
-                    <td>{{ $item->estado }}</td>
-                </tr>
+                @foreach ($report_contable as $sale)
+                    <tr>
+                        <td>{{ $sale->created_at }}</td>
+                        <td>{{ $sale->type_sale_name }}</td>
+                        <td>{{ $sale->type_sale_code }}</td>
+                        <td>{{ $sale->serie }}</td>
+                        <td>{{ $sale->correlative }}</td>
+                        <td>{{ $sale->creator_user_name }}</td>
+                        <td>{{ $sale->customer_type_document }}</td>
+                        <td>{{ $sale->customer_document_code }}</td>
+                        <td>{{ $sale->customer_document_number }}</td>
+                        <td>{{ $sale->customer_name }}</td>
+
+                        <td>{{ number_format($sale->subtotal, 2, '.', ',') }}</td>
+                        <td>{{ number_format($sale->igv_amount, 2, '.', ',') }}</td>
+                        <td>{{ number_format($sale->igv_percentage, 2, '.', ',') }}</td>
+                        <td>{{ number_format($sale->total, 2, '.', ',') }}</td>
+
+                        <td>{{ $sale->sunat_status }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
@@ -187,4 +206,5 @@
         </div>
     </div>
 </body>
+
 </html>

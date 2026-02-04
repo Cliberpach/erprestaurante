@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+    @include('sales.sale_document.modals.mdl_nota_credito')
     @include('sales.sale_document.modals.mdl_convert')
     <div class="card overflow-hidden">
         <div class="card-header">
@@ -146,6 +147,7 @@
         function events() {
             startDataTableSales();
             eventsMdlConvert();
+            eventsMdlNc();
         }
 
         function startDataTableSales() {
@@ -285,11 +287,11 @@
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">`;
 
-                            if (data.type_sale_code === '09' || data.type_sale_code === '01') {
+                            if (data.type_sale_code === '03' || data.type_sale_code === '01') {
                                 if (data.sunat_status === 'PENDIENTE' || data.sunat_status ===
                                     'RECHAZADO') {
                                     acciones += `<li>
-                                                    <a class="dropdown-item text-primary" href="javascript:void(0);">
+                                                    <a class="dropdown-item text-primary" href="javascript:void(0);" onclick="sendSunat(${data.id})">
                                                         <i class="fa-solid fa-paper-plane"></i> Sunat
                                                     </a>
                                                 </li>`;
@@ -303,6 +305,14 @@
                                         <i class="fas fa-right-left"></i> Convertir
                                     </a>
                                 </li>`;
+                            }
+
+                            if (data.sunat_status === 'ACEPTADO') {
+                                acciones += `<li>
+                                                    <a class="dropdown-item text-danger" href="javascript:void(0);" onclick="openMdlNotaCredito(${data.id})">
+                                                        <i class="fa-solid fa-ban"></i> Anular
+                                                    </a>
+                                                </li>`;
                             }
 
                             acciones += `</ul></div>`;
@@ -390,9 +400,9 @@
             window.location.href = route;
         }
 
-        function sendSunat(sale_document_id) {
+        async function sendSunat(saleId) {
 
-            const sale_document = getRowById(dtSales, sale_document_id);
+            const sale_document = getRowById(dtSales, saleId);
 
             let message = `Enviar el documento: ${sale_document.serie}-${sale_document.correlative} a Sunat?`;
 
@@ -418,45 +428,28 @@
 
                     try {
                         toastr.clear();
-                        const token = document.querySelector('input[name="_token"]').value;
 
                         const formData = new FormData();
                         const urlInvoice = @json(route('tenant.ventas.comprobante_venta.send_sunat'));
 
-                        formData.append('sale_document_id', sale_document_id);
+                        formData.append('sale_id', saleId);
 
-                        const response = await fetch(urlInvoice, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': token
-                            },
-                            body: formData
-                        });
-
-                        const res = await response.json();
+                        const res = await axios.post(urlInvoice, formData);
 
                         Swal.close();
 
-                        if (response.status === 422) {
-                            if ('errors' in res) {
-                                //pintarErroresValidacion(res.errors);
-                            }
-                            Swal.close();
-                            return;
-                        }
-
-                        if (res.success) {
+                        if (res.data.success) {
                             dtSales.ajax.reload(null, false);
-                            toastr.success(res.message, 'OPERACIÓN COMPLETADA');
-                            //     window.location.href    =   sale_index;
+                            toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
                             Swal.close();
                         } else {
-                            toastr.error(res.message, 'ERROR EN EL SERVIDOR');
+                            toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
                             Swal.close();
                         }
 
                     } catch (error) {
-                        toastr.error(error, 'ERROR EN LA PETICIÓN REGISTRAR VENTA');
+                        toastr.error(error, 'ERROR EN LA PETICIÓN ENVIAR A SUNAT');
+                        Swal.close();
                     }
 
                 } else if (
