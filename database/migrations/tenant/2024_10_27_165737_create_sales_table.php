@@ -78,7 +78,7 @@ return new class extends Migration
             $table->longText('ruta_cdr')->nullable();
             $table->longText('ruta_xml')->nullable();
             $table->longText('ruta_qr')->nullable();
-            $table->longText('last_send_message');
+            $table->longText('last_send_message')->nullable();
 
             $table->enum('type', ['PRODUCTOS', 'RESERVAS']);
 

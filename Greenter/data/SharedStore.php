@@ -1,6 +1,6 @@
 <?php
 
-namespace Greenter\Data;
+namespace Greenter\data;
 
 use App\Models\Company as TenantCompany;
 use App\Models\Tenant\Maintenance\Company\CompanyInvoice;

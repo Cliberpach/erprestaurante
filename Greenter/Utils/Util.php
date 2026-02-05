@@ -13,7 +13,7 @@ use Greenter\Report\PdfReport;
 use Greenter\Report\Resolver\DefaultTemplateResolver;
 use Greenter\Report\XmlUtils;
 use Greenter\See;
-use Greenter\Data\SharedStore;
+use Greenter\data\SharedStore;
 use Exception;
 use Illuminate\Support\Facades\File;
 
