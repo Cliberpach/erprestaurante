@@ -29,12 +29,11 @@ Route::get('/test-tenant', function () {
 
 Route::post('/send-message', [AlertAppController::class, 'store']);
 
-Route::get('impresoras', function () {
-    Route::get('ListarPedidosPendientesImprimir', [ApiController::class, 'ListarPedidosPendientesImprimir']);
-    Route::get('ObtenerPedido_PorCodigo/{idpedido}', [ApiController::class, 'ObtenerPedido_PorCodigo']);
-    Route::get('ActualizarPedidosPendientesImprimir/{idpedido}', [ApiController::class, 'ActualizarPedidosPendientesImprimir']);
-    Route::get('ObtenerRecibo_PorCodigo/{idrecibo}', [ApiController::class, 'ObtenerRecibo_PorCodigo']);
-    Route::get('ActualizarReciboPendienteImprimir/{idrecibo}', [ApiController::class, 'ActualizarReciboPendienteImprimir']);
-    Route::get('ObtenerComanda_PorCodigo/{idpedido}', [ApiController::class, 'ObtenerComanda_PorCodigo']);
-    Route::get('ActualizarComandaPendienteImprimir/{idpedido}', [ApiController::class, 'ActualizarComandaPendienteImprimir']);
-});
+
+Route::get('ListarPedidosPendientesImprimir', [ApiController::class, 'ListarPedidosPendientesImprimir']);
+Route::get('ObtenerPedido_PorCodigo/{idpedido}', [ApiController::class, 'ObtenerPedido_PorCodigo']);
+Route::get('ActualizarPedidosPendientesImprimir/{idpedido}', [ApiController::class, 'ActualizarPedidosPendientesImprimir']);
+Route::get('ObtenerRecibo_PorCodigo/{idrecibo}', [ApiController::class, 'ObtenerRecibo_PorCodigo']);
+Route::get('ActualizarReciboPendienteImprimir/{idrecibo}', [ApiController::class, 'ActualizarReciboPendienteImprimir']);
+Route::get('ObtenerComanda_PorCodigo/{idpedido}', [ApiController::class, 'ObtenerComanda_PorCodigo']);
+Route::get('ActualizarComandaPendienteImprimir/{idpedido}', [ApiController::class, 'ActualizarComandaPendienteImprimir']);
