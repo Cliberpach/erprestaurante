@@ -1,12 +1,27 @@
 <form action="" id="formNotaCredito">
 
-    <!-- MOTIVO (PRIORIDAD) -->
-    <div class="card border-primary mb-3 shadow-sm">
+    <!-- MOTIVO / OBSERVACIÓN -->
+    <div class="card mb-3 shadow-sm">
         <div class="card-body">
-            <label class="form-label fw-bold text-primary">
-                <i class="fas fa-pen text-warning"></i> MOTIVO DE LA NOTA DE CRÉDITO
-            </label>
-            <textarea name="motive" id="motive" required class="form-control" rows="4" placeholder="Ingrese el motivo de la anulación..."></textarea>
+            <div class="row g-3">
+
+                <!-- MOTIVO -->
+                <div class="col-12 col-lg-6">
+                    <label class="form-label fw-bold text-primary">
+                        <i class="fas fa-pen text-warning"></i> MOTIVO DE LA NOTA DE CRÉDITO
+                    </label>
+
+                    <textarea required name="motive" id="motive" class="form-control input-fill" rows="4" maxlength="200"
+                        placeholder="Ingrese el motivo de la nota de crédito..."></textarea>
+
+                    <small class="text-muted">
+                        Máximo 200 caracteres.
+                    </small>
+
+                    <p class="motive_error msgError"></p>
+                </div>
+
+            </div>
         </div>
     </div>
 
@@ -28,7 +43,6 @@
                     <p><i class="fas fa-hashtag text-dark"></i> <strong>N° Documento:</strong> <span
                             id="nc_doc">—</span></p>
 
-
                     <hr>
 
                     <p><i class="fas fa-receipt text-info"></i> <strong>Tipo:</strong> <span id="nc_type_sale">—</span>
@@ -42,8 +56,9 @@
                 <!-- COLUMNA 2 -->
                 <div class="col-12 col-lg-6">
                     <p>
-                        <i class="fas fa-cash-register text-primary"></i> <strong>Caja:</strong> <span
-                            id="nc_petty_cash">—</span>
+                        <i class="fas fa-cash-register text-primary"></i>
+                        <strong>Caja:</strong>
+                        <span id="nc_petty_cash">—</span>
                     </p>
 
                     <hr>
@@ -54,6 +69,7 @@
                             id="nc_igv_percent">—</span>%</p>
                     <p><i class="fas fa-receipt text-danger"></i> <strong>IGV Monto:</strong> S/ <span
                             id="nc_igv_amount">—</span></p>
+
                     <p>
                         <i class="fas fa-money-bill-wave text-success"></i>
                         <strong>Total:</strong>

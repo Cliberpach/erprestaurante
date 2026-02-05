@@ -36,8 +36,43 @@ class CompanyNumerationRequest extends FormRequest
                     }
                 },
             ],
-            'serie'         => 'required|string|max:255',
             'start_number'  => 'required|integer|min:1|max:99999999',
+            'serie' => [
+                'required',
+                'string',
+                'size:4',
+                function ($attribute, $value, $fail) {
+
+                    $billingTypeId = $this->billing_type_document;
+
+                    if (!$billingTypeId) {
+                        $fail('El tipo de documento seleccionado no es válido.');
+                        return;
+                    }
+
+                    $billingType = GeneralTableDetail::where('id', $billingTypeId)
+                        ->where('status', 'ACTIVO')
+                        ->first();
+
+                    if (!$billingType) {
+                        $fail('El tipo de documento seleccionado no es válido.');
+                        return;
+                    }
+
+                    $length =   strlen($billingType->parameter);
+
+                    $seriePrefix = substr($value, 0, $length);
+                    if ($seriePrefix !== $billingType->parameter) {
+                        $fail('Los dos primeros caracteres de la serie deben coincidir con el tipo de documento.');
+                    }
+
+                    $serieSufix = substr($value, $length);
+                    if (!ctype_digit($serieSufix)) {
+                        $fail('La serie debe contener el parámetro al inicio y luego números.');
+                    }
+
+                },
+            ],
         ];
     }
 

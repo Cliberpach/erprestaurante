@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Tenant\Invoicing;
 
+use App\Http\Services\Tenant\Invoicing\CreditNote\CreditNoteService;
 use App\Http\Services\Tenant\Invoicing\GuiaFacturacion\GuiaFacturacionService;
 use App\Http\Services\Tenant\Invoicing\Invoice\InvoiceService;
 use App\Models\Tenant\Maintenance\Company\CompanyInvoice;
@@ -16,6 +17,7 @@ class InvoicingManager
 
     protected GuiaFacturacionService $s_guia_fac;
     private InvoiceService $s_invoice;
+    private CreditNoteService $s_credit_note;
 
     /**
      * Create a new class instance.
@@ -24,6 +26,7 @@ class InvoicingManager
     {
         //$this->s_guia_fac       =   new GuiaFacturacionService();
         $this->s_invoice        =   new InvoiceService();
+        $this->s_credit_note    =   new CreditNoteService();
     }
 
     public function consultarGuiaSunat() {}
@@ -41,6 +44,13 @@ class InvoicingManager
         $util   =   $this->getUtil();
         $see    =   $this->config($util);
         return $this->s_invoice->sendInvoice($dto, $util, $see);
+    }
+
+    public function sendCreditNote(array $dto)
+    {
+        $util   =   $this->getUtil();
+        $see    =   $this->config($util);
+        return $this->s_credit_note->send($dto, $util, $see);
     }
 
 

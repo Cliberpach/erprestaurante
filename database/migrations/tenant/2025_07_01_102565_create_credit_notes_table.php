@@ -18,6 +18,15 @@ return new class extends Migration
             $table->unsignedBigInteger('sale_id');
             $table->foreign('sale_id')->references('id')->on('sales');
 
+            //========== CAJA EN LA QUE SE ESTÁ CREANDO LA NOTA =====
+            $table->unsignedBigInteger('petty_cash_id');
+            $table->foreign('petty_cash_id')->references('id')->on('petty_cashes');
+            $table->string('petty_cash_name', 160);
+
+            //========= MOVIMIENTO DE LA CAJA EN LA CUAL SE GENERA LA NOTA =======
+            $table->unsignedBigInteger('petty_cash_book_id');
+            $table->foreign('petty_cash_book_id')->references('id')->on('petty_cash_books');
+
             $table->string('type_doc_affected', 160);
             $table->string('num_doc_affected', 160);
             $table->string('code_motive', 160);
@@ -83,6 +92,8 @@ return new class extends Migration
             $table->string('editor_user_name')->nullable();
             $table->unsignedBigInteger('delete_user_id')->nullable();
             $table->string('delete_user_name')->nullable();
+
+            $table->longText('last_send_message');
 
             /* 🔹 TIMESTAMPS */
             $table->timestamps();

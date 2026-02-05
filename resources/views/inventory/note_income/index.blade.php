@@ -4,22 +4,18 @@
     NOTAS INGRESO
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="{{asset('assets/css/styles.css')}}">
-@endsection
-
 @section('content')
-
     @include('utils.spinners.spinner_1')
     @include('inventory.note_income.modals.mdl_show')
 
     <div class="card">
         @csrf
-        <div class="card-header d-flex flex-row justify-content-between">
+        <div class="card-header d-flex justify-content-between flex-row">
             <h4 class="card-title">NOTAS DE INGRESO</h4>
 
             <div class="input-group-append">
-                <button onclick="goToNoteIncomeCreate()"  type="button" data-bs-whatever="Nueva caja" class="btn btn-primary btn-add-new" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <button onclick="goToNoteIncomeCreate()" type="button" data-bs-whatever="Nueva caja"
+                    class="btn btn-primary btn-add-new" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <div class="lign-items-center d-flex align-items-center">
                         <i class="fas fa-plus pe-1"></i>
                         <p class="mb-0 ml-2"> NUEVO</p>
@@ -50,7 +46,7 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                   @include('inventory.note_income.tables.table_list_note_income')
+                    @include('inventory.note_income.tables.table_list_note_income')
                 </div>
             </div>
 
@@ -59,61 +55,57 @@
 @endsection
 
 @section('js')
-<script>
-let dtNoteIncome =   null;
+    <script>
+        let dtNoteIncome = null;
 
-document.addEventListener('DOMContentLoaded',()=>{
-    events();
-})
+        document.addEventListener('DOMContentLoaded', () => {
+            events();
+        })
 
-function events(){
-    paintAlerts();
-    startDataTableNoteIncome();
-    loadSelect2();
-}
+        function events() {
+            loadDtNotes();
+        }
 
-function loadSelect2(){
-    $( '.select2_form' ).select2( {
-        theme: "bootstrap-5",
-        width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-        placeholder: $( this ).data( 'placeholder' ),
-        allowClear: true
-    } );
-}
+        function loadDtNotes() {
+            const urlGetNoteIncome = '{{ route('tenant.inventario.nota_ingreso.getNoteIncome') }}';
 
-function paintAlerts(){
-    @if(Session::has('note_income_success'))
-        toastr.success('{{ Session::get('note_income_success') }}');
-    @endif
-}
-
-function startDataTableNoteIncome(){
-    const urlGetNoteIncome = '{{ route('tenant.inventario.nota_ingreso.getNoteIncome') }}';
-
-    dtNoteIncome  =   new DataTable('#tbl_list_note_income',{
-        responsive:true,
-        serverSide: true,
-        processing: true,
-        ajax: {
-            url: urlGetNoteIncome,
-            type: 'GET',
-            data:function(d){
-                // d.product_id    =   document.querySelector('#product_id').value;
-                d.date_start    =   document.querySelector('#date_start').value;
-                d.date_end      =   document.querySelector('#date_end').value;
-            }
-        },
-        order: [[0, 'desc']],
-        columns: [
-            { data: 'id', name: 'id' },
-            { data: 'created_at', name: 'created_at' },
-            { data: 'user_recorder_name', name: 'user_recorder_name' },
-            { data: 'observation', name: 'observation' },
-            {
-                data: null,
-                name: null,
-                render: function(data, type, row, meta) {
-                    return `
+            dtNoteIncome = new DataTable('#tbl_list_note_income', {
+                responsive: true,
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: urlGetNoteIncome,
+                    type: 'GET',
+                    data: function(d) {
+                        // d.product_id    =   document.querySelector('#product_id').value;
+                        d.date_start = document.querySelector('#date_start').value;
+                        d.date_end = document.querySelector('#date_end').value;
+                    }
+                },
+                order: [
+                    [0, 'desc']
+                ],
+                columns: [{
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at'
+                    },
+                    {
+                        data: 'user_recorder_name',
+                        name: 'user_recorder_name'
+                    },
+                    {
+                        data: 'observation',
+                        name: 'observation'
+                    },
+                    {
+                        data: null,
+                        name: null,
+                        render: function(data, type, row, meta) {
+                            return `
                     <div class="btn-group">
                     <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-bars"></i>
@@ -122,78 +114,75 @@ function startDataTableNoteIncome(){
                         <li><a class="dropdown-item" href="javascript:void(0);" onclick="openMdlShowNoteIncome(${data.id});"><i class="fas fa-eye"></i> Ver</a></li>
                     </ul>
                     </div>`;
+                        }
+                    }
+                ],
+                pageLength: 25,
+                lengthChange: false,
+                language: {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "emptyTable": "No hay datos disponibles en la tabla",
+                    "aria": {
+                        "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                        "sortDescending": ": activar para ordenar la columna de manera descendente"
+                    }
                 }
-            }
-        ],
-        pageLength: 25,
-        lengthChange: false,
-        language: {
-            "lengthMenu": "Mostrar _MENU_ registros por página",
-            "zeroRecords": "No se encontraron resultados",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
-            "search": "Buscar:",
-            "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
-            },
-            "loadingRecords": "Cargando...",
-            "processing": "Procesando...",
-            "emptyTable": "No hay datos disponibles en la tabla",
-            "aria": {
-                "sortAscending": ": activar para ordenar la columna de manera ascendente",
-                "sortDescending": ": activar para ordenar la columna de manera descendente"
-            }
+            });
         }
-    });
-}
 
 
-function goToNoteIncomeCreate(){
-    const route =   @json(route('tenant.inventario.nota_ingreso.create'));
-    window.location.href = route;
-}
+        function goToNoteIncomeCreate() {
+            const route = @json(route('tenant.inventario.nota_ingreso.create'));
+            window.location.href = route;
+        }
 
-function filterDataTable(){
-    dtNoteIncome.ajax.reload();
-}
+        function filterDataTable() {
+            dtNoteIncome.ajax.reload();
+        }
 
-function changeDateStart(date_start){
+        function changeDateStart(date_start) {
 
-    toatr.clear();
-    const date_end  =   document.querySelector('#date_end').value;
+            toatr.clear();
+            const date_end = document.querySelector('#date_end').value;
 
-    if(date_start > date_end && date_end){
-        document.querySelector('#date_start').value  =   '';
-        toastr.error('LA FECHA DE INICIO DEBE SER MENOR IGUAL A LA FECHA FINAL!!');
-        return;
-    }
+            if (date_start > date_end && date_end) {
+                document.querySelector('#date_start').value = '';
+                toastr.error('LA FECHA DE INICIO DEBE SER MENOR IGUAL A LA FECHA FINAL!!');
+                return;
+            }
 
-    filterDataTable();
+            filterDataTable();
 
-}
+        }
 
-function changeDateEnd(date_end){
+        function changeDateEnd(date_end) {
 
-    toatr.clear();
-    const date_start  =   document.querySelector('#date_start').value;
+            toatr.clear();
+            const date_start = document.querySelector('#date_start').value;
 
-    if(date_end < date_start && date_start){
-        document.querySelector('#date_end').value  =   '';
-        toastr.error('LA FECHA FINAL DEBE SER MAYOR IGUAL A LA FECHA INICIAL!!');
-        return;
-    }
+            if (date_end < date_start && date_start) {
+                document.querySelector('#date_end').value = '';
+                toastr.error('LA FECHA FINAL DEBE SER MAYOR IGUAL A LA FECHA INICIAL!!');
+                return;
+            }
 
-    filterDataTable();
+            filterDataTable();
 
-}
-
-
-
-</script>
-<script src="{{asset('assets/js/utils.js')}}"></script>
-<script src="{{ asset('assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
+        }
+    </script>
+    <script src="{{ asset('assets/js/utils.js') }}"></script>
+    <script src="{{ asset('assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
 @endsection

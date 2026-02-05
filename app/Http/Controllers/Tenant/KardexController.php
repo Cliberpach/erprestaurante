@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Tenant;
 
-use App\Exports\Tenant\KardexExport;
+use App\Exports\Tenant\Inventory\Kardex\KardexExport;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Product;
 use App\Models\Tenant\Kardex;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -19,19 +20,11 @@ class KardexController extends Controller
 
     public function index()
     {
-
-        $products   =   DB::select('select
-                        p.id,
-                        p.name
-                        from products as p
-                        where p.status = "ACTIVE"');
-
-        return view('inventory.kardex.index', compact('products'));
+        return view('inventory.kardex.index');
     }
 
     public function getKardex(Request $request)
     {
-
         $kardex =   $this->queryKardex($request);
 
         return DataTables::of($kardex)->make(true);
@@ -39,76 +32,18 @@ class KardexController extends Controller
 
     public static function queryKardex(Request $request)
     {
-        $kardex = DB::table('kardex as k')
-            ->select(
-                'k.id',
-                'k.created_at',
-                'k.product_id',
-                'k.product_name',
-                'k.category_id',
-                'k.category_name',
-                'k.brand_id',
-                'k.brand_name',
-                'k.type',
-                'k.warehouse_id',
-                'k.sale_document_id',
-                'k.note_income_id',
-                'k.document',
-                'k.quantity',
-                'k.user_recorder_id',
-                'k.user_recorder_name'
-            )
-            ->where('k.status', '!=', 'INACTIVE')
-            ->orderBy('k.product_id')
-            ->orderBy('k.warehouse_id')
-            ->orderBy('k.created_at');
+        $warehouse_id   =   $request->get('warehouse_id');
+        $product_id     =   $request->get('product_id');
+        $start_date     =   $request->get('start_date');
+        $end_date       =   $request->get('end_date');
 
+        $kardex =   DB::select(
+            'CALL sp_kardex(?, ?, ?,?)',
+            [$warehouse_id, $product_id, $start_date, $end_date]
+        );
 
-        if ($request->get('product_id')) {
-            $kardex = $kardex->where('k.product_id', $request->get('product_id'));
-        }
-
-        if ($request->get('date_start')) {
-            $kardex = $kardex->whereDate('k.created_at', '>=', $request->get('date_start'));
-        }
-
-        if ($request->get('date_end')) {
-            $kardex = $kardex->whereDate('k.created_at', '<=', $request->get('date_end'));
-        }
-
-        $kardex = $kardex->get();
-
-        return self::calculateStockMovement($kardex);
+        return $kardex;
     }
-
-    protected static function calculateStockMovement($kardexCollection)
-    {
-        $stock_by_product = [];
-
-        return $kardexCollection->map(function ($item) use (&$stock_by_product) {
-            $key = $item->product_id . '-' . $item->warehouse_id;
-
-            $previous_stock = $stock_by_product[$key] ?? 0;
-
-            $entrada = $item->type === 'IN'  ? (float) $item->quantity : 0;
-            $salida  = $item->type === 'OUT' ? (float) $item->quantity : 0;
-
-            $saldo = $previous_stock + $entrada - $salida;
-
-            // Añadir los campos al objeto
-            $item->stock_previous = number_format($previous_stock, 2, '.', '');
-            $item->entrada = number_format($entrada, 2, '.', '');
-            $item->salida  = number_format($salida, 2, '.', '');
-            $item->stock_later = number_format($saldo, 2, '.', '');
-
-            // Actualizamos el acumulado
-            $stock_by_product[$key] = $saldo;
-
-            return $item;
-        });
-    }
-
-
 
     /*
 array:14 [ // app\Http\Controllers\Tenant\KardexController.php:11
@@ -164,49 +99,37 @@ array:14 [ // app\Http\Controllers\Tenant\KardexController.php:11
 
     public function excel(Request $request)
     {
-        $kardex =   $this->queryKardex($request);
+        $data =   $this->queryKardex($request);
 
-        $kardex->transform(function ($item) {
-            unset($item->id);
-            unset($item->product_id);
-            unset($item->category_id);
-            unset($item->brand_id);
-            unset($item->sale_document_id);
-            unset($item->note_income_id);
-            unset($item->user_recorder_id);
-            return $item;
-        });
+        if ($request->get('product_id')) {
+            $request->merge([
+                'product_name' => Product::findOrFail($request->get('product_id'))->name
+            ]);
+        }
 
-        return Excel::download(new KardexExport($kardex, $request), 'kardex.xlsx');
+        $fecha = Carbon::now()->format('Y-m-d');
+        $fecha = $request->date ?? Carbon::now()->format('Y-m-d');
+
+        return Excel::download(
+            new KardexExport($data, $request, Company::findOrFail(1)),
+            "kardex_producto_{$fecha}.xlsx"
+        );
     }
 
     public function pdf(Request $request)
     {
 
-        $company                =   Company::find(1);
-
-        $report_kardex          =   $this->queryKardex($request);
-
-        $report_kardex->transform(function ($item) {
-            unset($item->id);
-            unset($item->product_id);
-            unset($item->category_id);
-            unset($item->brand_id);
-            unset($item->sale_document_id);
-            unset($item->note_income_id);
-            unset($item->user_recorder_id);
-            return $item;
-        });
-
+        $company       =   Company::find(1);
+        $data          =   $this->queryKardex($request);
 
         $pdf = Pdf::loadview('inventory.kardex.pdf.pdf', [
             'company'               =>  $company,
-            'report_kardex'         =>  $report_kardex,
+            'data'                  =>  $data,
             'filters'               =>  $request
 
         ])->setPaper('a4', 'landscape');
 
 
-        return $pdf->stream('reporte_kardex_' . Carbon::now()->format('Y_m_d_H_i_s') . '.pdf');
+        return $pdf->stream('kardex_producto' . Carbon::now()->format('Y_m_d_H_i_s') . '.pdf');
     }
 }

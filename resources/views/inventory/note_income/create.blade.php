@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('utils.spinners.spinner_1')
     @include('inventory.note_income.modals.mdl_products')
     @include('inventory.note_income.modals.mdl_edit_item')
 
@@ -39,8 +38,7 @@
         const lstNoteIncome = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadSelect2();
-            iniciarDataTableCompraDetalle();
+            loadDtNoteDetail();
             events();
         })
 
@@ -82,24 +80,7 @@
 
         }
 
-        function loadSelect2() {
-            $('.select2_form').select2({
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                allowClear: true
-            });
-
-            $('.select2_form_mdl').select2({
-                theme: "bootstrap-5",
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                allowClear: true,
-                dropdownParent: $('#mdlProductos')
-            });
-        }
-
-        function iniciarDataTableCompraDetalle() {
+        function loadDtNoteDetail() {
             dtCompraDetalle = new DataTable('#tbl_note_income_detail', {
                 language: {
                     "lengthMenu": "Mostrar _MENU_ registros por página",
@@ -169,7 +150,7 @@
             clearTable('tbl_note_income_detail');
             destroyDataTable(dtCompraDetalle);
             pintarTableCompraDetalle(lstNoteIncome);
-            iniciarDataTableCompraDetalle();
+            loadDtNoteDetail();
             toastr.info('PRODUCTO AGREGADO AL DETALLE');
         }
 
@@ -178,9 +159,18 @@
             lstItems.forEach((producto) => {
                 filas += `<tr>
                             <th>
-                                <div style="display:flex;justify-content:center;gap:5px;">
-                                    <i class="fas fa-edit btn btn-warning btnEditItem" data-producto-id="${producto.product_id}"></i>
-                                    <i class="fas fa-trash-alt btn btn-danger btnDeleteItem" data-producto-id="${producto.product_id}"></i>
+                               <div style="display:flex;justify-content:center;gap:5px;">
+                                    <button type="button"
+                                        class="btn btn-warning btn-sm btnEditItem"
+                                        data-producto-id="${producto.product_id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <button type="button"
+                                        class="btn btn-danger btn-sm btnDeleteItem"
+                                        data-producto-id="${producto.product_id}">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             </th>
                             <td>${producto.product_name}</td>

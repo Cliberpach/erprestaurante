@@ -7,6 +7,7 @@ use App\Http\Controllers\FormatController;
 use App\Http\Controllers\UtilController;
 use App\Http\Requests\Sale\SaleStoreRequest;
 use App\Http\Requests\Tenant\Sale\SaleConvertRequest;
+use App\Http\Requests\Tenant\Sale\SaleCreditNoteRequest;
 use App\Http\Services\Tenant\Sale\Sale\SaleManager;
 use App\Models\Company;
 use App\Models\CompanyInvoice;
@@ -268,7 +269,7 @@ array:3 [ // app\Http\Controllers\Tenant\SaleController.php:119
         try {
 
             $company                =   Company::find(1);
-            $sale          =   Sale::findOrFail($sale_id);
+            $sale                   =   Sale::findOrFail($sale_id);
             $sale_products          =   SaleProduct::where('sale_id', $sale_id)->get();
             $sale_dishes            =   SaleDish::where('sale_id', $sale_id)->get();
 
@@ -398,14 +399,20 @@ sale_id:1
     }
 
     /*
-array:1 [ // app\Http\Controllers\Tenant\SaleController.php:403
+array:3 [ // app\Http\Controllers\Tenant\SaleController.php:408
+  "motive" => "error plato"
   "sale_id" => "12"
 ]
 */
-    public function annular(Request $request)
+    public function annular(SaleCreditNoteRequest $request)
     {
+        DB::beginTransaction();
         try {
             $credit_note    =   $this->s_sale->annular($request->toArray());
+
+            $message        =   'NOTA CRÉDITO GENERADA: ' . $credit_note->serie . '-' . $credit_note->correlative;
+            DB::commit();
+            return response()->json(['success' => true, 'message' => $message]);
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json([

@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Tenant\Sale\Sale;
 
+use App\Models\Tenant\Sales\CreditNote\CreditNote;
 use App\Models\Tenant\Sales\Sale\Sale;
 
 class SaleManager
@@ -28,8 +29,8 @@ class SaleManager
         return $this->s_sale->sendSunat($sale_id);
     }
 
-    public function annular(array $data)
+    public function annular(array $data):CreditNote
     {
-        $this->s_sale->annular($data);
+        return $this->s_sale->annular($data);
     }
 }

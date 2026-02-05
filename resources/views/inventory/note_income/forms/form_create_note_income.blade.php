@@ -30,7 +30,7 @@
                         <i class="fas fa-text-width"></i>
                     </span>
                     <div class="form-floating">
-                        <textarea class="form-control" placeholder="Escribir..." id="observation" name="observation"></textarea>
+                        <textarea class="form-control input-fill" placeholder="Escribir..." id="observation" name="observation"></textarea>
                         <label for="observation">Máximo 200 caracteres</label>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                                     <span class="input-group-text" id="basic-addon1">
                                         <i class="fa-solid fa-box-open"></i>
                                     </span>
-                                    <input id="cantidad" name="cantidad" type="text" class="form-control inputEnteroPositivo" placeholder="Cantidad" aria-label="Username" aria-describedby="basic-addon1">
+                                    <input id="cantidad" name="cantidad" type="text" class="form-control inputEnteroPositivo input-fill" placeholder="Cantidad" aria-label="Username" aria-describedby="basic-addon1">
                                   </div>
                             </div>
                         </div>

@@ -240,10 +240,10 @@ HTML;
         if ($typeFile    ==  "zip") {
             if ($tipo_comprobante == 'RESUMEN') {
                 //$fileDir = __DIR__.'/../files/resumenes_cdr';
-                $fileDir    =   public_path('storage/greenter/resumenes/cdr');
+                $fileDir    =   public_path('storage/' . $files_route . '/greenter/resumenes/cdr');
             }
             if ($tipo_comprobante == 'GUIA REMISION') {
-                $fileDir    =   public_path('storage/greenter/guías_remisión/cdr');
+                $fileDir    =   public_path('storage/' . $files_route . '/greenter/guías_remisión/cdr');
             }
             if ($tipo_comprobante == 1) {  //======== FACTURA ====
                 $fileDir    =   public_path('storage/' . $files_route . '/greenter/facturas/cdr');
@@ -252,20 +252,20 @@ HTML;
                 $fileDir    =   public_path('storage/' . $files_route . '/greenter/boletas/cdr');
             }
             if ($tipo_comprobante == '07-03') {
-                $fileDir    =   public_path('storage/greenter/notas_credito_boletas/cdr');
+                $fileDir    =   public_path('storage/' . $files_route . '/greenter/notas_credito_boletas/cdr');
             }
             if ($tipo_comprobante == '07-01') {
-                $fileDir    =   public_path('storage/greenter/notas_credito_facturas/cdr');
+                $fileDir    =   public_path('storage/' . $files_route . '/greenter/notas_credito_facturas/cdr');
             }
         }
 
         if ($typeFile    ==  "xml") {
             if ($tipo_comprobante == 'RESUMEN') {
                 //$fileDir = __DIR__.'/../files/resumenes_xml';
-                $fileDir    =   public_path('storage/greenter/resumenes/xml');
+                $fileDir    =   public_path('storage/' . $files_route . '/greenter/resumenes/xml');
             }
             if ($tipo_comprobante == 'GUIA REMISION') {
-                $fileDir    =   public_path('storage/greenter/guías_remisión/xml');
+                $fileDir    =   public_path('storage/' . $files_route . '/greenter/guías_remisión/xml');
             }
             if ($tipo_comprobante == 1) {   //======== FACTURA =====
                 $fileDir    =   public_path('storage/' . $files_route . '/greenter/facturas/xml');
@@ -274,10 +274,10 @@ HTML;
                 $fileDir = public_path('storage/' . $files_route . '/greenter/boletas/xml');
             }
             if ($tipo_comprobante == '07-03') {
-                $fileDir    =   public_path('storage/greenter/notas_credito_boletas/xml');
+                $fileDir    =   public_path('storage/' . $files_route . '/greenter/notas_credito_boletas/xml');
             }
             if ($tipo_comprobante == '07-01') {
-                $fileDir    =   public_path('storage/greenter/notas_credito_facturas/xml');
+                $fileDir    =   public_path('storage/' . $files_route . '/greenter/notas_credito_facturas/xml');
             }
         }
 

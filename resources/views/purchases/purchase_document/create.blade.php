@@ -4,16 +4,16 @@
     DOCUMENTO DE COMPRA
 @endsection
 
-
 @section('content')
     @include('purchases.purchase_document.modals.mdl_products')
     @include('purchases.purchase_document.modals.mdl_edit_item')
     @include('utils.modals.suppliers.mdl_create_supplier')
 
     <div class="card">
-
         <div class="card-header">
-            <h6>Datos del Documento de Compra <i class="fa-solid fa-toolbox"></i></h6>
+            <div class="title mb-30 d-flex justify-content-between align-items-center">
+                <h6>Datos del Documento de Compra <i class="fa-solid fa-toolbox"></i></h6>
+            </div>
         </div>
         <div class="card-body">
             @include('purchases.purchase_document.forms.form_create')
@@ -40,17 +40,16 @@
         const lstPurchaseDocument = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadSelectPurchases();
+            loadSelectsPurchases();
             iniciarDataTableCompraDetalle();
-            configPurchases();
             events();
         })
 
         function events() {
 
             eventsMdlEditItem();
-            eventsMdlCreateProveedor();
             eventsMdlProducts();
+            eventsMdlCreateProveedor();
 
             document.querySelector('#igv_chk').addEventListener('change', (e) => {
                 toastr.clear();
@@ -99,12 +98,14 @@
                 }
             })
 
+            document.querySelector('#payment_condition_id').addEventListener('change', setExpirationDate);
+
         }
 
-        function loadSelectPurchases() {
-            const typeInvoiceSelect = document.getElementById('tipo_doc');
-            if (typeInvoiceSelect && !typeInvoiceSelect.tomselect) {
-                window.typeInvoiceSelect = new TomSelect(typeInvoiceSelect, {
+        function loadSelectsPurchases() {
+            const paymentConditionSelect = document.getElementById('payment_condition_id');
+            if (paymentConditionSelect && !paymentConditionSelect.tomselect) {
+                window.paymentConditionSelect = new TomSelect(paymentConditionSelect, {
                     valueField: 'id',
                     labelField: 'description',
                     searchField: ['description', 'id'],
@@ -151,10 +152,31 @@
                     }
                 });
             }
-        }
 
-        function configPurchases() {
-            window.typeInvoiceSelect.setValue('BOLETA');
+            const typeDocSelect = document.getElementById('tipo_doc');
+            if (typeDocSelect && !typeDocSelect.tomselect) {
+                window.typeDocSelect = new TomSelect(typeDocSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
         }
 
         function iniciarDataTableCompraDetalle() {
@@ -259,25 +281,10 @@
             let filas = ``;
             lstItems.forEach((producto) => {
                 filas += `<tr>
-                           <th>
-                                <div class="d-flex justify-content-center gap-1">
-                                    <button
-                                        type="button"
-                                        class="btn btn-warning btn-sm btnEditItem"
-                                        data-producto-id="${producto.product_id}"
-                                        title="Editar"
-                                    >
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="btn btn-danger btn-sm btnDeleteItem"
-                                        data-producto-id="${producto.product_id}"
-                                        title="Eliminar"
-                                    >
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
+                            <th>
+                                <div style="display:flex;justify-content:center;gap:5px;">
+                                    <i class="fas fa-edit btn btn-warning btnEditItem" data-producto-id="${producto.product_id}"></i>
+                                    <i class="fas fa-trash-alt btn btn-danger btnDeleteItem" data-producto-id="${producto.product_id}"></i>
                                 </div>
                             </th>
                             <td>${producto.product_name}</td>
@@ -313,7 +320,14 @@
 
 
         function storePurchaseDocument() {
-            Swal.fire({
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            swalWithBootstrapButtons.fire({
                 title: "DESEA REGISTRAR EL DOCUMENTO DE COMPRA?",
                 text: "Se registrará la compra e ingresará stock!",
                 icon: "warning",
@@ -382,7 +396,7 @@
 
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire({
+                    swalWithBootstrapButtons.fire({
                         title: "OPERACIÓN CANCELADA",
                         text: "NO SE REALIZARON ACCIONES",
                         icon: "error"
@@ -446,6 +460,27 @@
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             }).format(amount);
+        }
+
+        function setExpirationDate() {
+
+            const selectCondicion = document.getElementById('payment_condition_id');
+            const inputFechaRegistro = document.querySelector('#fecha_registro');
+            const inputFechaVencimiento = document.querySelector('#expiration_date');
+
+            const selectedOption = selectCondicion.options[selectCondicion.selectedIndex];
+            const days = parseInt(selectedOption.dataset.days || 0, 10);
+
+            const [year, month, day] = inputFechaRegistro.value.split('-');
+            const fechaBase = new Date(year, month - 1, day);
+
+            fechaBase.setDate(fechaBase.getDate() + days);
+
+            const yyyy = fechaBase.getFullYear();
+            const mm = String(fechaBase.getMonth() + 1).padStart(2, '0');
+            const dd = String(fechaBase.getDate()).padStart(2, '0');
+
+            inputFechaVencimiento.value = `${yyyy}-${mm}-${dd}`;
         }
     </script>
 @endsection

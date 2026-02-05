@@ -8,6 +8,7 @@ use App\Http\Services\Tenant\Invoicing\InvoicingManager;
 use App\Http\Services\Tenant\Maintenance\Company\CompanyManager;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Tenant\DocumentSerialization;
+use App\Models\Tenant\Sales\CreditNote\CreditNote;
 use App\Models\Tenant\Sales\Sale\Sale;
 use Exception;
 
@@ -218,12 +219,25 @@ class SaleService
         return $sale;
     }
 
-    public function annular(array $data)
-    {   
+    public function annular(array $data): CreditNote
+    {
         $sale           =   $this->s_repository->findSale($data['sale_id']);
         $data['sale']   =   $sale;
+        $sale_products  =   $this->s_repository->getSaleProducts($data['sale_id']);
+        $sale_dishes    =   $this->s_repository->getSaleDishes($data['sale_id']);
+
+        if ($sale_products->isNotEmpty()) {
+            $data['sale_products']  =   $sale_products->toArray();
+        }
+        if ($sale_dishes->isNotEmpty()) {
+            $data['sale_dishes']    =   $sale_dishes->toArray();
+        }
+
         $this->s_validations->validationAnnular($sale);
         $s_credit_note  =   new CreditNoteService();
-        $s_credit_note->storeFromSale($data);
+        $credit_note    =   $s_credit_note->storeFromSale($data);
+
+        $this->s_repository->setSunatStatus($sale, 'ANULADO');
+        return $credit_note;
     }
 }

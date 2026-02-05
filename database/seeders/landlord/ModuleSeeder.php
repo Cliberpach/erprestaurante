@@ -88,6 +88,11 @@ class ModuleSeeder extends Seeder
         ]);
 
         $this->createChild($module, [
+            'description' => 'Notas Crédito',
+            'route_name' => 'ventas.notas_credito.index',
+        ]);
+
+        $this->createChild($module, [
             'description' => 'Métodos Pago',
             'route_name' => 'ventas.metodos_pago.index',
         ]);

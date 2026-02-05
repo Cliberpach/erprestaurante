@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('purchase_documents_detail', function (Blueprint $table) {
-            
+
             $table->unsignedBigInteger('purchase_document_id');
             $table->foreign('purchase_document_id')->references('id')->on('purchase_documents');
 
@@ -28,17 +28,17 @@ return new class extends Migration
             $table->unsignedBigInteger('warehouse_id');
             $table->foreign('warehouse_id')->references('id')->on('warehouses');
 
-            $table->string('warehouse_name',160);
+            $table->string('warehouse_name', 160);
 
-            $table->string('product_name',200);
-            $table->string('category_name',200);
-            $table->string('brand_name',200);
+            $table->string('product_name', 200);
+            $table->string('category_name', 200);
+            $table->string('brand_name', 200);
 
             $table->decimal('quantity', 10, 2)->unsigned();
             $table->decimal('purchase_price', 10, 2)->unsigned();
             $table->decimal('subtotal', 10, 2)->unsigned();
 
-        
+
             $table->primary(['purchase_document_id', 'product_id']);
             $table->timestamps();
         });

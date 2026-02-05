@@ -9,10 +9,10 @@
 
                 <div class="row">
                     <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                        <label for="categoria" style="font-weight: bold;">CATEGORÍA</label>
+                        <label for="category_mdlproducts" style="font-weight: bold;">CATEGORÍA</label>
 
-                        <select data-placeholder="Seleccione una opción" name="categoria" id="categoria"
-                            class="select2_form_mdl" onchange="dtProductos.ajax.reload();">
+                        <select data-placeholder="Seleccione una opción" name="category_mdlproducts"
+                            id="category_mdlproducts" class="select2_form_mdl" onchange="dtProductos.ajax.reload();">
                             <option></option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -20,9 +20,8 @@
                         </select>
                     </div>
                     <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                        <label for="marca" style="font-weight: bold;">MARCA</label>
-
-                        <select data-placeholder="Seleccione una opción" name="marca" id="marca"
+                        <label for="brand_mdlproducts" style="font-weight: bold;">MARCA</label>
+                        <select data-placeholder="Seleccione una opción" name="brand_mdlproducts" id="brand_mdlproducts"
                             class="select2_form_mdl" onchange="dtProductos.ajax.reload();">
                             <option></option>
                             @foreach ($brands as $brand)
@@ -59,10 +58,65 @@
     }
 
     function eventsMdlProductos() {
-        loadDataTableProducts();
+        loadDtMdlProducts();
+        loadSelectsMdlProd();
     }
 
-    function loadDataTableProducts() {
+    function loadSelectsMdlProd() {
+
+        const brandSelectMp = document.getElementById('brand_mdlproducts');
+        if (brandSelectMp && !brandSelectMp.tomselect) {
+            window.brandSelectMp = new TomSelect(brandSelectMp, {
+                valueField: 'id',
+                labelField: 'description',
+                searchField: ['description', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                }
+            });
+        }
+
+        const categorySelectMp = document.getElementById('category_mdlproducts');
+        if (categorySelectMp && !categorySelectMp.tomselect) {
+            window.categorySelectMp = new TomSelect(categorySelectMp, {
+                valueField: 'id',
+                labelField: 'description',
+                searchField: ['description', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                }
+            });
+        }
+
+    }
+
+    function loadDtMdlProducts() {
         const urlGetProductos = @json(route('tenant.inventario.nota_ingreso.getProducts'));
 
         dtProductos = new DataTable('#tbl_products', {
@@ -72,8 +126,8 @@
                 url: urlGetProductos,
                 type: 'GET',
                 data: function(d) {
-                    d.categoria_id = $('#categoria').val();
-                    d.marca_id = $('#marca').val();
+                    d.categoria_id = $('#category_mdlproducts').val();
+                    d.marca_id = $('#brand_mdlproducts').val();
                 },
             },
             columns: [{
@@ -85,13 +139,14 @@
                     name: 'name'
                 },
                 {
-                    data: 'brand_name',
-                    name: 'brand_name'
-                },
-                {
                     data: 'category_name',
                     name: 'category_name'
                 },
+                {
+                    data: 'brand_name',
+                    name: 'brand_name'
+                },
+
                 {
                     data: 'stock',
                     name: 'Stock'

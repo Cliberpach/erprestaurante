@@ -68,7 +68,7 @@ class OrderValidation
             'payment_methods'       =>  $payment_methods
         ];
 
-        $vars   =   array_merge($vars,$vars_mdlcustomer);
+        $vars   =   array_merge($vars, $vars_mdlcustomer);
 
         return $vars;
     }
@@ -234,6 +234,7 @@ class OrderValidation
         $data['order_products']     =   $order_products;
         $data['order_dishes']       =   $order_dishes;
         $data['programming_id']     =   $programming->id;
+        $data['petty_cash_book']    =   $petty_cash_book;
 
         $this->validationLstDetailUpdate($data);
         return $data;

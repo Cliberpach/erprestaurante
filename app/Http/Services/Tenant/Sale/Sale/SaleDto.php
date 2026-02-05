@@ -16,6 +16,9 @@ class SaleDto
     {
         $dto    =   [];
 
+        $dto['warehouse_id']                =   1;
+        $dto['warehouse_name']              =   'CENTRAL';
+
         $customer                           =   $data['customer'];
         $dto['customer_id']                 =   $customer->id;
         $dto['customer_name']               =   $customer->name;

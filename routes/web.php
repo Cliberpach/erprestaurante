@@ -11,6 +11,7 @@ use App\Http\Controllers\Tenant\Maintenance\BankAccountController;
 use App\Http\Controllers\Tenant\Maintenance\UserController as MaintenanceUserController;
 use App\Http\Controllers\Tenant\ModuleController;
 use App\Http\Controllers\Tenant\ProductController;
+use App\Http\Controllers\Tenant\SupplierController;
 use App\Http\Controllers\Tenant\Supply\DishController;
 use App\Http\Controllers\Tenant\WorkShop\ModelController;
 use App\Http\Controllers\Tenant\WorkShop\ServiceController;
@@ -104,6 +105,6 @@ Route::group(["prefix" => "utils"], function () {
 
     Route::get('products/get-list', [ProductController::class, 'getProducts'])->name('tenant.utils.getProducts');
     Route::get('get-list/free-servers', [MaintenanceUserController::class, 'getListFreeServers'])->name('tenant.utils.getListFreeServers');
-
+    Route::get('search-supplier', [SupplierController::class, 'searchSupplier'])->name('tenant.utils.searchSupplier');
     Route::get('get-bank-account/{payment_method}', [BankAccountController::class, 'getBackAccountPayment'])->name('tenant.utils.getBackAccountPayment');
 });

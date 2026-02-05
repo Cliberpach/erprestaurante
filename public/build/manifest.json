@@ -104,7 +104,7 @@
     "src": "resources/js/orders/create/main.js"
   },
   "resources/js/orders/edit/main.js": {
-    "file": "assets/main-235a6806.js",
+    "file": "assets/main-42948dfe.js",
     "imports": [
       "_ui-e79cd951.js",
       "_index-dd82ac63.js"

@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('warehouse_id');
+            $table->foreign('warehouse_id')->references('id')->on('warehouses');
+            $table->string('warehouse_name', 160);
+
             //======== CLIENTE Y SUS DATOS HISTÓRICO =======
             $table->unsignedBigInteger('customer_id');
             $table->string('customer_name', 160);

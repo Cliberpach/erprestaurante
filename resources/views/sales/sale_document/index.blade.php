@@ -225,6 +225,9 @@
                             if (data.sunat_status === 'RECHAZADO') {
                                 badge_class = 'dark';
                             }
+                            if (data.sunat_status === 'ANULADO') {
+                                badge_class = 'dark';
+                            }
 
                             return `<span class="badge bg-${badge_class}">${data.sunat_status}</span>`;
                         },

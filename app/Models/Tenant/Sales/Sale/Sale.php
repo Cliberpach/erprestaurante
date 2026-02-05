@@ -14,6 +14,10 @@ class Sale extends Model
     protected $connection   =   'tenant';
 
     protected $fillable = [
+
+        'warehouse_id',
+        'warehouse_name',
+
         'customer_id',
         'customer_name',
         'customer_type_document',

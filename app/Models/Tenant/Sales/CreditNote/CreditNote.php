@@ -16,6 +16,10 @@ class CreditNote extends Model
 
         // 🔹 Documento afectado
         'sale_id',
+        'petty_cash_id',
+        'petty_cash_book_id',
+        'petty_cash_name',
+
         'type_doc_affected',
         'num_doc_affected',
         'code_motive',
@@ -24,6 +28,7 @@ class CreditNote extends Model
 
         // 🔹 Almacén / tipo de comprobante
         'warehouse_id',
+        'warehouse_name',
         'type_sale_id',
         'type_sale_code',
         'type_sale_name',
@@ -84,6 +89,8 @@ class CreditNote extends Model
         'editor_user_name',
         'delete_user_id',
         'delete_user_name',
+
+        'last_send_messages'
     ];
 
     protected static function boot()

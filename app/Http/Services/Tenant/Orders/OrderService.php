@@ -4,6 +4,7 @@ namespace App\Http\Services\Tenant\Orders;
 
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\UtilController;
+use App\Http\Services\Tenant\Inventory\Kardex\KardexService;
 use App\Http\Services\Tenant\Inventory\WarehouseProduct\WarehouseProductService;
 use App\Http\Services\Tenant\Reservation\ReservationService;
 use App\Http\Services\Tenant\Supply\Programming\ProgrammingService;
@@ -62,6 +63,11 @@ class OrderService
             UtilController::saveImg($data['voucher'], $order->payref_img_name, 'orders/payrefs/');
         }
 
+        if (!empty($lst_products)) {
+            $s_kardex   =   new KardexService();
+            $s_kardex->storeFromOrder($order);
+        }
+
         return $order;
     }
 
@@ -98,7 +104,9 @@ class OrderService
         $this->s_repository->storeOrderProduct($dto_oproduct);
         $this->s_repository->storeOrderDish($dto_odish);
 
-
+        $s_kardex   =   new KardexService();
+        $s_kardex->updateFromOrder($order);
+       
         return $order;
     }
 
@@ -145,9 +153,9 @@ class OrderService
         return $this->s_repository->getOrderProducts($order_id);
     }
 
-    public function setStatusInvoice(int $id, string $status,$invoice)
+    public function setStatusInvoice(int $id, string $status, $invoice)
     {
-        $this->s_repository->setStatusInvoice($id, $status,$invoice);
+        $this->s_repository->setStatusInvoice($id, $status, $invoice);
         $this->s_reservation->setStatusByOrder($id, 'FINALIZADO');
     }
 }

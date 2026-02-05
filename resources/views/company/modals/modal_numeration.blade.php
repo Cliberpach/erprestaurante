@@ -13,7 +13,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <button type="submit" class="btn btn-primary" form="formBillingNumeration">
-                    <i class="fas fa-save"></i>Guardar
+                    <i class="fas fa-save"></i> Guardar
                 </button>
             </div>
         </div>
@@ -140,11 +140,12 @@
 
         function storeBilling(formNumeration) {
 
-            const billing_type_document_text = $('#billing_type_document').select2('data')[0].text;
+            const value = window.billingSelect.getValue();
+            const option = window.billingSelect.getOption(value).textContent;
 
             Swal.fire({
-                title: `DESEA REGISTRAR LA NUMERACIÓN DE ${billing_type_document_text}`,
-                text: "Esto producirá cambios en la facturación!",
+                title: `Desea registrar: ${option} ?`,
+                text: "",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "SÍ, ACTUALIZAR!",
@@ -181,7 +182,8 @@
 
                         if (response.status === 422) {
                             if ('errors' in res) {
-                                //pintarErroresValidacion(res.errors);
+                                toastr.error('ERRORES EN EL FORMULARIO');
+                                paintValidationErrors(res.errors, 'error');
                             }
                             Swal.close();
                             return;
@@ -232,7 +234,7 @@
 
             //=========== SE MANEJA UNA SOLA SERIE POR DOCUMENTO =======
             const prefix_serie = lstBillingTypes[indexBilling].parameter;
-            document.querySelector('#serie').value = prefix_serie + '001';
+            document.querySelector('#serie').value = prefix_serie;
 
         }
     </script>

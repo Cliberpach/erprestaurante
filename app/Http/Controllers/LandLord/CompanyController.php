@@ -280,7 +280,7 @@ class CompanyController extends Controller
         TenantCompanyInvoice::create([
             'company_id'           => $company->id,
             'plan'                 => $company->plan,
-            'environment'          => 'DEMO',
+            'environment'          => 'BETA',
             'department_id'        => '01',
             'province_id'          => '0101',
             'district_id'          => '010101',

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Tenant\CustomerController;
 use App\Http\Controllers\Tenant\SaleController;
+use App\Http\Controllers\Tenant\Sales\CreditNoteController;
 use App\Http\Controllers\Tenant\Sales\PaymentMethodController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,5 +47,14 @@ Route::group(["prefix" => "ventas"], function () {
         Route::get('metodo_pago/getPaymentMethods', [PaymentMethodController::class, 'getPaymentMethods'])->name('tenant.ventas.metodos_pago.getPaymentMethods');
         Route::get('assign-accounts/create/{id}', [PaymentMethodController::class, 'assignAccountsCreate'])->name('tenant.ventas.metodos_pago.assignAccountsCreate');
         Route::post('assign-accounts/store', [PaymentMethodController::class, 'assignAccountsStore'])->name('tenant.ventas.metodos_pago.assignAccountsStore');
+    });
+
+    Route::group(["prefix" => "notas_credito"], function () {
+        Route::get('index', [CreditNoteController::class, 'index'])->name('tenant.ventas.notas_credito.index')->middleware('validar.plan:ventas');
+        Route::get('getAll', [CreditNoteController::class, 'getAll'])->name('tenant.ventas.notas_credito.getAll')->middleware('validar.plan:ventas');
+        Route::post('send_sunat', [CreditNoteController::class, 'sendSunat'])->name('tenant.ventas.notas_credito.send_sunat')->middleware('validar.plan:ventas');
+        Route::get('pdf-one/{id}', [CreditNoteController::class, 'pdfOne'])->name('tenant.ventas.notas_credito.pdfOne')->middleware('validar.plan:ventas');
+        Route::get('downloadXml/{id}', [CreditNoteController::class, 'downloadXml'])->name('tenant.ventas.notas_credito.downloadXml')->middleware('validar.plan:ventas');
+        Route::get('downloadCdr/{id}', [CreditNoteController::class, 'downloadCdr'])->name('tenant.ventas.notas_credito.downloadCdr')->middleware('validar.plan:ventas');
     });
 });

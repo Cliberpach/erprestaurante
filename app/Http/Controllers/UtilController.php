@@ -14,6 +14,7 @@ use App\Models\Landlord\Year;
 use App\Models\Province;
 use App\Models\Tenant\DocumentSerialization;
 use App\Models\Tenant\PaymentMethod;
+use App\Models\Tenant\Sales\PaymentCondition\PaymentCondition;
 use App\Models\Tenant\Supply\TypeDish\TypeDish;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\File;
 use Throwable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+
 
 class UtilController extends Controller
 {
@@ -293,5 +295,11 @@ class UtilController extends Controller
             'provinces'                => $provinces,
             'company_invoice'           => $company_invoice,
         ];
+    }
+
+     public static function getPaymentConditions()
+    {
+        $payment_conditions =   PaymentCondition::where('status', 'ACTIVO')->get();
+        return $payment_conditions;
     }
 }

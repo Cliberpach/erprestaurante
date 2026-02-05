@@ -48,7 +48,6 @@
             paramsMdlNc.id = saleId;
             const row = getRowById(dtSales, saleId);
             fillNotaCreditoForm(row);
-            console.log(row);
             $('#mdl_nc').modal('show');
         }
 
@@ -57,6 +56,10 @@
                 e.preventDefault();
                 storeNc(e.target);
             })
+
+            $('#mdl_nc').on('hidden.bs.modal', function() {
+                clearMdlNc();
+            });
         }
 
         function fillNotaCreditoForm(data) {
@@ -139,18 +142,27 @@
                             dtSales.ajax.reload(null, false);
                             toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
                             Swal.close();
+                            $('#mdl_nc').modal('hide');
                         } else {
                             toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
                             Swal.close();
                         }
 
                     } catch (error) {
-                        toastr.error(error, 'ERROR EN LA PETICIÓN ANULAR VENTA EN SUNAT');
+                        if (error.response && error.response.status === 422) {
+                            paintValidationErrors(error.response.data.errors, 'error');
+                            toastr.warning('Corrige los errores del formulario.', 'VALIDACIÓN');
+                            Swal.close();
+                            return;
+                        }
+                        toastr.error(
+                            error.response?.data?.message ?? 'Ocurrió un error inesperado.',
+                            'ERROR EN LA PETICIÓN GENERAR NOTA CRÉDITO'
+                        );
                         Swal.close();
                     }
 
                 } else if (
-                    /* Read more about handling dismissals below */
                     result.dismiss === Swal.DismissReason.cancel
                 ) {
                     Swal.fire({
@@ -161,6 +173,10 @@
                 }
             });
 
+        }
+
+        function clearMdlNc(){
+            document.querySelector('#motive').value =   '';
         }
     </script>
 @endpush

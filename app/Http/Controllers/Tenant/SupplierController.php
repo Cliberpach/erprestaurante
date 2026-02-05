@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\UtilController;
 use App\Http\Requests\Supplier\SupplierStoreRequest;
 use App\Http\Requests\Supplier\SupplierUpdatedRequest;
+use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Landlord\TypeIdentityDocument;
 use App\Models\Supplier;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\Multitenancy\Models\Tenant;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -44,7 +46,7 @@ class SupplierController extends Controller
     public function create()
     {
 
-        $type_identity_documents    =   TypeIdentityDocument::all();
+        $types_identity_documents   =   UtilController::getIdentityDocuments();
 
         return view('purchases.supplier.create', compact('type_identity_documents'));
     }
@@ -71,7 +73,7 @@ class SupplierController extends Controller
             }
 
             //========= VERIFICANDO QUE EXISTA EL TIPO DOC EN LA BD ========
-            $exists_tipo_doc    =   TypeIdentityDocument::findOrFail($tipo_documento);
+            $exists_tipo_doc    =   GeneralTableDetail::findOrFail($tipo_documento);
 
             if (!$exists_tipo_doc) {
                 throw new Exception("EL TIPO DE DOC NO EXISTE EN LA BD");
@@ -91,11 +93,18 @@ class SupplierController extends Controller
 
 
             //======= COMPROBAR QUE NO EXISTA EL DOCUMENTO EN LA TABLA supplierES =======
-            $existe_nro_documento   =   Supplier::where('type_identity_document_id', $tipo_documento)
-                ->where('document_number', $nro_documento)
-                ->first();
+            $existe_nro_documento   =   DB::select(
+                'select
+                                        s.id,s.name
+                                        from suppliers as s
+                                        where
+                                        s.type_identity_document_id = ?
+                                        and s.document_number = ?
+                                        and s.estado = "ACTIVO"',
+                [$tipo_documento, $nro_documento]
+            );
 
-            if ($existe_nro_documento) {
+            if (count($existe_nro_documento) > 0) {
                 throw new Exception($exists_tipo_doc->name . ':' . $nro_documento . '.YA EXISTE EN LA BD');
             }
 
@@ -120,7 +129,7 @@ class SupplierController extends Controller
                 if ($res->success) {
                     return response()->json(['success' => true, 'data' => $res->data, 'message' => 'OPERACIÓN COMPLETADA']);
                 } else {
-                    throw new Exception($res->data);
+                    throw new Exception($res->message);
                 }
             }
         } catch (Throwable $th) {
@@ -172,9 +181,20 @@ class SupplierController extends Controller
 
     public function edit($id)
     {
-        $type_identity_documents    =   TypeIdentityDocument::all();
 
-        $supplier           =   Supplier::findOrFail($id);
+        $type_identity_documents    =   DB::select('select *
+                                        from types_identity_documents as tid
+                                        where
+                                        tid.id = "1"
+                                        or tid.id = "3" ');
+        $supplier           =   Supplier::find($id);
+
+        if (!$supplier) {
+            dd('EL PROVEEDOR NO EXISTE EN LA BD');
+        }
+        if ($supplier->estado == "ANULADO") {
+            dd('PROVEEDOR ANULADO');
+        }
 
         return view(
             'purchases.supplier.edit',
@@ -253,6 +273,44 @@ class SupplierController extends Controller
 
             return response()->json(['success' => true, 'lstSuppliers' => $suppliers, 'message' => 'PROVEEDORES OBTENIDOS']);
         } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+
+    public function searchSupplier(Request $request)
+    {
+        try {
+
+            $query = trim($request->get('q', ''));
+
+            $suppliers = DB::table('suppliers as s');
+
+            if ($query) {
+                $suppliers->whereRaw("CONCAT(s.type_document_abbreviation, ':', s.document_number, ' - ', s.name) LIKE ?", ["%{$query}%"])
+                    ->orWhereRaw("CONCAT(s.document_number, ' - ', s.name) LIKE ?", ["%{$query}%"])
+                    ->orWhere('s.name', 'LIKE', "%{$query}%");
+            }
+
+
+
+            $results = $suppliers->limit(20)->get([
+                's.id',
+                's.type_document_abbreviation',
+                's.document_number',
+                's.name',
+                's.email'
+            ]);
+
+            $data = $results->map(fn($c) => [
+                'id' => $c->id,
+                'full_name' => "{$c->type_document_abbreviation}:{$c->document_number} - {$c->name}",
+                'email' => $c->email,
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'PROVEEDORES OBTENIDOS', 'data' => $data]);
+        } catch (Throwable $th) {
+            DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
     }

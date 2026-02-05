@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte Kardex</title>
+    <title>KARDEX PRODUCTO</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -22,7 +23,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .details p, .totals p {
+        .details p,
+        .totals p {
             margin: 5px 0;
             font-size: 16px;
         }
@@ -96,6 +98,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
 
@@ -104,7 +107,8 @@
             <tr>
                 <!-- Columna 1: Imagen -->
                 <td style="width: 20%; text-align: left;">
-                    <img src="{{ $company->logo_url }}" alt="Logo" style="height: 100px; object-fit: contain; max-width: 120px;">
+                    <img src="{{ $company->logo_url }}" alt="Logo"
+                        style="height: 100px; object-fit: contain; max-width: 120px;">
                 </td>
 
                 <!-- Columna 2: Información de la empresa -->
@@ -122,7 +126,7 @@
         </table>
 
         <div style="text-align: right; font-size: 14px; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">
-            REPORTE KARDEX
+            KARDEX PRODUCTO
         </div>
 
         <!-- Segunda tabla: Información adicional -->
@@ -135,38 +139,90 @@
                 <td class="label">FECHA IMPRESIÓN:</td>
                 <td>{{ now()->format('Y-m-d H:i:s') }}</td>
             </tr>
+            <tr>
+                <td class="label"><strong>FECHA INICIO:</strong></td>
+                <td>{{ $filters->get('start_date') }}</td>
+            </tr>
+            <tr>
+                <td class="label"><strong>FECHA FIN:</strong></td>
+                <td>{{ $filters->get('end_date') }}</td>
+            </tr>
+            <tr>
+                <td class="label"><strong>PRODUCTO:</strong></td>
+                <td>{{ $filters->get('product_name') }}</td>
+            </tr>
         </table>
 
         <!-- Tercera tabla: Reporte Kardex -->
         <table class="tbl-report-sale">
             <thead>
                 <tr>
-                    <th>FECHA</th>
-                    <th>PRODUCTO</th>
-                    <th>CATEGORÍA</th>
-                    <th>TIPO</th>
-                    <th>DOC</th>
-                    <th>STOCK</th>
-                    <th>ENTRADA</th>
-                    <th>SALIDA</th>
-                    <th>SALDO</th>
-                    <th>REGISTRA</th>
+                    {{-- <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Id
+                    </th> --}}
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Fecha
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Producto
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Categoría
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Marca
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Tipo
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Doc
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Stock
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Entrada
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Salida
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Saldo
+                    </th>
+                    <th
+                        style="background:#1B587C;color:white;text-align:center;border:1px solid #4EA4D8;text-transform:uppercase">
+                        Registrador
+                    </th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($report_kardex as $item)
-                <tr>
-                    <td>{{ $item->created_at }}</td>
-                    <td>{{ $item->product_name }}</td>
-                    <td>{{ $item->category_name }}</td>
-                    <td>{{ $item->type }}</td>
-                    <td>{{ $item->document }}</td>
-                    <td>{{ $item->stock_previous }}</td>
-                    <td>{{ $item->entrada }}</td>
-                    <td>{{ $item->salida }}</td>
-                    <td>{{ $item->stock_later }}</td>
-                    <td>{{ $item->user_recorder_name }}</td>
-                </tr>
+                @foreach ($data as $item)
+                    <tr>
+                        {{-- <td>{{ $item->product_id }}</td> --}}
+                        <td>{{ $item->date }}</td>
+                        <td>{{ $item->product_name }}</td>
+                        <td>{{ $item->category_name }}</td>
+                        <td>{{ $item->brand_name }}</td>
+                        <td>{{ $item->type }}</td>
+                        <td>{{ $item->document_serie }}</td>
+                        <td>{{ number_format($item->previous_stock, 2) }}</td>
+                        <td>{{ number_format($item->entrada, 2) }}</td>
+                        <td>{{ number_format($item->salida, 2) }}</td>
+                        <td>{{ number_format($item->later_stock, 2) }}</td>
+                        <td>{{ $item->creator_user_name }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
@@ -177,4 +233,5 @@
         </div>
     </div>
 </body>
+
 </html>

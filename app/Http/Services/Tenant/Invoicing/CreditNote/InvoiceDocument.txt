@@ -1,0 +1,476 @@
+//==== OBJECT COMPLETE =====
+Greenter\Model\Sale\Note {#2282 // app\Http\Services\Tenant\Invoicing\CreditNote\CreditNoteService.php:86
+  #ublVersion: "2.1"
+  #tipoDoc: "07"
+  #serie: "BB02"
+  #correlativo: "1"
+  #fechaEmision: DateTime @1770224320 {#2287
+    date: 2026-02-04 11:58:40.0 America/Lima (-05:00)
+  }
+  #company:
+Greenter\Model\Company
+\
+Company {#2289
+    -ruc: "22211133344"
+    -razonSocial: "LDRESTAURANTS"
+    -nombreComercial: "LDRESTAURANTS"
+    -address:
+Greenter\Model\Company
+\
+Address {#2290
+      -ubigueo: "130101"
+      -codigoPais: "PE"
+      -departamento: "AMAZONAS"
+      -provincia: "UTCUBAMBA"
+      -distrito: "EL MILAGRO"
+      -urbanizacion: "PALERMO"
+      -direccion: "LDRESTAURANTS"
+      -codLocal: "0000"
+    }
+    -email: "admin@gmail.com"
+    -telephone: null
+  }
+  #client:
+Greenter\Model\Client
+\
+Client {#2285
+    -tipoDoc: "1"
+    -numDoc: "75608753"
+    -rznSocial: "LUIS DANIEL ALVA LUJAN"
+    -address:
+Greenter\Model\Company
+\
+Address {#2286
+      -ubigueo: null
+      -codigoPais: "PE"
+      -departamento: null
+      -provincia: null
+      -distrito: null
+      -urbanizacion: null
+      -direccion: "AV. HEROES DEL CENEPA NRO. 1060, AMAZONAS - BAGUA - BAGUA"
+      -codLocal: "0000"
+    }
+    -email: ""
+    -telephone: "94124177"
+  }
+  #tipoMoneda: "PEN"
+  #sumOtrosCargos: null
+  #mtoOperGravadas: 1463.636364
+  #mtoOperInafectas: null
+  #mtoOperExoneradas: null
+  #mtoOperExportacion: null
+  #mtoOperGratuitas: null
+  #mtoIGVGratuitas: null
+  #mtoIGV: 146.363636
+  #mtoBaseIvap: null
+  #mtoIvap: null
+  #mtoBaseIsc: null
+  #mtoISC: null
+  #mtoBaseOth: null
+  #mtoOtrosTributos: null
+  #icbper: null
+  #totalImpuestos: 146.363636
+  #redondeo: null
+  #mtoImpVenta: 1610.0
+  #details: array:3 [
+    0 =>
+Greenter\Model\Sale
+\
+SaleDetail {#2300
+      -unidad: "NIU"
+      -cantidad: 100.0
+      -codProducto: "14-AGUA SIN GAS 625ML"
+      -codProdSunat: null
+      -codProdGS1: null
+      -descripcion: "AGUA SIN GAS 625ML"
+      -mtoValorUnitario: 7.272727
+      -cargos: null
+      -descuentos: null
+      -descuento: null
+      -mtoBaseIgv: 727.272727
+      -porcentajeIgv: 10.0
+      -igv: 72.727273
+      -tipAfeIgv: "10"
+      -mtoBaseIsc: null
+      -porcentajeIsc: null
+      -isc: null
+      -tipSisIsc: null
+      -mtoBaseOth: null
+      -porcentajeOth: null
+      -otroTributo: null
+      -icbper: null
+      -factorIcbper: 0.3
+      -totalImpuestos: 72.727273
+      -mtoPrecioUnitario: 8.0
+      -mtoValorVenta: 727.272727
+      -mtoValorGratuito: null
+      -atributos: null
+    }
+    1 =>
+Greenter\Model\Sale
+\
+SaleDetail {#2296
+      -unidad: "NIU"
+      -cantidad: 10.0
+      -codProducto: "37-Chancaca con Queso"
+      -codProdSunat: null
+      -codProdGS1: null
+      -descripcion: "Chancaca con Queso"
+      -mtoValorUnitario: 31.818182
+      -cargos: null
+      -descuentos: null
+      -descuento: null
+      -mtoBaseIgv: 318.181818
+      -porcentajeIgv: 10.0
+      -igv: 31.818182
+      -tipAfeIgv: "10"
+      -mtoBaseIsc: null
+      -porcentajeIsc: null
+      -isc: null
+      -tipSisIsc: null
+      -mtoBaseOth: null
+      -porcentajeOth: null
+      -otroTributo: null
+      -icbper: null
+      -factorIcbper: 0.3
+      -totalImpuestos: 31.818182
+      -mtoPrecioUnitario: 35.0
+      -mtoValorVenta: 318.181818
+      -mtoValorGratuito: null
+      -atributos: null
+    }
+    2 =>
+Greenter\Model\Sale
+\
+SaleDetail {#2288
+      -unidad: "NIU"
+      -cantidad: 20.0
+      -codProducto: "27-Tacu Tacu con Pollo"
+      -codProdSunat: null
+      -codProdGS1: null
+      -descripcion: "Tacu Tacu con Pollo"
+      -mtoValorUnitario: 20.909091
+      -cargos: null
+      -descuentos: null
+      -descuento: null
+      -mtoBaseIgv: 418.181818
+      -porcentajeIgv: 10.0
+      -igv: 41.818182
+      -tipAfeIgv: "10"
+      -mtoBaseIsc: null
+      -porcentajeIsc: null
+      -isc: null
+      -tipSisIsc: null
+      -mtoBaseOth: null
+      -porcentajeOth: null
+      -otroTributo: null
+      -icbper: null
+      -factorIcbper: 0.3
+      -totalImpuestos: 41.818182
+      -mtoPrecioUnitario: 23.0
+      -mtoValorVenta: 418.181818
+      -mtoValorGratuito: null
+      -atributos: null
+    }
+  ]
+  #legends: array:1 [
+    0 =>
+Greenter\Model\Sale
+\
+Legend {#2298
+      -code: "1000"
+      -value: "SON MIL SEISCIENTOS DIEZ CON 00/100 SOLES"
+    }
+  ]
+  #guias: null
+  #relDocs: null
+  #compra: null
+  #formaPago: null
+  #cuotas: null
+  -codMotivo: "01"
+  -desMotivo: "error en el plato"
+  -tipDocAfectado: "03"
+  -numDocfectado: "B001-3"
+  -perception: null
+  -valorVenta: null
+  -subTotal: null
+}
+
+
+//====== RESPONSE SUCCESS SUNAT ========
+Greenter\Model\Response\BillResult {#2294 // app\Http\Services\Tenant\Invoicing\CreditNote\CreditNoteService.php:87
+  #success: true
+  #error: null
+  #cdrZip: b"PK
+\x03\x04\x14\x00\x02\x00\x08\x00
+ogD\
+\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00
+dummy/
+\x03\x00
+PK
+\x03\x04\x14\x00\x02\x00\x08\x00
+ogD\cô«O<
+\x04\x00\x00\x1E
+\x00\x00\e\x00\x00\x00
+R-22211133344-07-BB02-1.xmlÁW█n█8
+\x10
+}´W
+\x08
+╬Cüb
+\x15
+J▓Ø8éÒ┬ù
+\x16
+unH}╔
+\x16
+¹ãH
+\x13
+Y¡D¬$e;¹§;ö¼ï]
+\x05
+Á
+\v
+,
+\x12\x04
+È­╠ÖÖ3C
+\x12
+Ú
+\x7F
+▄ãæ▒
+\x06
+!C╬«[÷╣ı2Çy▄
+\x0F
+Yp¦Z.>ø¢ÍÃ┴╗>
+\x15
+¯0Ióðú
+ü3É
+\t
+g
+\x12\f
+tf‗║ò
+µr*CÚ2
+\x1A
+âte
+\x02
+^°▓
+\x03
+╗ÚsõJo
+\x05
+1uÀÊwºl═C
+\x0F
+Lºò╗╗T£╚ðÉI┼
+\x06
+[u"¦ÿÃ1gƒÂ
+ÿV
+\x01
+?æ
+\x12
+ÿÆ
+\x15
+®¸ý²
+\x11
+Ú
+\x08
+ß^#!²3┬a
+\x10\x08\x08
+¿é&R
+\x1F
+[▒R*q
+\t
+┘l6þø÷9
+\x17\x01
+q,╦"Í
+\x15
+Aî/├Ó¼@KNô
+\x12
+ƒ
+\x07
+Æþ©ÑÝÖú^
+\x10
+`kêx
+\x02
+ñ
+\f
+é┴K7Ï╩He`mû&e¥®B¼Ñ
+\f
+RÈ)SFıøu& Êz▒sìn¬ı.êÀoıjôo¸w¾î¬└"
+\v
+lôåñq#ì¿0qWÇÈ═ù¡A
+\x1F
+'╚]Ä¯╩üÉ┼ÿ7ýÕû┌ý0\®A
+\x7F\x1E\x06
+XA*╩#rD_­ÿi7­ºýà
+\x0F
+Ì
+\x19
+F
+\x7F
+L
+\x19
+g¿S
+\x14
+■øiu
+\x0F
+j┼}c
+\x18\x05
+\äj
+\x15
+┐)ümiZ¼╦3=╗├╬■F┤
+\x1E
+ ¡aïd▄eåGôZØ"W3µ
+\x02
+╬äñª\Ð«Ýý(g­
+\x02\x02
+o
+\x0F
+0û│®û
+\v
+ìh^
+\x08
+╩õ
+\v\x17
+▒╠
+uËo├¯IT
+\f
+úo╩"¹<¶ëñÃ
+\x08
+ääõ0¾■$
+\f
+@¬
+\x13\x15
+CE╬Û:ò<O4Ja0Kû▀a~│Ï|´ì
+\x1F
+Ã7®▄ñOsÜ▄«z=µæx{Ë╗▒´"╔6ø
+\t
+¹9▄>Oû»¦Ý¤¹═Î@«Ø/_
+\x17
+¸?×║ƒõýÂ=║¢#ƒ ▒
+\x1D\t
+¸$©¥¯ôz
+\x14
+¦
+\x1F
+R6
+\x08
+Gìý¤Z}"rÅ
+\x0F
+Å"\ÒÚ3~└½±~
+\x04
+è>ÔQ┼Ù
+\f
+äzo0«î4¨ÉËÈ╝·À­Üq÷┐u¡½
+\t
+U4_i»³╠#¾
+\x03
+^
+\x03
+¥ßUª
+\x1D\x7F\x1E\x10\x19
+j³ç╬
+\x19
+█T╩
+\x14
+─
+\x1C
+DHú║E
+\x13
+ƒN_¾═©rÌç4~
+\x06
+q:█×w=@æ.®ö!ÑZòÄ©n¥S╚»ù¤/&9ÞÒ[ÑMO¨ø>Ø
+\f
+£s½O~▒f©q*
+\x15
+ÅwÀ
+\v\x1A
+Ý
+\x02
+z©æí5Ó‗Êr£╦+³█srh╣½ï£Þ
+\x16
+9ûsaZÄiu
+\x16
+ÂÝv{ngÃZA*Å
+\x05
+>
+\x17\x03
+╦r│▀
+\x1A
+,│g░Ôì?Ó╬▒{ø{­î└v▄¯ò█Â÷┴;nÛ╣5ıwÁh╦|¨0\È¬+ü\╝>Rí^s[Â£·Ï£‗5+i
+\x1C
+╦nÒÅsıÝVDõm»b#ƒBÝÉ¡jÖõ;õ
+\x00
+IÌJ
+\x0E\x0F\x7F
+¿hT
+\x16
+8Tèz½8ø$¢»GF0
+\x1A
+UwB>9│ÚÓý@
+\x03
+m╦
+\x03
+58æ▀
+\x05
+#ç:ÙO`>ê GJÊ
+\x18
+`
+\x06\x1E
+äÙÒc:Äm█Ýv╗Ë9:fCê
+\t
+¸R¡B1xE.ÕW6ö;-1─häúm
+\x17
+├Z┘¸
+\x06
+{╠}<1¹
+\x13
+Ø┘2È
+\x04
+ñ'┬$╦ÙÄ
+\x1A\x0F
+\Q├
+\x07
+c,└
+\x0F\x15
+7
+\x18
+µ#©æ
+\x07
+·╦XQCå>7¿
+\x07
+ëó>═YÙ
+\x1C
+Em§
+\x02
+¬▓÷fþáÇR▓&x«Wÿäh?▓'
+\x17
+µe¸┬Û]v█º┤d/
+\x04
+in
+i■¸f­
+\x1F
+PK
+\x01\x02\x00\x00\x14\x00\x02\x00\x08\x00
+ogD\
+\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00
+dummy/PK
+\x01\x02\x00\x00\x14\x00\x02\x00\x08\x00
+ogD\cô«O<
+\x04\x00\x00\x1E
+\x00\x00\e\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00
+&
+\x00\x00\x00
+R-22211133344-07-BB02-1.xmlPK
+\x05\x06\x00\x00\x00\x00\x02\x00\x02\x00
+}
+\x00\x00\x00
+ø
+\x04\x00\x00\x00\x00
+"
+  #cdrResponse:
+Greenter\Model\Response
+\
+CdrResponse {#5905
+    #id: "BB02-1"
+    #code: "0"
+    #description: "La Nota de Credito numero BB02-1, ha sido aceptada"
+    #notes: []
+    #reference: null
+  }
+}

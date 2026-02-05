@@ -63,8 +63,8 @@ class RoleSeeder extends Seeder
             'cajas.',
             'movimientos_caja.',
             'mostrador_cajero.',
-            'ventas.clientes.',
-            'ventas.comprobante_venta.'
+
+            'ventas.'
         ]);
 
         $this->createRole('CAJERO', $permissions);

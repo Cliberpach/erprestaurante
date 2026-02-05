@@ -122,4 +122,10 @@ class SaleRepository
 
         return $sale;
     }
+
+    public function setSunatStatus(Sale $sale, string $sunat_status)
+    {
+        $sale->sunat_status =   $sunat_status;
+        $sale->save();
+    }
 }

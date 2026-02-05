@@ -56,12 +56,12 @@ Route::group(["prefix" => "inventario"], function () {
     });
 
     Route::group(["prefix" => "kardex"], function () {
+        //============ KARDEX ============
         Route::get('index', [KardexController::class, 'index'])->name('tenant.inventario.kardex.index');
         Route::get('getKardex', [KardexController::class, 'getKardex'])->name('tenant.inventario.kardex.getKardex');
         Route::get('kardex/excel', [KardexController::class, 'excel'])->name('tenant.inventario.kardex.excel');
         Route::get('kardex/pdf', [KardexController::class, 'pdf'])->name('tenant.inventario.kardex.pdf');
     });
-
 
     Route::group(["prefix" => "kardex-valor"], function () {
         Route::get('index', [ValuedKardexController::class, 'index'])->name('tenant.inventario.kardex_valorizado.index');
