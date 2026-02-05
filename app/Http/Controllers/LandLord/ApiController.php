@@ -370,7 +370,7 @@ success: true
         $platos = array();
 
         if ($modoImpresionComanda == 'PARCIAL') {
-            $bebidas    =   $details->where('item_type', 'PRODUCTO')->orderBy('created_at', 'desc');
+            $bebidas    =   $details->where('item_type', 'PRODUCTO')->sortByDesc('created_at')->values();
 
             /*$bebidas = $objPedido
                 ->DPedidoPendiente()
@@ -395,7 +395,7 @@ success: true
                 );
             }
 
-            $platos    =   $details->where('item_type', 'PLATO')->orderBy('created_at', 'desc');
+            $platos    =   $details->where('item_type', 'PLATO')->sortByDesc('created_at')->values();
             /*$platos = $objPedido
                 ->DPedidoPendiente()
                 ->where('nombre_tabla', 'platos')
@@ -434,7 +434,7 @@ success: true
             }
         } else {
             if ($modoImpresionComanda == 'TODO' || $modoImpresionComanda == 'BEBIDA') {
-                $bebidas    =   $details->where('item_type', 'PRODUCTO')->orderBy('created_at', 'desc');
+                $bebidas    =   $details->where('item_type', 'PRODUCTO')->sortByDesc('created_at')->values();
 
                 /*$bebidas = $objPedido
                     ->DPedidoPendiente()
@@ -445,7 +445,7 @@ success: true
             }
 
             if ($modoImpresionComanda == 'TODO' || $modoImpresionComanda == 'PLATO') {
-                $platos    =   $details->where('item_type', 'PLATO')->orderBy('created_at', 'desc');
+                $platos    =   $details->where('item_type', 'PLATO')->sortByDesc('created_at')->values();
 
                 /*$platos = $objPedido
                     ->DPedidoPendiente()
