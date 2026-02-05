@@ -467,7 +467,7 @@ success: true
                 'im_nombre' => $nombreImp,
                 'cantidad' => $det->quantity,
                 'descripcion' => $det->item_name,
-                'observacion' => $det->observation ?? 'Sin observación',
+                'observacion' => $det->observation ?? 'Sin observaciones',
                 'fecha' => Carbon::parse($det->created_at)->format('d/m/Y h:i:s a'),
             ];
             array_push($arrayDetalles, $fila);
@@ -482,7 +482,7 @@ success: true
                 'im_nombre' => $nombreImp,
                 'cantidad' => $det->quantity,
                 'descripcion' => $det->item_name,
-                'observacion' => $det->observation ?? 'Sin observación',
+                'observacion' => $det->observation ?? 'Sin observaciones',
                 'fecha' => Carbon::parse($det->created_at)->format('d/m/Y h:i:s a'),
             ];
             array_push($arrayDetalles, $fila);
