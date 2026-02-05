@@ -35,6 +35,7 @@ use Database\Seeders\tenant\SupplierSeeder;
 use Database\Seeders\tenant\TypeFieldSeeder;
 use Database\Seeders\tenant\WarehouseSeeder;
 use Database\Seeders\landlord\UnitMeasurementSeeder;
+use Database\Seeders\tenant\PaymentConditionSeeder;
 use Database\Seeders\tenant\TestSeeder;
 
 class DatabaseSeeder extends Seeder
