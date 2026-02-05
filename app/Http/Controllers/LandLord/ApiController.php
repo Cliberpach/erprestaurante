@@ -287,7 +287,7 @@ success: true
 
     function ActualizarReciboPendienteImprimir($idrecibo)
     {
-        $recibo = Sale::findorfail($idrecibo);
+        $recibo = Sale::findOrFail($idrecibo);
         if ($recibo != null) {
             $recibo->pending_print = 'NO';
             $recibo->date_pending_print =   now();
@@ -336,31 +336,30 @@ success: true
         $pedido = Order::where('id', $idpedido)->first();
 
         $arrayPedido = array();
-        foreach ($pedido as $item) {
-            $modo = '';
-            if ($item->order_print_mode == 'TODO') $modo = 'COCINA - MOSTRADOR';
-            else if ($item->order_print_mode == 'PLATO') $modo = 'COCINA';
-            else if ($item->order_print_mode == 'BEBIDA') $modo = 'MOSTRADOR';
-            else if ($item->order_print_mode == 'PARCIAL') $modo = 'COCINA - MOSTRADOR';
+        $modo = '';
+        if ($pedido->order_print_mode == 'TODO') $modo = 'COCINA - MOSTRADOR';
+        else if ($pedido->order_print_mode == 'PLATO') $modo = 'COCINA';
+        else if ($pedido->order_print_mode == 'BEBIDA') $modo = 'MOSTRADOR';
+        else if ($pedido->order_print_mode == 'PARCIAL') $modo = 'COCINA - MOSTRADOR';
 
-            $fila = [
-                'nombrecomercial' => $empresa,
-                'ruc' => $ruc,
-                'direccion' => $direccionEmpresa,
-                'correo' => 'Email: ' . $emailEmpresa,
-                'telefono' => '+51 ' . $telefonoEmpresa,
+        $fila = [
+            'nombrecomercial' => $empresa,
+            'ruc' => $ruc,
+            'direccion' => $direccionEmpresa,
+            'correo' => 'Email: ' . $emailEmpresa,
+            'telefono' => '+51 ' . $telefonoEmpresa,
 
-                'idpedido' => $item->id,
-                'fecha' => $item->created_at->format('d/m/Y h:i:s a'),
-                'mesero' => 'MESERO: ' . $item->creator_user_name,
-                'mesa' => 'Nº MESA - ' . $item->table->name,
-                'total' => $item->total,
-                'observacion' => $item->observation ?? 'Sin observaciones',
-                'estado' => $item->hasSale() ? 'Pagado' : 'Confirmado',
-                'modoImpresionComanda' => $modo
-            ];
-            array_push($arrayPedido, $fila);
-        }
+            'idpedido' => $pedido->id,
+            'fecha' => $pedido->created_at->format('d/m/Y h:i:s a'),
+            'mesero' => 'MESERO: ' . $pedido->creator_user_name,
+            'mesa' => 'Nº MESA - ' . $pedido->table->name,
+            'total' => $pedido->total,
+            'observacion' => $pedido->observation ?? 'Sin observaciones',
+            'estado' => $pedido->hasSale() ? 'Pagado' : 'Confirmado',
+            'modoImpresionComanda' => $modo
+        ];
+        array_push($arrayPedido, $fila);
+
 
         //----------------------------------------------------------------------------
         //------------------ obtener pedido - y verificar las bebidas ----------------
