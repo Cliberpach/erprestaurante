@@ -114,7 +114,7 @@ class OrderRepository
     public function getDetails(int $id)
     {
         $q1 = DB::connection('tenant')
-            ->table('order_products as op')
+            ->table('orders_products as op')
             ->select(
                 'op.id',
                 'op.order_id',
@@ -140,7 +140,7 @@ class OrderRepository
             ->where('op.status', '<>', 'ANULADO');
 
         $q2 = DB::connection('tenant')
-            ->table('order_dishes as od')
+            ->table('orders_dishes as od')
             ->select(
                 'od.id',
                 'od.order_id',
