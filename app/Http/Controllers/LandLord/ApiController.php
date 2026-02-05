@@ -475,7 +475,7 @@ success: true
 
         foreach ($platos as $det) {
             $nombreImp = '';
-            if ($det->nombre_tabla == 'PLATO') $nombreImp = $nombreImpComidas;
+            if ($det->item_type == 'PLATO') $nombreImp = $nombreImpComidas;
             else $nombreImp = $nombreImpBebidas;
 
             $fila = [
