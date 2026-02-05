@@ -162,24 +162,23 @@ success: true
             ->get();*/
 
         $arrayPedido = array();
-        foreach ($pedido as $item) {
-            $fila = [
-                'nombrecomercial' => $empresa,
-                'ruc' => $ruc,
-                'direccion' => $direccionEmpresa,
-                'correo' => 'Email: ' . $emailEmpresa,
-                'telefono' => '+51 ' . $telefonoEmpresa,
+        $fila = [
+            'nombrecomercial' => $empresa,
+            'ruc' => $ruc,
+            'direccion' => $direccionEmpresa,
+            'correo' => 'Email: ' . $emailEmpresa,
+            'telefono' => '+51 ' . $telefonoEmpresa,
 
-                'idpedido' => $item->id,
-                'fecha' => $item->created_at->format('d/m/Y h:i:s a'),
-                'mesero' => 'MESERO: ' . $item->creator_user_name,
-                'mesa' => 'Nº MESA - ' . $item->table->name,
-                'total' => $item->total,
-                'observacion' => $item->observation ?? 'Sin observaciones',
-                'im_nombre' => $nombreImp
-            ];
-            array_push($arrayPedido, $fila);
-        }
+            'idpedido' => $pedido->id,
+            'fecha' => $pedido->created_at->format('d/m/Y h:i:s a'),
+            'mesero' => 'MESERO: ' . $pedido->creator_user_name,
+            'mesa' => 'Nº MESA - ' . $pedido->table->name,
+            'total' => $pedido->total,
+            'observacion' => $item->observation ?? 'Sin observaciones',
+            'im_nombre' => $nombreImp
+        ];
+        array_push($arrayPedido, $fila);
+
 
         $arrayDetalles = array();
         foreach ($detalles as $det) {
