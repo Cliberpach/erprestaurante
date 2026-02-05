@@ -14,7 +14,7 @@ class ModuleSeeder extends Seeder
         $this->seedCaja();
         $this->seedVentas();
         $this->seedAbastecimiento();
-        $this->seedCuentas();
+        //$this->seedCuentas();
         $this->seedInventario();
         $this->seedMostradorMesero();
         $this->seedMostradorCajero();
