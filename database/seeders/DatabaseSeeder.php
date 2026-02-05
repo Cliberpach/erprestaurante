@@ -69,6 +69,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProofPaymentSeeder::class);
         $this->call(TypeFieldSeeder::class);
         $this->call(TestSeeder::class);
+        $this->call(PaymentConditionSeeder::class);
 
         //$this->call(TenantUserSeeder::class);
     }
