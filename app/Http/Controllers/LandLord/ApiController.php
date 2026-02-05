@@ -5,6 +5,8 @@ namespace App\Http\Controllers\LandLord;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Tenant\Orders\Order;
+use App\Models\Tenant\Orders\OrderDish;
+use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\Sales\Sale\Sale;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -381,19 +383,13 @@ success: true
                 ->get();*/
 
             foreach ($bebidas as $det) {
-                DB::update(
-                    "UPDATE orders_products
-                    SET detail_printed='SI',updated_at = ?
-                    WHERE order_id=?
-                    AND product_id=?
-                    AND id=? ",
-                    [
-                        now(),
-                        $idpedido,
-                        $det->item_id,
-                        $det->id
-                    ]
-                );
+                OrderProduct::where('order_id', $idpedido)
+                    ->where('product_id', $det->item_id)
+                    ->where('id', $det->id)
+                    ->update([
+                        'detail_printed' => 'SI',
+                        'updated_at' => now(),
+                    ]);
             }
 
             $platos    =   $details->where('item_type', 'PLATO')->sortByDesc('created_at')->values();
@@ -405,19 +401,13 @@ success: true
                 ->get();*/
 
             foreach ($platos as $det) {
-                DB::update(
-                    "UPDATE orders_dishes
-                    SET detail_printed='SI',updated_at = ?
-                    WHERE order_id=?
-                    AND dish_id=?
-                    AND id=? ",
-                    [
-                        now(),
-                        $idpedido,
-                        $det->item_id,
-                        $det->id
-                    ]
-                );
+                OrderDish::where('order_id', $idpedido)
+                    ->where('dish_id', $det->item_id)
+                    ->where('id', $det->id)
+                    ->update([
+                        'detail_printed' => 'SI',
+                        'updated_at' => now(),
+                    ]);
                 // DB::update(
                 //     " UPDATE d_pedido
                 //     SET DPED_Impreso='SI'
