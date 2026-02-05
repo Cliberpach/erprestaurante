@@ -238,32 +238,30 @@ success: true
         }
 
         $arrayRecibo = array();
-        foreach ($recibo as $item) {
-            $fila = [
-                'nombrecomercial' => $empresa,
-                'ruc' => $ruc,
-                'direccion' => $direccionEmpresa,
-                'correo' => 'Email: ' . $emailEmpresa,
-                'telefono' => '+51 ' . $telefonoEmpresa,
+        $fila = [
+            'nombrecomercial' => $empresa,
+            'ruc' => $ruc,
+            'direccion' => $direccionEmpresa,
+            'correo' => 'Email: ' . $emailEmpresa,
+            'telefono' => '+51 ' . $telefonoEmpresa,
 
-                'idrecibo' => $item->id,
-                'fecha' => $item->created_at->format('d/m/Y h:i:s a'),
-                'tipo' => $item->type_sale_name,
-                'serie' => $item->serie,
-                'correlativo' => $item->correlative,
-                'nrodoc' => $item->customer_document_number,
-                'cliente' => $item->customer_name,
-                'direccionCliente' => $item->customer_address,
-                'subtotal' => $item->subtotal,
-                'igv' => $item->igv_amount,
-                'monto_total' => $item->total,
-                'total' => $item->total,
-                'descuento' => $item->discount,
-                'hash' => $item->serie . '-' . $item->correlative,
-                'im_nombre' => $nombreImp
-            ];
-            array_push($arrayRecibo, $fila);
-        }
+            'idrecibo' => $recibo->id,
+            'fecha' => $recibo->created_at->format('d/m/Y h:i:s a'),
+            'tipo' => $recibo->type_sale_name,
+            'serie' => $recibo->serie,
+            'correlativo' => $recibo->correlative,
+            'nrodoc' => $recibo->customer_document_number,
+            'cliente' => $recibo->customer_name,
+            'direccionCliente' => $recibo->customer_address,
+            'subtotal' => $recibo->subtotal,
+            'igv' => $recibo->igv_amount,
+            'monto_total' => $recibo->total,
+            'total' => $recibo->total,
+            'descuento' => $recibo->discount,
+            'hash' => $recibo->serie . '-' . $recibo->correlative,
+            'im_nombre' => $nombreImp
+        ];
+        array_push($arrayRecibo, $fila);
 
         $detalles   =   Order::where('id', $CodPedido)->first()->getDetails();
         // $detalles = DPedido::where('idpedido', '=', $CodPedido)
