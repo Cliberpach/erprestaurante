@@ -35,6 +35,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('warehouse_id');
             $table->foreign('warehouse_id')->references('id')->on('warehouses');
+            $table->string('warehouse_name',160);
 
             $table->unsignedBigInteger('type_sale_id')->comment('DE LA VENTA AFECTADA');
             $table->string('type_sale_code', 160)->comment('DE LA VENTA AFECTADA');
@@ -93,7 +94,7 @@ return new class extends Migration
             $table->unsignedBigInteger('delete_user_id')->nullable();
             $table->string('delete_user_name')->nullable();
 
-            $table->longText('last_send_message');
+            $table->longText('last_send_message')->nullable();
 
             /* 🔹 TIMESTAMPS */
             $table->timestamps();
