@@ -45,6 +45,9 @@ class OrderDto
         $dto['payref_id']      =   $data['payref_id'] ?? null;
         $dto['payref_name']    =   $data['payref_name'] ?? null;
 
+        $dto['pending_order_printing']  =   'SI';
+        $dto['order_print_mode']        =   'TODO';
+
         if (isset($data['voucher'])) {
             $files_route            =   Company::findOrFail(1)->files_route;
             $file_name              =   uniqid() . '_' . trim($data['voucher']->getClientOriginalName());
