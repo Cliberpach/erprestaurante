@@ -2,6 +2,9 @@
 
 namespace App\Models\Tenant\Orders;
 
+use App\Http\Services\Tenant\Orders\OrderService;
+use App\Models\Tenant\Sales\Sale\Sale;
+use App\Models\Tenant\Supply\Table\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,13 +22,16 @@ class Order extends Model
         'date',
         'place',
         'observation',
+
         'n_attempts_dishes',
         'n_attempts_products',
         'status',
         'status_invoice',
         'pending_print',
+        'pending_order_printing',
         'pending_kitchen_print',
         'kitchen_print_mode',
+
         'waiter_delete_status',
         'waiter_delete_name',
         'waiter_delete_user_id',
@@ -59,11 +65,34 @@ class Order extends Model
 
         'petty_cash_book_id',
         'petty_cash_id',
-        'petty_cash_name'
+        'petty_cash_name',
+
+        'date_pending_print',
+        'date_pending_order_print'
     ];
 
     protected $guarded = ['code'];
 
+    public function table()
+    {
+        return $this->belongsTo(Table::class, 'table_id');
+    }
+
+    public function getDetails()
+    {
+        $service = new OrderService();
+        return $service->getDetails($this->id);
+    }
+
+    public function sale()
+    {
+        return $this->hasOne(Sale::class, 'order_id', 'id');
+    }
+
+    public function hasSale(): bool
+    {
+        return $this->sale()->exists();
+    }
 
     protected static function boot()
     {

@@ -240,4 +240,9 @@ class SaleService
         $this->s_repository->setSunatStatus($sale, 'ANULADO');
         return $credit_note;
     }
+
+    public function getDetails(int $id)
+    {
+        return $this->s_repository->getDetail($id);
+    }
 }

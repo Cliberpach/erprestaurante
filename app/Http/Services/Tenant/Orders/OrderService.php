@@ -106,7 +106,7 @@ class OrderService
 
         $s_kardex   =   new KardexService();
         $s_kardex->updateFromOrder($order);
-       
+
         return $order;
     }
 
@@ -157,5 +157,10 @@ class OrderService
     {
         $this->s_repository->setStatusInvoice($id, $status, $invoice);
         $this->s_reservation->setStatusByOrder($id, 'FINALIZADO');
+    }
+
+    public function getDetails(int $id)
+    {
+        return $this->s_repository->getDetails($id);
     }
 }

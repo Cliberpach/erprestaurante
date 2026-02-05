@@ -2,6 +2,7 @@
 
 namespace App\Models\Tenant\Sales\Sale;
 
+use App\Http\Services\Tenant\Sale\Sale\SaleService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,7 @@ class Sale extends Model
         'customer_document_number',
         'customer_document_code',
         'customer_phone',
+        'customer_address',
 
         'petty_cash_id',
         'petty_cash_name',
@@ -37,14 +39,10 @@ class Sale extends Model
         'subtotal',
         'igv_amount',
         'total',
+        'discount',
         'change_pay',
 
         'legend',
-
-        'method_pay_id_1',
-        'amount_pay_1',
-        'method_pay_id_2',
-        'amount_pay_2',
 
         'correlative',
         'serie',
@@ -52,6 +50,7 @@ class Sale extends Model
         'status',
         'sunat_status',
         'pay_status',
+        'pending_print',
 
         'response_cdrZip',
         'response_success',
@@ -80,6 +79,7 @@ class Sale extends Model
         'deletor_user_name',
         'editor_user_name',
         'creator_user_name',
+        'date_pending_print'
     ];
 
 
@@ -100,6 +100,12 @@ class Sale extends Model
         return $this->pays
             ->where('payment_method_id', $paymentMethodId)
             ->sum('total');
+    }
+
+    public function getDetails()
+    {
+        $service = new SaleService();
+        return $service->getDetails($this->id);
     }
 
     protected static function boot()

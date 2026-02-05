@@ -26,6 +26,7 @@ class SaleDto
         $dto['customer_document_number']    =   $customer->document_number;
         $dto['customer_document_code']      =   $customer->type_document_code;
         $dto['customer_phone']              =   $customer->phone;
+        $dto['customer_address']            =   $customer->address;
 
         $cash_book                          =   $data['cash_book'];
         $dto['petty_cash_id']               =   $cash_book->petty_cash_id;

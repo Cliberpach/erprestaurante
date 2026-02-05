@@ -43,7 +43,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -71,10 +71,9 @@ class Kernel extends HttpKernel
 
     // app/Http/Kernel.php
 
-protected $routeMiddleware = [
-    // Otros middlewares...
-    'validar.plan'      => \App\Http\Middleware\PlanMiddleware::class,
-    //'verificar.caja'    => \App\Http\Middleware\VerificarCajaAbierta::class, // Asegúrate de agregar esta línea
-];
-
+    protected $routeMiddleware = [
+        // Otros middlewares...
+        'validar.plan'      => \App\Http\Middleware\PlanMiddleware::class,
+        //'verificar.caja'    => \App\Http\Middleware\VerificarCajaAbierta::class, // Asegúrate de agregar esta línea
+    ];
 }

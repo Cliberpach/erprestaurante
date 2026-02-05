@@ -55,9 +55,9 @@ return new class extends Migration
             $table->longText('payref_img_name')->nullable()->comment('Nombre de la imagen de la referencia de pago (payref)');
 
             /* 🔹 PRINT CONFIGURATION */
-            $table->string('pending_print', 2)->default('NO')->nullable();
-            $table->string('pending_order_printing', 5)->default('NO')->nullable();
-            $table->string('order_print_mode', 10)->default('TODO')->nullable();
+            $table->enum('pending_print', ['SI', 'NO'])->default('SI');
+            $table->enum('pending_order_printing', ['SI', 'NO'])->default('SI');
+            $table->enum('order_print_mode', ['TODO', 'PARCIAL','PLATO','BEBIDA'])->default('TODO');
 
             /* 🔹 WAITER DELETE INFO */
             $table->boolean('waiter_delete_status')->default(0)->nullable();
@@ -85,6 +85,8 @@ return new class extends Migration
             $table->string('editor_user_name')->nullable();
             $table->unsignedBigInteger('delete_user_id')->nullable();
             $table->string('delete_user_name')->nullable();
+            $table->dateTime('date_pending_print')->nullable();
+            $table->dateTime('date_pending_order_print')->nullable();
 
             $table->timestamps();
         });

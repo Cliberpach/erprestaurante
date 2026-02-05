@@ -57,7 +57,7 @@ class OrderRepository
         return $item;
     }
 
-    public function findOrder(int $id):Order
+    public function findOrder(int $id): Order
     {
         return Order::findOrFail($id);
     }
@@ -109,5 +109,60 @@ class OrderRepository
         $order->sale_serie          =   $invoice->serie;
         $order->sale_correlative    =   $invoice->correlative;
         $order->save();
+    }
+
+    public function getDetails(int $id)
+    {
+        $q1 = DB::table('order_products as op')
+            ->select(
+                'op.id',
+                'op.order_id',
+                DB::raw("'PRODUCTO' as item_type"),
+                'op.product_id as item_id',
+                'op.product_name as item_name',
+                'op.quantity',
+                'op.sale_price',
+                'op.total',
+                'op.mto_valor_unitario',
+                'op.mto_valor_venta',
+                'op.mto_base_igv',
+                'op.porcentaje_igv',
+                'op.igv',
+                'op.tip_afe_igv',
+                'op.total_impuestos',
+                'op.mto_precio_unitario',
+                'op.detail_printed',
+                'op.observation',
+                'op.created_at'
+            )
+            ->where('op.order_id', $id)
+            ->where('op.status', '<>', 'ANULADO');
+
+        $q2 = DB::table('order_dishes as od')
+            ->select(
+                'od.id',
+                'od.order_id',
+                DB::raw("'PLATO' as item_type"),
+                'od.dish_id as item_id',
+                'od.dish_name as item_name',
+                'od.quantity',
+                'od.sale_price',
+                'od.total',
+                'od.mto_valor_unitario',
+                'od.mto_valor_venta',
+                'od.mto_base_igv',
+                'od.porcentaje_igv',
+                'od.igv',
+                'od.tip_afe_igv',
+                'od.total_impuestos',
+                'od.mto_precio_unitario',
+                'od.detail_printed',
+                'od.observation',
+                'od.created_at'
+            )
+            ->where('od.order_id', $id)
+            ->where('od.status', '<>', 'ANULADO');
+
+        return $q1->unionAll($q2)->get();
     }
 }

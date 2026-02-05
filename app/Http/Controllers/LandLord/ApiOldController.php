@@ -3,15 +3,10 @@
 namespace App\Http\Controllers\LandLord;
 
 use App\Http\Controllers\Controller;
-use App\Http\Services\Tenant\Orders\OrderService;
-use App\Models\Company;
-use App\Models\Tenant\Orders\Order;
-use App\Models\Tenant\Orders\OrderProduct;
-use App\Models\Tenant\Sales\Sale\Sale;
-use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
+
     public function apiRuc($ruc)
     {
         $url = "https://apiperu.dev/api/ruc/" . $ruc;
@@ -106,26 +101,25 @@ success: true
         return $data;
     }
 
-    //Modificado por DANIEL-ALVA: todas las funciones fueron agregadas por DANIEL-ALVA
+    //Modificado por JC: todas las funciones fueron agregadas por JC
     function ListarPedidosPendientesImprimir()
     {
-        $comandas = Order::where('status', '<>', 'ANULADO')
-            ->where('pending_order_printing', '=', 'SI')
-            ->select('id AS idpedido')
-            ->orderby('id', 'asc')
+        $comandas = Pedido::where('estado_delete', '=', '1')
+            ->where('ImpresionPendienteComanda', '=', 'SI')
+            ->select('idpedido')
+            ->orderby('idpedido', 'asc')
             ->get();
 
-        $pedidos = Order::where('status', '<>', 'ANULADO')
-            ->where('pending_print', '=', 'SI')
-            ->select('id AS idpedido')
-            ->orderby('id', 'asc')
+        $pedidos = Pedido::where('estado_delete', '=', '1')
+            ->where('ImpresionPendiente', '=', 'SI')
+            ->select('idpedido')
+            ->orderby('idpedido', 'asc')
             ->get();
 
-        $cpe = Sale::where('status', '!=', 'ANULADO')
-            ->where('sunat_status', '<>', 'ANULADO')
-            ->where('pending_print', 'SI')
-            ->select('id AS idrecibo')
-            ->orderby('id', 'asc')
+        $cpe = Recibo::where('estado', '!=', 'ANULADO')
+            ->where('ImpresionPendiente', '=', 'SI')
+            ->select('idrecibo')
+            ->orderby('idrecibo', 'asc')
             ->get();
 
         return [
@@ -137,6 +131,7 @@ success: true
 
     function ObtenerPedido_PorCodigo($idpedido)
     {
+        //cocina - bebidas - caja
         $nombreImp = 'PDF24 PDF';
         // $area_impresion = AreaImpresion::where('codigo', 'caja')->first();
         // if ($area_impresion != null){
@@ -149,19 +144,16 @@ success: true
         //     }
         // }
 
-        $company    =   Company::findOrFail(1);
-        $empresa = $company->business_name;
-        $ruc = $company->ruc;
-        $direccionEmpresa = $company->fiscal_address;
-        $telefonoEmpresa = $company->phone;
-        $emailEmpresa = $company->email;
+        $empresa = DB::table('empresa')->count() == 0 ? 'SISCOM ' : DB::table('empresa')->first()->nombre;
+        $ruc = DB::table('empresa')->count() == 0 ? '- ' : DB::table('empresa')->first()->ruc;
+        $direccionEmpresa = DB::table('empresa')->count() == 0 ? '- ' : DB::table('empresa')->first()->direccion;
+        $telefonoEmpresa = DB::table('empresa')->count() == 0 ? '-' : DB::table('empresa')->first()->telefono;
+        $emailEmpresa = DB::table('empresa')->count() == 0 ? '-' : DB::table('empresa')->first()->email;
 
-        $pedido     =   Order::findOrFail($idpedido);
-        $detalles   =   $pedido->getDetails();
-
-        /*$detalles = DPedido::where('idpedido', '=', $idpedido)
+        $pedido = Pedido::where('idpedido', '=', $idpedido)->get();
+        $detalles = DPedido::where('idpedido', '=', $idpedido)
             ->where('estado_delete', '=', '1')
-            ->get();*/
+            ->get();
 
         $arrayPedido = array();
         foreach ($pedido as $item) {
@@ -172,12 +164,12 @@ success: true
                 'correo' => 'Email: ' . $emailEmpresa,
                 'telefono' => '+51 ' . $telefonoEmpresa,
 
-                'idpedido' => $item->id,
-                'fecha' => $item->created_at->format('d/m/Y h:i:s a'),
-                'mesero' => 'MESERO: ' . $item->creator_user_name,
-                'mesa' => 'Nº MESA - ' . $item->table->name,
-                'total' => $item->total,
-                'observacion' => $item->observation ?? 'Sin observaciones',
+                'idpedido' => $item->idpedido,
+                'fecha' => $item->fecha->format('d/m/Y h:i:s a'),
+                'mesero' => 'MESERO: ' . $item->Trabajador->Persona->nombres_apellidos(),
+                'mesa' => 'Nº MESA - ' . $item->Reserva->Mesa->nromesa,
+                'total' => $item->Total2($item->DPedido),
+                'observacion' => $item->GetObservacion(),
                 'im_nombre' => $nombreImp
             ];
             array_push($arrayPedido, $fila);
@@ -186,10 +178,10 @@ success: true
         $arrayDetalles = array();
         foreach ($detalles as $det) {
             $fila = [
-                'cantidad' => $det->quantity,
-                'descripcion' => $det->item_name,
-                'precio' => $det->sale_price,
-                'importe' => $det->total
+                'cantidad' => $det->cantidad,
+                'descripcion' => $det->producto->nombre,
+                'precio' => $det->p_venta,
+                'importe' => $det->cantidad * $det->p_venta
             ];
             array_push($arrayDetalles, $fila);
         }
@@ -202,10 +194,9 @@ success: true
 
     function ActualizarPedidosPendientesImprimir($idpedido)
     {
-        $pedido = Order::findOrFail($idpedido);
-        if ($pedido) {
-            $pedido->pending_print      =   'NO';
-            $pedido->date_pending_print =   now();
+        $pedido = Pedido::findorfail($idpedido);
+        if ($pedido != null) {
+            $pedido->ImpresionPendiente = 'NO';
             $pedido->save();
         }
     }
@@ -225,19 +216,19 @@ success: true
         //     }
         // }
 
-        $company    =   Company::findOrFail(1);
-        $empresa = $company->business_name;
-        $ruc = $company->ruc;
-        $direccionEmpresa = $company->fiscal_address;
-        $telefonoEmpresa = $company->phone;
-        $emailEmpresa = $company->email;
+        $empresa = DB::table('empresa')->count() == 0 ? 'SISCOM ' : DB::table('empresa')->first()->nombre;
+        $ruc = DB::table('empresa')->count() == 0 ? '- ' : DB::table('empresa')->first()->ruc;
+        $direccionEmpresa = DB::table('empresa')->count() == 0 ? '- ' : DB::table('empresa')->first()->direccion;
+        $telefonoEmpresa = DB::table('empresa')->count() == 0 ? '-' : DB::table('empresa')->first()->telefono;
+        $emailEmpresa = DB::table('empresa')->count() == 0 ? '-' : DB::table('empresa')->first()->email;
 
-        $recibo     = Sale::where('id', '=', $idrecibo)->first();
-        $detalles   = $recibo->getDetails();
+        $recibo = Recibo::where('idrecibo', '=', $idrecibo)->get();
+        $detalles = DRecibo::where('idrecibo', '=', $idrecibo)
+            ->get();
 
         $CodPedido = -1;
         foreach ($detalles as $dd) {
-            if ($CodPedido == -1) $CodPedido = $dd->order_id;
+            if ($CodPedido == -1) $CodPedido = $dd->idpedido;
         }
 
         $arrayRecibo = array();
@@ -249,37 +240,36 @@ success: true
                 'correo' => 'Email: ' . $emailEmpresa,
                 'telefono' => '+51 ' . $telefonoEmpresa,
 
-                'idrecibo' => $item->id,
-                'fecha' => $item->created_at->format('d/m/Y h:i:s a'),
-                'tipo' => $item->type_sale_name,
+                'idrecibo' => $item->idrecibo,
+                'fecha' => $item->fecha->format('d/m/Y h:i:s a'),
+                'tipo' => $item->tipo,
                 'serie' => $item->serie,
-                'correlativo' => $item->correlative,
-                'nrodoc' => $item->customer_document_number,
-                'cliente' => $item->customer_name,
-                'direccionCliente' => $item->customer_address,
+                'correlativo' => $item->correlativo,
+                'nrodoc' => ($item->Cliente->ClientePersona != null) ? $item->Cliente->ClientePersona->Persona->dni : $item->Cliente->ClienteRuc->ruc,
+                'cliente' => ($item->Cliente->ClientePersona != null) ? $item->Cliente->ClientePersona->Persona->nombres_apellidos() : $item->Cliente->ClienteRuc->nombre_comercial,
+                'direccionCliente' => ($item->Cliente->ClientePersona != null) ? $item->Cliente->ClientePersona->Persona->direccion : $item->Cliente->ClienteRuc->direccion,
                 'subtotal' => $item->subtotal,
-                'igv' => $item->igv_amount,
-                'monto_total' => $item->total,
+                'igv' => $item->total_igv,
+                'monto_total' => $item->monto_total,
                 'total' => $item->total,
-                'descuento' => $item->discount,
-                'hash' => $item->serie . '-' . $item->correlative,
+                'descuento' => $item->descuento,
+                'hash' => $item->hash,
                 'im_nombre' => $nombreImp
             ];
             array_push($arrayRecibo, $fila);
         }
 
-        $detalles   =   Order::where('id', $CodPedido)->first()->getDetails();
-        // $detalles = DPedido::where('idpedido', '=', $CodPedido)
-        //     ->where('estado_delete', '=', '1')
-        //     ->get();
+        $detalles = DPedido::where('idpedido', '=', $CodPedido)
+            ->where('estado_delete', '=', '1')
+            ->get();
 
         $arrayDetalles = array();
         foreach ($detalles as $det) {
             $fila = [
-                'cantidad' => $det->quantity,
-                'descripcion' => $det->item_name,
-                'precio' => $det->sale_price,
-                'importe' => $det->total
+                'cantidad' => $det->cantidad,
+                'descripcion' => $det->producto->nombre,
+                'precio' => $det->p_venta,
+                'importe' => $det->cantidad * $det->p_venta
             ];
             array_push($arrayDetalles, $fila);
         }
@@ -292,10 +282,9 @@ success: true
 
     function ActualizarReciboPendienteImprimir($idrecibo)
     {
-        $recibo = Sale::findorfail($idrecibo);
+        $recibo = Recibo::findorfail($idrecibo);
         if ($recibo != null) {
-            $recibo->pending_print = 'NO';
-            $recibo->date_pending_print =   now();
+            $recibo->ImpresionPendiente = 'NO';
             $recibo->save();
         }
     }
@@ -331,22 +320,21 @@ success: true
         $nombreImpComidas = "PLATO";
         $nombreImpBebidas = "BEBIDA";
 
-        $company    =   Company::findOrFail(1);
-        $empresa = $company->business_name;
-        $ruc = $company->ruc;
-        $direccionEmpresa = $company->fiscal_address;
-        $telefonoEmpresa = $company->phone;
-        $emailEmpresa = $company->email;
+        $empresa = DB::table('empresa')->count() == 0 ? 'SISCOM ' : DB::table('empresa')->first()->nombre;
+        $ruc = DB::table('empresa')->count() == 0 ? '- ' : DB::table('empresa')->first()->ruc;
+        $direccionEmpresa = DB::table('empresa')->count() == 0 ? '- ' : DB::table('empresa')->first()->direccion;
+        $telefonoEmpresa = DB::table('empresa')->count() == 0 ? '-' : DB::table('empresa')->first()->telefono;
+        $emailEmpresa = DB::table('empresa')->count() == 0 ? '-' : DB::table('empresa')->first()->email;
 
-        $pedido = Order::where('id', $idpedido)->first();
+        $pedido = Pedido::where('idpedido', '=', $idpedido)->get();
 
         $arrayPedido = array();
         foreach ($pedido as $item) {
             $modo = '';
-            if ($item->order_print_mode == 'TODO') $modo = 'COCINA - MOSTRADOR';
-            else if ($item->order_print_mode == 'PLATO') $modo = 'COCINA';
-            else if ($item->order_print_mode == 'BEBIDA') $modo = 'MOSTRADOR';
-            else if ($item->order_print_mode == 'PARCIAL') $modo = 'COCINA - MOSTRADOR';
+            if ($item->ModoImpresionComanda == 'TODO') $modo = 'COCINA - MOSTRADOR';
+            else if ($item->ModoImpresionComanda == 'PLATO') $modo = 'COCINA';
+            else if ($item->ModoImpresionComanda == 'BEBIDA') $modo = 'MOSTRADOR';
+            else if ($item->ModoImpresionComanda == 'PARCIAL') $modo = 'COCINA - MOSTRADOR';
 
             $fila = [
                 'nombrecomercial' => $empresa,
@@ -355,13 +343,13 @@ success: true
                 'correo' => 'Email: ' . $emailEmpresa,
                 'telefono' => '+51 ' . $telefonoEmpresa,
 
-                'idpedido' => $item->id,
-                'fecha' => $item->created_at->format('d/m/Y h:i:s a'),
-                'mesero' => 'MESERO: ' . $item->creator_user_name,
-                'mesa' => 'Nº MESA - ' . $item->table->name,
-                'total' => $item->total,
-                'observacion' => $item->observation ?? 'Sin observaciones',
-                'estado' => $item->hasSale() ? 'Pagado' : 'Confirmado',
+                'idpedido' => $item->idpedido,
+                'fecha' => $item->fecha->format('d/m/Y h:i:s a'),
+                'mesero' => 'MESERO: ' . $item->Trabajador->Persona->nombres_apellidos(),
+                'mesa' => 'Nº MESA - ' . $item->Reserva->Mesa->nromesa,
+                'total' => $item->Total2($item->DPedido),
+                'observacion' => $item->GetObservacion(),
+                'estado' => $item->estado,
                 'modoImpresionComanda' => $modo
             ];
             array_push($arrayPedido, $fila);
@@ -370,109 +358,71 @@ success: true
         //----------------------------------------------------------------------------
         //------------------ obtener pedido - y verificar las bebidas ----------------
         //----------------------------------------------------------------------------
-        $modoImpresionComanda = $pedido->order_print_mode;
-        $details    =   $pedido->getDetails()->where('detail_printed', 'NO');
+        $objPedido = Pedido::findorfail($idpedido);
+        $modoImpresionComanda = $objPedido->ModoImpresionComanda;
+
         $bebidas = array();
         $platos = array();
 
         if ($modoImpresionComanda == 'PARCIAL') {
-            $bebidas    =   $details->where('item_type', 'PRODUCTO')->orderBy('created_at', 'desc');
-
-            /*$bebidas = $objPedido
+            $bebidas = $objPedido
                 ->DPedidoPendiente()
                 ->where('nombre_tabla', 'producto')
                 ->where('DPED_Impreso', 'NO')
                 ->orderBy('created_at', 'desc')
-                ->get();*/
+                ->get();
 
             foreach ($bebidas as $det) {
                 DB::update(
-                    "UPDATE orders_products
-                    SET detail_printed='SI',updated_at = ?
-                    WHERE order_id=?
-                    AND product_id=?
-                    AND id=? ",
-                    [
-                        now(),
-                        $idpedido,
-                        $det->item_id,
-                        $det->id
-                    ]
+                    " UPDATE d_pedido SET DPED_Impreso='SI' WHERE idpedido=? AND idplato=? AND nombre_tabla=? AND correlativo=? ",
+                    [$idpedido, $det->idplato, $det->nombre_tabla, $det->correlativo]
                 );
             }
 
-            $platos    =   $details->where('item_type', 'PLATO')->orderBy('created_at', 'desc');
-            /*$platos = $objPedido
+            $platos = $objPedido
                 ->DPedidoPendiente()
                 ->where('nombre_tabla', 'platos')
                 ->where('DPED_Impreso', 'NO')
                 ->orderBy('created_at', 'desc')
-                ->get();*/
+                ->get();
 
             foreach ($platos as $det) {
                 DB::update(
-                    "UPDATE orders_dishes
-                    SET detail_printed='SI',updated_at = ?
-                    WHERE order_id=?
-                    AND product_id=?
-                    AND id=? ",
-                    [
-                        now(),
-                        $idpedido,
-                        $det->item_id,
-                        $det->id
-                    ]
+                    " UPDATE d_pedido SET DPED_Impreso='SI' WHERE idpedido=? AND idplato=? AND nombre_tabla=? AND correlativo=? ",
+                    [$idpedido, $det->idplato, $det->nombre_tabla, $det->correlativo]
                 );
-                // DB::update(
-                //     " UPDATE d_pedido
-                //     SET DPED_Impreso='SI'
-                //     WHERE idpedido=?
-                //     AND idplato=?
-                //     AND nombre_tabla=?
-                //     AND correlativo=? ",
-                //     [
-                //         $idpedido,
-                //         $det->idplato,
-                //         $det->nombre_tabla,
-                //         $det->correlativo
-                //     ]
-                // );
             }
         } else {
             if ($modoImpresionComanda == 'TODO' || $modoImpresionComanda == 'BEBIDA') {
-                $bebidas    =   $details->where('item_type', 'PRODUCTO')->orderBy('created_at', 'desc');
-
-                /*$bebidas = $objPedido
+                $bebidas = $objPedido
                     ->DPedidoPendiente()
                     ->where('nombre_tabla', 'producto')
                     //->where('DPED_Impreso', 'NO')
                     ->orderBy('created_at', 'desc')
-                    ->get();*/
+                    ->get();
             }
 
             if ($modoImpresionComanda == 'TODO' || $modoImpresionComanda == 'PLATO') {
-                $platos    =   $details->where('item_type', 'PLATO')->orderBy('created_at', 'desc');
-
-                /*$platos = $objPedido
+                $platos = $objPedido
                     ->DPedidoPendiente()
                     ->where('nombre_tabla', 'platos')
                     //->where('DPED_Impreso', 'NO')
                     ->orderBy('created_at', 'desc')
-                    ->get();*/
+                    ->get();
             }
         }
 
         $arrayDetalles = array();
         foreach ($bebidas as $det) {
             $nombreImp = '';
-            if ($det->item_type == 'PLATO') $nombreImp = $nombreImpComidas;
+            if ($det->nombre_tabla == 'platos') $nombreImp = $nombreImpComidas;
             else $nombreImp = $nombreImpBebidas;
 
             $fila = [
                 'im_nombre' => $nombreImp,
-                'cantidad' => $det->quantity,
-                'descripcion' => $det->item_name,
-                'observacion' => $det->observation ?? '-',
+                'cantidad' => $det->cantidad,
+                'descripcion' => $det->producto->nombre,
+                'observacion' => $det->descripcion == null ? 'Sin observaciones' : $det->descripcion,
                 'fecha' => $det->created_at->format('d/m/Y h:i:s a')
             ];
             array_push($arrayDetalles, $fila);
@@ -480,14 +430,14 @@ success: true
 
         foreach ($platos as $det) {
             $nombreImp = '';
-            if ($det->nombre_tabla == 'PLATO') $nombreImp = $nombreImpComidas;
+            if ($det->nombre_tabla == 'platos') $nombreImp = $nombreImpComidas;
             else $nombreImp = $nombreImpBebidas;
 
             $fila = [
                 'im_nombre' => $nombreImp,
-                'cantidad' => $det->quantity,
-                'descripcion' => $det->item_name,
-                'observacion' => $det->observation ?? '-',
+                'cantidad' => $det->cantidad,
+                'descripcion' => $det->producto->nombre,
+                'observacion' => $det->descripcion == null ? 'Sin observaciones' : $det->descripcion,
                 'fecha' => $det->created_at->format('d/m/Y h:i:s a')
             ];
             array_push($arrayDetalles, $fila);
@@ -501,10 +451,9 @@ success: true
 
     function ActualizarComandaPendienteImprimir($idpedido)
     {
-        $pedido = Order::findOrFail($idpedido);
+        $pedido = Pedido::findorfail($idpedido);
         if ($pedido != null) {
-            $pedido->pending_order_printing = 'NO';
-            $pedido->date_pending_order_print =   now();
+            $pedido->ImpresionPendienteComanda = 'NO';
             $pedido->save();
         }
     }

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('customer_document_number', 20);
             $table->string('customer_document_code', 4);
             $table->string('customer_phone', 20)->nullable();
+            $table->string('customer_address', 160)->nullable();
 
             //========== CAJA EN LA QUE SE ESTÁ CREANDO LA VENTA =====
             $table->unsignedBigInteger('petty_cash_id');
@@ -45,6 +46,7 @@ return new class extends Migration
             $table->decimal('subtotal', 16, 6)->unsigned();
             $table->decimal('igv_amount', 16, 6)->unsigned();
             $table->decimal('total', 16, 6)->unsigned();
+            $table->decimal('discount', 16, 6)->unsigned();
             $table->decimal('change_pay', 16, 6)->default(0)->unsigned();
             $table->string('legend', 260);
 
@@ -64,6 +66,7 @@ return new class extends Migration
             $table->enum('sunat_status', ['ACEPTADO', 'PENDIENTE', 'ENVIADO', 'RECHAZADO', 'ANULADO', 'ANULADO PARCIAL'])->default('PENDIENTE');
             $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
             $table->enum('pay_status', ['PAGADO', 'PENDIENTE'])->default('PENDIENTE');
+            $table->enum('pending_print', ['SI', 'NO'])->default('SI');
 
             //======= FACTURACIÓN ========
             $table->tinyInteger('response_cdrZip')->nullable();
@@ -90,6 +93,7 @@ return new class extends Migration
             $table->unsignedBigInteger('converted_from_id')->nullable();
             $table->string('converted_from_serie', 20)->nullable();
 
+            /*==== AUDITORÍA ====*/
             $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->unsignedBigInteger('editor_user_id')->nullable();
             $table->unsignedBigInteger('deletor_user_id')->nullable();
@@ -97,6 +101,8 @@ return new class extends Migration
             $table->string('deletor_user_name')->nullable();
             $table->string('editor_user_name')->nullable();
             $table->string('creator_user_name')->nullable();
+            $table->dateTime('date_pending_print')->nullable();
+
 
             // $table->unsignedBigInteger('payment_condition_id');
             // $table->foreign('payment_condition_id')->references('id')->on('payment_conditions');
