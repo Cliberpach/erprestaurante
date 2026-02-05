@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\LandLord;
 
 use App\Http\Controllers\Controller;
-use App\Http\Services\Tenant\Orders\OrderService;
 use App\Models\Company;
 use App\Models\Tenant\Orders\Order;
-use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\Sales\Sale\Sale;
 use Illuminate\Support\Facades\DB;
 

@@ -58,7 +58,8 @@ class SaleRepository
 
     public function getDetail(int $sale_id)
     {
-        $q1 = DB::table('sales_products as sp')
+        $q1 = DB::connection('tenant')
+            ->table('sales_products as sp')
             ->select(
                 'sp.sale_id',
                 DB::raw("'PRODUCTO' as item_type"),
@@ -79,7 +80,8 @@ class SaleRepository
             )->where('sp.sale_id', $sale_id);
 
 
-        $q2 = DB::table('sales_dishes as sd')
+        $q2 = DB::connection('tenant')
+            ->table('sales_dishes as sd')
             ->select(
                 'sd.sale_id',
                 DB::raw("'PLATO' as item_type"),
