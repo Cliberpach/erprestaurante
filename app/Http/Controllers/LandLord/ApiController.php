@@ -409,7 +409,7 @@ success: true
                     "UPDATE orders_dishes
                     SET detail_printed='SI',updated_at = ?
                     WHERE order_id=?
-                    AND product_id=?
+                    AND dish_id=?
                     AND id=? ",
                     [
                         now(),
