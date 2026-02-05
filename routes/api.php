@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LandLord\Api\AlertAppController;
+use App\Http\Controllers\LandLord\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Multitenancy\Models\Tenant;
@@ -29,11 +30,11 @@ Route::get('/test-tenant', function () {
 Route::post('/send-message', [AlertAppController::class, 'store']);
 
 Route::get('impresoras', function () {
-    Route::get('ListarPedidosPendientesImprimir', 'ApiController@ListarPedidosPendientesImprimir');
-    Route::get('ObtenerPedido_PorCodigo/{idpedido}', 'ApiController@ObtenerPedido_PorCodigo');
-    Route::get('ActualizarPedidosPendientesImprimir/{idpedido}', 'ApiController@ActualizarPedidosPendientesImprimir');
-    Route::get('ObtenerRecibo_PorCodigo/{idrecibo}', 'ApiController@ObtenerRecibo_PorCodigo');
-    Route::get('ActualizarReciboPendienteImprimir/{idrecibo}', 'ApiController@ActualizarReciboPendienteImprimir');
-    Route::get('ObtenerComanda_PorCodigo/{idpedido}', 'ApiController@ObtenerComanda_PorCodigo');
-    Route::get('ActualizarComandaPendienteImprimir/{idpedido}', 'ApiController@ActualizarComandaPendienteImprimir');
+    Route::get('ListarPedidosPendientesImprimir', [ApiController::class, 'ListarPedidosPendientesImprimir']);
+    Route::get('ObtenerPedido_PorCodigo/{idpedido}', [ApiController::class, 'ObtenerPedido_PorCodigo']);
+    Route::get('ActualizarPedidosPendientesImprimir/{idpedido}', [ApiController::class, 'ActualizarPedidosPendientesImprimir']);
+    Route::get('ObtenerRecibo_PorCodigo/{idrecibo}', [ApiController::class, 'ObtenerRecibo_PorCodigo']);
+    Route::get('ActualizarReciboPendienteImprimir/{idrecibo}', [ApiController::class, 'ActualizarReciboPendienteImprimir']);
+    Route::get('ObtenerComanda_PorCodigo/{idpedido}', [ApiController::class, 'ObtenerComanda_PorCodigo']);
+    Route::get('ActualizarComandaPendienteImprimir/{idpedido}', [ApiController::class, 'ActualizarComandaPendienteImprimir']);
 });
