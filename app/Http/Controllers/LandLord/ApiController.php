@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\Sales\Sale\Sale;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
@@ -467,7 +468,7 @@ success: true
                 'cantidad' => $det->quantity,
                 'descripcion' => $det->item_name,
                 'observacion' => $det->observation ?? '-',
-                'fecha' => $det->created_at->format('d/m/Y h:i:s a')
+                'fecha' => Carbon::parse($det->created_at)->format('d/m/Y h:i:s a'),
             ];
             array_push($arrayDetalles, $fila);
         }
@@ -482,7 +483,7 @@ success: true
                 'cantidad' => $det->quantity,
                 'descripcion' => $det->item_name,
                 'observacion' => $det->observation ?? '-',
-                'fecha' => $det->created_at->format('d/m/Y h:i:s a')
+                'fecha' => Carbon::parse($det->created_at)->format('d/m/Y h:i:s a'),
             ];
             array_push($arrayDetalles, $fila);
         }
