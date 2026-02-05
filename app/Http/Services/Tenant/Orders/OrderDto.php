@@ -48,6 +48,11 @@ class OrderDto
         $dto['pending_order_printing']  =   'SI';
         $dto['order_print_mode']        =   'TODO';
 
+        if ($data['mode']    === 'UPDATE') {
+            $dto['pending_order_printing']  =   'SI';
+            $dto['order_print_mode']        =   'PARCIAL';
+        }
+
         if (isset($data['voucher'])) {
             $files_route            =   Company::findOrFail(1)->files_route;
             $file_name              =   uniqid() . '_' . trim($data['voucher']->getClientOriginalName());
@@ -58,7 +63,7 @@ class OrderDto
         return $dto;
     }
 
-    public function getDtoOrderDish(array $lst_items, int $order_id): array
+    public function getDtoOrderDish(array $lst_items, int $order_id, string $mode): array
     {
         $dto    =   [];
         foreach ($lst_items as $item) {
@@ -83,13 +88,16 @@ class OrderDto
             $_item['type_dish_name']    =   $type_dish->name;
             $_item['observation']       =   mb_strtoupper(trim($item->observation ?? null), 'UTF-8');
 
+            if ($mode === 'STORE') {
+                $_item['detail_printed']    =   'SI';
+            }
             $dto[]  =   $_item;
         }
 
         return $dto;
     }
 
-    public function getDtoOrderProduct(array $lst_items, int $order_id): array
+    public function getDtoOrderProduct(array $lst_items, int $order_id, string $mode): array
     {
         $dto    =   [];
         foreach ($lst_items as $item) {
@@ -119,6 +127,9 @@ class OrderDto
             $_item['category_name']     =   $category->name;
             $_item['brand_name']        =   $brand->name;
             $_item['observation']       =   mb_strtoupper(trim($item->observation ?? null), 'UTF-8');
+            if ($mode === 'STORE') {
+                $_item['detail_printed']    =   'SI';
+            }
 
             $dto[]  =   $_item;
         }

@@ -39,6 +39,7 @@ class OrderService
 
     public function store(array $data): Order
     {
+        $data['mode']   =   'STORE';
         $data   =   $this->s_validation->validationStore($data);
         $dto    =   $this->s_dto->getDtoStore($data);
 
@@ -47,8 +48,8 @@ class OrderService
         $collect_detail =   collect($data['lst_detail']);
         $lst_dishes     =   $collect_detail->where('type_item', 'PLATO')->toArray();
         $lst_products   =   $collect_detail->where('type_item', 'PRODUCTO')->toArray();
-        $dto_odish      =   $this->s_dto->getDtoOrderDish($lst_dishes, $order->id);
-        $dto_oproduct   =   $this->s_dto->getDtoOrderProduct($lst_products, $order->id);
+        $dto_odish      =   $this->s_dto->getDtoOrderDish($lst_dishes, $order->id, 'STORE');
+        $dto_oproduct   =   $this->s_dto->getDtoOrderProduct($lst_products, $order->id, 'STORE');
 
         $this->s_repository->storeOrderProduct($dto_oproduct);
         $this->s_repository->storeOrderDish($dto_odish);
@@ -84,17 +85,18 @@ class OrderService
     }
 
     public function update(int $id, array $data): Order
-    {
+    {   dd($data);
         $data           =   $this->s_validation->validationUpdate($id, $data);
 
+        $data['mode']   =   "UPDATE";
         $dto            =   $this->s_dto->getDtoStore($data);
         $order          =   $this->s_repository->update($id, $dto);
 
         $collect_detail =   collect($data['lst_detail']);
         $lst_dishes     =   $collect_detail->where('type_item', 'PLATO')->toArray();
         $lst_products   =   $collect_detail->where('type_item', 'PRODUCTO')->toArray();
-        $dto_odish      =   $this->s_dto->getDtoOrderDish($lst_dishes, $order->id);
-        $dto_oproduct   =   $this->s_dto->getDtoOrderProduct($lst_products, $order->id);
+        $dto_odish      =   $this->s_dto->getDtoOrderDish($lst_dishes, $order->id, 'UPDATE');
+        $dto_oproduct   =   $this->s_dto->getDtoOrderProduct($lst_products, $order->id, 'UPDATE');
 
 
         $this->operationStock($dto_odish, $dto_oproduct, $id);
