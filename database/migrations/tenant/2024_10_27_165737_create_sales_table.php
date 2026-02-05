@@ -46,7 +46,7 @@ return new class extends Migration
             $table->decimal('subtotal', 16, 6)->unsigned();
             $table->decimal('igv_amount', 16, 6)->unsigned();
             $table->decimal('total', 16, 6)->unsigned();
-            $table->decimal('discount', 16, 6)->unsigned();
+            $table->decimal('discount', 16, 6)->unsigned()->default(0);
             $table->decimal('change_pay', 16, 6)->default(0)->unsigned();
             $table->string('legend', 260);
 

@@ -55,8 +55,8 @@ return new class extends Migration
             $table->longText('payref_img_name')->nullable()->comment('Nombre de la imagen de la referencia de pago (payref)');
 
             /* 🔹 PRINT CONFIGURATION */
-            $table->enum('pending_print', ['SI', 'NO'])->default('SI');
-            $table->enum('pending_order_printing', ['SI', 'NO'])->default('SI');
+            $table->enum('pending_print', ['SI', 'NO'])->default('NO');
+            $table->enum('pending_order_printing', ['SI', 'NO'])->default('NO');
             $table->enum('order_print_mode', ['TODO', 'PARCIAL','PLATO','BEBIDA'])->default('TODO');
 
             /* 🔹 WAITER DELETE INFO */
