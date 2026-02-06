@@ -36,7 +36,8 @@ class PurchaseService
         $dto_detail =   $this->s_dto->getDtoDetail($data['lst_purchase'], $item);
         $this->s_repository->storeDetail($dto_detail);
 
-        $this->s_warehouse->increaseLstStock($dto_detail);
+        $lst_detail =   array_map(fn($item) => (object)$item, $dto_detail);
+        $this->s_warehouse->increaseLstStock($lst_detail);
 
         $this->s_kardex->storeFromPurchase($item);
 

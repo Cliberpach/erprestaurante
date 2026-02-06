@@ -62,13 +62,8 @@ class NoteIncomeDetailService
             $note_detail->quantity          =   $item->quantity;
             $note_detail->save();
 
-
             //====== INSERTANDO STOCK =====
-            $this->s_warehouse_product->increaseStock(1,$item->product_id,$item->quantity);
-
-            //===== GRABANDO EN KARDEX ========
-            $this->s_kardex->store($note_income,$note_detail,'IN','NOTE INCOME');
-
+            $this->s_warehouse_product->increaseStock(1, $item->product_id, $item->quantity);
         }
     }
 }

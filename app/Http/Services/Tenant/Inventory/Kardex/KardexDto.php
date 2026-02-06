@@ -5,6 +5,8 @@ namespace App\Http\Services\Tenant\Inventory\Kardex;
 use App\Models\Product;
 use App\Models\Tenant\NoteIncome;
 use App\Models\Tenant\NoteIncomeDetail;
+use App\Models\Tenant\NoteRelease;
+use App\Models\Tenant\NoteReleaseDetail;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\PurchaseDocument;
@@ -32,6 +34,42 @@ class KardexDto
             $_item['note_income_id']        =   $note->id;
             $_item['type']                  =   'ENTRADA';
             $_item['document_serie']        =   'NI-' . str_pad($note->id, 8, '0', STR_PAD_LEFT);
+            $_item['date']                  =   $note->created_at;
+            $_item['warehouse_id']          =   $item->warehouse_id;
+            $_item['warehouse_name']        =   $item->warehouse_name;
+            $_item['product_id']            =   $item->product_id;
+            $_item['category_id']           =   $item->category_id;
+            $_item['brand_id']              =   $item->brand_id;
+            $_item['product_name']          =   $item->product_name;
+            $_item['product_unit']          =   'NIU';
+            $_item['category_name']         =   $item->category_name;
+            $_item['brand_name']            =   $item->brand_name;
+            $_item['quantity']              =   $item->quantity;
+            $_item['sale_price']            =   $product->sale_price;
+            $_item['purchase_price']        =   $product->purchase_price;
+            $_item['amount']                =   $item->quantity * $product->sale_price;
+            $_item['creator_user_id']       =   Auth::user()->id;
+            $_item['creator_user_name']     =   Auth::user()->name;
+            $_item['created_at']            =   Carbon::now();
+            $dto[]  =   $_item;
+        }
+
+        return $dto;
+    }
+
+    public function getDtoFromNoteRelease(NoteRelease $note)
+    {
+        $dto            =   [];
+        $lst_detail     =   NoteReleaseDetail::where('note_release_id', $note->id)->get();
+
+        foreach ($lst_detail as $item) {
+
+            $product                        =   Product::findOrFail($item->product_id);
+
+            $_item                          =   [];
+            $_item['note_release_id']        =   $note->id;
+            $_item['type']                  =   'SALIDA';
+            $_item['document_serie']        =   'NS-' . str_pad($note->id, 8, '0', STR_PAD_LEFT);
             $_item['date']                  =   $note->created_at;
             $_item['warehouse_id']          =   $item->warehouse_id;
             $_item['warehouse_name']        =   $item->warehouse_name;
@@ -109,7 +147,7 @@ class KardexDto
             $_item['order_id']              =   $order->id;
             $_item['type']                  =   'SALIDA';
             $_item['document_serie']        =   $order->code;
-            $_item['date']                  =   $order->created_at;
+            $_item['date']                  =   $item->created_at;
             $_item['warehouse_id']          =   $item->warehouse_id;
             $_item['warehouse_name']        =   $warehouse->descripcion;
             $_item['product_id']            =   $item->product_id;

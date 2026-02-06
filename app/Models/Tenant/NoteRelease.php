@@ -9,6 +9,7 @@ class NoteRelease extends Model
 {
     use HasFactory;
     protected $table = 'notes_release';
+    protected $connection   =   'tenant';
 
     protected $guarded = [''];
 }

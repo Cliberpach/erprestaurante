@@ -179,10 +179,10 @@ class OrderRepository
     {
         foreach ($dto_odish_olds as $dish) {
             DB::table('orders_dishes')
-                ->where('id', $dish['id'])
+                ->where('id', $dish['order_detail_id'])
                 ->update([
                     'quantity'       => $dish['quantity'],
-                    'description'    => $dish['description'] ?? null,
+                    'observation'    => $dish['observation'] ?? null,
                     'sale_price'     => $dish['sale_price'] ?? null,
                     'updated_at'     => now(),
                 ]);
@@ -191,14 +191,14 @@ class OrderRepository
 
     public function updateOrderProduct(array $dto_oproduct_olds): void
     {
-        foreach ($dto_oproduct_olds as $product) {
+        foreach ($dto_oproduct_olds as $item) {
             DB::table('orders_products')
-                ->where('id', $product['id'])
+                ->where('id', $item['order_detail_id'])
                 ->update([
-                    'quantity'       => $product['quantity'],
-                    'description'    => $product['description'] ?? null,
-                    'purchase_price' => $product['purchase_price'] ?? null,
-                    'sale_price'     => $product['sale_price'] ?? null,
+                    'quantity'       => $item['quantity'],
+                    'observation'    => $item['observation'],
+                    'purchase_price' => $item['purchase_price'],
+                    'sale_price'     => $item['sale_price'],
                     'updated_at'     => now(),
                 ]);
         }

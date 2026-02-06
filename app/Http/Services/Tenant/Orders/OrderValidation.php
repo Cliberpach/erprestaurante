@@ -15,6 +15,7 @@ use App\Models\Tenant\Supply\Table\Table;
 use App\Models\Tenant\WarehouseProduct;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class OrderValidation
 {
@@ -142,7 +143,6 @@ class OrderValidation
     public function validationStore(array $data): array
     {
         $user               =   Auth::user();
-
         if (!$user->hasRole('MESERO')) {
             throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
         }
@@ -182,7 +182,7 @@ class OrderValidation
         $data['payref_name']        =   $payref_name;
         $data['petty_cash_book']    =   $petty_cash_book;
 
-        $this->validationLstDetail($lst_detail, $programming->id);
+        $this->validationLstDetailStore($lst_detail, $programming->id, 1);
 
         return $data;
     }
@@ -194,6 +194,9 @@ class OrderValidation
         $order_products     =   $this->s_repository->getOrderProducts($id);
         $order_dishes       =   $this->s_repository->getOrderDishes($id);
 
+        if (!$user->hasRole('MESERO')) {
+            throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
+        }
         if ($user->id != $order->creator_user_id) {
             throw new Exception("ESTA PEDIDO LE PERTENECE A OTRO MESERO");
         }
@@ -240,28 +243,103 @@ class OrderValidation
         return $data;
     }
 
-    public function validationLstDetail(array $lst_detail, int $programming_id)
+    public function validationLstDetailStore(array $lst_detail, int $programming_id, int $warehouse_id)
     {
-        foreach ($lst_detail as $item) {
+        $this->validationLstQuantities($lst_detail);
+        $lst_products   =   collect($lst_detail)->where('type_item', 'PRODUCTO')->values()->toArray();
+        $lst_dishes   =   collect($lst_detail)->where('type_item', 'PLATO')->values()->toArray();
 
-            if ($item->type_item === 'PLATO') {
-                $item_bd = ProgrammingDetail::where('programming_id', $programming_id)->where('dish_id', $item->id)->first();
-                if (!$item_bd) {
-                    throw new Exception($item->name . ", NO EXISTE EN LA PROGRAMACIÓN");
-                }
-                if ($item_bd->stock < $item->quantity) {
-                    throw new Exception("STOCK INSUFICIENTE: " . $item_bd->stock . " PARA LA CANT SOLICITADA: " . $item->quantity);
-                }
+        $this->validationProductsStore($lst_products, $warehouse_id);
+        $this->validationDishesStore($lst_dishes, $programming_id);
+    }
+
+    public function validationProductsStore(array $lst_products, int $warehouse_id)
+    {
+        $lst_totales = collect($lst_products)
+            ->map(function ($item) {
+                $item->product_id = $item->id;
+                return $item;
+            })
+            ->groupBy('product_id')
+            ->map(fn($items) => $items->sum('quantity'));
+
+
+        $warehouses = WarehouseProduct::where('warehouse_id', $warehouse_id)
+            ->whereIn('product_id', $lst_totales->keys())
+            ->get()
+            ->keyBy('product_id');
+
+        foreach ($lst_totales as $product_id => $quantity_total) {
+            $warehouse_product  =   $warehouses[$product_id] ?? null;
+            if (!$warehouse_product) {
+                throw new Exception(
+                    "Producto {$product_id} no existe en el almacén {$warehouse_id}"
+                );
             }
 
-            if ($item->type_item === 'PRODUCTO') {
-                $item_bd = WarehouseProduct::where('warehouse_id', 1)->where('product_id', $item->id)->first();
-                if (!$item_bd) {
-                    throw new Exception($item->name . ", NO EXISTE EN EL ALMACÉN");
-                }
-                if ($item_bd->stock < $item->quantity) {
-                    throw new Exception("STOCK INSUFICIENTE: " . $item_bd->stock . " PARA LA CANT SOLICITADA: " . $item->quantity);
-                }
+            $stock  =   (int)$warehouse_product->stock;
+            if ((int)$quantity_total > $stock) {
+                throw new Exception(
+                    "Producto {$product_id} stock ({$stock}) insuficiente, cantidad requerida: {$quantity_total}"
+                );
+            }
+        }
+    }
+
+    public function validationDishesStore($lst_dishes, $programming_id)
+    {
+        $lst_totales = collect($lst_dishes)
+            ->map(function ($item) {
+                $item->dish_id = $item->id;
+                return $item;
+            })
+            ->groupBy('dish_id')
+            ->map(fn($items) => $items->sum('quantity'));
+
+
+        $programmings = ProgrammingDetail::where('programming_id', $programming_id)
+            ->whereIn('dish_id', $lst_totales->keys())
+            ->get()
+            ->keyBy('dish_id');
+
+        foreach ($lst_totales as $dish_id => $quantity_total) {
+            $programming  =   $programmings[$dish_id] ?? null;
+            if (!$programming) {
+                throw new Exception(
+                    "Plato {$dish_id} no existe en la programación {$programming_id}"
+                );
+            }
+
+            $stock  =   (int)$programming->stock;
+            if ((int)$quantity_total > $stock) {
+                throw new Exception(
+                    "Plato {$dish_id} stock ({$stock}) insuficiente, cantidad requerida: {$quantity_total}"
+                );
+            }
+        }
+    }
+
+    public function validationLstQuantities(array $lst_detail)
+    {
+        foreach ($lst_detail as $item) {
+            $validator = Validator::make(
+                ['quantity' => $item->quantity],
+                [
+                    'quantity' => [
+                        'required',
+                        'numeric',
+                        'regex:/^\d{1,16}(\.\d{1,6})?$/',
+                    ],
+                ],
+                [
+                    'quantity.required' => 'La cantidad es obligatoria.',
+                    'quantity.numeric'  => 'La cantidad debe ser un número válido.',
+                    'quantity.regex'    => 'La cantidad debe tener máximo 16 dígitos y hasta 6 decimales.',
+                ]
+            );
+
+            if ($validator->fails()) {
+                throw new Exception($validator->errors()->first('quantity'));
             }
         }
     }
@@ -270,37 +348,96 @@ class OrderValidation
     {
         $lst_detail     =   $data['lst_detail'];
         $programming_id =   $data['programming_id'];
-        $order_products =   $data['order_products'];
         $order_dishes   =   $data['order_dishes'];
+        $order_products =   $data['order_products'];
 
-        foreach ($lst_detail as $item) {
+        $this->validationLstQuantities($lst_detail);
+        $this->validationDishesUpdate($lst_detail, $order_dishes, $programming_id);
+        $this->validationProductsUpdate($lst_detail, $order_products, 1);
+    }
 
-            if ($item->type_item === 'PLATO') {
-                $item_bd = ProgrammingDetail::where('programming_id', $programming_id)->where('dish_id', $item->id)->first();
-                if (!$item_bd) {
-                    throw new Exception($item->name . ", NO EXISTE EN LA PROGRAMACIÓN");
-                }
+    public function validationDishesUpdate($lst_detail, $order_dishes, $programming_id)
+    {
+        $lst_totales = collect($lst_detail)
+            ->where('type_item', 'PLATO')
+            ->map(function ($item) {
+                $item->dish_id = $item->id;
+                return $item;
+            })
+            ->groupBy('dish_id')
+            ->map(fn($items) => $items->sum('quantity'));
 
-                $items_preview      =   $order_dishes->where('dish_id', $item->id)->where('status', '<>', 'ANULADO')->where('delete_status', false);
-                $quantity_preview   =   $items_preview ? $items_preview->sum('quantity') : 0;
-                $stock              =   (int)$item_bd->stock + $quantity_preview;
-                if ($stock < $item->quantity) {
-                    throw new Exception("STOCK INSUFICIENTE: " . $stock . " PARA LA CANT SOLICITADA: " . $item->quantity);
-                }
+        $lst_old_totales = collect($order_dishes)
+            ->groupBy('dish_id')
+            ->map(fn($items) => $items->sum('quantity'));
+
+        $lst_delta = $lst_totales->map(function ($newQty, $dishId) use ($lst_old_totales) {
+            $oldQty = $lst_old_totales[$dishId] ?? 0;
+            return $newQty - $oldQty;
+        })->filter(fn($delta) => $delta > 0);
+
+
+        $programmings = ProgrammingDetail::where('programming_id', $programming_id)
+            ->whereIn('dish_id', $lst_delta->keys())
+            ->get()
+            ->keyBy('dish_id');
+        foreach ($lst_delta as $dish_id => $delta_quantity) {
+
+            $item_programming = $programmings[$dish_id] ?? null;
+
+            if (!$item_programming) {
+                throw new Exception("PLATO {$dish_id} NO EXISTE EN LA PROGRAMACIÓN");
             }
 
-            if ($item->type_item === 'PRODUCTO') {
-                $item_bd = WarehouseProduct::where('warehouse_id', 1)->where('product_id', $item->id)->first();
-                if (!$item_bd) {
-                    throw new Exception($item->name . ", NO EXISTE EN EL ALMACÉN");
-                }
+            if ($delta_quantity > $item_programming->stock) {
+                $item_programming->stock    =   (int)$item_programming->stock;
+                throw new Exception(
+                    "STOCK INSUFICIENTE PARA PLATO {$dish_id}. " .
+                        "Disponible: {$item_programming->stock}, requerido: {$delta_quantity}"
+                );
+            }
+        }
+    }
 
-                $items_preview      =   $order_products->where('product_id', $item->id)->where('status', '<>', 'ANULADO')->where('delete_status', false);
-                $quantity_preview   =   $items_preview ? $items_preview->sum('quantity') : 0;
-                $stock              =   (int)$item_bd->stock + $quantity_preview;
-                if ($stock < $item->quantity) {
-                    throw new Exception("STOCK INSUFICIENTE: " . $stock . " PARA LA CANT SOLICITADA: " . $item->quantity);
-                }
+    public function validationProductsUpdate($lst_detail, $order_products, $warehouse_id)
+    {
+        $lst_totales = collect($lst_detail)
+            ->where('type_item', 'PRODUCTO')
+            ->map(function ($item) {
+                $item->product_id = $item->id;
+                return $item;
+            })
+            ->groupBy('product_id')
+            ->map(fn($items) => $items->sum('quantity'));
+
+        $lst_old_totales = collect($order_products)
+            ->groupBy('product_id')
+            ->map(fn($items) => $items->sum('quantity'));
+
+        $lst_delta = $lst_totales->map(function ($newQty, $productId) use ($lst_old_totales) {
+            $oldQty = $lst_old_totales[$productId] ?? 0;
+            return $newQty - $oldQty;
+        })->filter(fn($delta) => $delta > 0);
+
+        $warehouses = WarehouseProduct::where('warehouse_id', $warehouse_id)
+            ->whereIn('product_id', $lst_delta->keys())
+            ->get()
+            ->keyBy('product_id');
+
+        foreach ($lst_delta as $product_id => $delta_quantity) {
+
+            $item_warehouse = $warehouses[$product_id] ?? null;
+
+            if (!$item_warehouse) {
+                throw new Exception("PRODUCTO {$product_id} NO EXISTE EN EL ALMACÉN");
+            }
+
+            if ($delta_quantity > $item_warehouse->stock) {
+                $item_warehouse->stock  =   (int)$item_warehouse->stock;
+                throw new Exception(
+                    "STOCK INSUFICIENTE PARA PRODUCTO {$product_id}. " .
+                        "Disponible: {$item_warehouse->stock}, requerido: {$delta_quantity}"
+                );
             }
         }
     }
