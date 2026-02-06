@@ -373,7 +373,7 @@ success: true
         $platos = array();
 
         if ($modoImpresionComanda == 'PARCIAL') {
-            $bebidas    =   $details->where('item_type', 'PRODUCTO')->where('detail_printed','NO')->sortByDesc('created_at')->values();
+            $bebidas    =   $details->where('item_type', 'PRODUCTO')->where('detail_printed', 'NO')->sortByDesc('created_at')->values();
 
             /*$bebidas = $objPedido
                 ->DPedidoPendiente()
@@ -392,7 +392,7 @@ success: true
                     ]);
             }
 
-            $platos    =   $details->where('item_type', 'PLATO')->where('detail_printed','NO')->sortByDesc('created_at')->values();
+            $platos    =   $details->where('item_type', 'PLATO')->where('detail_printed', 'NO')->sortByDesc('created_at')->values();
             /*$platos = $objPedido
                 ->DPedidoPendiente()
                 ->where('nombre_tabla', 'platos')
@@ -424,11 +424,11 @@ success: true
                 // );
             }
         } else {
-            return response()->json('test');
             if ($modoImpresionComanda == 'TODO' || $modoImpresionComanda == 'BEBIDA') {
                 $bebidas    =   $details->where('item_type', 'PRODUCTO')
-                //->where('detail_printed','NO')
-                ->sortByDesc('created_at')->values();
+                    //->where('detail_printed','NO')
+                    ->sortByDesc('created_at')->values();
+                return response()->json($bebidas);
 
                 /*$bebidas = $objPedido
                     ->DPedidoPendiente()
@@ -440,8 +440,8 @@ success: true
 
             if ($modoImpresionComanda == 'TODO' || $modoImpresionComanda == 'PLATO') {
                 $platos    =   $details->where('item_type', 'PLATO')
-                //->where('detail_printed','NO')
-                ->sortByDesc('created_at')->values();
+                    //->where('detail_printed','NO')
+                    ->sortByDesc('created_at')->values();
 
                 /*$platos = $objPedido
                     ->DPedidoPendiente()
