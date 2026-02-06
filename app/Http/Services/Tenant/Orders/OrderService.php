@@ -39,11 +39,11 @@ class OrderService
 
     public function store(array $data): Order
     {
-        $data['mode']   =   'STORE';
         $data           =   $this->s_validation->validationStore($data);
+        $data['mode']   =   'STORE';
         $dto            =   $this->s_dto->getDtoStore($data);
-
         $order          =   $this->s_repository->store($dto);
+        dd($order);
 
         $collect_detail =   collect($data['lst_detail']);
         $lst_dishes     =   $collect_detail->where('type_item', 'PLATO')->toArray();
