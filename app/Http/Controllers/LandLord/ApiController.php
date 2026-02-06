@@ -424,6 +424,7 @@ success: true
                 // );
             }
         } else {
+            return response()->json('test');
             if ($modoImpresionComanda == 'TODO' || $modoImpresionComanda == 'BEBIDA') {
                 $bebidas    =   $details->where('item_type', 'PRODUCTO')
                 //->where('detail_printed','NO')
