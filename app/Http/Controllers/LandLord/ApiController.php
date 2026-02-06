@@ -368,7 +368,7 @@ success: true
         //------------------ obtener pedido - y verificar las bebidas ----------------
         //----------------------------------------------------------------------------
         $modoImpresionComanda = $pedido->order_print_mode;
-        $details    =   $pedido->getDetails()->where('detail_printed', 'NO');
+        $details    =   $pedido->getDetails();
         $bebidas = array();
         $platos = array();
 
@@ -428,7 +428,6 @@ success: true
                 $bebidas    =   $details->where('item_type', 'PRODUCTO')
                     //->where('detail_printed','NO')
                     ->sortByDesc('created_at')->values();
-                return response()->json($bebidas);
 
                 /*$bebidas = $objPedido
                     ->DPedidoPendiente()
