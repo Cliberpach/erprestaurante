@@ -70,7 +70,7 @@ class OrderService
             $s_kardex   =   new KardexService();
             $s_kardex->storeFromOrder($order);
         }
-dd($order);
+
         return $order;
     }
 

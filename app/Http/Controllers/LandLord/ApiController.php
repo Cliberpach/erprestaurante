@@ -111,7 +111,7 @@ success: true
     function ListarPedidosPendientesImprimir()
     {
         $comandas = Order::where('status', '<>', 'ANULADO')
-            ->where('pending_order_printing', '=', 'SI')
+            ->where('pending_order_printing', 'SI')
             ->select('id AS idpedido')
             ->orderby('id', 'asc')
             ->get();
@@ -425,7 +425,9 @@ success: true
             }
         } else {
             if ($modoImpresionComanda == 'TODO' || $modoImpresionComanda == 'BEBIDA') {
-                $bebidas    =   $details->where('item_type', 'PRODUCTO')->where('detail_printed','NO')->sortByDesc('created_at')->values();
+                $bebidas    =   $details->where('item_type', 'PRODUCTO')
+                //->where('detail_printed','NO')
+                ->sortByDesc('created_at')->values();
 
                 /*$bebidas = $objPedido
                     ->DPedidoPendiente()
@@ -436,7 +438,9 @@ success: true
             }
 
             if ($modoImpresionComanda == 'TODO' || $modoImpresionComanda == 'PLATO') {
-                $platos    =   $details->where('item_type', 'PLATO')->where('detail_printed','NO')->sortByDesc('created_at')->values();
+                $platos    =   $details->where('item_type', 'PLATO')
+                //->where('detail_printed','NO')
+                ->sortByDesc('created_at')->values();
 
                 /*$platos = $objPedido
                     ->DPedidoPendiente()
