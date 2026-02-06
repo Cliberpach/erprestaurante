@@ -304,4 +304,10 @@ class OrderService
     {
         return $this->s_repository->getDetails($id);
     }
+
+    public function preAccount(int $id): Order
+    {
+        $order = $this->s_repository->setPendingPrint($id, 'SI');
+        return $order;
+    }
 }

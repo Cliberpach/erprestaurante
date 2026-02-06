@@ -23,7 +23,7 @@ class CounterService
     }
 
     public function store(array $data): Order
-    {   
+    {
         $order  =   $this->s_order->store($data);
         return $order;
     }
@@ -42,5 +42,11 @@ class CounterService
     public function update(int $id, array $data): Order
     {
         return $this->s_order->update($id, $data);
+    }
+
+    public function preAccount(int $id): Order
+    {
+        $order  =   $this->s_order->preAccount($id);
+        return $order;
     }
 }

@@ -179,4 +179,18 @@ array:10 [ // app/Http/Services/Tenant/Orders/OrderService.php:88
             ]);
         }
     }
+
+    public function preAccount(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $this->s_manager->preAccount($request->get('order_id'));
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Precuenta impresa con éxito']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
 }

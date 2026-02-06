@@ -29,13 +29,18 @@ class CounterManager
         return $this->s_service->getOrderTable($table_id);
     }
 
-    public function edit(int $id){
+    public function edit(int $id)
+    {
         return $this->s_service->edit($id);
     }
 
-      public function update(int $id,array $data): Order
+    public function update(int $id, array $data): Order
     {
-        return $this->s_service->update($id,$data);
+        return $this->s_service->update($id, $data);
     }
 
+    public function preAccount(int $id): Order
+    {
+        return $this->s_service->preAccount($id);
+    }
 }

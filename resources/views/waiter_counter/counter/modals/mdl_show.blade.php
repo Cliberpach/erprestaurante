@@ -225,6 +225,10 @@
             document.querySelector('#btnEditOrder').addEventListener('click', (e) => {
                 actionBtnEditOrder(e);
             })
+
+            document.querySelector('#btnPreCuenta').addEventListener('click', (e) => {
+                printPreAccount(paramsMdlShow.orderId);
+            })
         }
 
         async function openMdlShowOrder(tableId, orderId) {
@@ -337,7 +341,64 @@
 
                 tbody.appendChild(row);
             });
+        }
 
+        function printPreAccount(orderId) {
+            toastr.clear();
+
+            let message = `Imprimir Pre-Cuenta PE-${orderId}`;
+            Swal.fire({
+                title: message,
+                text: "Operación no reversible!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí!",
+                cancelButtonText: "No, cancelar!",
+                reverseButtons: true
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+
+                    Swal.fire({
+                        title: 'Cargando...',
+                        html: 'Impriendo precuenta...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    try {
+
+                        const formData = new FormData();
+                        formData.append('order_id', orderId);
+                        let url = route('tenant.mostrador_mesero.mostrador.preCuenta', formData);
+
+                        const res = await axios.post(url, formData);
+
+                        if (res.data.success) {
+                            //dtOrders.ajax.reload();
+                            toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
+                        } else {
+                            toastr.error(res.data.message, 'ERROR EN EL SERVIDOR AL IMPRIMIR PRECUENTA');
+                        }
+
+                    } catch (error) {
+                        toastr.error(error, 'ERROR EN LA PETICIÓN IMPRIMIR PRECUENTA');
+                    } finally {
+                        Swal.close();
+                    }
+
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    Swal.fire({
+                        title: "Operación cancelada",
+                        text: "No se realizaron acciones",
+                        icon: "error"
+                    });
+                }
+            });
         }
     </script>
 @endpush

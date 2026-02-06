@@ -203,4 +203,11 @@ class OrderRepository
                 ]);
         }
     }
+
+    public function setPendingPrint(int $id, string $status): Order
+    {
+        $order                  =   Order::findOrFail($id);
+        $order->pending_print   =   $status;
+        return $order;
+    }
 }
