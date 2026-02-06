@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Services\Tenant\Inventory\Kardex\KardexService;
 use App\Models\Product;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\NoteIncome;
@@ -23,7 +24,7 @@ class TestService
                 'petty_cash_name' => 'PRINCIPAL',
 
                 'shift_id'        => 1,
-                'user_id'         => 1,
+                'user_id'         => 2,
 
                 'initial_amount'  => 0,
                 'closing_amount'  => 0,
@@ -46,7 +47,7 @@ class TestService
                 'observation' => 'INGRESO INICIAL DE PRODUCTOS',
             ]);
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | DETALLE DE NOTA DE INGRESO (TODOS LOS PRODUCTOS)
         |--------------------------------------------------------------------------
@@ -75,9 +76,11 @@ class TestService
                     'product_id'    =>  $product->id,
                     'stock'         =>  200
                 ]);
-                
             }
 
+            //========= KARDEX NOTA ==========
+            $s_kardex   =   new KardexService();
+            $s_kardex->storeFromNoteIncome($noteIncome);
 
             /*
         |--------------------------------------------------------------------------
@@ -137,7 +140,7 @@ class TestService
                 $total += $dish->purchase_price * $quantity;
             }
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | ACTUALIZAR TOTAL
         |--------------------------------------------------------------------------
@@ -145,8 +148,6 @@ class TestService
             $programming->update([
                 'total' => $total,
             ]);
-
         });
-
     }
 }
