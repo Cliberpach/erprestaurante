@@ -31,6 +31,7 @@ class Order extends Model
         'pending_order_printing',
         'pending_kitchen_print',
         'kitchen_print_mode',
+        'order_print_mode',
 
         'waiter_delete_status',
         'waiter_delete_name',

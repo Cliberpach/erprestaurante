@@ -48,7 +48,7 @@ class OrderDto
         $dto['pending_order_printing']  =   'SI';
         $dto['order_print_mode']        =   'TODO';
 
-        if ($data['mode']    === 'UPDATE') {
+        if ($data['mode'] == "UPDATE") {
             $dto['pending_order_printing']  =   'SI';
             $dto['order_print_mode']        =   'PARCIAL';
         }
