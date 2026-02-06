@@ -43,7 +43,7 @@ class OrderService
         $data['mode']   =   'STORE';
         $dto            =   $this->s_dto->getDtoStore($data);
         $order          =   $this->s_repository->store($dto);
-        dd($order);
+
 
         $collect_detail =   collect($data['lst_detail']);
         $lst_dishes     =   $collect_detail->where('type_item', 'PLATO')->toArray();
@@ -70,7 +70,7 @@ class OrderService
             $s_kardex   =   new KardexService();
             $s_kardex->storeFromOrder($order);
         }
-
+dd($order);
         return $order;
     }
 
