@@ -10,6 +10,7 @@ class Kardex extends Model
     use HasFactory;
 
     protected $table = 'kardex';
+    protected $connection = 'tenant';
 
     protected $fillable = [
         'sale_id',
