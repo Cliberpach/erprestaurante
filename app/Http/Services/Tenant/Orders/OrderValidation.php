@@ -222,7 +222,7 @@ class OrderValidation
         }
 
         $table          =   Table::findOrFail($data['table_id']);
-        $reservation    =   Reservation::where('table_id', $table->id)->first();
+        $reservation    =   Reservation::where('table_id', $table->id)->where('order_id', $order->id)->first();
         if ($reservation->status !== 'OCUPADO') {
             throw new Exception("LA MESA: " . $table->name . " HA  CAMBIADO SU RESERVA A: " . $reservation->status);
         }
