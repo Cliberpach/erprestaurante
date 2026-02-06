@@ -208,6 +208,7 @@ class OrderRepository
     {
         $order                  =   Order::findOrFail($id);
         $order->pending_print   =   $status;
+        $order->save();
         return $order;
     }
 }
