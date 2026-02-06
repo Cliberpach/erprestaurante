@@ -71,9 +71,9 @@ class OrderDto
             $dish       =   Dish::findOrFail($item->id);
             $type_dish  =   TypeDish::findOrFail($dish->type_dish_id);
 
-            /*if (isset($item->order_detail_id)) {
+            if (isset($item->order_detail_id)) {
                 $_item['order_detail_id']   =   $item->order_detail_id;
-            }*/
+            }
 
             $_item['created_at']        =   Carbon::now();
             $_item['order_id']          =   $order_id;
@@ -90,6 +90,15 @@ class OrderDto
 
             if ($mode === 'STORE') {
                 $_item['detail_printed']    =   'SI';
+            }
+            if ($mode === 'UPDATE_NEW') {
+                $_item['detail_printed']    =   'NO';
+            }
+            if ($mode === 'UPDATE_OLD') {
+                $_item['delete_status']             =   false;
+                if ($item->print_status === 'IMPRESO') {
+                    $_item['print_delivery_status']     =   'ENTREGADO';
+                }
             }
             $dto[]  =   $_item;
         }
@@ -108,9 +117,9 @@ class OrderDto
             $warehouse  =   Warehouse::findOrFail($item->warehouse_id);
 
 
-            /*if (isset($item->order_detail_id)) {
+            if (isset($item->order_detail_id)) {
                 $_item['order_detail_id']   =   $item->order_detail_id;
-            }*/
+            }
 
             $_item['created_at']        =   Carbon::now();
             $_item['order_id']          =   $order_id;
@@ -130,7 +139,15 @@ class OrderDto
             if ($mode === 'STORE') {
                 $_item['detail_printed']    =   'SI';
             }
-
+            if ($mode === 'UPDATE_NEW') {
+                $_item['detail_printed']    =   'NO';
+            }
+            if ($mode === 'UPDATE_OLD') {
+                $_item['delete_status']             =   false;
+                if ($item->print_status === 'IMPRESO') {
+                    $_item['print_delivery_status']     =   'ENTREGADO';
+                }
+            }
             $dto[]  =   $_item;
         }
 

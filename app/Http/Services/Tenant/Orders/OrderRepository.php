@@ -151,4 +151,56 @@ class OrderRepository
 
         return $q1->unionAll($q2)->get();
     }
+
+    public function cancelOrderDetailsByIds(array $dishIds = [], array $productIds = []): void
+    {
+        // ===== PLATOS =====
+        if (!empty($dishIds)) {
+            OrderDish::whereIn('id', $dishIds)
+                ->update([
+                    'status' => 'ANULADO',
+                    'updated_at' => now(),
+                    'delete_status' => true
+                ]);
+        }
+
+        // ===== PRODUCTOS =====
+        if (!empty($productIds)) {
+            OrderProduct::whereIn('id', $productIds)
+                ->update([
+                    'status' => 'ANULADO',
+                    'updated_at' => now(),
+                    'delete_status' => true
+                ]);
+        }
+    }
+
+    public function updateOrderDish(array $dto_odish_olds): void
+    {
+        foreach ($dto_odish_olds as $dish) {
+            DB::table('orders_dishes')
+                ->where('id', $dish['id'])
+                ->update([
+                    'quantity'       => $dish['quantity'],
+                    'description'    => $dish['description'] ?? null,
+                    'sale_price'     => $dish['sale_price'] ?? null,
+                    'updated_at'     => now(),
+                ]);
+        }
+    }
+
+    public function updateOrderProduct(array $dto_oproduct_olds): void
+    {
+        foreach ($dto_oproduct_olds as $product) {
+            DB::table('orders_products')
+                ->where('id', $product['id'])
+                ->update([
+                    'quantity'       => $product['quantity'],
+                    'description'    => $product['description'] ?? null,
+                    'purchase_price' => $product['purchase_price'] ?? null,
+                    'sale_price'     => $product['sale_price'] ?? null,
+                    'updated_at'     => now(),
+                ]);
+        }
+    }
 }

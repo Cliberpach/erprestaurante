@@ -56,6 +56,8 @@ class OrderService
 
         $this->s_reservation->store($order);
 
+        $dto_odish    = array_map(fn($item) => (object) $item, $dto_odish);
+        $dto_oproduct = array_map(fn($item) => (object) $item, $dto_oproduct);
         $this->s_pct->decreaseLstStock($dto_oproduct);
         $this->s_programming->decreaseLstStock($dto_odish);
 
@@ -85,26 +87,119 @@ class OrderService
     }
 
     public function update(int $id, array $data): Order
-    {   dd($data);
+    {
         $data           =   $this->s_validation->validationUpdate($id, $data);
-
         $data['mode']   =   "UPDATE";
         $dto            =   $this->s_dto->getDtoStore($data);
         $order          =   $this->s_repository->update($id, $dto);
 
-        $collect_detail =   collect($data['lst_detail']);
-        $lst_dishes     =   $collect_detail->where('type_item', 'PLATO')->toArray();
-        $lst_products   =   $collect_detail->where('type_item', 'PRODUCTO')->toArray();
-        $dto_odish      =   $this->s_dto->getDtoOrderDish($lst_dishes, $order->id, 'UPDATE');
-        $dto_oproduct   =   $this->s_dto->getDtoOrderProduct($lst_products, $order->id, 'UPDATE');
+        $detailsBD      =   collect($this->s_repository->getDetails($id));
+        $lst_detail     =   collect($data['lst_detail']);
+        $lst_news       =   $lst_detail->whereNull('order_detail_id')->values();
+        $lst_olds_front =   $lst_detail->whereNotNull('order_detail_id')->keyBy('order_detail_id');
+        $lst_kept       =   $detailsBD->whereIn('id', $lst_olds_front->keys())->values();
+        $lst_deleted    =   $detailsBD->whereNotIn('id', $lst_olds_front->keys())->values();
 
+        $lst_olds_bd = $lst_kept
+            ->map(function ($item) use ($lst_olds_front) {
 
-        $this->operationStock($dto_odish, $dto_oproduct, $id);
-        $this->s_repository->cancelOrderDishes($id);
-        $this->s_repository->cancelOrderProducts($id);
+                $item     = (object) $item;
+                $frontQty = (int) $lst_olds_front[$item->id]['quantity'];
+                $bdQty    = (int) $item->quantity;
 
-        $this->s_repository->storeOrderProduct($dto_oproduct);
-        $this->s_repository->storeOrderDish($dto_odish);
+                $data = (array) $item;
+
+                $data['quantity_front']     = $frontQty;
+                $data['quantity_diff']      = $frontQty - $bdQty;
+                $data['quantity_changed']   = $frontQty !== $bdQty;
+                $data['quantity_direction'] = match (true) {
+                    $frontQty > $bdQty => 'UP',
+                    $frontQty < $bdQty => 'DOWN',
+                    default            => 'SAME',
+                };
+
+                return $data;
+            })
+            ->values()
+            ->toArray();
+
+        //======== OPERAR NUEVOS ========
+        $lst_news_dishes    =   $lst_news->where('type_item', 'PLATO')->toArray();
+        $lst_news_products  =   $lst_news->where('type_item', 'PRODUCTO')->toArray();
+
+        $dto_odish_news     =   $this->s_dto->getDtoOrderDish($lst_news_dishes, $order->id, 'UPDATE_NEW');
+        $dto_oproduct_news  =   $this->s_dto->getDtoOrderProduct($lst_news_products, $order->id, 'UPDATE_NEW');
+
+        $this->s_repository->storeOrderProduct($dto_oproduct_news);
+        $this->s_repository->storeOrderDish($dto_odish_news);
+        $this->s_programming->decreaseLstStock($dto_odish_news);
+        $this->s_pct->decreaseLstStock($dto_oproduct_news);
+
+        //====== MANTENIDOS =======
+        $lst_olds_dishes   = array_map(fn($i) => (object)$i, array_filter($lst_olds_bd, fn($i) => $i['type_item'] === 'PLATO'));
+        $lst_olds_products = array_map(fn($i) => (object)$i, array_filter($lst_olds_bd, fn($i) => $i['type_item'] === 'PRODUCTO'));
+
+        $dto_odish_olds    = $this->s_dto->getDtoOrderDish($lst_olds_dishes, $order->id, 'UPDATE_OLD');
+        $dto_oproduct_olds = $this->s_dto->getDtoOrderProduct($lst_olds_products, $order->id, 'UPDATE_OLD');
+
+        $this->s_repository->updateOrderDish($dto_odish_olds);
+        $this->s_repository->updateOrderProduct($dto_oproduct_olds);
+
+        $filter = fn($dir, $type) => array_values(
+            array_filter(
+                array_map(
+                    fn($item) => match ($item['type_item']) {
+                        'PRODUCTO' => [
+                            'product_id'   => $item['id'],
+                            'warehouse_id' => $item['warehouse_id'] ?? 1,
+                            'quantity'     => abs($item['quantity_diff']),
+                        ],
+                        'PLATO' => [
+                            'programming_id' => $item['programming_id'],
+                            'dish_id'        => $item['id'],
+                            'quantity'       => abs($item['quantity_diff']),
+                        ],
+                        default => null,
+                    },
+                    array_filter(
+                        $lst_olds_bd,
+                        fn($item) => $item['quantity_direction'] === $dir && $item['type_item'] === $type
+                    )
+                ),
+                fn($i) => !is_null($i)
+            )
+        );
+
+        $lst_up_platos      = $filter('UP', 'PLATO');
+        $lst_up_productos   = $filter('UP', 'PRODUCTO');
+        $lst_down_platos    = $filter('DOWN', 'PLATO');
+        $lst_down_productos = $filter('DOWN', 'PRODUCTO');
+
+        $this->s_pct->decreaseLstStock($lst_down_productos);
+        $this->s_pct->increaseLstStock($lst_up_productos);
+        $this->s_programming->decreaseLstStock($lst_down_platos);
+        $this->s_programming->increaseLstStock($lst_up_platos);
+
+        // ===== ELIMINADOS =====
+        $lst_deleted_dishes   = $lst_deleted->where('type_item', 'PLATO')->map(fn($i) => (array)$i)->values()->toArray();
+        $lst_deleted_products = $lst_deleted->where('type_item', 'PRODUCTO')->map(fn($i) => (array)$i)->values()->toArray();
+
+        $this->s_pct->increaseLstStock(array_map(fn($i) => (object)[
+            'product_id' => $i['id'],
+            'warehouse_id' => $i['warehouse_id'] ?? 1,
+            'quantity' => (int)$i['quantity'],
+        ], $lst_deleted_products));
+
+        $this->s_programming->increaseLstStock(array_map(fn($i) => (object)[
+            'programming_id' => $i['programming_id'],
+            'dish_id' => $i['id'],
+            'quantity' => (int)$i['quantity'],
+        ], $lst_deleted_dishes));
+
+        $lst_deleted_dishes_ids   = array_column($lst_deleted_dishes, 'id');
+        $lst_deleted_products_ids = array_column($lst_deleted_products, 'id');
+
+        $this->s_repository->cancelOrderDetailsByIds($lst_deleted_dishes_ids, $lst_deleted_products_ids);
 
         $s_kardex   =   new KardexService();
         $s_kardex->updateFromOrder($order);
@@ -112,25 +207,19 @@ class OrderService
         return $order;
     }
 
-    public function operationStock(array $lst_dishes, array $lst_products, int $order_id)
+    public function operationStock(array $lst_dishes, array $lst_products)
     {
-        $this->operationStockDish($lst_dishes, $order_id);
-        $this->operationStockProduct($lst_products, $order_id);
+        $this->operationStockDish($lst_dishes);
+        $this->operationStockProduct($lst_products);
     }
 
-    public function operationStockDish($lst_dishes, $order_id)
+    public function operationStockDish($lst_dishes)
     {
-        $dishes_ant     =   $this->s_repository->getOrderDishes($order_id);
-        $this->s_programming->increaseLstStock($dishes_ant->toArray());
-
         $this->s_programming->decreaseLstStock($lst_dishes);
     }
 
-    public function operationStockProduct($lst_products, $order_id)
+    public function operationStockProduct($lst_products)
     {
-        $products_ant     =   $this->s_repository->getOrderProducts($order_id);
-        $this->s_pct->increaseLstStock($products_ant->toArray());
-
         $this->s_pct->decreaseLstStock($lst_products);
     }
 

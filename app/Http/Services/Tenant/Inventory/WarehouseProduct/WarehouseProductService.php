@@ -38,7 +38,7 @@ class WarehouseProductService
     public function increaseLstStock(array $lst_items)
     {
         foreach ($lst_items as $item) {
-            $this->increaseStock($item['warehouse_id'], $item['product_id'], $item['quantity']);
+            $this->increaseStock($item->warehouse_id, $item->product_id, $item->quantity);
         }
     }
 
@@ -56,7 +56,7 @@ class WarehouseProductService
     public function decreaseLstStock(array $lst_items)
     {
         foreach ($lst_items as $item) {
-            $this->decreaseStock($item['warehouse_id'], $item['product_id'], $item['quantity']);
+            $this->decreaseStock($item->warehouse_id, $item->product_id, $item->quantity);
         }
     }
 

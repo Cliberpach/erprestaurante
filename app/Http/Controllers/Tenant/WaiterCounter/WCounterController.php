@@ -140,14 +140,20 @@ array:8 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:89
     }
 
     /*
-array:5 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:136
-  "_token" => "nLC9ESLc8E5XI4HuR8lNMcpju2xHbHRCXUsXfm0q"
+array:10 [ // app/Http/Services/Tenant/Orders/OrderService.php:88
+  "_token" => "McZEPesV81wwiy2Bji9a5FWDtNdG1PTjxmLBvRWh"
   "_method" => "PUT"
   "client_id" => "1"
+  "observation" => null
+  "producto" => null
+  "item_stock" => null
+  "sale_price" => null
+  "cantidad" => null
   "lst_detail" => "[
-  {"id":1,"name":"BUJIA","purchase_price":"1.000000","quantity":1,"sale_price":"1.000000","stock":null,"total":"1.000000","type_item":"PRODUCTO","type_name":"REPUESTO-NACIONAL"},
-  {"id":3,"name":"CEVICHE DE CONCHAS","purchase_price":"1.000000","quantity":1,"sale_price":"20.000000","stock":null,"total":"20.000000","type_item":"PLATO","type_name":"ENTRADA"}]"
-  "table_id" => "2"
+  {"order_detail_id":2,"warehouse_id":1,"id":8,"name":"GALLETAS OREO","purchase_price":"1.000000","quantity":1,"sale_price":"4.000000","stock":null,"total":"4.000000","type_item":"PRODUCTO","type_name":"SNACKS-SAN JORGE","is_new":false},
+  {"order_detail_id":2,"programming_id":2,"id":35,"name":"Turrón de Doña Pepa","purchase_price":"14.000000","quantity":1,"sale_price":"38.000000","stock":null,"total":"38.000000","type_item":"PLATO","type_name":"POSTRES","is_new":false},
+  {"id":33,"programming_id":2,"name":"Mazamorra Morada","type_name":"POSTRES","purchase_price":"14.000000","sale_price":"21.000000","type_item":"PLATO","quantity":"12","stock":"199.000000","total":252,"observation":""}]"
+  "table_id" => "4"
 ]
 */
     public function update(int $id, Request $request)

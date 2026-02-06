@@ -71,14 +71,14 @@ class ProgrammingRepository
     public function increaseLstStock(array $lst_items)
     {
         foreach ($lst_items as $item) {
-            $this->increaseStock($item['programming_id'], $item['dish_id'], $item['quantity']);
+            $this->increaseStock($item->programming_id, $item->dish_id, $item->quantity);
         }
     }
 
     public function decreaseLstStock(array $lst_items)
     {
         foreach ($lst_items as $item) {
-            $this->decreaseStock($item['programming_id'], $item['dish_id'], $item['quantity']);
+            $this->decreaseStock($item->programming_id, $item->dish_id, $item->quantity);
         }
     }
 }
