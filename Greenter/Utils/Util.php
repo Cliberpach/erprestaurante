@@ -62,6 +62,10 @@ final class Util
             $destinationDir     = public_path('storage/' . $greenter_config->files_route . '/greenter/certs/');
             $destinationPath    = public_path('storage/' . $greenter_config->files_route . '/greenter/certs/certificate_test.pem');
 
+            if (!File::exists($destinationDir)) {
+                File::makeDirectory($destinationDir, 0755, true);
+            }
+
             if (!File::exists($destinationPath)) {
 
                 if (File::exists($sourcePath)) {
@@ -71,7 +75,7 @@ final class Util
                     throw new Exception('No existe el certificate_test.pem en Greenter/certificate/!!');
                 }
             }
- dd('beta');
+            
             if (File::exists($destinationPath)) {
                 $certificadoPath    =   $destinationPath;
             }
