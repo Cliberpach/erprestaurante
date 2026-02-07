@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\UtilController;
 use App\Http\Requests\Company\CompanyNumerationRequest;
 use App\Http\Requests\CompanyStoreRequest;
+use App\Http\Requests\Tenant\Maintenance\Company\CompanyInvoiceRequest;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\CompanyInvoice;
@@ -26,6 +27,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 use Throwable;
@@ -336,44 +338,11 @@ array:11 [ // app\Http\Controllers\Tenant\CompanyController.php:254
   "sol_pass"        => "asfasfas"   --REQUEST
   "api_user_gre"    => null         --REQUEST
   "api_pass_gre"   => null         --REQUEST
-  "certificate"     =>              --REQUEST
-Illuminate\Http
-\
-UploadedFile {#1964
-    -test: false
-    -originalName: "certificado_test.pem"
-    -mimeType: "application/octet-stream"
-    -error: 0
-    #hashName: null
-    path: "C:\xampp8.2\tmp"
-    filename: "phpBE97.tmp"
-    basename: "phpBE97.tmp"
-    pathname: "C:\xampp8.2\tmp\phpBE97.tmp"
-    extension: "tmp"
-    realPath: "
-C:\xampp8.2
-\
-tmp\phpBE97.tmp"
-    aTime: 2024-10-29 16:34:33
-    mTime: 2024-10-29 16:34:33
-    cTime: 2024-10-29 16:34:33
-    inode: 2251799814249250
-    size: 5248
-    perms: 0100666
-    owner: 0
-    group: 0
-    type: "file"
-    writable: true
-    readable: true
-    executable: false
-    file: true
-    dir: false
-    link: false
-    linkTarget: "C:\xampp8.2\tmp\phpBE97.tmp"
-  }
+  "certificate"     => Illuminate\Http\UploadedFile {#1964} -REQUEST
+  "certificate_password"
 ]
 */
-    public function updateInvoice($id, Request $request)
+    public function updateInvoice($id, CompanyInvoiceRequest $request)
     {
         DB::beginTransaction();
 
@@ -381,44 +350,159 @@ tmp\phpBE97.tmp"
 
             $company_invoice                    =   CompanyInvoice::find(1);
             $company_invoice->secondary_user    =   $request->get('sol_user');
-            $company_invoice->secondary_password =   $request->get('sol_pass');
+            $company_invoice->secondary_password =  $request->get('sol_pass');
             $company_invoice->ubigeo            =   $request->get('district');
             $company_invoice->urbanization      =   $request->get('urbanization');
             $company_invoice->local_code        =   $request->get('local_code');
             $company_invoice->api_user_gre      =   $request->get('api_user_gre');
             $company_invoice->api_password_gre  =   $request->get('api_pass_gre');
+            $company_invoice->certificate_password  =   $request->get('certificate_password');
             $company_invoice->update();
 
             //========= PREGUNTANDO SI HAY CERTIFICADO EN EL REQUEST ========
             if ($request->hasFile('certificate')) {
 
                 $certificateFile    = $request->file('certificate');
-                $extension          = $certificateFile->getClientOriginalExtension();
-                $company            = Company::find(1);
-
-
-                $directoryPath = 'public/' . $company->files_route . '/greenter/certificado/';
-                if (!Storage::exists($directoryPath)) {
-                    Storage::makeDirectory($directoryPath);
+                $extension          = strtolower($certificateFile->getClientOriginalExtension());
+                if (!in_array($extension, ['pem', 'p12'])) {
+                    throw ValidationException::withMessages([
+                        'certificate' => [
+                            'El certificado debe tener extensión .pem o .p12.'
+                        ]
+                    ]);
                 }
 
-                // Define el nombre para el archivo .pem
-                $pemFilename    =   'certificate_production.' . $extension;
-                $path           =   $certificateFile->storeAs($directoryPath, $pemFilename);
+                if ($extension === 'p12' && !$request->filled('certificate_password')) {
+                    throw ValidationException::withMessages([
+                        'certificate_password' => [
+                            'La contraseña del certificado es obligatoria cuando se sube un archivo P12.'
+                        ]
+                    ]);
+                }
+
+                $company            = Company::find(1);
+                $pemFilename        = 'cert_production.pem';
+                $directoryPath      = $company->files_route . '/greenter/certs/';
+                $pemFullPath        = storage_path('app/public/' . $directoryPath . $pemFilename);
+
+
+                if (!Storage::disk('public')->exists($directoryPath)) {
+                    Storage::disk('public')->makeDirectory($directoryPath);
+                }
+
+                // ===== CASO 1: SUBEN UN .PEM =====
+                if ($extension === 'pem') {
+                    $certificateFile->storeAs(
+                        $directoryPath,
+                        $pemFilename,
+                        'public'
+                    );
+                }
+
+                // ===== CASO 2: SUBEN UN .P12 =====
+                if ($extension === 'p12') {
+
+                    $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+                    $opensslPath = $isWindows
+                        ? '"C:\Program Files\OpenSSL-Win64\bin\openssl.exe"'
+                        : 'openssl';
+
+                    //$opensslPath = '"C:\Program Files\OpenSSL-Win64\bin\openssl.exe"';
+                    /*if (!file_exists(str_replace('"', '', $opensslPath))) {
+                        throw new \Exception('OpenSSL no encontrado en el servidor');
+                    }*/
+
+                    exec($opensslPath . ' version 2>&1', $check, $checkCode);
+                    if ($checkCode !== 0) {
+                        throw new Exception('OpenSSL no está disponible en el servidor');
+                    }
+
+                    // 📁 Rutas temporales
+                    $tempP12Path    = storage_path('app/temp_' . uniqid() . '.p12');
+                    $privateKeyPath = storage_path('app/private_' . uniqid() . '.key');
+                    $certPath       = storage_path('app/cert_' . uniqid() . '.crt');
+
+                    // Guardar P12 temporal
+                    $certificateFile->move(dirname($tempP12Path), basename($tempP12Path));
+
+                    if (!file_exists($tempP12Path)) {
+                        throw new \Exception('No se pudo guardar el archivo P12 temporal');
+                    }
+
+                    $p12Password = $request->input('certificate_password');
+
+                    // 1️⃣ Extraer CLAVE PRIVADA
+                    $cmdPrivateKey = $opensslPath . ' pkcs12 ' .
+                        '-in ' . escapeshellarg($tempP12Path) . ' ' .
+                        '-nocerts -nodes ' .
+                        '-out ' . escapeshellarg($privateKeyPath) . ' ' .
+                        '-password pass:' . escapeshellarg($p12Password) . ' 2>&1';
+
+                    exec($cmdPrivateKey, $outKey, $codeKey);
+
+                    if ($codeKey !== 0) {
+                        logger()->error('Error extrayendo clave privada', $outKey);
+                        throw new \Exception('Error al extraer la clave privada del P12');
+                    }
+
+                    // 2️⃣ Extraer CERTIFICADO DEL CONTRIBUYENTE
+                    $cmdCert = $opensslPath . ' pkcs12 ' .
+                        '-in ' . escapeshellarg($tempP12Path) . ' ' .
+                        '-clcerts -nokeys ' .
+                        '-out ' . escapeshellarg($certPath) . ' ' .
+                        '-password pass:' . escapeshellarg($p12Password) . ' 2>&1';
+
+                    exec($cmdCert, $outCert, $codeCert);
+
+                    if ($codeCert !== 0) {
+                        logger()->error('Error extrayendo certificado', $outCert);
+                        throw new \Exception('Error al extraer el certificado del P12');
+                    }
+
+                    // 3️⃣ UNIR EN UN SOLO PEM (FORMATO SUNAT CORRECTO)
+                    $cleanPrivateKey = $this->cleanPem(file_get_contents($privateKeyPath));
+                    $cleanCert       = $this->cleanPem(file_get_contents($certPath));
+
+                    file_put_contents(
+                        $pemFullPath,
+                        $cleanPrivateKey . $cleanCert
+                    );
+
+                    // 🧹 Limpiar temporales
+                    @unlink($tempP12Path);
+                    @unlink($privateKeyPath);
+                    @unlink($certPath);
+                }
+
 
                 $company_invoice->certificate_url   = 'storage/' . $company->files_route . '/greenter/' . $pemFilename;
                 $company_invoice->certificate       = $pemFilename;
                 $company_invoice->update();
             }
 
-
             DB::commit();
             return response()->json(['success' => true, 'message' => 'DATOS DE FACTURACIÓN ACTUALIZADOS']);
-        } catch (\Throwable $th) {
+        } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors()
+            ], 422);
+        } catch (Throwable $th) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
     }
+
+    public function cleanPem($content)
+    {
+        preg_match_all(
+            '/-----BEGIN ([A-Z ]+)-----.*?-----END \1-----/s',
+            $content,
+            $matches
+        );
+
+        return implode(PHP_EOL, $matches[0]) . PHP_EOL;
+    }
+
 
     public function getListNumeration(Request $request)
     {

@@ -455,7 +455,8 @@
 
                         if (response.status === 422) {
                             if ('errors' in res) {
-                                paintValidationErrors(res.errors);
+                                toastr.error('Errores de validación en el formulario');
+                                paintValidationErrors(res.errors, 'error');
                             }
                             Swal.close();
                             return;

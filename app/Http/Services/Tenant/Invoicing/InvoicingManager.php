@@ -88,7 +88,7 @@ class InvoicingManager
                 'c.files_route'
             )->where('c.id', 1)->first();
 
-
+     
         if (!$config) {
             throw new Exception("NO EXISTE LA CONFIGURACIÓN EN LA TABLA EMPRESAS");
         }
