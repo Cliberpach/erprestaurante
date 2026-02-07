@@ -69,13 +69,13 @@ final class Util
             if (!File::exists($destinationPath)) {
 
                 if (File::exists($sourcePath)) {
-                    File::makeDirectory($destinationDir, 0755, true);
+                    //File::makeDirectory($destinationDir, 0755, true);
                     File::copy($sourcePath, $destinationPath);
                 } else {
                     throw new Exception('No existe el certificate_test.pem en Greenter/certificate/!!');
                 }
             }
-            
+
             if (File::exists($destinationPath)) {
                 $certificadoPath    =   $destinationPath;
             }
