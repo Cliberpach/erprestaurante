@@ -36,11 +36,11 @@ class CreditNoteService
         $dto                    =   $this->s_dto->getDtoFromSale($data);
         $instance               =   $this->s_repository->store($dto);
 
-
         if (isset($data['sale_products'])) {
             $dto_products           =   $this->s_dto->getDtoDetail($data['sale_products'], $instance->id);
             $this->s_repository->storeProducts($dto_products);
             $s_wps                  =   new WarehouseProductService();
+            dd($data['sale_products']);
             $s_wps->increaseLstStock($data['sale_products']);
         }
         if (isset($data['sale_dishes'])) {
