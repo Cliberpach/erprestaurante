@@ -325,7 +325,7 @@ class CompanyController extends Controller
         $role = Role::where('name', 'admin')->first();
         $user->assignRole($role);
 
-        $this->createUserWithRole(
+        /*$this->createUserWithRole(
             'CAJERO 1',
             'cajero@gmail.com',
             '123456789',
@@ -354,10 +354,10 @@ class CompanyController extends Controller
             '123456789',
             'COCINERO',
             5
-        );
+        );*/
 
 
-        app(TestService::class)->createTestData();
+        //app(TestService::class)->createTestData();
 
         DocumentSerialization::create([
             'company_id'        => $company->id,
