@@ -227,10 +227,10 @@ class SaleService
         $sale_dishes    =   $this->s_repository->getSaleDishes($data['sale_id']);
 
         if ($sale_products->isNotEmpty()) {
-            $data['sale_products']  =   $sale_products->toArray();
+            $data['sale_products']  =   $sale_products;
         }
         if ($sale_dishes->isNotEmpty()) {
-            $data['sale_dishes']    =   $sale_dishes->toArray();
+            $data['sale_dishes']    =   $sale_dishes;
         }
 
         $this->s_validations->validationAnnular($sale);
