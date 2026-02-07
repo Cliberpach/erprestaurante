@@ -432,7 +432,7 @@ array:11 [ // app\Http\Controllers\Tenant\CompanyController.php:254
                     $p12Password = $request->input('certificate_password');
 
                     // 1️⃣ Extraer CLAVE PRIVADA
-                    $cmdPrivateKey = $opensslPath . ' pkcs12 ' .
+                    $cmdPrivateKey = $opensslPath . ' pkcs12 -legacy' .
                         '-in ' . escapeshellarg($tempP12Path) . ' ' .
                         '-nocerts -nodes ' .
                         '-out ' . escapeshellarg($privateKeyPath) . ' ' .
@@ -446,7 +446,7 @@ array:11 [ // app\Http\Controllers\Tenant\CompanyController.php:254
                     }
 
                     // 2️⃣ Extraer CERTIFICADO DEL CONTRIBUYENTE
-                    $cmdCert = $opensslPath . ' pkcs12 ' .
+                    $cmdCert = $opensslPath . ' pkcs12 -legacy' .
                         '-in ' . escapeshellarg($tempP12Path) . ' ' .
                         '-clcerts -nokeys ' .
                         '-out ' . escapeshellarg($certPath) . ' ' .
