@@ -39,15 +39,22 @@ class CreditNoteService
         if (isset($data['sale_products'])) {
             $dto_products           =   $this->s_dto->getDtoDetail($data['sale_products']->toArray(), $instance->id);
             $this->s_repository->storeProducts($dto_products);
+
+            $lst_products = $data['sale_products']->map(function ($item) {
+                return (object) $item->toArray();
+            })->toArray();
+
             $s_wps                  =   new WarehouseProductService();
-           
-            $s_wps->increaseLstStock($data['sale_products']);
+            $s_wps->increaseLstStock($lst_products);
         }
         if (isset($data['sale_dishes'])) {
             $dto_dishes     =   $this->s_dto->getDtoDetail($data['sale_dishes']->toArray(), $instance->id);
             $this->s_repository->storeDishes($dto_dishes);
+            $lst_dishes = $data['sale_dishes']->map(function ($item) {
+                return (object) $item->toArray();
+            })->toArray();
             $s_programming  =   new ProgrammingService();
-            $s_programming->increaseLstStock($data['sale_dishes']);
+            $s_programming->increaseLstStock($lst_dishes);
         }
         return $instance;
     }
