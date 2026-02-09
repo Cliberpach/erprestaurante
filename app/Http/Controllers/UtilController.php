@@ -13,6 +13,7 @@ use App\Models\Landlord\TypeIdentityDocument;
 use App\Models\Landlord\Year;
 use App\Models\Province;
 use App\Models\Tenant\DocumentSerialization;
+use App\Models\Tenant\Maintenance\CostCenter;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\PaymentCondition\PaymentCondition;
 use App\Models\Tenant\Supply\TypeDish\TypeDish;
@@ -297,9 +298,15 @@ class UtilController extends Controller
         ];
     }
 
-     public static function getPaymentConditions()
+    public static function getPaymentConditions()
     {
         $payment_conditions =   PaymentCondition::where('status', 'ACTIVO')->get();
         return $payment_conditions;
+    }
+
+    public static function getCostCenter()
+    {
+        $items =   CostCenter::where('status', 'ACTIVO')->get();
+        return $items;
     }
 }

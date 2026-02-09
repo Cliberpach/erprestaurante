@@ -10,6 +10,7 @@ use App\Models\ExitMoneyDetail;
 use App\Models\ProofPayment;
 use App\Models\Supplier;
 use App\Models\Tenant\Cash\PettyCashBook;
+use App\Models\Tenant\Maintenance\CostCenter;
 use App\Models\Tenant\PaymentMethod;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -64,12 +65,14 @@ class ExitMoneyController extends Controller
         $proof_payments = ProofPayment::all();
         $date = now()->format('Y-m-d');
         $payment_methods    =   PaymentMethod::where('estado', 'ACTIVO')->get();
+        $cost_center        =   CostCenter::where('status', 'ACTIVO')->get();
 
         return view('cash.exit-money.create', compact(
             'suppliers',
             'proof_payments',
             'date',
-            'payment_methods'
+            'payment_methods',
+            'cost_center'
         ));
     }
 
@@ -152,7 +155,15 @@ class ExitMoneyController extends Controller
         $exit_money_detail = ExitMoneyDetail::where('exit_money_id', $exit_money->id)->get();
         $suppliers = Supplier::all();
         $proof_payments = ProofPayment::all();
-        return view('cash.exit-money.edit', compact('exit_money', 'exit_money_detail', 'suppliers', 'proof_payments'));
+        $cost_center        =   CostCenter::where('status', 'ACTIVO')->get();
+
+        return view('cash.exit-money.edit', compact(
+            'exit_money',
+            'exit_money_detail',
+            'suppliers',
+            'proof_payments',
+            'cost_center'
+        ));
     }
 
     public function updateExit(Request $request, $id)

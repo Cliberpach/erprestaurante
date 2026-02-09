@@ -34,18 +34,20 @@
 
     @include('cash.exit-money.create-supplier-modal')
     @include('cash.exit-money.create-proof-payment-modal')
+    @include('utils.modals.cost_center.mdl_create')
 @endsection
 
 
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             events();
+            loadSelectsExit();
         });
 
         function events() {
+            eventsMdlCostCenter();
+
             const proofPaymentSelect = document.getElementById('proof_payment');
             const identityDocumentSelect = document.getElementById('identity_document');
             const documentNumberInput = document.getElementById('document_number');
@@ -326,6 +328,33 @@
                     buttonsStyling: false
                 });
 
+            }
+        }
+
+        function loadSelectsExit() {
+            const costCenterSelect = document.getElementById('reason');
+            if (costCenterSelect && !costCenterSelect.tomselect) {
+                window.costCenterSelect = new TomSelect(costCenterSelect, {
+                    valueField: 'id',
+                    labelField: 'name',
+                    searchField: ['name', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.name)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.name)}</div>
+                        `
+                    }
+                });
             }
         }
     </script>

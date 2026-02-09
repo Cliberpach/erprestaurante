@@ -218,7 +218,8 @@
 
         const paramsMdlShow = {
             orderId: null,
-            tableId: null
+            tableId: null,
+            order: null
         }
 
         function eventsMdlOrderShow() {
@@ -229,12 +230,21 @@
             document.querySelector('#btnPreCuenta').addEventListener('click', (e) => {
                 printPreAccount(paramsMdlShow.orderId);
             })
+
+            document.querySelector('#btnChangeTable').addEventListener('click', (e) => {
+                openMdlChangeTbl(paramsMdlShow.orderId);
+            })
+
+            document.querySelector('#btnDeleteOrder').addEventListener('click', (e) => {
+                openMdlDeleteOrder(paramsMdlShow.orderId);
+            })
         }
 
         async function openMdlShowOrder(tableId, orderId) {
             paramsMdlShow.orderId = orderId;
             paramsMdlShow.tableId = tableId;
             const data = await getOrderTable(tableId);
+            paramsMdlShow.order = data;
             paintOrderTable(data);
             $('#mdlShowOrder').modal('show');
         }

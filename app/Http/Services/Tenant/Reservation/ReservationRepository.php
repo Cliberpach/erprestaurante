@@ -17,4 +17,18 @@ class ReservationRepository
         $item->status   =   $status;
         $item->save();
     }
+
+    public function changeTable(int $order_id, int $table_selected)
+    {
+        $reservation            =   Reservation::where('order_id', $order_id)->first();
+        $reservation->table_id  =   $table_selected;
+        $reservation->save();
+    }
+
+    public function deleteFromOrder(int $order_id)
+    {
+        $item           =   Reservation::where('order_id', $order_id)->first();
+        $item->status   =   'ANULADO';
+        $item->save();
+    }
 }

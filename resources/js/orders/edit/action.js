@@ -3,7 +3,7 @@ import { isDesktop } from "../../utils/utils";
 import { dtDetail, elementsUI, lstDetail, setDtDetail, setLstDetail } from "../shared/state";
 import { clearFormAddItem, paintCardsDetail } from "../shared/ui";
 import { routes } from "./routes";
-import { amounts, itemSelected } from "./state";
+import { amounts, configDelete, itemSelected } from "./state";
 import { paintAmounts, paintTblDetail } from "./ui";
 
 export async function actionFormUpdate(formUpdate) {
@@ -153,23 +153,29 @@ export function actionDeleteItem(btn) {
     toastr.clear();
 
     const index = btn.getAttribute('data-index');
-
-    const res = deleteItem(index);
-    if (res) {
-
-        if (isDesktop()) {
-            clearTable('tbl_order_detail');
-            setDtDetail(destroyDataTable(dtDetail));
-            paintTblDetail(lstDetail);
-            setDtDetail(loadDataTableSimple('tbl_order_detail'));
-        } else {
-            paintCardsDetail(lstDetail);
-        }
-
-        calculateAmounts(amounts);
-        paintAmounts(amounts);
-        toastr.success('ITEM ELIMINADO!!');
+    console.log('index',index);
+    if (configDelete) {
+        openMdlDeleteItem(index);
+    } else {
+        flowDeleteItem(index);
     }
+}
+
+function flowDeleteItem(index) {
+    const res = deleteItem(index);
+    if (!res) return;
+    if (isDesktop()) {
+        clearTable('tbl_order_detail');
+        setDtDetail(destroyDataTable(dtDetail));
+        paintTblDetail(lstDetail);
+        setDtDetail(loadDataTableSimple('tbl_order_detail'));
+    } else {
+        paintCardsDetail(lstDetail);
+    }
+
+    calculateAmounts(amounts);
+    paintAmounts(amounts);
+    toastr.success('ITEM ELIMINADO!!');
 }
 
 function deleteItem(index) {
@@ -177,7 +183,6 @@ function deleteItem(index) {
         toastr.error('NO SE ENCONTRÓ EL ITEM EN EL DETALLE!!!');
         return false;
     }
-
     lstDetail.splice(index, 1);
     return true;
 }
@@ -245,3 +250,4 @@ export function loadDataEdit() {
 
 window.calculateAmounts = calculateAmounts;
 window.paintAmounts = paintAmounts;
+window.flowDeleteItem = flowDeleteItem;

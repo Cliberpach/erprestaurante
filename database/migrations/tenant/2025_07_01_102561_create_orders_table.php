@@ -57,7 +57,7 @@ return new class extends Migration
             /* 🔹 PRINT CONFIGURATION */
             $table->enum('pending_print', ['SI', 'NO'])->default('NO');
             $table->enum('pending_order_printing', ['SI', 'NO'])->default('NO');
-            $table->enum('order_print_mode', ['TODO', 'PARCIAL','PLATO','BEBIDA'])->default('TODO');
+            $table->enum('order_print_mode', ['TODO', 'PARCIAL', 'PLATO', 'BEBIDA'])->default('TODO');
 
             /* 🔹 WAITER DELETE INFO */
             $table->boolean('waiter_delete_status')->default(0)->nullable();
@@ -87,6 +87,7 @@ return new class extends Migration
             $table->string('delete_user_name')->nullable();
             $table->dateTime('date_pending_print')->nullable();
             $table->dateTime('date_pending_order_print')->nullable();
+            $table->dateTime('date_change_table')->nullable();
 
             $table->timestamps();
         });

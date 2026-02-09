@@ -63,8 +63,8 @@
                         <i class="fas fa-tasks text-info mr-1"></i> Estado:
                     </label>
                     <select class="form-control" id="status" name="status">
-                        <option value="">Todo</option>
-                        <option selected value="PENDIENTE">Pendiente</option>
+                        <option selected value="">Todo</option>
+                        <option value="PENDIENTE">Pendiente</option>
                         <option value="PAGADO">Pagado</option>
                     </select>
                 </div>
@@ -88,8 +88,6 @@
 
         </div>
     </div>
-
-    <!-- end card -->
 @endsection
 
 @section('js')
@@ -153,10 +151,10 @@
                         orderable: true
                     },
                     {
-                        data: 'currency',
-                        name: 'pd.currency',
-                        searchable: false,
-                        orderable: false
+                        data: 'cost_center_name',
+                        name: 'pd.cost_center_name',
+                        searchable: true,
+                        orderable: true
                     },
                     {
                         data: null,

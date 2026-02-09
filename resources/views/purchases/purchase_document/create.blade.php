@@ -8,6 +8,7 @@
     @include('purchases.purchase_document.modals.mdl_products')
     @include('purchases.purchase_document.modals.mdl_edit_item')
     @include('utils.modals.suppliers.mdl_create_supplier')
+    @include('utils.modals.cost_center.mdl_create')
 
     <div class="card">
         <div class="card-header">
@@ -50,6 +51,7 @@
             eventsMdlEditItem();
             eventsMdlProducts();
             eventsMdlCreateProveedor();
+            eventsMdlCostCenter();
 
             document.querySelector('#igv_chk').addEventListener('change', (e) => {
                 toastr.clear();
@@ -173,6 +175,31 @@
                         `,
                         item: (item, escape) => `
                             <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
+
+            const costCenterSelect = document.getElementById('cost_center');
+            if (costCenterSelect && !costCenterSelect.tomselect) {
+                window.costCenterSelect = new TomSelect(costCenterSelect, {
+                    valueField: 'id',
+                    labelField: 'name',
+                    searchField: ['name', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.name)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.name)}</div>
                         `
                     }
                 });

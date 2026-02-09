@@ -1,7 +1,6 @@
 <table class="display table" id="tbl_clientes_list">
     <thead class="table-light">
         <tr>
-
             <th class="minw-100px">#</th>
             <th data-priority="2" class="minw-200px">Nombre</th>
             <th class="minw-100px">Doc</th>

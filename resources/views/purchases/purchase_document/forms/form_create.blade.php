@@ -96,6 +96,22 @@
                 </div>
             </div>
 
+            <div class="col-md-3">
+                <div>
+                    <label for="cost_center" class="form-label">Centro de costos</label>
+                    <button class="btn btn-sm btn-link p-0" type="button" onclick="openMdlCostCenter()">
+                        [+ Nuevo]
+                    </button>
+                </div>
+                <select name="cost_center" id="cost_center" class="form-control">
+                    <option value=""></option>
+                    @foreach ($cost_center as $item)
+                        <option value="{{ $item->name }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+                <p class="cost_center_error msgError"></p>
+            </div>
+
             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <label class="required_field" for="serie" style="font-weight: bold;">SERIE</label>
                 <div class="input-group mb-3">
@@ -114,8 +130,8 @@
                         <i class="fa-solid fa-hashtag"></i>
                     </span>
                     <input required id="numero" name="numero" type="text"
-                        class="form-control inputEnteroPositivo input-fill" placeholder="Número" aria-label="Username"
-                        aria-describedby="basic-addon1">
+                        class="form-control inputEnteroPositivo input-fill" placeholder="Número"
+                        aria-label="Username" aria-describedby="basic-addon1">
                 </div>
             </div>
 

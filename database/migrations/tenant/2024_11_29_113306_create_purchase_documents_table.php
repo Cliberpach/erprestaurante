@@ -22,6 +22,10 @@ return new class extends Migration
             $table->string('supplier_type_document_abbreviation', 20);
             $table->string('supplier_document_number', 20);
 
+            $table->unsignedBigInteger('cost_center_id');
+            $table->foreign('cost_center_id')->references('id')->on('cost_center');
+            $table->string('cost_center_name', 200);
+
             $table->string('currency', 100);
 
             $table->string('document_type', 160);

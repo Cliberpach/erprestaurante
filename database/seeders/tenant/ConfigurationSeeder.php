@@ -14,9 +14,13 @@ class ConfigurationSeeder extends Seeder
     public function run(): void
     {
         $configuration              =   new Configuration();
-        $configuration->description =   'TURNO NOCHE RESERVAS';
-        $configuration->property    =   '19:00';
+        $configuration->description =   'Ambiente Facturación';
+        $configuration->property    =   'BETA';
         $configuration->save();
 
+        $configuration              =   new Configuration();
+        $configuration->description =   'Contraseña eliminar';
+        $configuration->property    =   '123456789';
+        $configuration->save();
     }
 }

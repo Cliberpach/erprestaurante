@@ -15,5 +15,6 @@ export const routesUtil = {
             quantity,
             order_id: orderId
         }),
-    getBankAccountPayment: (paymentMethodId) => route('tenant.utils.getBackAccountPayment', { payment_method: paymentMethodId })
+    getBankAccountPayment: (paymentMethodId) => route('tenant.utils.getBackAccountPayment', { payment_method: paymentMethodId }),
+    validationPassword: route('tenant.utils.validationPassword')
 };

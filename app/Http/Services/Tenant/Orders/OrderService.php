@@ -310,4 +310,40 @@ class OrderService
         $order = $this->s_repository->setPendingPrint($id, 'SI');
         return $order;
     }
+
+    public function changeTable(array $data): Order
+    {
+        $order_id       =   $data['order_id'];
+        $table_selected =   $data['table_selected'];
+        $order  =   $this->s_repository->findOrder($data['order_id']);
+        $data['order']  =   $order;
+        $this->s_validation->validationChangeTable($data);
+        $table_old      =   $order->table_id;
+        $order          =   $this->s_repository->changeTable($order_id, $table_selected);
+        $this->s_reservation->changeTable($order_id, $table_selected, $table_old);
+        return $order;
+    }
+
+    public function destroy(array $data, int $id): Order
+    {
+        $order  =   $this->s_repository->findOrder($id);
+        $data['order']  =   $order;
+        $this->s_validation->validationDestroyOrder($data);
+
+        $products = $this->s_repository->getOrderProducts($id)
+            ->map(fn($item) => (object) $item->toArray())
+            ->toArray();
+
+        $dishes = $this->s_repository->getOrderDishes($id)
+            ->map(fn($item) => (object) $item->toArray())
+            ->toArray();
+
+        $this->s_repository->deleteOrder($id);
+        $this->s_reservation->deleteFromOrder($id, $order->table_id);
+
+        $this->s_pct->increaseLstStock($products);
+        $this->s_programming->increaseLstStock($dishes);
+
+        return $order;
+    }
 }

@@ -69,7 +69,8 @@ class Order extends Model
         'petty_cash_name',
 
         'date_pending_print',
-        'date_pending_order_print'
+        'date_pending_order_print',
+        'date_change_table'
     ];
 
     protected $guarded = ['code'];

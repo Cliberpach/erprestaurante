@@ -58,6 +58,7 @@ class PurchaseDocumentoController extends Controller
                 'pd.observation',
                 'pd.payment_status',
                 'pd.payment_condition_name',
+                'pd.cost_center_name'
             )
             ->where('pd.status', 'ACTIVO');
 
@@ -136,7 +137,7 @@ class PurchaseDocumentoController extends Controller
 
         $type_identity_documents    =   UtilController::getIdentityDocuments();
         $payment_conditions         =   UtilController::getPaymentConditions();
-
+        $cost_center                =   UtilController::getCostCenter();
 
         return view(
             'purchases.purchase_document.create',
@@ -147,7 +148,8 @@ class PurchaseDocumentoController extends Controller
                 'suppliers',
                 'igv',
                 'type_identity_documents',
-                'payment_conditions'
+                'payment_conditions',
+                'cost_center'
             )
         );
     }
@@ -176,6 +178,7 @@ array:18 [ // app\Http\Controllers\Tenant\Purchase\PurchaseDocumentoController.p
   "user_recorder_name"  => "SUPERADMIN"
   "payment_condition_id" => "2"
   "expiration_date" => "2026-01-24"
+  "cost_center" => "3"
 ]
 */
     public function store(PurchaseDocumentStoreRequest $request)

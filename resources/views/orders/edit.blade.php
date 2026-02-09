@@ -12,6 +12,7 @@
     @include('orders.modals.mdl_dishes')
     @include('orders.modals.mdl_products')
     @include('orders.modals.mdl_edit_item')
+    @include('orders.modals.mdl_delete_item')
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
             <h4 class="card-title mb-md-0 mb-2">EDITAR PEDIDO</h4>
@@ -68,10 +69,12 @@
             companyIgv: @json($igv),
             tableId: @json($table->id),
             lstDetail: @json($lst_detail),
+            configDelete: @json($config_delete),
             init() {
                 eventsMdlDishes();
                 eventsMdlProductos();
-                eventsMdlEditItem();
+                //eventsMdlEditItem();
+                eventsMdlDeleteItem();
             }
         };
     </script>

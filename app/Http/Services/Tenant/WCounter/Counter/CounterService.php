@@ -49,4 +49,14 @@ class CounterService
         $order  =   $this->s_order->preAccount($id);
         return $order;
     }
+
+    public function changeTable(array $data): Order
+    {
+        return $this->s_order->changeTable($data);
+    }
+
+    public function destroy(array $data, int $id): Order
+    {
+        return $this->s_order->destroy($data, $id);
+    }
 }

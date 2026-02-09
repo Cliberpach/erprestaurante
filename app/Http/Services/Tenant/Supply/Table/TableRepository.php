@@ -3,6 +3,7 @@
 namespace App\Http\Services\Tenant\Supply\Table;
 
 use App\Models\Tenant\Supply\Table\Table;
+use Illuminate\Support\Facades\DB;
 
 class TableRepository
 {
@@ -60,5 +61,33 @@ class TableRepository
         $item           =   Table::findOrFail($id);
         $item->status   =   $status;
         $item->save();
+    }
+
+    public function getTablesFree()
+    {
+        $tables =   DB::select(
+            'SELECT t.*
+            FROM tables t
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM reservations r
+                WHERE r.table_id = t.id
+                AND r.status = "OCUPADO"
+            )'
+        );
+
+        return $tables;
+    }
+
+    public function isNotFree(int $id)
+    {
+        $table  =   DB::table('reservations as r')
+            ->join('tables as t', 't.id', 'r.table_id')
+            ->where('r.status', 'OCUPADO')
+            ->where('r.table_id',$id)
+            ->select('r.code', 't.name')
+            ->first();
+
+        return $table;
     }
 }

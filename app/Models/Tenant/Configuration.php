@@ -10,6 +10,11 @@ class Configuration extends Model
     use HasFactory;
 
     protected $table        = 'configuration';
+    protected $connection   = 'tenant';
 
-    protected $guarded = [''];
+    protected $fillable = [
+        'description',
+        'property',
+        'status',
+    ];
 }

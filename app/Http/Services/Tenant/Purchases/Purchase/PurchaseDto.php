@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Models\Tenant\Maintenance\CostCenter;
 use App\Models\Tenant\PurchaseDocument;
 use App\Models\Tenant\Sales\PaymentCondition\PaymentCondition;
 use App\Models\Tenant\Warehouse;
@@ -20,6 +21,7 @@ class PurchaseDto
 
         $supplier           =   Supplier::findOrFail($data['proveedor']);
         $warehouse          =   Warehouse::findOrFail(1);
+        $cost_center        =   CostCenter::findOrFail($data['cost_center']);
         $montos             =   $this->calcularMontos($data['lst_purchase'], $data['igv_chk'] ?? null, $data['igv_value']);
 
         $dto['warehouse_id']                        =   $warehouse->id;
@@ -34,6 +36,8 @@ class PurchaseDto
         $dto['serie']                               =   $data['serie'];
         $dto['correlative']                         =   $data['numero'];
         $dto['observation']                         =   $data['observation'];
+        $dto['cost_center_id']                      =   $cost_center->id;
+        $dto['cost_center_name']                    =   $cost_center->name;
 
         $dto['prices_with_igv']           =   isset($data['igv_chk']) ? 1 : 0;
         $dto['igv']                       =   $data['igv_value'];

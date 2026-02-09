@@ -45,7 +45,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadSelectCustomers();
             events();
-            configuracionInicial();
+            configDefault();
         })
 
         function events() {
@@ -100,7 +100,7 @@
 
             document.querySelector('#formRegistrarCliente').addEventListener('submit', (e) => {
                 e.preventDefault();
-                registrarCliente();
+                storeCustomer();
             })
 
             document.addEventListener('click', (e) => {
@@ -214,19 +214,17 @@
             }
         }
 
-        function configuracionInicial() {
+        function configDefault() {
             //======== CHK PERMITIR VENTAS AL CRÉDITO ======
             /*const chkPermitirCredito = document.querySelector('#control_credito');
             chkPermitirCredito.checked = false;
             chkPermitirCredito.dispatchEvent(new Event('change'));*/
 
             //======== SELECT TIPO DOCUMENTO ======
-            $('#type_identity_document').val(2).trigger('change');
-            const inputNroDoc = document.querySelector('#nro_document');
-            inputNroDoc.focus();
+            window.typeDocumentSelect.setValue(1);
         }
 
-        function registrarCliente() {
+        function storeCustomer() {
             Swal.fire({
                 title: "DESEA REGISTRAR EL CLIENTE?",
                 text: "Se creará un nuevo cliente!",
@@ -361,10 +359,10 @@
                         toastr.error(res.data.message);
                         return;
                     }
-                    if (tipo_documento == 1) {
+                    if (typeDocument == 1) {
                         setDatosDni(res.data);
                     }
-                    if (tipo_documento == 3) {
+                    if (typeDocument == 3) {
                         setDatosRuc(res.data);
                     }
 

@@ -64,7 +64,7 @@ class OrderRepository
 
     public function getOrderProducts(int $id)
     {
-        $order_products =   OrderProduct::where('order_id', $id)->where('status', '<>', 'ANULADO')->where('delete_status', false)->get();
+        $order_products =   OrderProduct::where('order_id', $id)->where('status', '!=', 'ANULADO')->where('delete_status', false)->get();
         return $order_products;
     }
 
@@ -210,5 +210,24 @@ class OrderRepository
         $order->pending_print   =   $status;
         $order->save();
         return $order;
+    }
+
+    public function changeTable(int $order_id, int $table_selected): Order
+    {
+        $order                      =   $this->findOrder($order_id);
+        $order->table_id            =   $table_selected;
+        $order->date_change_table   =   now();
+        $order->save();
+        return $order;
+    }
+
+    public function deleteOrder(int $id)
+    {
+        $order  =   Order::findOrFail($id);
+        $order->status  =   'ANULADO';
+        $order->save();
+
+        $this->cancelOrderDishes($id);
+        $this->cancelOrderProducts($id);
     }
 }

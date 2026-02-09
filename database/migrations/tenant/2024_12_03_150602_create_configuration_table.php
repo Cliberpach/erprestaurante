@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('configuration', function (Blueprint $table) {
             $table->id();
-            $table->string('description',160);
-            $table->string('property',100);
+            $table->string('description', 160);
+            $table->string('property', 100);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

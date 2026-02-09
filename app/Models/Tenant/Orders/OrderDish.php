@@ -9,6 +9,7 @@ class OrderDish extends Model
 {
     use HasFactory;
     protected $table = 'orders_dishes';
+    protected $connection = 'tenant';
 
     protected $fillable = [
         'order_id',

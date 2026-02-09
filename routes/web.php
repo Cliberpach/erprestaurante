@@ -8,6 +8,8 @@ use App\Http\Controllers\Tenant\BookController;
 use App\Http\Controllers\Tenant\Cash\PettyCashController;
 use App\Http\Controllers\Tenant\CustomerController;
 use App\Http\Controllers\Tenant\Maintenance\BankAccountController;
+use App\Http\Controllers\Tenant\Maintenance\ConfigurationController;
+use App\Http\Controllers\Tenant\Maintenance\CostCenterController;
 use App\Http\Controllers\Tenant\Maintenance\UserController as MaintenanceUserController;
 use App\Http\Controllers\Tenant\ModuleController;
 use App\Http\Controllers\Tenant\ProductController;
@@ -18,6 +20,7 @@ use App\Http\Controllers\Tenant\WorkShop\ServiceController;
 use App\Http\Controllers\Tenant\WorkShop\VehicleController;
 use App\Http\Controllers\Tenant\WorkShop\YearController;
 use App\Http\Controllers\UtilController;
+use App\Models\Tenant\Configuration;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,4 +110,7 @@ Route::group(["prefix" => "utils"], function () {
     Route::get('get-list/free-servers', [MaintenanceUserController::class, 'getListFreeServers'])->name('tenant.utils.getListFreeServers');
     Route::get('search-supplier', [SupplierController::class, 'searchSupplier'])->name('tenant.utils.searchSupplier');
     Route::get('get-bank-account/{payment_method}', [BankAccountController::class, 'getBackAccountPayment'])->name('tenant.utils.getBackAccountPayment');
+
+    Route::post('validation-password', [ConfigurationController::class, 'validationPassword'])->name('tenant.utils.validationPassword');
+    Route::post('cost-center/store', [CostCenterController::class, 'storeCostCenter'])->name('tenant.utils.storeCostCenter');
 });

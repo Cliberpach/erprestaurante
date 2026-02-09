@@ -29,7 +29,7 @@ class PurchaseDocumentStoreRequest extends FormRequest
                 'required',
                 'date',
                 'date_format:Y-m-d',
-                'in:' . now()->toDateString(), 
+                'in:' . now()->toDateString(),
             ],
             'fecha_entrega' => [
                 'required',
@@ -42,8 +42,8 @@ class PurchaseDocumentStoreRequest extends FormRequest
             ],
             'proveedor' => [
                 'required',
-                'exists:suppliers,id', 
-                Rule::exists('suppliers', 'id')->where('estado', 'ACTIVO'), 
+                'exists:suppliers,id',
+                Rule::exists('suppliers', 'id')->where('estado', 'ACTIVO'),
             ],
             'tipo_doc' => [
                 'required',
@@ -52,7 +52,7 @@ class PurchaseDocumentStoreRequest extends FormRequest
             'igv_chk' => [
                 'nullable',
                 'numeric',
-                Rule::exists('companies', 'igv'), 
+                Rule::exists('companies', 'igv'),
             ],
             'serie' => [
                 'required',
@@ -69,11 +69,15 @@ class PurchaseDocumentStoreRequest extends FormRequest
             ],
             'moneda' => [
                 'required',
-                Rule::in(['PEN', 'USD']), 
+                Rule::in(['PEN', 'USD']),
             ],
             'user_recorder_id' => [
                 'required',
-                'exists:users,id', 
+                'exists:users,id',
+            ],
+            'cost_center' => [
+                'required',
+                Rule::exists('cost_center', 'id')->where('status', 'ACTIVO'),
             ],
         ];
     }
@@ -118,6 +122,9 @@ class PurchaseDocumentStoreRequest extends FormRequest
 
             'user_recorder_id.required' => 'El usuario que graba el documento es obligatorio.',
             'user_recorder_id.exists'   => 'El usuario que graba el documento no existe.',
+
+            'cost_center.required' => 'El centro de costo es obligatorio.',
+            'cost_center.exists'   => 'El centro de costo no existe.',
         ];
     }
 

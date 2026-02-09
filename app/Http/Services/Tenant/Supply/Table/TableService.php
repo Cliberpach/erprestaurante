@@ -47,6 +47,16 @@ class TableService
 
     public function setStatus(int $id, string $status)
     {
-        $this->s_repository->setStatus($id,$status);
+        $this->s_repository->setStatus($id, $status);
+    }
+
+    public function getTablesFree()
+    {
+        return $this->s_repository->getTablesFree();
+    }
+
+    public function isNotFree(int $id)
+    {
+        return $this->s_repository->isNotFree($id);
     }
 }

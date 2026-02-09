@@ -1,46 +1,18 @@
 <?php
 
-namespace App\Models\Tenant;
+namespace App\Models\Tenant\Maintenance;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PurchaseDocument extends Model
+class CostCenter extends Model
 {
     use HasFactory;
-    protected $table = 'purchase_documents';
+    protected $table = 'cost_center';
     protected $connection = 'tenant';
-
     protected $fillable = [
-        'warehouse_id',
-        'warehouse_name',
-        'delivery_date',
-        'supplier_id',
-        'supplier_name',
-        'supplier_type_document_abbreviation',
-        'supplier_document_number',
-        'condition',
-        'currency',
-        'document_type',
-        'serie',
-        'correlative',
-        'observation',
-        'prices_with_igv',
-        'igv',
-        'subtotal',
-        'amount_igv',
-        'total',
-        'status',
 
-        'payment_condition_id',
-        'payment_condition_name',
-        'payment_condition_days',
-        'payment_status',
-        'registration_date',
-        'expiration_date',
-
-        'cost_center_id',
-        'cost_center_name',
+        'name',
 
         'creator_user_id',
         'editor_user_id',
@@ -48,7 +20,9 @@ class PurchaseDocument extends Model
 
         'delete_user_name',
         'editor_user_name',
-        'creator_user_name',
+        'create_user_name',
+
+        'status',
     ];
 
     protected static function boot()
@@ -69,8 +43,8 @@ class PurchaseDocument extends Model
             }
             if ($model->isDirty('status') && $model->status === 'ANULADO') {
                 if (auth()->check()) {
-                    $model->delete_user_id = auth()->id();
-                    $model->delete_user_name = auth()->user()->name;
+                    $model->deletor_user_id = auth()->id();
+                    $model->deletor_user_name = auth()->user()->name;
                 }
             }
         });

@@ -5,7 +5,6 @@ namespace App\Http\Services\Tenant\Reservation;
 use App\Http\Services\Tenant\Supply\Table\TableService;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\Reservation\Reservation;
-use Illuminate\Contracts\View\View;
 
 class ReservationService
 {
@@ -30,7 +29,21 @@ class ReservationService
         return $item;
     }
 
-    public function setStatusByOrder(int $order_id,string $status){
-        $this->s_repository->setStatusByOrder($order_id,$status);
+    public function setStatusByOrder(int $order_id, string $status)
+    {
+        $this->s_repository->setStatusByOrder($order_id, $status);
+    }
+
+    public function changeTable(int $order_id, int $table_selected, int $table_old)
+    {
+        $this->s_repository->changeTable($order_id, $table_selected);
+        $this->s_table->setStatus($table_selected, 'OCUPADO');
+        $this->s_table->setStatus($table_old, 'LIBRE');
+    }
+
+    public function deleteFromOrder(int $order_id, int $table_id)
+    {
+        $this->s_repository->deleteFromOrder($order_id);
+        $this->s_table->setStatus($table_id, 'LIBRE');
     }
 }

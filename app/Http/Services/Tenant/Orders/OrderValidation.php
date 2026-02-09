@@ -5,9 +5,12 @@ namespace App\Http\Services\Tenant\Orders;
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Cash\PettyCashBook\PettyCashBookService;
+use App\Http\Services\Tenant\Supply\Table\TableService;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Company;
+use App\Models\Tenant\Configuration;
+use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Reservation\Reservation;
 use App\Models\Tenant\Supply\Programming\ProgrammingDetail;
@@ -93,6 +96,7 @@ class OrderValidation
         $customer_formatted =   FormatController::getFormatInitialCustomer($order->customer_id);
         $petty_cash_book    =   $this->s_cash_book->getCashBookWaiter($user->id);
         $programming        =   $this->s_cash_book->hasProgrammingActive($petty_cash_book->petty_cash_book_id);
+        $config_delete      =   Configuration::findOrFail(2)->status;
 
         if ($order->status !== 'ACTIVO') {
             throw new Exception('EL PEDIDO SE ENCUENTRA CON ESTADO: ' . $order->status);
@@ -135,6 +139,7 @@ class OrderValidation
             'order_products'        =>  $order_products,
             'order_dishes'          =>  $order_dishes,
             'lst_detail'            =>  $lst_detail,
+            'config_delete'         =>  $config_delete
         ];
 
         return $vars;
@@ -439,6 +444,55 @@ class OrderValidation
                         "Disponible: {$item_warehouse->stock}, requerido: {$delta_quantity}"
                 );
             }
+        }
+    }
+
+    public function validationChangeTable(array $data)
+    {
+        $user   =   Auth::user();
+        $order  =   $data['order'];
+        if (!$user->hasRole('MESERO')) {
+            throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
+        }
+        if ($user->id != $order->creator_user_id) {
+            throw new Exception("ESTA PEDIDO LE PERTENECE A OTRO MESERO");
+        }
+        if ($order->status !== 'ACTIVO') {
+            throw new Exception('NO SE PUEDE CAMBIAR DE MESA, PEDIDO CON ESTADO: ' . $order->status);
+        }
+        if ($order->status_invoice !== 'NO FACTURADO') {
+            throw new Exception('NO SE PUEDE CAMBIAR DE MESA, PEDIDO YA FACTURADO');
+        }
+
+        $s_table       =   new TableService();
+        $isNotFree     =   $s_table->isNotFree($data['table_selected']);
+        if ($isNotFree) {
+            throw new Exception("LA MESA NUEVA ESTÁ OCUPADA POR LA RESERVA: " . $isNotFree->code);
+        }
+    }
+
+    public function validationDestroyOrder(array $data)
+    {
+        $user   =   Auth::user();
+        $order  =   $data['order'];
+        if (!$user->hasRole('MESERO')) {
+            throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
+        }
+        if ($user->id != $order->creator_user_id) {
+            throw new Exception("ESTA PEDIDO LE PERTENECE A OTRO MESERO");
+        }
+        if ($order->status !== 'ACTIVO') {
+            throw new Exception('NO SE PUEDE ELIMINAR, PEDIDO CON ESTADO: ' . $order->status);
+        }
+        if ($order->status_invoice !== 'NO FACTURADO') {
+            throw new Exception('NO SE PUEDE ELIMINAR, PEDIDO YA FACTURADO');
+        }
+
+        $password_bd    =   Configuration::findOrFail(2)->property;
+        $password       =   trim($data['password_delete_order']);
+
+        if ($password_bd !== $password) {
+            throw new Exception("Contraseña incorrecta");
         }
     }
 }

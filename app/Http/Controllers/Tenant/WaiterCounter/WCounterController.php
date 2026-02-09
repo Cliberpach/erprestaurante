@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tenant\WaiterCounter;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenant\WaiterCounter\WaiterCounterStoreRequest;
+use App\Http\Services\Tenant\Supply\Table\TableService;
 use App\Http\Services\Tenant\WCounter\Counter\CounterManager;
 use App\Models\Tenant\Supply\Table\Table;
 use Illuminate\Contracts\View\View;
@@ -191,6 +192,70 @@ array:10 [ // app/Http/Services/Tenant/Orders/OrderService.php:88
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    public function getTablesFree()
+    {
+        try {
+            $s_table        =   new TableService();
+            $tables_free    =   $s_table->getTablesFree();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'MESAS LIBRES OBTENIDAS CON ÉXITO',
+                'data' => $tables_free
+            ]);
+        } catch (Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    /*
+  array:2 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:222
+  "order_id" => "9"
+  "table_selected" => "7"
+]
+*/
+    public function changeTable(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $order  =   $this->s_manager->changeTable($request->toArray());
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'MESA CAMBIADA CON ÉXITO']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ]);
+        }
+    }
+
+    /*
+array:2 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:239
+  "password_delete_order" => "ASDASDAS"
+  "_method" => "PUT"
+]
+*/
+    public function destroy(Request $request, int $id)
+    {
+        DB::beginTransaction();
+        try {
+            $order  =   $this->s_manager->destroy($request->toArray(),$id);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'PEDIDO ELIMINADO CON ÉXITO']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ]);
         }
     }
 }

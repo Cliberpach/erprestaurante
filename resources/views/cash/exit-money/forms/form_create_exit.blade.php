@@ -3,8 +3,12 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <h4 class="card-title mb-0">Registrar Egreso</h4>
         <div>
-            <a href="{{ route('tenant.cajas.egresos.store') }}" class="btn btn-secondary me-2">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{{ route('tenant.cajas.egresos.index') }}" class="btn btn-danger me-2">
+                <i class="fas fa-arrow-left"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Guardar
+            </button>
         </div>
     </div>
 
@@ -30,15 +34,15 @@
             <!-- Número -->
             <div class="col-md-4">
                 <label for="number" class="form-label">Número</label>
-                <input type="text" name="number" id="number" class="form-control">
+                <input type="text" name="number" id="number" class="form-control input-fill">
                 <p class="number_error msgError"></p>
             </div>
 
             <!-- Fecha de emisión -->
             <div class="col-md-4">
                 <label for="date" class="form-label">Fecha de emisión</label>
-                <input type="date" name="date" id="date" class="form-control" value="{{ $date }}"
-                    readonly>
+                <input type="date" name="date" id="date" class="form-control input-fill"
+                    value="{{ $date }}" readonly>
                 <p class="date_error msgError"></p>
             </div>
 
@@ -66,13 +70,17 @@
 
             <!-- Razón -->
             <div class="col-md-3">
-                <label for="reason" class="form-label">Razón</label>
+                <div>
+                    <label for="reason" class="form-label">Centro de costos</label>
+                    <button class="btn btn-sm btn-link p-0" type="button" onclick="openMdlCostCenter()">
+                        [+ Nuevo]
+                    </button>
+                </div>
                 <select name="reason" id="reason" class="form-control">
-                    <option value="GASTO">GASTO</option>
-                    <option value="DEVOLUCION">DEVOLUCION</option>
-                    <option value="COMPRAS">COMPRAS</option>
-                    <option value="LIMPIEZA">LIMPIEZA</option>
-                    <option value="ENVIO">ENVIO</option>
+                    <option value=""></option>
+                    @foreach ($cost_center as $item)
+                        <option value="{{ $item->name }}">{{ $item->name }}</option>
+                    @endforeach
                 </select>
                 <p class="reason_error msgError"></p>
             </div>
@@ -82,7 +90,7 @@
                 <label for="payment_method_id" class="form-label">MÉTODO DE PAGO</label>
                 <select name="payment_method_id" id="payment_method_id" class="form-control">
                     @foreach ($payment_methods as $payment_method)
-                        <option value="{{$payment_method->id}}">{{$payment_method->description}}</option>
+                        <option value="{{ $payment_method->id }}">{{ $payment_method->description }}</option>
                     @endforeach
                 </select>
                 <p class="payment_method_id_error msgError"></p>

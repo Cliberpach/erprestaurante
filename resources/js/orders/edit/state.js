@@ -23,6 +23,7 @@ export function getAmounts() {
     return amounts;
 }
 
+export const configDelete = app.configDelete;
 
 window.setItemSelected = setItemSelected;
 window.getAmounts = getAmounts;

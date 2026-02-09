@@ -4,10 +4,6 @@
     Configuración
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-@endsection
-
 @section('content')
     <div class="card">
         @csrf
@@ -117,4 +113,3 @@
         });
     }
 </script>
-<script src="{{ asset('assets/js/utils.js') }}"></script>

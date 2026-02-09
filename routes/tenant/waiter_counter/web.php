@@ -13,5 +13,8 @@ Route::group(["prefix" => "mostrador_mesero"], function () {
         Route::put('update/{id}', [WCounterController::class, 'update'])->name('tenant.mostrador_mesero.mostrador.update');
         Route::get('edit/{id}', [WCounterController::class, 'edit'])->name('tenant.mostrador_mesero.mostrador.edit');
         Route::post('pre-account', [WCounterController::class, 'preAccount'])->name('tenant.mostrador_mesero.mostrador.preCuenta');
+        Route::get('getTablesFree', [WCounterController::class, 'getTablesFree'])->name('tenant.mostrador_mesero.mostrador.getTablesFree');
+        Route::post('change-table', [WCounterController::class, 'changeTable'])->name('tenant.mostrador_mesero.mostrador.changeTable');
+        Route::put('delete-order/{id}', [WCounterController::class, 'destroy'])->name('tenant.mostrador_mesero.mostrador.destroy');
     });
 });

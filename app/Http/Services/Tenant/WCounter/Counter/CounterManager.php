@@ -43,4 +43,14 @@ class CounterManager
     {
         return $this->s_service->preAccount($id);
     }
+
+    public function changeTable(array $data): Order
+    {
+        return $this->s_service->changeTable($data);
+    }
+
+    public function destroy(array $data,int $id): Order
+    {
+        return $this->s_service->destroy($data,$id);
+    }
 }

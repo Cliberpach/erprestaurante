@@ -6,6 +6,8 @@
 
 @section('content')
     @include('waiter_counter.counter.modals.mdl_show')
+    @include('waiter_counter.counter.modals.mdl_change_table')
+    @include('waiter_counter.counter.modals.mdl_delete_order')
     <div class="card overflow-hidden">
         <div class="card-header d-flex align-items-center justify-content-between">
             <h6 class="card-title mb-0">Mostrador Mozo</h6>
@@ -60,6 +62,8 @@
 
         function events() {
             eventsMdlOrderShow();
+            eventsMdlChangeTbl();
+            eventsMdlDeleteOrder();
         }
 
         function toOrderCreate(tableId) {
@@ -70,11 +74,10 @@
 
         async function loadTablesAsCircles() {
             try {
-                const response = await axios.get(
-                    "{{ route('tenant.mostrador_mesero.mostrador.getAll') }}"
-                );
-
-                const data = response.data.data ?? response.data;
+                mostrarAnimacion1();
+                const res = await axios.get(route('tenant.mostrador_mesero.mostrador.getAll'));
+                ocultarAnimacion1();
+                const data = res.data.data ?? res.data;
                 const grid = document.getElementById('tables-grid');
                 grid.innerHTML = '';
 
@@ -112,10 +115,10 @@
                                 </div>
 
                                 ${item.total ? `
-                                                                        <div class="table-total">
-                                                                            S/ ${formatSoles(item.total)}
-                                                                        </div>
-                                                                        ` : ''}
+                                                <div class="table-total">
+                                                    S/ ${formatSoles(item.total)}
+                                                </div>
+                                                ` : ''}
                             </div>
                         </div>
                     `;
@@ -126,13 +129,14 @@
                             if (!card || !grid.contains(card)) return;
 
                             const tableId = card.getAttribute('data-table');
-                            const status = (card.getAttribute('data-status') || '').toString().toUpperCase();
+                            const status = (card.getAttribute('data-status') || '').toString()
+                                .toUpperCase();
                             const orderId = card.getAttribute('data-order');
 
                             if (status === 'LIBRE' || !status) {
                                 toOrderCreate(tableId);
                             } else {
-                                openMdlShowOrder(tableId,orderId);
+                                openMdlShowOrder(tableId, orderId);
                             }
                         });
 
