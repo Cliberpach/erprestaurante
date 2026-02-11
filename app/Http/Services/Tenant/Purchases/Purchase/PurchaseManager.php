@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\Tenant\Purchases\Purchase;
 
-use App\Models\Tenant\Alerts\Alert;
 use App\Models\Tenant\PurchaseDocument;
 
 class PurchaseManager

@@ -8,8 +8,8 @@ use App\Models\Company;
 use App\Models\Landlord\Customer;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Tenant\Orders\Order;
+use App\Models\Tenant\Sales\PaymentCondition\PaymentCondition;
 use App\Models\Tenant\Sales\Sale\Sale;
-use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -51,68 +51,40 @@ class SaleValidation
         +"type_sale_name": "NOTA DE VENTA"
     }
     */
-    public static function validationStore($data): object
+    public function validationStore($data): object
     {
         //====== VALIDANDO USUARIO REGISTRADOR DEBE EXISTIR ======
-        $user_recorder  =   User::findOrFail($data['user_recorder_id']);
+        $user_recorder  =   Auth::user();
 
         if (!$user_recorder) {
             throw new Exception("EL USUARIO REGISTRADOR NO EXISTE EN LA BD!!!");
         }
 
-        //======= VALIDANDO USUARIO ACTUAL DEBE ESTAR EN UNA CAJA APERTURADA =======
-        $user_in_petty_cash =   DB::select(
-            'SELECT
-                                pc.name as petty_cash_name,
-                                pcb.petty_cash_id,
-                                pcb.id as petty_cash_book_id,
-                                pcb.status
-                                from petty_cash_books as pcb
-                                inner join petty_cashes as pc on pc.id = pcb.petty_cash_id
-                                where
-                                pcb.user_id = ?
-                                and pcb.status = "ABIERTO"',
-            [$user_recorder->id]
-        );
+        $cash_service   =   new PettyCashBookService();
+        $petty_cash     =   $cash_service->getCashBookUser($user_recorder->id);
 
-        if (count($user_in_petty_cash) === 0) {
+        if (!$petty_cash) {
             throw new Exception("EL USUARIO NO SE ENCUENTRA EN UNA CAJA APERTURADA!!!");
         }
 
         //======= VALIDACION TIPO DE VENTA Y CLIENTE =========
-        $type_sale      =   $data['type_sale'];
+        $type_sale      =   GeneralTableDetail::findOrFail($data['type_sale']);
         $type_sale_name =   null;
-        $customer_id    =   $data['customer_id'];
 
-        $customer       =   DB::connection('landlord')->select('select
-                            c.id,
-                            c.document_number,
-                            c.name,
-                            c.phone,
-                            c.type_document_abbreviation,
-                            c.type_document_code as type_document_code
-                            from customers as c
-                            where c.id = ?', [$customer_id]);
+        $customer       =   Customer::findOrFail($data['customer_id']);
 
         //======== RUC Y BOLETA ======
-        if ($customer[0]->type_document_abbreviation === 'RUC' && $type_sale === '3') {
+        if ($customer->type_document_abbreviation === 'RUC' && $type_sale->id == '3') {
             throw new Exception("NO SE PERMITEN BOLETAS DE VENTA CON RUC!!!");
         }
 
         //======== DNI Y FACTURA ======
-        if ($customer[0]->type_document_abbreviation === 'DNI' && $type_sale === '1') {
+        if ($customer->type_document_abbreviation === 'DNI' && $type_sale->id == '1') {
             throw new Exception("NO SE PERMITEN FACTURAS DE VENTA CON DNI!!!");
         }
 
-        if ($type_sale === '80') {
-            $type_sale_name =   'NOTA DE VENTA';
-        }
-        if ($type_sale === '3') {
-            $type_sale_name =   'BOLETA DE VENTA ELECTRÓNICA';
-        }
-        if ($type_sale === '1') {
-            $type_sale_name =   'FACTURA ELECTRÓNICA';
-        }
+
+        $type_sale_name =   $type_sale->name;
 
         //======= VALIDANDO DETALLE DE LA VENTA =======
         $lstSale    =   json_decode($data['lstSale']);
@@ -126,15 +98,30 @@ class SaleValidation
             throw new Exception("EL PORCENTAJE DE IGV DEL DOCUMENTO DE VENTA NO CORRESPONDE AL DE LA EMPRESA!!!");
         }
 
+        //========= DATES =========
+        $registration_date      =   now();
+        $payment_condition      =   PaymentCondition::findOrFail($data['payment_condition_id']);
+        $nro_days               =   (int) $payment_condition->nro_days;
+        $expiration_date        =   $registration_date->copy()->addDays($nro_days);
+
+        $lst_pays               =   json_decode($data['lstPays']);
+        $this->validationLstProducts($lstSale);
+
         return (object)[
-            'customer'          =>  $customer[0],
-            'user_recorder'     =>  $user_recorder,
-            'petty_cash'        =>  $user_in_petty_cash[0],
-            'type_sale_code'    =>  $type_sale,
+            'customer'          =>  $customer,
+            'petty_cash'        =>  $petty_cash,
+            'type_sale_id'      =>  $type_sale->id,
+            'type_sale_code'    =>  $type_sale->symbol,
             'type_sale_name'    =>  $type_sale_name,
             'igv_percentage'    =>  $data['igv_percentage'],
             'lstSale'           =>  $lstSale,
-            'type'              =>  'PRODUCTOS'
+            'type'              =>  'PRODUCTOS',
+
+            'expiration_date'   =>  $expiration_date,
+            'registration_date' =>  $registration_date,
+            'payment_condition' =>  $payment_condition,
+
+            'lst_pays'          =>  $lst_pays
         ];
     }
 
@@ -357,6 +344,26 @@ class SaleValidation
         }
         if ($sale->sunat_status === 'ANULADO PARCIAL') {
             throw new Exception('DOCUMENTO DE VENTA: ' . $sale->serie . '-' . $sale->correlative . ', YA FUE ANULADO');
+        }
+    }
+
+    public function validationLstProducts(array $lst_items)
+    {
+        $lst_ids    =   collect($lst_items)->pluck('id')->values()->toArray();
+        $warehouses_bd   =   DB::table('warehouse_products as wp')
+            ->where('wp.warehouse_id', 1)
+            ->whereIn('wp.product_id', $lst_ids)
+            ->get();
+
+        foreach ($lst_items as $item) {
+            $warehouse = $warehouses_bd->firstWhere('product_id', $item->id);
+
+            if (!$warehouse) {
+                throw new Exception("Producto {$item->name} no existe en almacén");
+            }
+            if ((float)$warehouse->stock < (float)$item->cant) {
+                throw new Exception("Stock insuficiente," . $item->name . "stock actual: " . $warehouse->stock . ", Cantidad requerida: " . $item->cant);
+            }
         }
     }
 }

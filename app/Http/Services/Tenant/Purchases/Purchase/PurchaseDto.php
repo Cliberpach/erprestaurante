@@ -39,11 +39,12 @@ class PurchaseDto
         $dto['cost_center_id']                      =   $cost_center->id;
         $dto['cost_center_name']                    =   $cost_center->name;
 
-        $dto['prices_with_igv']           =   isset($data['igv_chk']) ? 1 : 0;
-        $dto['igv']                       =   $data['igv_value'];
-        $dto['subtotal']                  =   $montos->subtotal;
-        $dto['amount_igv']                =   $montos->monto_igv;
-        $dto['total']                     =   $montos->total;
+        $dto['prices_with_igv'] =   isset($data['igv_chk']) ? 1 : 0;
+        $dto['igv']             =   $data['igv_value'];
+        $dto['subtotal']        =   $montos->subtotal;
+        $dto['amount_igv']      =   $montos->monto_igv;
+        $dto['total']           =   $montos->total;
+        $dto['discount_cash']   =   isset($data['discount_cash']) ? true : false;
 
         //========= DATES =========
         $registration_date      =   now();

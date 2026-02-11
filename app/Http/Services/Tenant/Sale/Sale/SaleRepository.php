@@ -130,4 +130,9 @@ class SaleRepository
         $sale->sunat_status =   $sunat_status;
         $sale->save();
     }
+
+    public function insertSale(array $dto): Sale
+    {
+        return Sale::create($dto);
+    }
 }

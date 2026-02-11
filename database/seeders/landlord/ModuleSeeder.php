@@ -14,7 +14,7 @@ class ModuleSeeder extends Seeder
         $this->seedCaja();
         $this->seedVentas();
         $this->seedAbastecimiento();
-        //$this->seedCuentas();
+        $this->seedCuentas();
         $this->seedInventario();
         $this->seedMostradorMesero();
         $this->seedMostradorCajero();
@@ -96,6 +96,11 @@ class ModuleSeeder extends Seeder
             'description' => 'Métodos Pago',
             'route_name' => 'ventas.metodos_pago.index',
         ]);
+
+        $this->createChild($module, [
+            'description' => 'Condiciones Pago',
+            'route_name' => 'ventas.condiciones_pago.index'
+        ]);
     }
 
     private function seedAbastecimiento(): void
@@ -121,10 +126,10 @@ class ModuleSeeder extends Seeder
     {
         $module = $this->createModule('Cuentas');
 
-        $this->createChild($module, [
+        /*$this->createChild($module, [
             'description' => 'Cuentas Cliente',
             'route_name' => 'cuentas.cliente.index',
-        ]);
+        ]);*/
 
         $this->createChild($module, [
             'description' => 'Cuentas Proveedor',

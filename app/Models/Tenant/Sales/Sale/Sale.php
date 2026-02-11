@@ -6,6 +6,7 @@ use App\Http\Services\Tenant\Sale\Sale\SaleService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Sale extends Model
 {
@@ -71,6 +72,14 @@ class Sale extends Model
 
         'type',
         'order_id',
+        'public_hash',
+
+        'expiration_date',
+        'registration_date',
+        'payment_condition_id',
+        'payment_condition_name',
+        'payment_condition_days',
+        'payment_status',
 
         'creator_user_id',
         'editor_user_id',
@@ -116,6 +125,7 @@ class Sale extends Model
             if (auth()->check()) {
                 $model->creator_user_id = auth()->id();
                 $model->creator_user_name = auth()->user()->name;
+                $model->public_hash  = (string) Str::uuid();
             }
         });
 
@@ -126,8 +136,8 @@ class Sale extends Model
             }
             if ($model->isDirty('status') && $model->status === 'ANULADO') {
                 if (auth()->check()) {
-                    $model->delete_user_id = auth()->id();
-                    $model->delete_user_name = auth()->user()->name;
+                    $model->deletor_user_id = auth()->id();
+                    $model->deletor_user_name = auth()->user()->name;
                 }
             }
         });

@@ -121,13 +121,6 @@
             $('#mdlChangeTable').modal('show');
         }
 
-        function actionBtnEditOrder(e) {
-            const url = route('tenant.mostrador_mesero.mostrador.edit', {
-                id: paramsMdlChangeTbl.orderId
-            });
-            window.location.href = url;
-        }
-
         async function getTablesFree() {
             try {
                 toastr.clear();

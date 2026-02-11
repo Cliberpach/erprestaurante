@@ -345,16 +345,8 @@
             tbody.innerHTML = filas;
         }
 
-
         function storePurchaseDocument() {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success",
-                    cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-            swalWithBootstrapButtons.fire({
+            Swal.fire({
                 title: "DESEA REGISTRAR EL DOCUMENTO DE COMPRA?",
                 text: "Se registrará la compra e ingresará stock!",
                 icon: "warning",
@@ -371,8 +363,6 @@
                     const urlStorePurchaseDocument = @json(route('tenant.compras.documento_compra.store'));
 
                     formData.append('lstPurchaseDocument', JSON.stringify(lstPurchaseDocument));
-                    formData.append('user_recorder_id', @json($colaborador_registrador->id));
-                    formData.append('user_recorder_name', @json($colaborador_registrador->name));
                     formData.append('observation', document.querySelector('#observation').value);
                     formData.append('igv_value', @json($igv));
 
@@ -395,8 +385,6 @@
                         });
 
                         const res = await response.json();
-
-                        console.log(res);
 
                         if (response.status === 422) {
                             if ('errors' in res) {
@@ -421,9 +409,8 @@
                         Swal.close();
                     }
 
-
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: "OPERACIÓN CANCELADA",
                         text: "NO SE REALIZARON ACCIONES",
                         icon: "error"

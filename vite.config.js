@@ -14,6 +14,7 @@ export default defineConfig({
                 'resources/js/orders/edit/main.js',
 
                 'resources/js/cashier_counter/counter/charge/main.js',
+                'resources/js/sales/sales/main.js',
 
                 'resources/js/libs/filepond.js',
                 //'resources/js/libs/calendar.js',

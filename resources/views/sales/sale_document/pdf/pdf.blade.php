@@ -328,31 +328,24 @@
     </div>
 
 
-    <div class="qr">
+    <div class="qr" style="margin-top: 30px;">
         @if ($sale->ruta_qr)
             <img style="height:140px;object-fit: contain;" src="{{ public_path($sale->ruta_qr) }}">
+            <a target="_blank" href="{{ route('tenant.utils.searchSale', $sale->public_hash) }}">
+                <em>{{ route('tenant.utils.searchSale', $sale->public_hash) }}</em>
+            </a>
         @endif
     </div>
 
-
     <footer>
-        <b>Sistema de reserva de campos deportivos
-            <a target="_blank"
-                href="{{ (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') .
-                    '://' .
-                    implode('.', array_slice(explode('.', $_SERVER['HTTP_HOST']), 1)) }}">
-                <em>
-                    {{ (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . implode('.', array_slice(explode('.', $_SERVER['HTTP_HOST']), 1)) }}
-                </em>
+        <b>
+            Para consultar el comprobante ingrese a
+            <a target="_blank" href="{{ route('consultarComprobante') }}">
+                <em>{{ route('consultarComprobante') }}</em>
             </a>
         </b>
     </footer>
 
-    {{-- <footer>
-            <b>Para consultar el comprobante ingresar a <a target="_blank" href="{{ (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
-                "https" : "http") . "://" . $_SERVER['HTTP_HOST']."/buscar"}}"><em>{{ (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
-                "https" : "http") . "://" . $_SERVER['HTTP_HOST']."/buscar"}}</em></a></b>
-        </footer> --}}
 </body>
 
 </html>

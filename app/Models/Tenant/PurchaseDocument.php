@@ -26,6 +26,7 @@ class PurchaseDocument extends Model
         'correlative',
         'observation',
         'prices_with_igv',
+        'discount_cash',
         'igv',
         'subtotal',
         'amount_igv',

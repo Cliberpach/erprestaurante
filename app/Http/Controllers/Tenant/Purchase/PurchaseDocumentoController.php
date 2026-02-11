@@ -164,6 +164,7 @@ array:18 [ // app\Http\Controllers\Tenant\Purchase\PurchaseDocumentoController.p
   "proveedor"           => "4"
   "tipo_doc"            => "BOLETA"
   "igv_chk"             => "18"  //====== SI O NO =====
+  "discount_cash"       =>  checkbox
   "igv_value"           => "18"  // %IGV
   "serie"               => "B001"
   "numero"              => "541"
@@ -184,7 +185,6 @@ array:18 [ // app\Http\Controllers\Tenant\Purchase\PurchaseDocumentoController.p
     public function store(PurchaseDocumentStoreRequest $request)
     {
         DB::beginTransaction();
-
         try {
 
             $this->s_purchase->store($request->toArray());

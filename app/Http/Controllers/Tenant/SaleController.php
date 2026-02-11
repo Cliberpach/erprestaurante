@@ -14,10 +14,6 @@ use App\Models\CompanyInvoice;
 use App\Models\Landlord\Customer;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
-use App\Models\Tenant\Sales\Sale\SaleDish;
-use App\Models\Tenant\Sales\Sale\SaleProduct;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -131,8 +127,10 @@ class SaleController extends Controller
         $provinces      =   DB::select('select * from provinces');
 
         $company_invoice    =   CompanyInvoice::find(1);
+        $invoice_types      =   UtilController::getInvoiceTypes()->whereIn('id', ['65', '66', '67']);
         $payment_methods    =   PaymentMethod::where('estado', 'ACTIVO')->get();
-        $invoice_types      =   UtilController::getInvoiceTypes();
+        $customer_formatted =   FormatController::getFormatInitialCustomer(1);
+        $payment_conditions =   UtilController::getPaymentConditions();
 
         return view(
             'sales.sale_document.create',
@@ -147,7 +145,10 @@ class SaleController extends Controller
                 'districts',
                 'provinces',
                 'payment_methods',
-                'company_invoice'
+                'company_invoice',
+                'invoice_types',
+                'customer_formatted',
+                'payment_conditions',
             )
         );
     }
@@ -233,13 +234,16 @@ class SaleController extends Controller
 
 
     /*
-array:3 [ // app\Http\Controllers\Tenant\SaleController.php:119
-    "lstSale"           =>  "[{"id":1,"brand_id":3,"category_id":3,"name":"PAPA LAYS","stock_min":1,"code_factory":"","code_bar":"","category_name":"SNACKS","brand_name":"LAYS","stock":"100.00","sale_price":"12.00","purchase_price":"11.00","cant":1}]"
-    "type_sale"         =>  "127"    --REQUEST AND COMPLEJA
-    "customer_id"       =>  "1"      --REQUEST AND COMPLEJA
-    "user_recorder_id"  =>  "1"   --VALIDACIÓN COMPLEJA
-    "igv_percentage"    =>  "18.0000"
-    "lstPays"           => "[{"method_pay":1,"amount":"14"},{"method_pay":"3","amount":"20"}]"
+array:9 [ // app\Http\Services\Tenant\Sale\Sale\SaleService.php:38
+  "_token" => "Ucg9W52nqXOk9r5X7fseL0IV70KvfemnNoJr9aoE"
+  "type_sale" => "65"
+  "payment_condition_id" => "1"
+  "registration_date" => "2026-02-10"
+  "expiration_date" => "2026-02-10"
+  "customer_id" => "1"
+  "lstSale" => "[{"id":20,"brand_id":1,"category_id":4,"name":"YOGURT FRESA","stock_min":1,"code_factory":null,"code_bar":null,"category_name":"GASEOSAS","brand_name":"GLORIA","stock":"200.00","sale_price":"5.00","purchase_price":"7.00","cant":1},{"id":29,"brand_id":1,"category_id":5,"name":"GOMITAS","stock_min":1,"code_factory":null,"code_bar":null,"category_name":"AGUAS","brand_name":"GLORIA","stock":"200.00","sale_price":"4.00","purchase_price":"1.00","cant":1},{"id":11,"brand_id":2,"category_id":4,"name":"GASEOSA COLA 500ML","stock_min":1,"code_factory":null,"code_bar":null,"category_name":"GASEOSAS","brand_name":"COCA COLA","stock":"200.00","sale_price":"5.00","purchase_price":"5.00","cant":1}]"
+  "lstPays" => "[{"method_pay":1,"amount":14}]"
+  "igv_percentage" => "18.0000"
 ]
 */
     public function store(SaleStoreRequest $request)
@@ -268,54 +272,10 @@ array:3 [ // app\Http\Controllers\Tenant\SaleController.php:119
     {
         try {
 
-            $company                =   Company::find(1);
-            $sale                   =   Sale::findOrFail($sale_id);
-            $sale_products          =   SaleProduct::where('sale_id', $sale_id)->get();
-            $sale_dishes            =   SaleDish::where('sale_id', $sale_id)->get();
-
-            $route_view             =   'sales.sale_document.pdf.pdf';
-            $pdf_size               =   null;
-
-            $data_qr                =   (object)[
-                'ruc_emisor'        =>  $company->ruc,
-                'tipo_comprobante'  =>  $sale->type_sale_code,
-                'serie'             =>  $sale->serie,
-                'correlativo'       =>  $sale->correlative,
-                'mto_total_igv'     =>  number_format($sale->igv_amount, 2, '.', ''),
-                'total'             =>  number_format($sale->total, 2, '.', ''),
-                'fecha_emision'     =>  \Carbon\Carbon::parse($sale->created_at)->format('Y-m-d'),
-                'tipo_documento_adquiriente'    =>  $sale->customer_document_code,
-                'nro_documento_adquieriente'    =>  $sale->customer_document_number
-            ];
-
-            $res_qr         =   QRController::generateQr(json_encode($data_qr));
-            $res_qr         =   $res_qr->getData();
-
-            if ($res_qr->success) {
-                $sale->ruta_qr =   $res_qr->data->ruta_qr;
-                $sale->update();
-            }
-
-            $customer       =   Customer::find($sale->customer_id);
-
-            if ((int)$size === 0) {
-                $pdf_size   =   [0, 0, 226.772, 651.95];
-            } else {
-                $pdf_size   =   'A4';
-                $route_view =   'sales.sale_document.pdf.pdf-a4';
-            }
-
-            $pdf = PDF::loadview($route_view, [
-                'company'               =>  $company,
-                'sale'                  =>  $sale,
-                'customer'              =>  $customer,
-                'sale_products'         =>  $sale_products,
-                'sale_dishes'           =>  $sale_dishes
-            ]);
-
-            $pdf->setPaper($pdf_size);
-
-            return $pdf->stream($sale->serie . '-' . $sale->correlative . '.pdf');
+            $res    =   $this->s_sale->pdf_voucher($sale_id, $size);
+            $pdf    =   $res['pdf'];
+            $name   =   $res['pdf_name'];
+            return $pdf->stream($name . '.pdf');
         } catch (Throwable $th) {
             return response()->json(['success' => false, 'message' => $th->getMessage(), 'line' => $th->getLine()]);
         }

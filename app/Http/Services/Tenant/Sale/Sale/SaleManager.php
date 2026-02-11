@@ -29,8 +29,13 @@ class SaleManager
         return $this->s_sale->sendSunat($sale_id);
     }
 
-    public function annular(array $data):CreditNote
+    public function annular(array $data): CreditNote
     {
         return $this->s_sale->annular($data);
+    }
+
+    public function pdf_voucher(int $sale_id, $size):array
+    {
+        return $this->s_sale->pdf_voucher($sale_id, $size);
     }
 }

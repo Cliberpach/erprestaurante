@@ -36,10 +36,6 @@ class PurchaseDocumentStoreRequest extends FormRequest
                 'date',
                 'date_format:Y-m-d',
             ],
-            'usuario' => [
-                'required',
-                'string',
-            ],
             'proveedor' => [
                 'required',
                 'exists:suppliers,id',
@@ -71,10 +67,6 @@ class PurchaseDocumentStoreRequest extends FormRequest
                 'required',
                 Rule::in(['PEN', 'USD']),
             ],
-            'user_recorder_id' => [
-                'required',
-                'exists:users,id',
-            ],
             'cost_center' => [
                 'required',
                 Rule::exists('cost_center', 'id')->where('status', 'ACTIVO'),
@@ -99,9 +91,6 @@ class PurchaseDocumentStoreRequest extends FormRequest
             'fecha_entrega.date'            => 'La fecha de entrega debe ser una fecha válida.',
             'fecha_entrega.date_format'     => 'La fecha de entrega debe tener el formato YYYY-MM-DD.',
 
-            'usuario.required'              => 'El usuario es obligatorio.',
-            'usuario.string'                => 'El usuario debe ser una cadena de texto.',
-
             'proveedor.required'            => 'El proveedor es obligatorio.',
             'proveedor.exists'              => 'El proveedor no existe o no está activo.',
 
@@ -119,9 +108,6 @@ class PurchaseDocumentStoreRequest extends FormRequest
 
             'moneda.required'   => 'La moneda es obligatoria.',
             'moneda.in'         => 'La moneda debe ser PEN o USD.',
-
-            'user_recorder_id.required' => 'El usuario que graba el documento es obligatorio.',
-            'user_recorder_id.exists'   => 'El usuario que graba el documento no existe.',
 
             'cost_center.required' => 'El centro de costo es obligatorio.',
             'cost_center.exists'   => 'El centro de costo no existe.',

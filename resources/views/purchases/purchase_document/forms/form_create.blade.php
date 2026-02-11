@@ -25,13 +25,8 @@
 
             <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
                 <label for="fecha_registro" class="required_field" style="font-weight: bold;">FECHA REGISTRO</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">
-                        <i class="fa-solid fa-calendar-days"></i>
-                    </span>
-                    <input value="{{ date('Y-m-d') }}" readonly required id="fecha_registro" name="fecha_registro"
-                        type="date" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
-                </div>
+                <input value="{{ date('Y-m-d') }}" readonly required id="fecha_registro" name="fecha_registro"
+                    type="date" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
             </div>
 
             <!-- Fecha Vencimiento -->
@@ -43,30 +38,23 @@
 
             <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
                 <label for="fecha_registro" class="required_field" style="font-weight: bold;">FECHA ENTREGA</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">
-                        <i class="fa-solid fa-calendar-days"></i>
-                    </span>
-                    <input value="{{ date('Y-m-d') }}" required id="fecha_entrega" name="fecha_entrega" type="date"
-                        class="form-control input-fill" aria-label="Username" aria-describedby="basic-addon1">
-                </div>
+                <input value="{{ date('Y-m-d') }}" required id="fecha_entrega" name="fecha_entrega" type="date"
+                    class="form-control input-fill" aria-label="Username" aria-describedby="basic-addon1">
             </div>
 
-            <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
-                <label for="usuario" class="required_field" style="font-weight: bold;">REGISTRADOR</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">
-                        <i class="fa-solid fa-diagram-project"></i>
-                    </span>
-                    <input value="{{ $colaborador_registrador->name }}" readonly required id="usuario" name="usuario"
-                        type="text" class="form-control inputEnteroPositivo" placeholder="usuario"
-                        aria-label="Username" aria-describedby="basic-addon1">
-                </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12 mb-3">
+                <label class="required_field" for="tipo_doc" style="font-weight: bold;">TIPO DOC</label>
+                <select required name="tipo_doc" id="tipo_doc" data-placeholder="Seleccionar">
+                    <option value=""></option>
+                    <option value="FACTURA">FACTURA</option>
+                    <option value="BOLETA">BOLETA</option>
+                </select>
             </div>
 
             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 mb-3">
-                <label class="required_field" for="proveedor" style="font-weight: bold;">PROVEEDOR</label> <i
-                    class="fa-solid fa-plus btn btn-primary" onclick="openMdlNuevoProveedor();"></i>
+                <label class="required_field" for="proveedor" style="font-weight: bold;">PROVEEDOR</label>
+                <i class="fa-solid fa-plus btn btn-primary btn-sm rounded-circle mb-1"
+                    onclick="openMdlNuevoProveedor();"></i>
                 <select required name="proveedor" id="proveedor" data-placeholder="Seleccionar">
                     @foreach ($suppliers as $supplier)
                         <option value="{{ $supplier->id }}">
@@ -76,44 +64,23 @@
                 </select>
             </div>
 
-            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 mb-3">
-                <label class="required_field" for="tipo_doc" style="font-weight: bold;">TIPO DOC</label>
-                <select required name="tipo_doc" id="tipo_doc" data-placeholder="Seleccionar">
-                    <option value=""></option>
-                    <option value="FACTURA">FACTURA</option>
-                    <option value="BOLETA">BOLETA</option>
-                </select>
-            </div>
-
-            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                <label for="igv_chk" style="font-weight: bold;">IGV</label>
-                <div class="form-check">
-                    <input checked id="igv_chk" name="igv_chk" class="form-check-input" type="checkbox"
-                        value="{{ $igv }}">
-                    <label class="form-check-label" for="flexCheckDefault">
-                        {{ number_format($igv, 2) }}%
-                    </label>
-                </div>
-            </div>
-
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
                 <div>
-                    <label for="cost_center" class="form-label">Centro de costos</label>
-                    <button class="btn btn-sm btn-link p-0" type="button" onclick="openMdlCostCenter()">
-                        [+ Nuevo]
-                    </button>
+                    <label for="cost_center" class="form-label" style="font-weight: bold;">Centro de costos</label>
+                    <i class="fa-solid fa-plus btn btn-primary btn-sm rounded-circle mb-1"
+                        onclick="openMdlCostCenter();"></i>
                 </div>
-                <select name="cost_center" id="cost_center" class="form-control">
+                <select name="cost_center" id="cost_center" class="form-control" data-placeholder="Seleccionar">
                     <option value=""></option>
                     @foreach ($cost_center as $item)
-                        <option value="{{ $item->name }}">{{ $item->name }}</option>
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
                     @endforeach
                 </select>
                 <p class="cost_center_error msgError"></p>
             </div>
 
-            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                <label class="required_field" for="serie" style="font-weight: bold;">SERIE</label>
+            <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                <label class="required_field mb-2" for="serie" style="font-weight: bold;">Serie</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">
                         <i class="fa-solid fa-envelopes-bulk"></i>
@@ -123,8 +90,8 @@
                 </div>
             </div>
 
-            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 mb-3">
-                <label class="required_field" for="numero" style="font-weight: bold;">N°</label>
+            <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12 mb-3">
+                <label class="required_field mb-2" for="numero" style="font-weight: bold;">N°</label>
                 <div class="input-group">
                     <span class="input-group-text" id="basic-addon1">
                         <i class="fa-solid fa-hashtag"></i>
@@ -145,6 +112,28 @@
                         <textarea class="form-control input-fill" placeholder="Escribir..." id="observation" name="observation"></textarea>
                         <label for="observation">Máximo 200 caracteres</label>
                     </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                <label for="igv_chk" style="font-weight: bold;">Igv</label>
+                <div class="form-check">
+                    <input checked id="igv_chk" name="igv_chk" class="form-check-input" type="checkbox"
+                        value="{{ $igv }}">
+                    <label class="form-check-label" for="igv_chk">
+                        {{ number_format($igv, 2) }}%
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                <label for="discount_cash" style="font-weight: bold;">Descontar Caja</label>
+                <div class="form-check">
+                    <input checked id="discount_cash" name="discount_cash" class="form-check-input" type="checkbox"
+                        value="SI">
+                    <label class="form-check-label" for="discount_cash">
+                        Sí
+                    </label>
                 </div>
             </div>
 
@@ -199,7 +188,7 @@
                                         <i class="fa-solid fa-money-bill-1-wave"></i>
                                     </span>
                                     <input id="precio" name="precio" type="text"
-                                        class="form-control inputDecimalPositivo" placeholder="Precio"
+                                        class="form-control inputDecimalPositivo input-fill" placeholder="Precio"
                                         aria-label="Username" aria-describedby="basic-addon1">
                                 </div>
                             </div>
@@ -210,7 +199,7 @@
                                         <i class="fa-solid fa-box-open"></i>
                                     </span>
                                     <input id="cantidad" name="cantidad" type="text"
-                                        class="form-control inputDecimalPositivo" placeholder="Cantidad"
+                                        class="form-control inputDecimalPositivo input-fill" placeholder="Cantidad"
                                         aria-label="Username" aria-describedby="basic-addon1">
                                 </div>
                             </div>

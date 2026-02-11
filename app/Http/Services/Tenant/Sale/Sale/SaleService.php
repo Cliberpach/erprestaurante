@@ -3,14 +3,20 @@
 namespace App\Http\Services\Tenant\Sale\Sale;
 
 use App\Http\Controllers\Tenant\NumberToLettersController;
+use App\Http\Controllers\Tenant\QRController;
 use App\Http\Services\Tenant\CreditNote\CreditNoteService;
+use App\Http\Services\Tenant\Inventory\Kardex\KardexService;
+use App\Http\Services\Tenant\Inventory\WarehouseProduct\WarehouseProductService;
 use App\Http\Services\Tenant\Invoicing\InvoicingManager;
-use App\Http\Services\Tenant\Maintenance\Company\CompanyManager;
+use App\Http\Services\Tenant\Maintenance\Company\CompanyService;
+use App\Models\Landlord\Company;
+use App\Models\Landlord\Customer;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Tenant\DocumentSerialization;
 use App\Models\Tenant\Sales\CreditNote\CreditNote;
 use App\Models\Tenant\Sales\Sale\Sale;
 use Exception;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleService
 {
@@ -19,7 +25,7 @@ class SaleService
     private CorrelativeService  $s_correlative;
     private SaleRepository $s_repository;
     private SaleDto $s_dto;
-    private CompanyManager $s_company;
+    private CompanyService $s_company;
 
     public function __construct()
     {
@@ -27,7 +33,7 @@ class SaleService
         $this->s_validations    =   new SaleValidation($this->s_repository);
         $this->s_calculations   =   new CalculationsService();
         $this->s_correlative    =   new CorrelativeService();
-        $this->s_company        =   new CompanyManager();
+        $this->s_company        =   new CompanyService();
         $this->s_dto            =   new SaleDto();
     }
 
@@ -44,75 +50,34 @@ class SaleService
 
         $lstPays                =       json_decode($data['lstPays']);
         $validated_pays         =       $this->s_validations->validationLstPays($lstPays, $amounts);
+        $lstPays                =       $this->s_dto->formatPays($lstPays);
 
         //========= OBTENIENDO CORRELATIVO Y SERIE =========
-        $data_correlative       =       $this->s_correlative->getCorrelative($validated_data->type_sale_code);
+        $validated_data->data_correlative   =   $this->s_correlative->getCorrelative($validated_data->type_sale_id);
 
         //====== LEGENDA ========
-        $legend                 =       NumberToLettersController::numberToLetters($amounts->total);
+        $validated_data->legend             =   NumberToLettersController::numberToLetters($amounts->total);
 
         //======= GUARDAR MAESTRO VENTA =======
-        $sale   =   $this->saveSale($validated_data, $amounts, $legend, $validated_pays, $data_correlative);
+        $dto            =   $this->s_dto->getDtoStore($validated_data, $amounts);
+        $sale           =   $this->s_repository->insertSale($dto);
 
-        //========= REGISTRAR DETALLE TYPE PRODUCTOS =======
-        if ($validated_data->type === 'PRODUCTOS') {
-            //$this->s_detail->storeDetail($sale, $validated_data);
+        $lst_products           =   $this->s_dto->formatDetailSale($validated_data->lstSale);
+        $dto_s_products         =   $this->s_dto->getDtoProducts($lst_products, $sale);
+        $this->s_repository->storeSaleProduct($dto_s_products);
+        $s_wp   =   new WarehouseProductService();
+        $s_wp->decreaseLstStock($lst_products);
+
+        if ($sale->payment_condition_id == 1) {
+            $dto_pays       =   $this->s_dto->getDtoPays($lstPays, $sale);
+            $this->s_repository->storeSalePay($dto_pays);
         }
 
-        //========= REGISTRAR DETALLE TYPE RESERVAS =======
-        /*if($validated_data->type === 'RESERVAS'){
-            $this->s_detail->storeDetailReservations($sale,$validated_data);
-        }*/
-
         //======= INICIAR FACTURACIÓN =======
-        $this->s_company->startInvoicing(1, $validated_data->type_sale_code);
+        $this->s_company->startInvoicing(1, $sale->type_sale_id);
 
-        return $sale;
-    }
-
-    public function saveSale(object $validated_data, object $amounts, $legend, array $validated_pays, object $data_correlative): Sale
-    {
-        $sale                           =   new Sale();
-
-        //======= GUARDANDO CLIENTE =======
-        $sale->customer_id              =   $validated_data->customer->id;
-        $sale->customer_name            =   $validated_data->customer->name;
-        $sale->customer_type_document   =   $validated_data->customer->type_document_abbreviation;
-        $sale->customer_document_number =   $validated_data->customer->document_number;
-        $sale->customer_document_code   =   $validated_data->customer->type_document_code;
-        $sale->customer_phone           =   $validated_data->customer->phone;
-
-        //======= GUARDANDO USUARIO REGISTRADOR =======
-        $sale->user_recorder_id         =   $validated_data->user_recorder->id;
-        $sale->user_recorder_name       =   $validated_data->user_recorder->name;
-
-        //====== GUARDANDO DATOS DE LA CAJA Y MOVIMIENTO DEL USUARIO =====
-        $sale->petty_cash_id            =   $validated_data->petty_cash->petty_cash_id;
-        $sale->petty_cash_name          =   $validated_data->petty_cash->petty_cash_name;
-        $sale->petty_cash_book_id       =   $validated_data->petty_cash->petty_cash_book_id;
-
-        //======== TIPO DE VENTA ======
-        $sale->type_sale_code           =   $validated_data->type_sale_code;
-        $sale->type_sale_name           =   $validated_data->type_sale_name;
-
-        //====== MONTOS ======
-        $sale->igv_percentage           =   $validated_data->igv_percentage;
-        $sale->subtotal                 =   $amounts->subtotal;
-        $sale->igv_amount               =   $amounts->igv_amount;
-        $sale->total                    =   $amounts->total;
-        $sale->legend                   =   $legend;
-
-        //======= PAGOS =====
-        $sale->method_pay_id_1          =   $validated_pays[0]->method_pay;
-        $sale->amount_pay_1             =   $validated_pays[0]->amount;
-
-        $sale->method_pay_id_2          =   $validated_pays[1]->method_pay;
-        $sale->amount_pay_2             =   $validated_pays[1]->amount;
-
-        //======== CORRELATIVO Y SERIE =======
-        $sale->correlative              =   $data_correlative->correlative;
-        $sale->serie                    =   $data_correlative->serie;
-        $sale->save();
+        $s_kardex   =   new KardexService();
+        $s_kardex->storeFromSale($sale);
 
         return $sale;
     }
@@ -176,6 +141,8 @@ class SaleService
 
         $dto_pays       =   $this->s_dto->getDtoPays($data['lst_pays'], $sale);
         $this->s_repository->storeSalePay($dto_pays);
+
+        $this->s_company->startInvoicing(1, $sale->type_sale_id);
 
         return $sale;
     }
@@ -244,5 +211,59 @@ class SaleService
     public function getDetails(int $id)
     {
         return $this->s_repository->getDetail($id);
+    }
+
+    public function pdf_voucher(int $sale_id, $size): array
+    {
+        $company                =   Company::findOrFail(1);
+        $sale                   =   Sale::findOrFail($sale_id);
+        $sale_products          =   $this->s_repository->getSaleProducts($sale_id);
+        $sale_dishes            =   $this->s_repository->getSaleDishes($sale_id);
+
+        $route_view             =   'sales.sale_document.pdf.pdf';
+        $pdf_size               =   null;
+
+        $data_qr                =   (object)[
+            'ruc_emisor'        =>  $company->ruc,
+            'tipo_comprobante'  =>  $sale->type_sale_code,
+            'serie'             =>  $sale->serie,
+            'correlativo'       =>  $sale->correlative,
+            'mto_total_igv'     =>  number_format($sale->igv_amount, 2, '.', ''),
+            'total'             =>  number_format($sale->total, 2, '.', ''),
+            'fecha_emision'     =>  \Carbon\Carbon::parse($sale->created_at)->format('Y-m-d'),
+            'tipo_documento_adquiriente'    =>  $sale->customer_document_code,
+            'nro_documento_adquieriente'    =>  $sale->customer_document_number
+        ];
+
+        $res_qr         =   QRController::generateQr(json_encode($data_qr));
+        $res_qr         =   $res_qr->getData();
+
+        if ($res_qr->success && !$sale->ruta_qr) {
+            $sale->ruta_qr =   $res_qr->data->ruta_qr;
+            $sale->save();
+        }
+
+        $customer       =   Customer::findOrFail($sale->customer_id);
+
+        if ((int)$size === 0) {
+            $pdf_size   =   [0, 0, 226.772, 651.95];
+        } else {
+            $pdf_size   =   'A4';
+            $route_view =   'sales.sale_document.pdf.pdf-a4';
+        }
+
+        $pdf = Pdf::loadview($route_view, [
+            'company'               =>  $company,
+            'sale'                  =>  $sale,
+            'customer'              =>  $customer,
+            'sale_products'         =>  $sale_products,
+            'sale_dishes'           =>  $sale_dishes
+        ]);
+
+        $pdf->setPaper($pdf_size);
+
+        $res    =   ['pdf' => $pdf, 'pdf_name' => $sale->customer_document_number . '-' . $sale->serie . '-' . $sale->correlative];
+
+        return $res;
     }
 }

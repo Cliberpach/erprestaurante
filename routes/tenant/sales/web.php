@@ -3,9 +3,9 @@
 use App\Http\Controllers\Tenant\CustomerController;
 use App\Http\Controllers\Tenant\SaleController;
 use App\Http\Controllers\Tenant\Sales\CreditNoteController;
+use App\Http\Controllers\Tenant\Sales\PaymentConditionController;
 use App\Http\Controllers\Tenant\Sales\PaymentMethodController;
 use Illuminate\Support\Facades\Route;
-
 
 Route::group(["prefix" => "ventas"], function () {
 
@@ -56,5 +56,15 @@ Route::group(["prefix" => "ventas"], function () {
         Route::get('pdf-one/{id}', [CreditNoteController::class, 'pdfOne'])->name('tenant.ventas.notas_credito.pdfOne')->middleware('validar.plan:ventas');
         Route::get('downloadXml/{id}', [CreditNoteController::class, 'downloadXml'])->name('tenant.ventas.notas_credito.downloadXml')->middleware('validar.plan:ventas');
         Route::get('downloadCdr/{id}', [CreditNoteController::class, 'downloadCdr'])->name('tenant.ventas.notas_credito.downloadCdr')->middleware('validar.plan:ventas');
+    });
+
+    Route::group(["prefix" => "condiciones_pago"], function () {
+        Route::get('metodo_pago/index', [PaymentConditionController::class, 'index'])->name('tenant.ventas.condiciones_pago.index');
+        Route::get('create', [PaymentConditionController::class, 'create'])->name('tenant.ventas.condiciones_pago.create');
+        Route::get('edit/{id}', [PaymentConditionController::class, 'edit'])->name('tenant.ventas.condiciones_pago.edit');
+        Route::post('store', [PaymentConditionController::class, 'store'])->name('tenant.ventas.condiciones_pago.store');
+        Route::put('update/{id}', [PaymentConditionController::class, 'update'])->name('tenant.ventas.condiciones_pago.update');
+        Route::get('getCondicionPago', [PaymentConditionController::class, 'getCondicionPago'])->name('tenant.ventas.condiciones_pago.getCondicionPago');
+        Route::delete('destroy/{id}', [PaymentConditionController::class, 'destroy'])->name('tenant.ventas.condiciones_pago.destroy');
     });
 });

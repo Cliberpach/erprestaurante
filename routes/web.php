@@ -13,6 +13,7 @@ use App\Http\Controllers\Tenant\Maintenance\CostCenterController;
 use App\Http\Controllers\Tenant\Maintenance\UserController as MaintenanceUserController;
 use App\Http\Controllers\Tenant\ModuleController;
 use App\Http\Controllers\Tenant\ProductController;
+use App\Http\Controllers\Tenant\Sales\QuerySaleController;
 use App\Http\Controllers\Tenant\SupplierController;
 use App\Http\Controllers\Tenant\Supply\DishController;
 use App\Http\Controllers\Tenant\WorkShop\ModelController;
@@ -20,7 +21,6 @@ use App\Http\Controllers\Tenant\WorkShop\ServiceController;
 use App\Http\Controllers\Tenant\WorkShop\VehicleController;
 use App\Http\Controllers\Tenant\WorkShop\YearController;
 use App\Http\Controllers\UtilController;
-use App\Models\Tenant\Configuration;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,3 +114,14 @@ Route::group(["prefix" => "utils"], function () {
     Route::post('validation-password', [ConfigurationController::class, 'validationPassword'])->name('tenant.utils.validationPassword');
     Route::post('cost-center/store', [CostCenterController::class, 'storeCostCenter'])->name('tenant.utils.storeCostCenter');
 });
+
+
+Route::group(['prefix' => 'consultas'], function () {
+    Route::get('/comprobante', [QuerySaleController::class, 'index'])->name('consultarComprobante');
+    Route::post('/comprobante/buscar', [QuerySaleController::class, 'consultarComprobante'])->name('consultarComprobante.buscar');
+    Route::get('/comprobante/pdf', [QuerySaleController::class, 'pdf'])->name('consultarComprobante.pdf');
+    Route::get('/comprobante/xml', [QuerySaleController::class, 'xml'])->name('consultarComprobante.xml');
+    Route::get('/comprobante/cdr', [QuerySaleController::class, 'cdr'])->name('consultarComprobante.cdr');
+});
+Route::get('consultas/{hash}', [BankAccountController::class, 'searchSale'])->name('tenant.utils.searchSale');
+

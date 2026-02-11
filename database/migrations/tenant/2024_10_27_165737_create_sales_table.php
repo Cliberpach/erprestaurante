@@ -93,6 +93,8 @@ return new class extends Migration
             $table->unsignedBigInteger('converted_from_id')->nullable();
             $table->string('converted_from_serie', 20)->nullable();
 
+            $table->string('public_hash', 64)->unique();
+
             /*==== AUDITORÍA ====*/
             $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->unsignedBigInteger('editor_user_id')->nullable();
@@ -104,15 +106,15 @@ return new class extends Migration
             $table->dateTime('date_pending_print')->nullable();
 
 
-            // $table->unsignedBigInteger('payment_condition_id');
-            // $table->foreign('payment_condition_id')->references('id')->on('payment_conditions');
+            $table->unsignedBigInteger('payment_condition_id');
+            $table->foreign('payment_condition_id')->references('id')->on('payment_conditions');
 
-            // $table->string('payment_condition_name', 100);
-            // $table->unsignedInteger('payment_condition_days');
-            // $table->enum('payment_status',['PAGADO','PENDIENTE'])->default('PENDIENTE');
+            $table->string('payment_condition_name', 100);
+            $table->unsignedInteger('payment_condition_days');
+            $table->enum('payment_status', ['PAGADO', 'PENDIENTE'])->default('PENDIENTE');
 
-            // $table->date('registration_date');
-            // $table->date('expiration_date');
+            $table->date('registration_date');
+            $table->date('expiration_date');
 
             $table->timestamps();
         });

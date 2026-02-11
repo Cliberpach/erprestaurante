@@ -40,6 +40,7 @@ return new class extends Migration
             $table->decimal('amount_igv', 16, 4)->unsigned();
             $table->decimal('total', 16, 4)->unsigned();
 
+            $table->boolean('discount_cash')->default(false);
             $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
 
             $table->unsignedBigInteger('payment_condition_id');

@@ -242,7 +242,7 @@
                                             <a
                                                 class="dropdown-item"
                                                 href="#"
-                                                onclick="redirectParams('tenant.abastecimiento.platos.edit', ${data.id})">
+                                                onclick="redirectParams('tenant.mostrador_mesero.mostrador.edit', ${data.id})">
                                                 <i class="fa fa-edit text-warning me-2"></i> Editar
                                             </a>
                                         </li>

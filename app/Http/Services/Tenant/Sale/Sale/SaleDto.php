@@ -9,9 +9,98 @@ use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\WorkShop\Service;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class SaleDto
 {
+    public function getDtoStore(
+        object $validated_data,
+        object $amounts,
+    ): array {
+        $dto = [];
+        $legend             =   $validated_data->legend;
+        $data_correlative   =   $validated_data->data_correlative;
+
+        $dto['warehouse_id']               = 1;
+        $dto['warehouse_name']             = 'CENTRAL';
+        //======= CLIENTE =======
+        $dto['customer_id']                = $validated_data->customer->id;
+        $dto['customer_name']              = $validated_data->customer->name;
+        $dto['customer_type_document']     = $validated_data->customer->type_document_abbreviation;
+        $dto['customer_document_number']   = $validated_data->customer->document_number;
+        $dto['customer_document_code']     = $validated_data->customer->type_document_code;
+        $dto['customer_phone']             = $validated_data->customer->phone;
+
+        //======= USUARIO REGISTRADOR =======
+        $dto['user_recorder_id']            = Auth::user()->id;
+        $dto['user_recorder_name']          = Auth::user()->name;
+
+        //====== CAJA / MOVIMIENTO ======
+        $dto['petty_cash_id']               = $validated_data->petty_cash->petty_cash_id;
+        $dto['petty_cash_name']             = $validated_data->petty_cash->name;
+        $dto['petty_cash_book_id']          = $validated_data->petty_cash->petty_cash_book_id;
+
+        //======== TIPO DE VENTA ======
+        $dto['type_sale_id']                = $validated_data->type_sale_id;
+        $dto['type_sale_code']              = $validated_data->type_sale_code;
+        $dto['type_sale_name']              = $validated_data->type_sale_name;
+
+        //====== MONTOS ======
+        $dto['igv_percentage']              = $validated_data->igv_percentage;
+        $dto['subtotal']                    = $amounts->subtotal;
+        $dto['igv_amount']                  = $amounts->igv_amount;
+        $dto['total']                       = $amounts->total;
+        $dto['legend']                      = $legend;
+
+        //======== SERIE Y CORRELATIVO =======
+        $dto['correlative']                 = $data_correlative->correlative;
+        $dto['serie']                       = $data_correlative->serie;
+
+        //========== FECHAS ========
+        $dto['expiration_date']             = $validated_data->expiration_date;
+        $dto['registration_date']           = $validated_data->registration_date;
+
+        $dto['payment_condition_id']        = $validated_data->payment_condition->id;
+        $dto['payment_condition_name']      = $validated_data->payment_condition->name;
+        $dto['payment_condition_days']      = $validated_data->payment_condition->nro_days;
+
+        $dto['payment_status']              = $validated_data->payment_condition->name === 'CONTADO' ? 'PAGADO' : 'PENDIENTE';
+
+        return $dto;
+    }
+
+    public function formatDetailSale(array $lst_products): array
+    {
+        $lst_formatted   =   array_map(function ($item) {
+            return (object) [
+                'warehouse_id'      =>  1,
+                'warehouse_name'    =>  'CENTRAL',
+                'product_id'        =>  $item->id,
+                'category_id'       =>  $item->category_id,
+                'brand_id'          =>  $item->brand_id,
+                'product_name'      =>  $item->name,
+                'category_name'     =>  $item->category_name,
+                'brand_name'        =>  $item->brand_name,
+                'quantity'          =>  $item->cant,
+                'purchase_price'    =>  $item->purchase_price,
+                'sale_price'        =>  $item->sale_price,
+                'total'             =>  $item->sale_price * $item->cant
+            ];
+        }, $lst_products);
+        return $lst_formatted;
+    }
+
+    public function formatPays(array $lst_pays): array
+    {
+        $lst_formatted  =   array_map(function ($item) {
+            return (object) [
+                'paymentId'     => $item->method_pay,
+                'amount' => $item->amount,
+            ];
+        }, $lst_pays);
+        return $lst_formatted;
+    }
+
     public function getDtoStoreFromOrder(array $data)
     {
         $dto    =   [];
@@ -130,7 +219,6 @@ class SaleDto
 
         return $dto;
     }
-
 
     public function getDtoSaleDish($lst_items, Sale $sale): array
     {
