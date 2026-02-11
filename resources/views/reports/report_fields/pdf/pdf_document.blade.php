@@ -136,7 +136,7 @@
                     <img src="{{ $company->logo_url }}" class="img-fluid" style="object-fit: contain;">
                 @else
                     <img src="{{ public_path() . '/assets/img/img_default.png' }}" class="img-fluid" style="object-fit: contain;">
-                @endif 
+                @endif
             </div>
             <div class="empresa">
                 <p class="m-0 p-0 text-uppercase nombre-empresa">{{$company->abbreviated_business_name}}</p>
@@ -144,12 +144,12 @@
                 <p class="m-0 p-0 text-uppercase direccion-empresa">{{$company->fiscal_address}}</p>
 
                 <p class="m-0 p-0 text-info-empresa">Central telefónica: {{$company->phone}}</p>
-                <p class="m-0 p-0 text-info-empresa">Email: {{$company->email}}</p> 
+                <p class="m-0 p-0 text-info-empresa">Email: {{$company->email}}</p>
             </div><br>
             <div class="comprobante">
                 <div class="numero-documento">
                     <p class="m-0 p-0 text-uppercase">{{ $sale_document->type_sale_name }}</p>
-                    <p class="m-0 p-0 text-uppercase">{{$sale_document->serie.'-'.$sale_document->correlative}}</p> 
+                    <p class="m-0 p-0 text-uppercase">{{$sale_document->serie.'-'.$sale_document->correlative}}</p>
                 </div>
             </div>
         </div><br>
@@ -221,10 +221,10 @@
                             <td style="text-align: left">{{ number_format($item->price_sale,2) }}</td>
                             <td style="text-align: right">{{ number_format(($item->quantity) * $item->price_sale, 2) }}</td>
                         </tr>
-                     
+
                     @endforeach
-                   
-                   
+
+
                 </tbody>
                 <tfoot>
                     @if($sale_document->type_sale_code != 80)
@@ -246,10 +246,10 @@
                             <th style="text-align:right">{{ number_format($sale_document->total, 2) }}</th>
                         </tr>
                    @endif
-                </tfoot> 
-            </table> 
+                </tfoot>
+            </table>
             <br>
-            <p class="p-0 m-0 text-uppercase text-cuerpo">SON: <b>{{ $sale_document->legend }}</b></p> 
+            <p class="p-0 m-0 text-uppercase text-cuerpo">SON: <b>{{ $sale_document->legend }}</b></p>
             <br>
             {{-- @if ($mostrar_cuentas === "SI")
                 <table class="tbl-qr">
@@ -315,17 +315,17 @@
                 </div>
             @endif --}}
         </div>
-       
-     
+
+
         <div class="qr">
             @if($sale_document->ruta_qr)
                 <img style="height:140px;object-fit: contain;" src="{{ public_path($sale_document->ruta_qr) }}">
             @endif
-        </div>        
-  
+        </div>
+
 
         <footer>
-            <b>Sistema de reserva de campos deportivos 
+            <b>Sistema de reserva de campos deportivos
                 <a target="_blank" href="{{ (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                 "https" : "http") . "://" . implode('.', array_slice(explode('.', $_SERVER['HTTP_HOST']), 1))}}">
                     <em>
@@ -334,7 +334,7 @@
                 </a>
             </b>
         </footer>
-        
+
         {{-- <footer>
             <b>Para consultar el comprobante ingresar a <a target="_blank" href="{{ (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
                 "https" : "http") . "://" . $_SERVER['HTTP_HOST']."/buscar"}}"><em>{{ (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
