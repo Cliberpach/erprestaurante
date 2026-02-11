@@ -198,7 +198,7 @@
             <tr>
                 <td>ATENDIDO POR</td>
                 <td>:</td>
-                <td class="text-uppercase">{{ $sale->user_recorder_name }}</td>
+                <td class="text-uppercase">{{ $sale->creator_user_name }}</td>
             </tr>
         </table>
     </div>
