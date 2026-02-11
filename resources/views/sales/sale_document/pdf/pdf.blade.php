@@ -331,9 +331,9 @@
     <div class="qr" style="margin-top: 30px;">
         @if ($sale->ruta_qr)
             <img style="height:140px;object-fit: contain;" src="{{ public_path($sale->ruta_qr) }}">
-            <a target="_blank" href="{{ route('tenant.utils.searchSale', $sale->public_hash) }}">
+            {{-- <a target="_blank" href="{{ route('tenant.utils.searchSale', $sale->public_hash) }}">
                 <em>{{ route('tenant.utils.searchSale', $sale->public_hash) }}</em>
-            </a>
+            </a> --}}
         @endif
     </div>
 
