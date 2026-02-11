@@ -28,9 +28,9 @@ class ModuleSeeder extends Seeder
         Helpers
     ========================== */
 
-    private function createModule(string $description, int $order = 1, ?string $show = null): Module
+    private function createModule(string $description, int $render_order, string $icon, int $order = 1, ?string $show = null): Module
     {
-        return Module::create(compact('description', 'order', 'show'));
+        return Module::create(compact('description', 'order', 'show', 'render_order'));
     }
 
     private function createChild(Module $module, array $data): ModuleChild
@@ -55,7 +55,7 @@ class ModuleSeeder extends Seeder
 
     private function seedCaja(): void
     {
-        $module = $this->createModule('Cajas');
+        $module = $this->createModule('Cajas', 1, 'cashier_machine_cash_register_pos_icon_225168.svg');
 
         $this->createChild($module, [
             'description' => 'Caja',
@@ -75,7 +75,7 @@ class ModuleSeeder extends Seeder
 
     private function seedVentas(): void
     {
-        $module = $this->createModule('Ventas');
+        $module = $this->createModule('Ventas', 2, 'percentage-sales-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Comprobante Venta',
@@ -105,7 +105,7 @@ class ModuleSeeder extends Seeder
 
     private function seedAbastecimiento(): void
     {
-        $module = $this->createModule('Abastecimiento');
+        $module = $this->createModule('Abastecimiento', 3,'');
 
         foreach (
             [
@@ -124,7 +124,7 @@ class ModuleSeeder extends Seeder
 
     private function seedCuentas(): void
     {
-        $module = $this->createModule('Cuentas');
+        $module = $this->createModule('Cuentas', 4, 'credit-card-svgrepo-com.svg');
 
         /*$this->createChild($module, [
             'description' => 'Cuentas Cliente',
@@ -139,7 +139,7 @@ class ModuleSeeder extends Seeder
 
     private function seedInventario(): void
     {
-        $module = $this->createModule('Inventario');
+        $module = $this->createModule('Inventario', 5, 'warehouse-svgrepo-com.svg');
 
         foreach (
             [
@@ -162,7 +162,7 @@ class ModuleSeeder extends Seeder
 
     private function seedMostradorMesero(): void
     {
-        $module = $this->createModule('Mostrador Mesero');
+        $module = $this->createModule('Mostrador Mesero', 6,'');
 
         $this->createChild($module, [
             'description' => 'Mostrador',
@@ -172,7 +172,7 @@ class ModuleSeeder extends Seeder
 
     private function seedMostradorCajero(): void
     {
-        $module = $this->createModule('Mostrador Cajero');
+        $module = $this->createModule('Mostrador Cajero', 7,'');
 
         $this->createChild($module, [
             'description' => 'Mostrador',
@@ -182,7 +182,7 @@ class ModuleSeeder extends Seeder
 
     private function seedCompras(): void
     {
-        $module = $this->createModule('Compras');
+        $module = $this->createModule('Compras', 8, 'shopping-cart-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Proveedores',
@@ -197,7 +197,7 @@ class ModuleSeeder extends Seeder
 
     private function seedReportes(): void
     {
-        $module = $this->createModule('Reportes');
+        $module = $this->createModule('Reportes', 9, 'analytics-financial-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Ventas Productos',
@@ -222,7 +222,7 @@ class ModuleSeeder extends Seeder
 
     private function seedMantenimiento(): void
     {
-        $module = $this->createModule('Mantenimiento', 1, 'landlord');
+        $module = $this->createModule('Mantenimiento', 10, 'configuration-svgrepo-com.svg', 1, 'landlord');
 
         $this->createChild($module, [
             'description' => 'Empresa',
@@ -254,7 +254,7 @@ class ModuleSeeder extends Seeder
 
     private function seedConsultas(): void
     {
-        $module = $this->createModule('Consultas');
+        $module = $this->createModule('Consultas', 11, 'analytics-report-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Créditos',

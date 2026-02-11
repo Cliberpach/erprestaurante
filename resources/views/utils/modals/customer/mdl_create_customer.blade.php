@@ -114,6 +114,31 @@
                 }
             });
         }
+
+        const typeDocumentSelect = document.getElementById('type_identity_document');
+        if (typeDocumentSelect && !typeDocumentSelect.tomselect) {
+            window.typeDocumentSelect = new TomSelect(typeDocumentSelect, {
+                valueField: 'id',
+                labelField: 'description',
+                searchField: ['description', 'id'],
+                create: false,
+                sortField: {
+                    field: 'id',
+                    direction: 'desc'
+                },
+                plugins: ['clear_button'],
+                render: {
+                    option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                    item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                }
+            });
+        }
     }
 
     function eventsMdlCreateCustomer() {
@@ -136,18 +161,13 @@
 
         $('#mdlCreateCustomer').on('hidden.bs.modal', function() {
 
-            //======= RESETEAR FORMULARIO ======
-            $('.select2_form_customer').val(null).trigger('change');
-
             document.querySelector('#name').value = '';
             document.querySelector('#address').value = '';
             document.querySelector('#phone').value = '';
             document.querySelector('#email').value = '';
 
-            $('#province').empty().trigger('change');
-            $('#district').empty().trigger('change');
 
-            $('#type_identity_document').val('1').trigger('change');
+            window.typeDocumentSelect.setValue(1);
 
             customerParams.documentSearchCustomer = null;
             clearValidationErrors('msgErrorCustomer');
@@ -195,13 +215,13 @@
         if (isNumeric(customerParams.documentSearchCustomer) && customerParams.documentSearchCustomer) {
             //====== DNI ======
             if (customerParams.documentSearchCustomer.length === 8) {
-                $('#type_identity_document').val('1').trigger('change');
+                window.typeDocumentSelect.setValue(1);
                 document.querySelector('#nro_document').value = customerParams.documentSearchCustomer;
                 document.querySelector('#btn_search_nro_document').click();
             }
             //========= RUC ========
             if (customerParams.documentSearchCustomer.length === 11) {
-                $('#type_identity_document').val('3').trigger('change');
+                window.typeDocumentSelect.setValue(3);
                 document.querySelector('#nro_document').value = customerParams.documentSearchCustomer;
                 document.querySelector('#btn_search_nro_document').click();
             }
@@ -215,10 +235,13 @@
         mostrarAnimacion1();
         try {
             const token = document.querySelector('input[name="_token"]').value;
-            const urlConsultDocument =
-                `{{ route('tenant.ventas.clientes.consult_document') }}?type_identity_document=${encodeURIComponent(type_identity_document)}&nro_document=${encodeURIComponent(nro_document)}`;
 
-            const response = await fetch(urlConsultDocument, {
+            const url = route('tenant.ventas.clientes.consult_document', {
+                type_identity_document: type_identity_document,
+                nro_document: nro_document
+            })
+
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': token
@@ -276,9 +299,9 @@
             return;
         }
 
-        $('#department').val(ubigeo_department_id).trigger('change');
-        $('#province').val(ubigeo_province_id).trigger('change');
-        $('#district').val(ubigeo_district_id).trigger('change');
+        window.departmentSelect.setValue(parseInt(ubigeo_department_id));
+        window.provinceSelect.setValue(parseInt(ubigeo_province_id));
+        window.districtSelect.setValue(parseInt(ubigeo_district_id));
 
     }
 
@@ -470,9 +493,9 @@
             instanceSelect = customerSelect;
         }
 
-        console.log('instance',instanceSelect);
+        console.log('instance', instanceSelect);
 
-        if(!instanceSelect.options[option.id]) {
+        if (!instanceSelect.options[option.id]) {
             instanceSelect.addOption(option);
         }
         instanceSelect.setValue(option.id);

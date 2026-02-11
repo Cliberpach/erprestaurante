@@ -32,7 +32,7 @@ class SaleController extends Controller
 
     public function index()
     {
-        $invoice_types      =   UtilController::getInvoiceTypes()->where('name', '<>', 'NOTA DE VENTA');
+        $invoice_types      =   UtilController::getInvoiceTypes()->whereIn('id', ['65', '66']);
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
         return view('sales.sale_document.index', compact(
             'invoice_types',

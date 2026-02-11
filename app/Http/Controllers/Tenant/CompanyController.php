@@ -60,7 +60,6 @@ class CompanyController extends Controller
 
     public function edit($id)
     {
-        // Encuentra la empresa por su ID
         $company            =   Company::findOrFail($id);
 
         $departments        =   DB::select('select * from departments');
@@ -69,9 +68,7 @@ class CompanyController extends Controller
 
         $company_invoice    =   CompanyInvoice::where('company_id', $company->id)->get()[0];
 
-
-        $billing_documents  =   UtilController::getInvoiceTypes();
-        // Devuelve la vista 'company.editcompanie_tenant' con la variable 'company'
+        $billing_documents  =   UtilController::getInvoiceTypesFree();
         return view(
             'company.editcompanie_tenant',
             compact(
@@ -84,7 +81,6 @@ class CompanyController extends Controller
             )
         );
     }
-
 
     public function store(CompanyStoreRequest $request): RedirectResponse
     {

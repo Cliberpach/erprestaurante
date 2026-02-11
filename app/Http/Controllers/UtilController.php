@@ -247,6 +247,19 @@ class UtilController extends Controller
         return $invoice_types;
     }
 
+    public static function getInvoiceTypesFree()
+    {
+        $invoice_types = DB::table('erprestaurante.general_table_details as gtd')
+            ->where('gtd.general_table_id', 4)
+            ->where('gtd.status', 'ACTIVO')
+            ->whereNotIn('gtd.id', function ($query) {
+                $query->select('ds.document_type_id')
+                    ->from('document_serializations AS ds');
+            })
+            ->get();
+        return $invoice_types;
+    }
+
     public function isActiveInvoiceType(int $id)
     {
         try {

@@ -159,6 +159,7 @@
                         d.start_date = $('#start_date').val();
                         d.end_date = $('#end_date').val();
                         d.status = $('#status').val();
+                        d.sale = @json($sale);
                     }
                 },
                 order: [

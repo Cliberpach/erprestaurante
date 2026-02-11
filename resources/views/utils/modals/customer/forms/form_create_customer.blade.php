@@ -40,7 +40,7 @@
                     <span class="input-group-text" id="basic-addon1">
                         <i class="fas fa-user-tag"></i>
                     </span>
-                    <input required maxlength="160" id="name" name="name" type="text" class="form-control" placeholder="NOMBRE" aria-label="Username" aria-describedby="basic-addon1">
+                    <input required maxlength="160" id="name" name="name" type="text" class="form-control input-fill" placeholder="NOMBRE" aria-label="Username" aria-describedby="basic-addon1">
                     </div>
                     <span class="name_error_customer msgErrorCustomer"  style="color:red;"></span>
                 </div>
@@ -51,7 +51,7 @@
                     <span class="input-group-text" id="basic-addon1">
                         <i class="fas fa-map-marked-alt"></i>
                     </span>
-                    <input maxlength="160" id="address" name="address" type="text" class="form-control" placeholder="DIRECCIÓN" aria-label="Username" aria-describedby="basic-addon1">
+                    <input maxlength="160" id="address" name="address" type="text" class="form-control input-fill" placeholder="DIRECCIÓN" aria-label="Username" aria-describedby="basic-addon1">
                     </div>
                     <span class="address_error_customer msgErrorCustomer"  style="color:red;"></span>
                 </div>
@@ -92,7 +92,7 @@
                     <span class="input-group-text" id="basic-addon1">
                         <i class="fas fa-phone"></i>
                     </span>
-                    <input maxlength="20" id="phone" name="phone" type="text" class="form-control inputNroTelefono" placeholder="TELÉFONO" aria-label="Username" aria-describedby="basic-addon1">
+                    <input maxlength="20" id="phone" name="phone" type="text" class="form-control inputNroTelefono input-fill" placeholder="TELÉFONO" aria-label="Username" aria-describedby="basic-addon1">
                     </div>
                     <span class="phone_error_customer msgErrorCustomer"  style="color:red;"></span>
                 </div>
@@ -103,7 +103,7 @@
                     <span class="input-group-text" id="basic-addon1">
                         <i class="fas fa-at"></i>
                     </span>
-                    <input maxlength="160" id="email" name="email" type="email" class="form-control" placeholder="CORREO" aria-label="Username" aria-describedby="basic-addon1">
+                    <input maxlength="160" id="email" name="email" type="email" class="form-control input-fill" placeholder="CORREO" aria-label="Username" aria-describedby="basic-addon1">
                     </div>
                     <span class="email_error_customer msgErrorCustomer"  style="color:red;"></span>
                 </div>

@@ -21,9 +21,11 @@ class CreditNoteController extends Controller
         $this->s_manager    =   new CreditNoteManager();
     }
 
-    public function index()
+    public function index($sale = null)
     {
-        return view('sales.credit_notes.index');
+        return view('sales.credit_notes.index', [
+            'sale'  =>  $sale
+        ]);
     }
 
     public function getAll(Request $request)
@@ -32,8 +34,9 @@ class CreditNoteController extends Controller
         $filter_start_date  =   $request->get('start_date');
         $filter_end_date    =   $request->get('end_date');
         $filter_sunat       =   $request->get('status');
+        $filter_sale        =   $request->get('sale');
 
-        $sales    =   DB::table('credit_notes as cn')
+        $items    =   DB::table('credit_notes as cn')
             ->select(
                 'cn.id',
                 'cn.created_at',
@@ -58,19 +61,22 @@ class CreditNoteController extends Controller
             );
 
         if ($filter_customer) {
-            $sales->where('cn.customer_id', $filter_customer);
+            $items->where('cn.customer_id', $filter_customer);
         }
         if ($filter_start_date) {
-            $sales->whereDate('cn.created_at', '>=', $filter_start_date);
+            $items->whereDate('cn.created_at', '>=', $filter_start_date);
         }
         if ($filter_end_date) {
-            $sales->whereDate('cn.created_at', '<=', $filter_end_date);
+            $items->whereDate('cn.created_at', '<=', $filter_end_date);
         }
         if ($filter_sunat) {
-            $sales->where('cn.sunat_status', $filter_sunat);
+            $items->where('cn.sunat_status', $filter_sunat);
+        }
+        if ($filter_sale) {
+            $items->where('cn.sale_id', $filter_sale);
         }
 
-        return DataTables::of($sales)
+        return DataTables::of($items)
             ->filterColumn('customer_full_name', function ($query, $keyword) {
                 $query->whereRaw("
                     CONCAT(

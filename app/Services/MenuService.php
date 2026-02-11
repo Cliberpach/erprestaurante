@@ -36,6 +36,7 @@ class MenuService
                         ->whereIn('route_name', $permissions);
                 },
             ])
+            ->orderBy('render_order')
             ->get()
             ->filter(fn($module) => $module->children->isNotEmpty())
             ->values();

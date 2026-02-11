@@ -2,19 +2,13 @@
   "_index-dd82ac63.js": {
     "file": "assets/index-dd82ac63.js"
   },
-  "_routes-1d6a2dd6.js": {
-    "file": "assets/routes-1d6a2dd6.js",
-    "imports": [
-      "_index-dd82ac63.js"
-    ]
-  },
   "_sweetalert2.esm.all-f89f7467.js": {
     "file": "assets/sweetalert2.esm.all-f89f7467.js"
   },
-  "_ui-ce871a13.js": {
-    "file": "assets/ui-ce871a13.js",
+  "_ui-7f0ac515.js": {
+    "file": "assets/ui-7f0ac515.js",
     "imports": [
-      "_routes-1d6a2dd6.js"
+      "_index-dd82ac63.js"
     ]
   },
   "node_modules/lightgallery/fonts/lg.svg": {
@@ -107,31 +101,28 @@
     "src": "resources/js/libs/lightgalery.js"
   },
   "resources/js/orders/create/main.js": {
-    "file": "assets/main-0d5db856.js",
+    "file": "assets/main-0e869fa3.js",
     "imports": [
-      "_ui-ce871a13.js",
-      "_index-dd82ac63.js",
-      "_routes-1d6a2dd6.js"
+      "_ui-7f0ac515.js",
+      "_index-dd82ac63.js"
     ],
     "isEntry": true,
     "src": "resources/js/orders/create/main.js"
   },
   "resources/js/orders/edit/main.js": {
-    "file": "assets/main-f119e00f.js",
+    "file": "assets/main-eaf5951b.js",
     "imports": [
-      "_ui-ce871a13.js",
-      "_index-dd82ac63.js",
-      "_routes-1d6a2dd6.js"
+      "_ui-7f0ac515.js",
+      "_index-dd82ac63.js"
     ],
     "isEntry": true,
     "src": "resources/js/orders/edit/main.js"
   },
   "resources/js/sales/sales/main.js": {
-    "file": "assets/main-16774502.js",
+    "file": "assets/main-9a92416e.js",
     "imports": [
       "_index-dd82ac63.js",
-      "_sweetalert2.esm.all-f89f7467.js",
-      "_routes-1d6a2dd6.js"
+      "_sweetalert2.esm.all-f89f7467.js"
     ],
     "isEntry": true,
     "src": "resources/js/sales/sales/main.js"

@@ -1,11 +1,13 @@
-import { routesUtil } from "../../utils/routes";
 import { actionChangeMethodPay } from "./action";
-import { app, lastCustomerQuery, setLastCustomerQuery } from "./states";
+import { app, getLastCustomerQuery, lastCustomerQuery, setCustomerSelect, setLastCustomerQuery } from "./states";
 
 export function loadTomSelect() {
+    loadCustomerSelect();
+}
 
+export function loadCustomerSelect() {
     const initialCustomer = app.customerFormatted;
-    window.clientSelect = new TomSelect('#customer_id', {
+    const instance = new TomSelect('#customer_id', {
         valueField: 'id',
         options: [initialCustomer],
         items: [initialCustomer.id],
@@ -22,14 +24,14 @@ export function loadTomSelect() {
         load: async (query, callback) => {
             if (query.length < 3) return callback();
             try {
-                const url = routesUtil.searchCustomer(query, null);
+                const url = route('tenant.utils.searchCustomer', { q: query });
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Error al buscar clientes');
                 const data = await response.json();
                 const results = data.data ?? [];
                 callback(results);
                 if (results.length === 0) {
-                    customerParams.documentSearchCustomer = lastCustomerQuery;
+                    customerParams.documentSearchCustomer = getLastCustomerQuery();
                     console.log("No se encontró en BD. Guardado:", window.typedCustomer);
                 }
             } catch (error) {
@@ -55,6 +57,8 @@ export function loadTomSelect() {
             }
         }
     });
+
+    setCustomerSelect(instance);
 }
 
 export function loadNewSelect(id) {
@@ -95,7 +99,7 @@ export function loadSelectGlobal(className) {
             plugins: el.dataset.clear === 'true' ? ['clear_button'] : [],
             onChange(value) {
                 const index = el.dataset.index;
-                console.log('index',index);
+                console.log('index', index);
                 actionChangeMethodPay(value, index);
             }
         });

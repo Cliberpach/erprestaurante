@@ -3,6 +3,7 @@
 namespace App\Http\Services\Tenant\CreditNote;
 
 use App\Http\Controllers\Tenant\QRController;
+use App\Http\Services\Tenant\Inventory\Kardex\KardexService;
 use App\Http\Services\Tenant\Inventory\WarehouseProduct\WarehouseProductService;
 use App\Http\Services\Tenant\Invoicing\InvoicingManager;
 use App\Http\Services\Tenant\Supply\Programming\ProgrammingService;
@@ -46,6 +47,9 @@ class CreditNoteService
 
             $s_wps                  =   new WarehouseProductService();
             $s_wps->increaseLstStock($lst_products);
+
+            $s_kardex   =   new KardexService();
+            $s_kardex->storeFromNoteCredit($instance);
         }
         if (isset($data['sale_dishes'])) {
             $dto_dishes     =   $this->s_dto->getDtoDetail($data['sale_dishes']->toArray(), $instance->id);

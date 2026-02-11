@@ -11,7 +11,6 @@ use App\Models\ModuleChild;
 use App\Models\ModuleGrandChild;
 use App\Models\Plan;
 use App\Models\Tenant;
-use App\Models\Tenant\Cash\PettyCashBook;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -397,7 +396,8 @@ class CompanyController extends Controller
                 'id' => $module->id,
                 'description' => $module->description,
                 'order' => $module->order,
-                'icon'  =>  $module->icon
+                'icon'  =>  $module->icon,
+                'render_order' => $module->render_order
             ]);
         }
 

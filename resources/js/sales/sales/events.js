@@ -49,9 +49,6 @@ function eventsChange() {
         actionPaymentCondition(e.target.value);
     });
 
-    window.clientSelect.on('change', function (value) {
-        //actionChangeClient(value);
-    });
 }
 
 function eventsInput() {

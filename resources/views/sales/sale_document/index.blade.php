@@ -133,6 +133,40 @@
         vertical-align: middle;
         font-weight: 500;
     }
+
+
+    /*======== VENTAS ANULADAS =======*/
+    /* Ventas anuladas */
+    .row-sale-cancelled {
+        background: linear-gradient(90deg,
+                rgba(255, 193, 7, 0.35),
+                rgba(255, 193, 7, 0.10)) !important;
+
+        border-left: 8px solid #ffc107;
+        box-shadow: inset 6px 0 0 rgba(255, 193, 7, 0.18);
+
+        transition:
+            background 0.25s ease,
+            box-shadow 0.25s ease,
+            transform 0.15s ease;
+    }
+
+    /* Hover con presencia */
+    .row-sale-cancelled:hover {
+        background: linear-gradient(90deg,
+                rgba(255, 193, 7, 0.45),
+                rgba(255, 193, 7, 0.18)) !important;
+
+        box-shadow:
+            inset 6px 0 0 rgba(255, 193, 7, 0.28),
+            0 2px 10px rgba(255, 193, 7, 0.18);
+    }
+
+    /* Texto ligeramente más fuerte */
+    .row-sale-cancelled td {
+        vertical-align: middle;
+        font-weight: 500;
+    }
 </style>
 
 @section('js')
@@ -173,6 +207,9 @@
                 rowCallback: function(row, data) {
                     if (data.converted_to_id) {
                         $(row).addClass('row-sale-converted');
+                    }
+                    if (data.sunat_status === 'ANULADO') {
+                        $(row).addClass('row-sale-cancelled');
                     }
                 },
                 columns: [
@@ -282,6 +319,10 @@
                         data: null,
                         render: function(data, type, row) {
 
+                            const routeNote = route('tenant.ventas.notas_credito.index', {
+                                sale: data.id
+                            });
+
                             let acciones = `<div class="btn-group float-end">
                                                 <button
                                                     class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle"
@@ -313,7 +354,15 @@
                             if (data.sunat_status === 'ACEPTADO') {
                                 acciones += `<li>
                                                     <a class="dropdown-item text-danger" href="javascript:void(0);" onclick="openMdlNotaCredito(${data.id})">
-                                                        <i class="fa-solid fa-ban"></i> Anular
+                                                        <i class="fa-solid fa-ban"></i> Nota Crédito
+                                                    </a>
+                                                </li>`;
+                            }
+
+                            if (data.sunat_status === 'ANULADO') {
+                                acciones += `<li>
+                                                    <a class="dropdown-item text-danger" href="${routeNote}">
+                                                        <i class="fa-solid fa-ban"></i> Ver Nota
                                                     </a>
                                                 </li>`;
                             }

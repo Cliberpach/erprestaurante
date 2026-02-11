@@ -6,6 +6,7 @@ use App\Models\Tenant\NoteIncome;
 use App\Models\Tenant\NoteRelease;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\PurchaseDocument;
+use App\Models\Tenant\Sales\CreditNote\CreditNote;
 use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\WorkShop\WorkOrder\WorkOrder;
 
@@ -18,6 +19,12 @@ class KardexService
     {
         $this->s_dto        =   new KardexDto();
         $this->s_repository =   new KardexRepository();
+    }
+
+    public function storeFromNoteCredit(CreditNote $note)
+    {
+        $dto    =   $this->s_dto->getDtoFromNoteCredit($note);
+        $this->s_repository->insertKardex($dto);
     }
 
     public function storeFromNoteRelease(NoteRelease $note)

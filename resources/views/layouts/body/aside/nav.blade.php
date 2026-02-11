@@ -1,3 +1,11 @@
+<style>
+    .menu-link svg {
+        width: 32px;
+        height: 32px;
+    }
+</style>
+
+
 <ul class="menubar">
     {{-- <li class="menu-item menu-arrow">
         <a class="menu-link" href="javascript:void(0);" role="button">
@@ -103,7 +111,14 @@
     @foreach ($modules as $module)
         <li class="menu-item menu-arrow">
             <a class="menu-link" href="javascript:void(0);" role="button">
-                <i class="fi fi-rr-file"></i>
+                @php
+                    $iconPath = public_path('assets/menu-icons/' . $module->icon);
+                @endphp
+                @if ($module->icon && file_exists($iconPath))
+                    {!! file_get_contents($iconPath) !!}
+                @else
+                    <i class="fi fi-rr-file"></i>
+                @endif
                 <span class="menu-label">{{ $module->description }}</span>
             </a>
             <ul class="menu-inner">
@@ -117,7 +132,8 @@
                             <ul class="menu-inner">
                                 @foreach ($child->grandchildren as $grandchild)
                                     <li class="menu-item">
-                                        <a class="menu-link menu-click" href="{{ route($base . $grandchild->route_name) }}">
+                                        <a class="menu-link menu-click"
+                                            href="{{ route($base . $grandchild->route_name) }}">
                                             <span class="menu-label">{{ $grandchild->description }}</span>
                                         </a>
                                     </li>

@@ -1,20 +1,23 @@
 <style>
     .data-key {
-      font-weight: bold !important;
-      color: #007bff !important;
-      width: 160px;
-      display: inline-block;
+        font-weight: bold !important;
+        color: #007bff !important;
+        width: 160px;
+        display: inline-block;
     }
+
     .data-value {
-      color: #343a40 !important;
-      word-break: break-word !important;
+        color: #343a40 !important;
+        word-break: break-word !important;
     }
+
     .modal-body {
-      background-color: #f8f9fa;
+        background-color: #f8f9fa;
     }
+
     .modal-body .col-12 {
-      border: 1px solid #dee2e6;
-      background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        background-color: #ffffff;
     }
 </style>
 
@@ -29,16 +32,22 @@
             </div>
             <div class="modal-body">
 
-                <div class="col-12 border rounded p-3 bg-light shadow-sm" style="margin-bottom: 10px;">
-                  <p class="mb-2"><span class="data-key">ID:</span> <span class="data-value" id="noteId"></span></p>
-                  <p class="mb-2"><span class="data-key">Usuario Registrador:</span> <span class="data-value" id="userRecorderName"></span></p>
-                  <p class="mb-2"><span class="data-key">Observación:</span> <span class="data-value" id="observation"></span></p>
-                  <p class="mb-2"><span class="data-key">Estado:</span> <span class="data-value" id="estado"></span></p>
-                  <p class="mb-2"><span class="data-key">Creado el:</span> <span class="data-value" id="createdAt"></span></p>
-                  <p class="mb-0"><span class="data-key">Actualizado el:</span> <span class="data-value" id="updatedAt"></span></p>
+                <div class="col-12 bg-light rounded border p-3 shadow-sm" style="margin-bottom: 10px;">
+                    <p class="mb-2"><span class="data-key">ID:</span> <span class="data-value" id="noteId"></span>
+                    </p>
+                    <p class="mb-2"><span class="data-key">Usuario Registrador:</span> <span class="data-value"
+                            id="userRecorderName"></span></p>
+                    <p class="mb-2"><span class="data-key">Observación:</span> <span class="data-value"
+                            id="observation"></span></p>
+                    <p class="mb-2"><span class="data-key">Estado:</span> <span class="data-value"
+                            id="estado"></span></p>
+                    <p class="mb-2"><span class="data-key">Creado el:</span> <span class="data-value"
+                            id="createdAt"></span></p>
+                    <p class="mb-0"><span class="data-key">Actualizado el:</span> <span class="data-value"
+                            id="updatedAt"></span></p>
                 </div>
 
-                <div class="col-12 border rounded p-2 bg-light shadow-sm">
+                <div class="col-12 bg-light rounded border p-2 shadow-sm">
                     @include('inventory.note_release.tables.tbl_note_release_show')
                 </div>
 
@@ -52,61 +61,58 @@
 
 
 <script>
-
-    let dtNoteReleaseShow    =   null;
+    let dtNoteReleaseShow = null;
 
     function openMdlShowNoteRelease(note_id) {
-
         getNoteRelease(note_id);
-
     }
 
-    async function getNoteRelease(note_id){
+    async function getNoteRelease(note_id) {
         try {
             toastr.clear();
             mostrarAnimacion1();
-            const token                         =   document.querySelector('input[name="_token"]').value;
-            const urlGetNoteRelease              =   @json(route('tenant.inventario.nota_salida.show', ['id' => 'ID']));
-            const url                           =   urlGetNoteRelease.replace('ID', note_id);
+            const token = document.querySelector('input[name="_token"]').value;
+            const urlGetNoteRelease = @json(route('tenant.inventario.nota_salida.show', ['id' => 'ID']));
+            const url = urlGetNoteRelease.replace('ID', note_id);
 
-            const response  =   await fetch(url, {
-                                    method: 'GET',
-                                    headers: {
-                                        'X-CSRF-TOKEN': token
-                                    }
-                                });
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': token
+                }
+            });
 
-            const   res =   await response.json();
+            const res = await response.json();
 
-            if(res.success){
+            if (res.success) {
                 paintNoteRelease(res.note_release);
 
                 destroyDataTable(dtNoteReleaseShow);
                 clearTable('tbl_note_release_show');
                 paintNoteReleaseDetail(res.note_release_detail);
-                dtNoteReleaseShow    =   loadDataTableSimple(dtNoteReleaseShow,'tbl_note_release_show');
+                dtNoteReleaseShow = loadDataTableSimple('tbl_note_release_show');
 
                 $('#mdlShowNoteRelease').modal('show');
-            }else{
-                toastr.error(res.message,'ERROR EN EL SERVIDOR');
+            } else {
+                toastr.error(res.message, 'ERROR EN EL SERVIDOR');
             }
 
         } catch (error) {
-            toastr.error(error,'ERROR EN LA PETICIÓN VER NOTA DE SALIDA');
-        }finally{
+            toastr.error(error, 'ERROR EN LA PETICIÓN VER NOTA DE SALIDA');
+        } finally {
             ocultarAnimacion1();
         }
     }
 
     function paintNoteRelease(noteIncome) {
 
-        document.getElementById('spanNoteId').textContent       = `#${noteIncome.id}`;
-        document.getElementById('noteId').textContent           = noteIncome.id;
+        document.getElementById('spanNoteId').textContent = `#${noteIncome.id}`;
+        document.getElementById('noteId').textContent = noteIncome.id;
         document.getElementById('userRecorderName').textContent = noteIncome.user_recorder_name;
-        document.getElementById('observation').textContent      = noteIncome.observation;
-        document.getElementById('estado').textContent           = noteIncome.estado;
-        document.getElementById('createdAt').textContent        = noteIncome.created_at;
-        document.getElementById('updatedAt').textContent        = noteIncome.updated_at;
+        document.getElementById('observation').textContent = noteIncome.observation;
+        document.getElementById('estado').textContent = noteIncome.estado;
+        document.getElementById('createdAt').textContent = noteIncome.created_at;
+        document.getElementById('updatedAt').textContent = noteIncome.updated_at;
 
     }
 
@@ -128,7 +134,4 @@
         });
 
     }
-
-
-
 </script>
