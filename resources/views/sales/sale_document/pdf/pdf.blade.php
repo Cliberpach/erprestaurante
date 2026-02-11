@@ -144,7 +144,7 @@
         <div class="empresa">
             <p class="text-uppercase nombre-empresa m-0 p-0">{{ $company->abbreviated_business_name }}</p>
             <p class="text-uppercase ruc-empresa m-0 p-0">RUC {{ $company->ruc }}</p>
-            <p class="text-uppercase direccion-empresa m-0 p-0">{{ $company->fiscal_address }}</p>
+            <p class="direccion-empresa m-0 p-0">{{ $company->fiscal_address }}</p>
 
             <p class="text-info-empresa m-0 p-0">Central telefónica: {{ $company->phone }}</p>
             <p class="text-info-empresa m-0 p-0">Email: {{ $company->email }}</p>
