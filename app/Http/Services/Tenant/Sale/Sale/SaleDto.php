@@ -146,6 +146,15 @@ class SaleDto
         $dto['pay_status']      =   'PAGADO';
         $dto['change_pay']      =   $data['change'];
 
+        $dto['expiration_date']             = Carbon::now();
+        $dto['registration_date']           = Carbon::now();
+
+        $dto['payment_condition_id']        = 1;
+        $dto['payment_condition_name']      = "CONTADO";
+        $dto['payment_condition_days']      = 0;
+
+        $dto['payment_status']              = "PAGADO";
+
         return $dto;
     }
 
