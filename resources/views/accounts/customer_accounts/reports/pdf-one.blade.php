@@ -130,7 +130,7 @@
                 <!-- COLUMNA 2: INFO DE LA EMPRESA -->
                 <td style="width: 60%; text-align: left; vertical-align: top;">
                     <h2 style="margin: 0; font-size: 14px; color: #3a6ea5;">
-                        {{ $company->business_name }}
+                        {{ $company->abbreviated_business_name }}
                     </h2>
                     <p style="margin: 0; font-size: 12px; color: #555;">RUC: {{ $company->ruc }}</p>
                     <p style="margin: 0; font-size: 12px; color: #555;">{{ $company->fiscal_address }}</p>
@@ -254,7 +254,7 @@
         <!-- Footer -->
         <footer>
             <div class="footer-content">
-                <p>&copy; {{ now()->year }} {{ $company->business_name }} - Todos los derechos reservados</p>
+                <p>&copy; {{ now()->year }} {{ $company->abbreviated_business_name }} - Todos los derechos reservados</p>
             </div>
         </footer>
     </div>

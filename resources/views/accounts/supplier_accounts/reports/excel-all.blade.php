@@ -13,7 +13,7 @@
         <table>
             <tr>
                 <td style="width: 220px; font-weight: bold;">EMPRESA</td>
-                <td style="font-size: 12px;">{{ $company->business_name }}</td>
+                <td style="font-size: 12px;">{{ $company->abbreviated_business_name }}</td>
             </tr>
             <tr>
                 <td style="width: 220px; font-weight: bold;">RUC</td>

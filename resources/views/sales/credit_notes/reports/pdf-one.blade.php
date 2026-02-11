@@ -358,7 +358,7 @@
 
                 <!-- Información de la empresa -->
                 <td style="width: 55%; text-align: left; vertical-align: top; padding-left: 15px;">
-                    <h2 class="company-name">{{ $company->business_name  }}</h2>
+                    <h2 class="company-name">{{ $company->abbreviated_business_name  }}</h2>
                     <p class="company-info"><strong>RUC:</strong> {{ $company->ruc }}</p>
                     <p class="company-info"><strong>Dirección:</strong> {{ $company->fiscal_address }}</p>
                     <p class="company-info"><strong>Teléfono:</strong> {{ $company->phone }}</p>
@@ -473,7 +473,7 @@
         <!-- ========== FOOTER ========== -->
         <footer class="footer-pdf">
             <div class="footer-content">
-                <p><strong>{{ $company->razon_social }}</strong></p>
+                <p><strong>{{ $company->abbreviated_business_name }}</strong></p>
                 <p>&copy; {{ now()->year }} Todos los derechos reservados | ComandaPro</p>
             </div>
         </footer>
