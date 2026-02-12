@@ -152,6 +152,10 @@ class UserController extends Controller
             $rol                            =   TenantRole::findOrFail($request->get('rol'));
 
             $usuario                        =   User::findOrFail($id);
+            if ($usuario->id == 1) {
+                throw new Exception("No permitido editar al ADMIN");
+            }
+
             $usuario->collaborator_id       =   $request->get('colaborador');
             $usuario->name                  =   mb_strtoupper($colaborador->full_name, 'UTF-8');
             $usuario->email                 =   $request->get('correo');
@@ -179,6 +183,9 @@ class UserController extends Controller
         try {
 
             $user                    =   User::findOrFail($id);
+            if ($user->id == 1) {
+                throw new Exception("No permitido eliminar al ADMIN");
+            }
 
             $roles = $user->getRoleNames();
             if ($roles->contains('CAJERO')) {
