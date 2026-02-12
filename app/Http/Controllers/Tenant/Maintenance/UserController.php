@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenant\Maintenance\Users\UserStoreRequest;
 use App\Http\Requests\Tenant\Maintenance\Users\UserUpdateRequest;
 use App\Http\Services\Tenant\Maintenance\User\UserManager;
+use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
+use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\TenantRole;
 use App\Models\Tenant\User;
 use Exception;
@@ -23,7 +25,8 @@ class UserController extends Controller
 {
     private UserManager $s_manager;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->s_manager = new UserManager();
     }
 
@@ -174,9 +177,25 @@ class UserController extends Controller
     {
         DB::beginTransaction();
         try {
-            $usuario                    =   User::findOrFail($id);
-            $usuario->status            =   'ANULADO';
-            $usuario->update();
+
+            $user                    =   User::findOrFail($id);
+
+            $roles = $user->getRoleNames();
+            if ($roles->contains('CAJERO')) {
+                $cash_book  =   PettyCashBook::where('user_id', $user->id)->where('status', 'ABIERTO')->first();
+                if ($cash_book) {
+                    throw new Exception("No puedes eliminar al usuario, tiene una caja abierta: " . $cash_book->petty_cash_name . ':' . $cash_book->id);
+                }
+            }
+            if ($roles->contains('MESERO')) {
+                $order  =   Order::where('creator_user_id', $user->id)->where('status', 'ACTIVO')->first();
+                if ($order) {
+                    throw new Exception("No puedes eliminar al usuario, tiene un pedido pendiente: " . $order->code);
+                }
+            }
+
+            $user->status            =   'ANULADO';
+            $user->update();
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'USUARIO ELIMINADO']);

@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 
 class UserUpdateRequest extends FormRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
@@ -29,7 +29,7 @@ class UserUpdateRequest extends FormRequest
                 'required',
                 Rule::exists('collaborators', 'id')
             ],
-            'correo'            => 'required|email|unique:users,email,' . $this->route('id') . ',id',
+            'correo' => 'required|email|unique:users,email,' . $this->route('id') . ',id,status,ACTIVO',
             'password'          => 'required|string|min:8',
             'repetir_password'  => 'required|string|same:password',
             'rol'       => [
