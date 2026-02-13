@@ -213,7 +213,6 @@ array:11 [ // app\Http\Controllers\General\Herramientas\ColaboradorController.ph
     //======== VALIDAR DNI ÚNICO EN LA BASE DE DATOS, COLABORADORES ========
     public function searchDocument(Request $request)
     {
-
         try {
 
             $document_number    =   $request->get('document_number');

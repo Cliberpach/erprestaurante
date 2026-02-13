@@ -125,13 +125,15 @@
                             `{{ route('tenant.mantenimiento.colaboradores.destroy', ':id') }}`.replace(
                                 ':id', data.id);
 
-                        return `
-                            <div class="btn-group">
-                            <button type="button" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa-solid fa-grip"></i>
-                            </button>
-                            <ul class="dropdown-menu" style="max-height: 150px; overflow-y: auto;">
-                                <li>
+                        let options =   `
+                                        <div class="btn-group">
+                                        <button type="button" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa-solid fa-grip"></i>
+                                        </button>
+                                        <ul class="dropdown-menu" style="max-height: 150px; overflow-y: auto;">`
+
+                        if(data.id != 1){
+                            options += `  <li>
                                     <a class="dropdown-item" href="${urlEdit}">
                                         <i class="fa-solid fa-pen-to-square"></i> Editar
                                     </a>
@@ -141,10 +143,12 @@
                                     <a class="dropdown-item" href="javascript:void(0);" onclick="eliminarColaborador(${data.id})">
                                         <i class="fa-solid fa-trash"></i> Eliminar
                                     </a>
-                                </li>
-                            </ul>
-                            </div>
-                        `;
+                                </li>`;
+                        }
+
+                        options += `</ul></div>`;
+
+                        return options;
                     },
                     name: 'actions',
                     orderable: false,
