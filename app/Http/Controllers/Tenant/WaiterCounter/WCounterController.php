@@ -54,7 +54,7 @@ class WCounterController extends Controller
                 'o.total',
                 'o.creator_user_name',
                 't.id as table_id',
-            );
+            )->where('t.status', 'ACTIVO');
 
         return DataTables::of($free_tables)->make(true);
     }
@@ -245,7 +245,7 @@ array:2 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:23
     {
         DB::beginTransaction();
         try {
-            $order  =   $this->s_manager->destroy($request->toArray(),$id);
+            $order  =   $this->s_manager->destroy($request->toArray(), $id);
             DB::commit();
             return response()->json(['success' => true, 'message' => 'PEDIDO ELIMINADO CON ÉXITO']);
         } catch (Throwable $th) {

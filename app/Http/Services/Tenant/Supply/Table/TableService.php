@@ -8,10 +8,12 @@ class TableService
 {
     private TableRepository $s_repository;
     private TableDto $s_dto;
+    private TableValidation $s_validation;
 
     public function __construct()
     {
         $this->s_repository =   new TableRepository();
+        $this->s_validation =   new TableValidation($this->s_repository);
         $this->s_dto        =   new TableDto();
     }
 
@@ -57,6 +59,7 @@ class TableService
 
     public function isNotFree(int $id)
     {
+        $this->s_validation->validationDestroy($id);
         return $this->s_repository->isNotFree($id);
     }
 }

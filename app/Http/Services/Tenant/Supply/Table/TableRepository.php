@@ -84,10 +84,11 @@ class TableRepository
         $table  =   DB::table('reservations as r')
             ->join('tables as t', 't.id', 'r.table_id')
             ->where('r.status', 'OCUPADO')
-            ->where('r.table_id',$id)
+            ->where('r.table_id', $id)
             ->select('r.code', 't.name')
             ->first();
 
         return $table;
     }
+
 }
