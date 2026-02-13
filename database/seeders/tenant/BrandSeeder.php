@@ -16,9 +16,5 @@ class BrandSeeder extends Seeder
             'name' => 'MARCA',
             'status' => 'INACTIVE'
         ]);
-
-        Brand::create([
-            'name' => 'NACIONAL'
-        ]);
     }
 }

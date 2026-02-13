@@ -16,9 +16,5 @@ class CategorySeeder extends Seeder
             'name'      =>  'CATEGORIA',
             'status'    =>  'INACTIVE'
         ]);
-
-        Category::create([
-            'name' => 'RESPUESTO',
-        ]);
     }
 }

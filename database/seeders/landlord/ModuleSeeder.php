@@ -52,7 +52,7 @@ class ModuleSeeder extends Seeder
 
     private function seedDashboard(): void
     {
-        $module = $this->createModule('Dashboard', 1, 'dashboard-graph-analytics-report-svgrepo-com.svg');
+        $module = $this->createModule('Dashboard', 1, 'finances-pie-chart-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Dashboard',
@@ -67,7 +67,7 @@ class ModuleSeeder extends Seeder
 
     private function seedCaja(): void
     {
-        $module = $this->createModule('Cajas', 1, 'cashier_machine_cash_register_pos_icon_225168.svg');
+        $module = $this->createModule('Cajas', 1, 'cash-register-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Caja',
@@ -87,7 +87,7 @@ class ModuleSeeder extends Seeder
 
     private function seedVentas(): void
     {
-        $module = $this->createModule('Ventas', 2, 'percentage-sales-svgrepo-com.svg');
+        $module = $this->createModule('Ventas', 2, 'invoice-receipt-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Comprobante Venta',
@@ -117,7 +117,7 @@ class ModuleSeeder extends Seeder
 
     private function seedAbastecimiento(): void
     {
-        $module = $this->createModule('Abastecimiento', 3, '');
+        $module = $this->createModule('Abastecimiento', 3, 'japanese-food-rice-svgrepo-com.svg');
 
         foreach (
             [
@@ -174,7 +174,7 @@ class ModuleSeeder extends Seeder
 
     private function seedMostradorMesero(): void
     {
-        $module = $this->createModule('Mostrador Mesero', 6, '');
+        $module = $this->createModule('Mostrador Mesero', 6, 'waiter-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Mostrador',
@@ -184,7 +184,7 @@ class ModuleSeeder extends Seeder
 
     private function seedMostradorCajero(): void
     {
-        $module = $this->createModule('Mostrador Cajero', 7, '');
+        $module = $this->createModule('Mostrador Cajero', 7, 'reception-hotel-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Mostrador',
