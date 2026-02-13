@@ -56,7 +56,7 @@
 
 
                 <!-- CARD COLAPSABLE -->
-                <div class="card d-none mb-2 shadow-sm">
+                <div class="card mb-2 shadow-sm">
 
                     <!-- HEADER CLICKABLE -->
                     <div class="card-header bg-white p-2" role="button" data-bs-toggle="collapse"

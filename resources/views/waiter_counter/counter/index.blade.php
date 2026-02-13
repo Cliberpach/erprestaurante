@@ -14,11 +14,7 @@
             <div class="d-flex flex-wrap gap-2">
                 <div class="btn-group btn-group-sm" role="group">
                     <button id="btn-view-circles" class="btn btn-primary active" onclick="setView('circles')">
-                        <i class="fas fa-th-large me-1"></i> Mesas
-                    </button>
-
-                    <button id="btn-view-table" class="btn btn-outline-primary" onclick="setView('table')">
-                        <i class="fas fa-table me-1"></i> Tabla
+                        <i class="fas fa-sync-alt me-1"></i> Refrescar mostrador
                     </button>
                 </div>
 
@@ -29,11 +25,6 @@
             <!-- Vista Círculos -->
             <div id="view-circles">
                 @include('waiter_counter.counter.grids.grid_list')
-            </div>
-
-            <!-- Vista Tabla -->
-            <div id="view-table" class="d-none">
-                @include('waiter_counter.counter.tables.tbl_list')
             </div>
 
         </div>
@@ -53,9 +44,7 @@
         let currentView = 'circles';
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadDtItems();
-            const savedView = localStorage.getItem('mostrador_view') || 'circles';
-            setView(savedView);
+            setView('circles');
             loadTablesAsCircles();
             events();
         })
@@ -115,10 +104,10 @@
                                 </div>
 
                                 ${item.total ? `
-                                                <div class="table-total">
-                                                    S/ ${formatSoles(item.total)}
-                                                </div>
-                                                ` : ''}
+                                                    <div class="table-total">
+                                                        S/ ${formatSoles(item.total)}
+                                                    </div>
+                                                    ` : ''}
                             </div>
                         </div>
                     `;
@@ -150,188 +139,20 @@
             }
         }
 
-        function loadDtItems() {
-            dtItems = new DataTable('#dt-dishes', {
-                "serverSide": true,
-                "processing": true,
-                "ajax": '{{ route('tenant.mostrador_mesero.mostrador.getAll') }}',
-                "columns": [{
-                        data: 'table_id',
-                        name: 't.id',
-                        className: "text-center",
-                        "visible": false,
-                        "searchable": false
-                    },
-                    {
-                        data: 'table_name',
-                        name: 't.name',
-                        searchable: true,
-                        orderable: true,
-                    },
-                    {
-                        data: 'reservation_code',
-                        name: 'r.code',
-                        searchable: true,
-                        orderable: true,
-                    },
-                    {
-                        data: 'creator_user_name',
-                        name: 'o.creator_user_name',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'customer_name',
-                        name: 'o.customer_name',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'total',
-                        name: 'o.total',
-                        searchable: false,
-                        orderable: false,
-                        render: function(data) {
-                            return formatSoles(data);
-                        }
-                    },
-                    {
-                        data: 'reservation_date',
-                        name: 'o.created_at',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'status',
-                        name: 'r.status',
-                        searchable: false,
-                        orderable: false,
-                        render: function(data) {
-                            let badgeClass = '';
-                            let text = data;
-
-                            if (data === 'LIBRE') {
-                                badgeClass = 'bg-primary';
-                            } else if (data === 'OCUPADO') {
-                                badgeClass = 'bg-danger';
-                            } else {
-                                badgeClass = 'bg-secondary';
-                            }
-
-                            return `<span class="badge ${badgeClass}">${text}</span>`;
-                        }
-                    },
-                    {
-                        searchable: false,
-                        orderable: false,
-                        data: null,
-                        className: "text-center",
-                        render: function(data) {
-                            return `
-                                <div class="dropdown">
-                                    <button
-                                        class="btn btn-warning btn-sm dropdown-toggle"
-                                        type="button"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a
-                                                class="dropdown-item"
-                                                href="#"
-                                                onclick="redirectParams('tenant.mostrador_mesero.mostrador.edit', ${data.id})">
-                                                <i class="fa fa-edit text-warning me-2"></i> Editar
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a
-                                                class="dropdown-item text-danger"
-                                                href="#"
-                                                onclick="eliminar(${data.id})">
-                                                <i class="fa fa-trash me-2"></i> Eliminar
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            `;
-                        }
-                    }
-
-                ],
-                language: {
-                    decimal: "",
-                    emptyTable: "No hay datos disponibles en la tabla",
-                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    infoEmpty: "Mostrando 0 a 0 de 0 registros",
-                    infoFiltered: "(filtrado de _MAX_ registros totales)",
-                    infoPostFix: "",
-                    thousands: ",",
-                    lengthMenu: "Mostrar _MENU_ registros",
-                    loadingRecords: "Cargando...",
-                    processing: "Procesando...",
-                    search: "Buscar:",
-                    zeroRecords: "No se encontraron registros coincidentes",
-                    paginate: {
-                        first: "Primero",
-                        last: "Último",
-                        next: "Siguiente",
-                        previous: "Anterior"
-                    },
-                    aria: {
-                        sortAscending: ": activar para ordenar columna ascendente",
-                        sortDescending: ": activar para ordenar columna descendente"
-                    },
-                    select: {
-                        rows: {
-                            _: "%d filas seleccionadas",
-                            0: "Haz clic en una fila para seleccionarla",
-                            1: "1 fila seleccionada"
-                        }
-                    }
-                },
-                "order": [
-                    [0, "asc"]
-                ],
-            });
-
-        }
-
         function setView(view) {
             localStorage.setItem('mostrador_view', view);
 
             const circles = document.getElementById('view-circles');
-            const table = document.getElementById('view-table');
 
             const btnCircles = document.getElementById('btn-view-circles');
-            const btnTable = document.getElementById('btn-view-table');
 
             if (view === 'circles') {
                 circles.classList.remove('d-none');
-                table.classList.add('d-none');
 
                 btnCircles.classList.add('btn-primary', 'active');
                 btnCircles.classList.remove('btn-outline-primary');
 
-                btnTable.classList.add('btn-outline-primary');
-                btnTable.classList.remove('btn-primary', 'active');
-
-                loadTablesAsCircles(); // 🔁 refresca
-            } else {
-                circles.classList.add('d-none');
-                table.classList.remove('d-none');
-
-                btnTable.classList.add('btn-primary', 'active');
-                btnTable.classList.remove('btn-outline-primary');
-
-                btnCircles.classList.add('btn-outline-primary');
-                btnCircles.classList.remove('btn-primary', 'active');
-
-                if (dtItems) {
-                    dtItems.ajax.reload(null, false);
-                }
+                loadTablesAsCircles();
             }
         }
 
@@ -406,7 +227,7 @@
                     }
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: 'Cancelado',
                         text: 'La solicitud ha sido cancelada.',
                         icon: 'error',
