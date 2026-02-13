@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->date('delivery_date');
 
+            $table->unsignedBigInteger('warehouse_id');
+            $table->foreign('warehouse_id')->references('id')->on('warehouses');
+            $table->string('warehouse_name', 160);
+
             $table->unsignedBigInteger('supplier_id');
             $table->foreign('supplier_id')->references('id')->on('suppliers');
 

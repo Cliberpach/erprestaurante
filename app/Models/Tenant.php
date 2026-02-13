@@ -22,7 +22,6 @@ class Tenant extends BaseTenant
         static::created(fn (Tenant $tenant) => $tenant->runMigrationsSeeders($tenant));
     }
 
-
     public function createDatabase($tenant)
     {
         $database_name = "tenancy_".$tenant->domain;
