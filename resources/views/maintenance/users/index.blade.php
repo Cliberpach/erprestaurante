@@ -94,7 +94,7 @@
                                 </button>
                                 <ul class="dropdown-menu" style="max-height: 100px; overflow-y: auto;">`;
 
-                            if (id != 1) {
+                            if (data.id != 1) {
                                 options += ` <li>
                                         <a class="dropdown-item" href="${urlEdit}">
                                             <i class="fa-solid fa-pen-to-square"></i> Editar
