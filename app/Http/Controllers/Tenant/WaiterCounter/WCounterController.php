@@ -54,7 +54,7 @@ class WCounterController extends Controller
                 'o.total',
                 'o.creator_user_name',
                 't.id as table_id',
-            )->where('t.status', 'ACTIVO');
+            )->where('t.status', '<>', 'ANULADO');
 
         return DataTables::of($free_tables)->make(true);
     }
