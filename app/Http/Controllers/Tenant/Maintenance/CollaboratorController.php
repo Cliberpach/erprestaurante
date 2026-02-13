@@ -135,6 +135,10 @@ array:11 [ // app\Http\Controllers\General\Herramientas\ColaboradorController.ph
         DB::beginTransaction();
         try {
 
+            if ($id == 1) {
+                throw new Exception("No permitido editar colaborador ADMIN");
+            }
+
             $type_document                              =   TypeIdentityDocument::findOrFail($request->get('document_type'));
             $colaborador                                =   Collaborator::find($id);
 
@@ -168,6 +172,10 @@ array:11 [ // app\Http\Controllers\General\Herramientas\ColaboradorController.ph
     {
         DB::beginTransaction();
         try {
+
+            if ($id == 1) {
+                throw new Exception("No permitido eliminar colaborador ADMIN");
+            }
 
             $colaborador                    =   Collaborator::find($id);
             $colaborador->status            =   'ANULADO';
