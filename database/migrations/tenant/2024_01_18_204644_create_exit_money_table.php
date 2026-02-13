@@ -18,7 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('number', 15);
             $table->date('date');
-            $table->enum('reason', ['GASTO', 'DEVOLUCION','COMPRAS','LIMPIEZA','ENVIO']);
+
+            $table->unsignedBigInteger('cost_center_id');
+            $table->string('cost_center_name',200);
+
             $table->double('total');
             $table->boolean('status')->default(true);
             $table->timestamps();
@@ -26,6 +29,7 @@ return new class extends Migration
             $table->foreign('proof_payment_id')->references('id')->on('proof_payments');
             $table->foreign('supplier_id')->references('id')->on('suppliers');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('cost_center_id')->references('id')->on('cost_center');
 
             $table->unsignedBigInteger('payment_method_id');
             $table->unsignedBigInteger('petty_cash_book_id');

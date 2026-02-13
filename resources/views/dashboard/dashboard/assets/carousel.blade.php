@@ -1,0 +1,171 @@
+<style>
+    .dashboard-card {
+        background-color: #1e3a8a;
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        border: 3px solid white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: transform 0.3s ease-in-out,
+            box-shadow 0.3s ease-in-out,
+            background-color 0.3s ease-in-out;
+        min-height: 140px;
+        text-align: center;
+        cursor: pointer;
+        overflow: hidden;
+        height: 100%;
+        white-space: normal;
+    }
+
+    .dashboard-card div:first-child {
+        font-size: 1.1rem;
+        text-wrap: balance;
+        text-align: center;
+    }
+
+    /* Hover */
+    .dashboard-card:hover {
+        transform: scale(1.01);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+        background-color: #2563eb;
+        border-color: #2563eb;
+    }
+
+    /* Protege el carousel del overflow */
+    .carousel {
+        overflow-x: hidden;
+    }
+
+    /* Flechas */
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        padding: 15px;
+    }
+
+    /* Flechas DENTRO del contenedor (clave) */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 5%;
+    }
+
+    .carousel-control-prev {
+        left: 0;
+    }
+
+    .carousel-control-next {
+        right: 0;
+    }
+
+    /* Indicadores */
+    .carousel-indicators [data-bs-target] {
+        background-color: #1e3a8a;
+    }
+
+    .carousel-indicators .active {
+        background-color: #2563eb;
+    }
+</style>
+
+
+<div id="carouselExampleIndicators" class="carousel slide">
+
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
+            aria-current="true"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
+    </div>
+
+    <div class="carousel-inner">
+
+        <div class="carousel-item active">
+            <div class="row g-3 align-items-stretch">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="dashboard-card">
+                        <div>Utilidad</div>
+                        <p id="utility_total"></p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="dashboard-card">
+                        <div>Monto Facturación</div>
+                        <p id="total_invoices"></p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="dashboard-card">
+                        <div>Platos Vendidos</div>
+                        <p id="quantity_dishes"></p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="dashboard-card">
+                        <div>Productos Vendidos</div>
+                        <p id="quantity_products"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="carousel-item">
+            <div class="row g-3 align-items-stretch">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="dashboard-card">
+                        <div>Utilidad Productos</div>
+                        <p id="utility_products">S/0.00</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="dashboard-card">
+                        <div>Utilidad Platos</div>
+                        <p id="utility_dishes">S/0.00</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="dashboard-card">
+                        <div>Monto Boletas</div>
+                        <p id="total_boletas"></p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="dashboard-card">
+                        <div>Monto Facturas</div>
+                        <p id="total_facturas"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="carousel-item">
+            <div class="row g-3 align-items-stretch">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                    <div class="dashboard-card">
+                        <div>Cuentas Pagar</div>
+                        <p id="total_supplier_accounts"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+        data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
+</div>

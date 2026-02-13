@@ -20,7 +20,7 @@ class ExitMoneyStoreRequest extends FormRequest
             'proof_payment'    => 'required',
             'number'           => 'required',
             'date'             => 'required|date',
-            'reason'           => 'required',
+            'cost_center'      => 'required|exists:cost_center,id,status,ACTIVO',
             'supplier_id'      => 'required|exists:suppliers,id',
             'description.*'    => 'required|string',
             'total.*'          => 'required|numeric|min:0',
@@ -39,7 +39,10 @@ class ExitMoneyStoreRequest extends FormRequest
             'number.required'          => 'El número es obligatorio.',
             'date.required'            => 'La fecha de emisión es obligatoria.',
             'date.date'                => 'La fecha debe tener un formato válido.',
-            'reason.required'          => 'La razón es obligatoria.',
+
+            'cost_center.required'      => 'El centro de costos es obligatorio.',
+            'cost_center.exists'        => 'El centro de costos no existe.',
+
             'supplier_id.required'     => 'Debe seleccionar un proveedor.',
             'supplier_id.exists'       => 'El proveedor seleccionado no es válido.',
 

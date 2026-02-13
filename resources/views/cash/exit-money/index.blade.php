@@ -69,8 +69,8 @@
                         searchable: true
                     },
                     {
-                        data: 'reason',
-                        name: 'em.reason',
+                        data: 'cost_center_name',
+                        name: 'em.cost_center_name',
                         className: "text-center",
                         orderable: true,
                         searchable: true

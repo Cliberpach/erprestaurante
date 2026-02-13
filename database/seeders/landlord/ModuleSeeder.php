@@ -11,6 +11,7 @@ class ModuleSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->seedDashboard();
         $this->seedCaja();
         $this->seedVentas();
         $this->seedAbastecimiento();
@@ -48,6 +49,17 @@ class ModuleSeeder extends Seeder
             'order' => 3,
         ], $data));
     }
+
+    private function seedDashboard(): void
+    {
+        $module = $this->createModule('Dashboard', 1, 'dashboard-graph-analytics-report-svgrepo-com.svg');
+
+        $this->createChild($module, [
+            'description' => 'Dashboard',
+            'route_name' => 'dashboard.dashboard.index',
+        ]);
+    }
+
 
     /* =========================
         Seeds por módulo
@@ -105,7 +117,7 @@ class ModuleSeeder extends Seeder
 
     private function seedAbastecimiento(): void
     {
-        $module = $this->createModule('Abastecimiento', 3,'');
+        $module = $this->createModule('Abastecimiento', 3, '');
 
         foreach (
             [
@@ -162,7 +174,7 @@ class ModuleSeeder extends Seeder
 
     private function seedMostradorMesero(): void
     {
-        $module = $this->createModule('Mostrador Mesero', 6,'');
+        $module = $this->createModule('Mostrador Mesero', 6, '');
 
         $this->createChild($module, [
             'description' => 'Mostrador',
@@ -172,7 +184,7 @@ class ModuleSeeder extends Seeder
 
     private function seedMostradorCajero(): void
     {
-        $module = $this->createModule('Mostrador Cajero', 7,'');
+        $module = $this->createModule('Mostrador Cajero', 7, '');
 
         $this->createChild($module, [
             'description' => 'Mostrador',

@@ -71,18 +71,18 @@
             <!-- Razón -->
             <div class="col-md-3">
                 <div>
-                    <label for="reason" class="form-label">Centro de costos</label>
+                    <label for="cost_center" class="form-label">Centro de costos</label>
                     <button class="btn btn-sm btn-link p-0" type="button" onclick="openMdlCostCenter()">
                         [+ Nuevo]
                     </button>
                 </div>
-                <select name="reason" id="reason" class="form-control">
+                <select name="cost_center" id="cost_center" class="form-control">
                     <option value=""></option>
                     @foreach ($cost_center as $item)
-                        <option value="{{ $item->name }}">{{ $item->name }}</option>
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
                     @endforeach
                 </select>
-                <p class="reason_error msgError"></p>
+                <p class="cost_center_error msgError"></p>
             </div>
 
             <!-- Tipo de Pago -->

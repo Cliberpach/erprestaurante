@@ -48,7 +48,7 @@ class ExitMoneyController extends Controller
             ->select(
                 'em.id',
                 'em.date',
-                'em.reason',
+                'em.cost_center_name',
                 's.name as supplier_name',
                 'em.number',
                 'em.total'
@@ -76,6 +76,23 @@ class ExitMoneyController extends Controller
         ));
     }
 
+    /*
+array:9 [ // app\Http\Controllers\Tenant\Cash\ExitMoneyController.php:80
+  "_token" => "4Q9IT0dQOZrZPohhHXaaOSiZJTZEJajvdeXtAcQJ"
+  "proof_payment" => "4"
+  "number" => "B002"
+  "date" => "2026-02-12"
+  "supplier_id" => "2"
+  "cost_center" => "3"
+  "payment_method_id" => "1"
+  "description" => array:1 [
+    0 => "ALMUERZO"
+  ]
+  "total" => array:1 [
+    0 => "80"
+  ]
+]
+*/
     public function store(ExitMoneyStoreRequest $request)
     {
         DB::beginTransaction();
@@ -92,15 +109,16 @@ class ExitMoneyController extends Controller
             }
 
             $payment_method =   PaymentMethod::findOrFail($request->get('payment_method_id'));
+            $cost_center    =   CostCenter::findOrFail($request->get('cost_center'));
 
             $exit_money = new ExitMoney();
-            $cajaAbierta = PettyCashBook::where('status', 'ABIERTO')->first();
             $exit_money->proof_payment_id = $request->proof_payment;
             $exit_money->payment_method_id = $payment_method->id;
             $exit_money->payment_method_name    =   $payment_method->description;
             $exit_money->number = $request->number;
             $exit_money->date = $request->date;
-            $exit_money->reason = $request->reason;
+            $exit_money->cost_center_id = $request->cost_center;
+            $exit_money->cost_center_name   =   $cost_center->name;
             $exit_money->supplier_id = $request->supplier_id;
             $exit_money->user_id = Auth::id();
             $exit_money->petty_cash_book_id =   $petty_cash->id;
@@ -108,9 +126,9 @@ class ExitMoneyController extends Controller
 
             $exit_money->save();
 
-            if ($cajaAbierta->closing_amount == null) {
-                $cajaAbierta->closing_amount = $cajaAbierta->initial_amount;
-            }
+            // if ($cajaAbierta->closing_amount == null) {
+            //     $cajaAbierta->closing_amount = $cajaAbierta->initial_amount;
+            // }
 
             for ($i = 0; $i < count($request->description); $i++) {
                 $booking_detail = new ExitMoneyDetail();
@@ -122,10 +140,10 @@ class ExitMoneyController extends Controller
                 DB::table('exit_money')->where('id', $exit_money->id)->increment('total', $request->total[$i]);
             }
 
-            $exit_money_total_actualizado = DB::table('exit_money')->where('id', $exit_money->id)->value('total');
+            // $exit_money_total_actualizado = DB::table('exit_money')->where('id', $exit_money->id)->value('total');
 
-            $cajaAbierta->closing_amount = $cajaAbierta->closing_amount - $exit_money_total_actualizado;
-            $cajaAbierta->save();
+            // $cajaAbierta->closing_amount = $cajaAbierta->closing_amount - $exit_money_total_actualizado;
+            // $cajaAbierta->save();
 
             Session::flash('message_success', 'EGRESO REGISTRADO CON ÉXITO');
 

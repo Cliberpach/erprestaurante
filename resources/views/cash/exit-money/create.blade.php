@@ -332,7 +332,7 @@
         }
 
         function loadSelectsExit() {
-            const costCenterSelect = document.getElementById('reason');
+            const costCenterSelect = document.getElementById('cost_center');
             if (costCenterSelect && !costCenterSelect.tomselect) {
                 window.costCenterSelect = new TomSelect(costCenterSelect, {
                     valueField: 'id',
