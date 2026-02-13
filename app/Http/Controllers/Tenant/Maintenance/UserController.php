@@ -7,6 +7,7 @@ use App\Http\Requests\Tenant\Maintenance\Users\UserStoreRequest;
 use App\Http\Requests\Tenant\Maintenance\Users\UserUpdateRequest;
 use App\Http\Services\Tenant\Maintenance\User\UserManager;
 use App\Models\Tenant\Cash\PettyCashBook;
+use App\Models\Tenant\Cash\PettyCashServer;
 use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\TenantRole;
@@ -198,6 +199,19 @@ class UserController extends Controller
                 $order  =   Order::where('creator_user_id', $user->id)->where('status', 'ACTIVO')->first();
                 if ($order) {
                     throw new Exception("No puedes eliminar al usuario, tiene un pedido pendiente: " . $order->code);
+                }
+                $cash_book  =   PettyCashServer::from('petty_cash_servers as pcs')
+                    ->join('petty_cash_books as pcb', 'pcb.id', 'pcs.petty_cash_book_id')
+                    ->where('pcs.user_id', $id)
+                    ->where('pcb.status', 'ABIERTO')
+                    ->select(
+                        'pcb.id',
+                        'pcb.petty_cash_name'
+                    )
+                    ->first();
+
+                if ($cash_book) {
+                    throw new Exception('No permitido eliminar al usuario, pertenece a una caja abierta: ' . $cash_book->petty_cash_name);
                 }
             }
 

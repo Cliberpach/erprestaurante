@@ -8,6 +8,7 @@ use App\Http\Requests\Tenant\Maintenance\Collaborator\CollaboratorStoreRequest;
 use App\Http\Requests\Tenant\Maintenance\Collaborator\CollaboratorUpdateRequest;
 use App\Models\Landlord\TypeIdentityDocument;
 use App\Models\Tenant\Cash\PettyCashBook;
+use App\Models\Tenant\Cash\PettyCashServer;
 use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\User;
@@ -194,6 +195,19 @@ array:11 [ // app\Http\Controllers\General\Herramientas\ColaboradorController.ph
                     $order  =   Order::where('creator_user_id', $user->id)->where('status', 'ACTIVO')->first();
                     if ($order) {
                         throw new Exception("No puedes eliminar al colaborador, tiene un pedido pendiente: " . $order->code);
+                    }
+                    $cash_book  =   PettyCashServer::from('petty_cash_servers as pcs')
+                        ->join('petty_cash_books as pcb', 'pcb.id', 'pcs.petty_cash_book_id')
+                        ->where('pcs.user_id', $user->id)
+                        ->where('pcb.status', 'ABIERTO')
+                        ->select(
+                            'pcb.id',
+                            'pcb.petty_cash_name'
+                        )
+                        ->first();
+
+                    if ($cash_book) {
+                        throw new Exception('No permitido eliminar al colaborador, pertenece a una caja abierta: ' . $cash_book->petty_cash_name);
                     }
                 }
 
