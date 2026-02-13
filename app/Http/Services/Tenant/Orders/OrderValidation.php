@@ -95,7 +95,11 @@ class OrderValidation
         $igv                =   round(Company::find(1)->igv, 2);
         $customer_formatted =   FormatController::getFormatInitialCustomer($order->customer_id);
         $petty_cash_book    =   $this->s_cash_book->getCashBookWaiter($user->id);
-        $programming        =   $this->s_cash_book->hasProgrammingActive($petty_cash_book->petty_cash_book_id);
+        $programming        =   null;
+        if ($petty_cash_book) {
+            $programming        =   $this->s_cash_book->hasProgrammingActive($petty_cash_book->petty_cash_book_id);
+        }
+
         $config_delete      =   Configuration::findOrFail(2)->status;
 
         if ($order->status !== 'ACTIVO') {
