@@ -8,6 +8,7 @@ use App\Http\Requests\Tenant\PaymentMethod\PaymentMethodUpdateRequest;
 use App\Models\Tenant\Maintenance\BankAccount\BankAccount;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sale\PaymentMethodAccount;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -57,13 +58,17 @@ class PaymentMethodController extends Controller
         DB::beginTransaction();
         try {
 
+            if ($id == 1) {
+                throw new Exception('No está permitido editar el método pago efectivo');
+            }
+
             $payment_method                 =   PaymentMethod::find($id);
             $payment_method->description    =   $request->get('descripcion_edit');
             $payment_method->update();
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'MÉTODO DE PAGO ACTUALIZADO']);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
@@ -98,7 +103,7 @@ array:2 [ // app\Http\Controllers\Tenant\Sales\PaymentMethodController.php:90
             if ($count_active_accounts > 1) {
                 return response()->json(['success' => false, 'message' => 'SOLO PUEDE HABER UNA CUENTA ACTIVA POR MÉTODO DE PAGO']);
             }
-            
+
             foreach ($lstCuentasAsignadas as $cuenta_asignada) {
                 $account                       =   new PaymentMethodAccount();
                 $account->payment_method_id    =   $tipo_pago_id;

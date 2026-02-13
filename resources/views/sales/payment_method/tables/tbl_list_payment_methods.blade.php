@@ -1,12 +1,12 @@
-<table class="table table-hover table-striped" id="tbl_list_payment_methods">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th data-priority="2" scope="col">NOMBRE</th>
-        <th data-priority="3" scope="col">FECHA REGISTRO</th>
-        <th data-priority="4" scope="col">FECHA MODIFICACION</th>
-        <th data-priority="1" scope="col">ACCIÓN</th>
-      </tr>
+<table class="table-hover table-striped table" id="tbl_list_payment_methods">
+    <thead class="table-light">
+        <tr>
+            <th class="minw-100px">#</th>
+            <th data-priority="2" class="minw-100px" scope="col">Nombre</th>
+            <th data-priority="3" class="minw-100px">Fec Registro</th>
+            <th data-priority="4" class="minw-100px">Fec Modificación</th>
+            <th data-priority="1" class="minw-100px">Acción</th>
+        </tr>
     </thead>
     <tbody>
 

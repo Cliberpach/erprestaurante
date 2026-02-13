@@ -7,9 +7,11 @@ use App\Http\Requests\Tenant\Sale\PaymentCondition\PaymentConditionUpdateRequest
 use App\Http\Requests\Tenant\Sale\PaymentCondition\PaymentConditionStoreRequest;
 use App\Models\Tenant\Sales\PaymentCondition\PaymentCondition;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Throwable;
 
 class PaymentConditionController extends Controller
@@ -72,7 +74,11 @@ class PaymentConditionController extends Controller
 
     public function edit($id)
     {
-        $condicion_pago =   PaymentCondition::find($id);
+        if ($id == 1) {
+            Session::flash('message_error', 'No permitido editar la condición de pago CONTADO');
+            return view('sales.payment_conditions.index');
+        }
+        $condicion_pago =   PaymentCondition::findOrFail($id);
         return view('sales.payment_conditions.edit', compact('condicion_pago'));
     }
 
@@ -82,6 +88,11 @@ class PaymentConditionController extends Controller
         DB::beginTransaction();
 
         try {
+
+            if ($id == 1) {
+                throw new Exception('No permitido editar la condición de pago CONTADO');
+            }
+
             $nombre_tipo   =   null;
 
             if ($request->get('tipo') == 1) {
@@ -110,6 +121,11 @@ class PaymentConditionController extends Controller
     {
         DB::beginTransaction();
         try {
+
+            if ($id == 1) {
+                throw new Exception('No permitido eliminar la condición de pago CONTADO');
+            }
+
             $condicion_pago                    =   PaymentCondition::findOrFail($id);
             $condicion_pago->status            =   'ANULADO';
             $condicion_pago->update();

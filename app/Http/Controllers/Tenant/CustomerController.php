@@ -15,6 +15,7 @@ use App\Models\Province;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Spatie\Multitenancy\Models\Tenant;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
@@ -102,7 +103,7 @@ class CustomerController extends Controller
         DB::beginTransaction();
 
         try {
-      
+
             $department                             =   Department::findOrFail($request->get('department'));
             $province                               =   Province::findOrFail($request->get('province'));
             $district                               =   District::findOrFail($request->get('district'));
@@ -152,11 +153,16 @@ class CustomerController extends Controller
 
     public function edit($id)
     {
+        if ($id == 1) {
+            Session::flash('message_error', 'NO PERMITIDO EDITAR EL CLIENTE VARIOS');
+        }
+
         $customer                   =   Customer::findOrFail($id);
         $types_identity_documents   =   UtilController::getIdentityDocuments();
         $departments                =   Department::all();
         $provinces                  =   Province::all();
         $districts                  =   District::all();
+
         return view('sales.customers.edit', compact(
             'customer',
             'types_identity_documents',
@@ -184,6 +190,10 @@ array:10 [ // app\Http\Controllers\Tenant\CustomerController.php:173
     {
         DB::beginTransaction();
         try {
+
+            if ($id == 1) {
+                throw new Exception('No está permitido editar el Cliente Varios');
+            }
 
             $department                             =   Department::findOrFail($request->get('department'));
             $province                               =   Province::findOrFail($request->get('province'));
@@ -236,6 +246,10 @@ array:10 [ // app\Http\Controllers\Tenant\CustomerController.php:173
     {
         DB::beginTransaction();
         try {
+            if ($id == 1) {
+                throw new Exception('No está permitido eliminar el Cliente Varios');
+            }
+
             $cliente            =   Customer::findOrFail($id);
             $cliente->status    =   'ANULADO';
             $cliente->update();

@@ -37,6 +37,14 @@
                 e.preventDefault();
                 deleteItem(e.target);
             })
+
+            const modal = document.getElementById('mdlDeleteItem');
+            modal.addEventListener('hidden.bs.modal', function() {
+                clearFormDeleteItem();
+            });
+            modal.addEventListener('shown.bs.modal', function() {
+                document.querySelector('#password').focus();
+            });
         }
 
         async function openMdlDeleteItem(itemIndex) {
@@ -155,6 +163,10 @@
                     });
                 }
             });
+        }
+
+        function clearFormDeleteItem() {
+            document.querySelector('#password').value = '';
         }
     </script>
 @endpush

@@ -4,10 +4,6 @@
     Métodos pago
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-@endsection
-
 @section('content')
     @include('sales.payment_method.modals.mdl_create_payment_method')
     @include('sales.payment_method.modals.mdl_edit_payment_method')
@@ -38,8 +34,6 @@
         </div>
 
     </div>
-
-    <!-- end card -->
 @endsection
 
 @section('js')
@@ -103,31 +97,30 @@
                                 id: row.id
                             });
 
-                            return `
-                            <div class="btn-group dropdown">
-                            <button type="button" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                            let options = `  <div class="btn-group dropdown">
+                            <button type="button" class="dropdown-toggle btn btn-primary btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa-solid fa-grip"></i>
                             </button>
-                            <ul class="dropdown-menu" style="max-height: 150px; overflow-y: auto;">
-                                <li>
+                            <ul class="dropdown-menu" style="max-height: 150px; overflow-y: auto;">`;
+
+                            if (data.id != 1) {
+                                options += `<li>
                                     <a class="dropdown-item" href="javascript:void(0);" onclick="openMdlEditPaymentMethod(${data.id})">
                                         <i class="fa-solid fa-pen-to-square"></i> Editar
                                     </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="javascript:void(0);" onclick="eliminarAlmacen(${data.id})">
-                                        <i class="fa-solid fa-trash"></i> Eliminar
-                                    </a>
-                                </li>
-                                <li>
+                                </li>`;
+                            }
+
+                            options += `<li>
                                     <a class="dropdown-item" href="${routeAccounts}" >
                                         <i class="fas fa-piggy-bank"></i> Cuentas
                                     </a>
-                                </li>
-                            </ul>
-                            </div>
-                        `;
+                                </li></ul>
+                                </div>`;
+
+
+                            return options;
+
                         },
                         name: 'actions',
                         orderable: false,
@@ -158,16 +151,20 @@
             });
         }
 
-
-        function eliminarAlmacen(id) {
+        function destroyPaymentMethod(id) {
             toastr.clear();
             let row = getRowById(dtPaymentMethods, id);
             let message = '';
             let tipo_documento = '';
 
             Swal.fire({
-                title: `DESEA ELIMINAR EL ALMACÉN?`,
-                text: `Almacén: ${row.nombre}`,
+                title: `
+                                            Desea eliminar el método de pago ? `,
+                text: `
+                                            Almacén: $ {
+                                                row.nombre
+                                            }
+                                            `,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Sí, eliminar!",
@@ -178,7 +175,7 @@
 
                     Swal.fire({
                         title: 'Cargando...',
-                        html: 'Eliminando almacén...',
+                        html: 'Eliminando método de pago...',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
@@ -186,11 +183,11 @@
                     });
 
                     try {
-                        let urlDeleteAlmacen = null;
-                        urlDeleteAlmacen = urlDeleteAlmacen.replace(':id', id);
+                        let url = null;
+                        url = url.replace(':id', id);
                         const token = document.querySelector('input[name="_token"]').value;
 
-                        const response = await fetch(urlDeleteAlmacen, {
+                        const response = await fetch(url, {
                             method: 'DELETE',
                             headers: {
                                 'X-CSRF-TOKEN': token
@@ -203,17 +200,16 @@
                             dtPaymentMethods.draw();
                             toastr.success(res.message, 'OPERACIÓN COMPLETADA');
                         } else {
-                            toastr.error(res.message, 'ERROR EN EL SERVIDOR AL ELIMINAR ALMACÉN');
+                            toastr.error(res.message, 'ERROR EN EL SERVIDOR AL ELIMINAR MÉTODO DE PAGO');
                         }
 
                     } catch (error) {
-                        toastr.error(error, 'ERROR EN LA PETICIÓN ELIMINAR ALMACÉN');
+                        toastr.error(error, 'ERROR EN LA PETICIÓN ELIMINAR MÉTODO DE PAGO');
                     } finally {
                         Swal.close();
                     }
 
                 } else if (
-                    /* Read more about handling dismissals below */
                     result.dismiss === Swal.DismissReason.cancel
                 ) {
                     Swal.fire({
