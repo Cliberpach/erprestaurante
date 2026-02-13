@@ -68,6 +68,7 @@ class TableRepository
         $tables =   DB::select(
             'SELECT t.*
             FROM tables t
+            WHERE t.status <> "ANULADO"
             WHERE NOT EXISTS (
                 SELECT 1
                 FROM reservations r
