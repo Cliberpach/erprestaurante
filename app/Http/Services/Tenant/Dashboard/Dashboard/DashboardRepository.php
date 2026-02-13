@@ -100,6 +100,7 @@ class DashboardRepository
                 'u.name',
             )
             ->selectRaw('COALESCE(SUM(s.total), 0) as amount')
+            ->where('u.status', 'ACTIVO')
             ->where('mhr.role_id', 2)
             ->groupBy('u.id', 'u.name')
             ->orderByDesc('amount')
@@ -232,6 +233,7 @@ class DashboardRepository
                 'u.name',
             )
             ->selectRaw('COALESCE(SUM(s.total), 0) as amount')
+            ->where('u.status', 'ACTIVO')
             ->where('mhr.role_id', 2)
             ->groupBy('u.id', 'u.name')
             ->orderByDesc('amount')
