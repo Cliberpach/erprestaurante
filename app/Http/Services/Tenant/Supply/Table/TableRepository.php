@@ -69,7 +69,7 @@ class TableRepository
             'SELECT t.*
             FROM tables t
             WHERE t.status != "ANULADO"
-            WHERE NOT EXISTS (
+            AND NOT EXISTS (
                 SELECT 1
                 FROM reservations r
                 WHERE r.table_id = t.id
