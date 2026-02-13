@@ -167,28 +167,8 @@
                             <!-- MONTOS -->
                             <div class="row g-2 mb-3 text-center">
 
-                                <div class="col-4">
-                                    <div class="rounded border bg-white p-2">
-                                        <i class="fas fa-file-invoice-dollar text-info mb-1"></i>
-                                        <div class="small text-muted">Subtotal</div>
-                                        <div class="fw-semibold" id="subtotal"></div>
-                                    </div>
-                                </div>
+                                <div class="col-12">
 
-                                <div class="col-4">
-                                    <div class="rounded border bg-white p-2">
-                                        <i class="fas fa-percent text-warning mb-1"></i>
-                                        <div class="small text-muted">IGV</div>
-                                        <div class="fw-semibold" id="igv"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-4">
-                                    <div class="bg-light rounded border p-2">
-                                        <i class="fas fa-coins text-success mb-1"></i>
-                                        <div class="small fw-bold">Total</div>
-                                        <div class="fw-bold fs-6 text-success" id="totalDetail"></div>
-                                    </div>
                                 </div>
 
                             </div>
@@ -325,10 +305,7 @@
             }
 
             // MONTOS
-            document.querySelector('#subtotal').textContent = `S/ ${formatSoles(data.subtotal)}`;
-            document.querySelector('#igv').textContent = `S/ ${formatSoles(data.igv)}`;
             document.querySelector('#total').textContent = `S/ ${formatSoles(data.total)}`;
-            document.querySelector('#totalDetail').textContent = `S/ ${formatSoles(data.total)}`;
 
             // OBSERVACIÓN
             document.querySelector('#observation').textContent = data.observation ?? '—';
