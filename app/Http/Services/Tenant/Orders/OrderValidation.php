@@ -110,7 +110,7 @@ class OrderValidation
         }
 
         if (!$user->hasRole('MESERO')) {
-            throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
+            throw new Exception('NO TIENES ROL DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
         }
 
         if (Auth::user()->id != $order->creator_user_id) {

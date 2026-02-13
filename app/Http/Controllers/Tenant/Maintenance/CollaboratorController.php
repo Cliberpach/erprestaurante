@@ -10,7 +10,7 @@ use App\Models\Landlord\TypeIdentityDocument;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
 use App\Models\Tenant\Orders\Order;
-use App\Models\User;
+use App\Models\Tenant\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -183,12 +183,11 @@ array:11 [ // app\Http\Controllers\General\Herramientas\ColaboradorController.ph
 
             $user   =   User::where('collaborator_id', $id)->where('status', 'ACTIVO')->first();
             if ($user) {
-
                 $roles = $user->getRoleNames();
                 if ($roles->contains('CAJERO')) {
                     $cash_book  =   PettyCashBook::where('user_id', $user->id)->where('status', 'ABIERTO')->first();
                     if ($cash_book) {
-                        throw new Exception("No puedes eliminar el colaborador, tiene una caja abierta: " . $cash_book->petty_cash_name . ':' . $cash_book->id);
+                        throw new Exception("No puedes eliminar el colaborador, tiene una caja abierta: " . $cash_book->petty_cash_name . ', Movimiento:' . $cash_book->id);
                     }
                 }
                 if ($roles->contains('MESERO')) {

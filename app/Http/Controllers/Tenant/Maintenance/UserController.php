@@ -191,7 +191,7 @@ class UserController extends Controller
             if ($roles->contains('CAJERO')) {
                 $cash_book  =   PettyCashBook::where('user_id', $user->id)->where('status', 'ABIERTO')->first();
                 if ($cash_book) {
-                    throw new Exception("No puedes eliminar al usuario, tiene una caja abierta: " . $cash_book->petty_cash_name . ':' . $cash_book->id);
+                    throw new Exception("No puedes eliminar al usuario, tiene una caja abierta: " . $cash_book->petty_cash_name . ',Movimiento: ' . $cash_book->id);
                 }
             }
             if ($roles->contains('MESERO')) {
