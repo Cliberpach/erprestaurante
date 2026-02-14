@@ -88,6 +88,7 @@ class DishService
 
         $items = Dish::from('dishes as d')
             ->join('types_dish as td', 'td.id', 'd.type_dish_id')
+            ->where('d.status', 'ACTIVO')
             ->where(function ($q) use ($query) {
                 $q->where('d.name', 'LIKE', "%{$query}%")
                     ->orWhere('td.name', 'LIKE', "%{$query}%");

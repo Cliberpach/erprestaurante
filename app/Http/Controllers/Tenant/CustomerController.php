@@ -374,7 +374,7 @@ array:10 [ // app\Http\Controllers\Tenant\CustomerController.php:173
             $query = trim($request->get('q', ''));
             $vehicle_id = $request->get('vehicle_id', null);
 
-            $customers = DB::table('erprestaurante.customers as c');
+            $customers = DB::table('erprestaurante.customers as c')->where('c.status', 'ACTIVO');
 
             if ($query) {
                 $customers->whereRaw("CONCAT(type_document_abbreviation, ':', document_number, ' - ', name) LIKE ?", ["%{$query}%"])

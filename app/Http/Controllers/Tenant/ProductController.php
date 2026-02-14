@@ -274,6 +274,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
             ->leftjoin('warehouse_products as wp', 'wp.product_id', 'p.id')
             ->join('categories as c', 'c.id', 'p.category_id')
             ->join('brands as b', 'b.id', 'p.brand_id')
+            ->where('p.status', 'ACTIVO')
             ->where(function ($q) use ($query) {
                 $q->where('p.name', 'LIKE', "%{$query}%")
                     ->orWhere('c.name', 'LIKE', "%{$query}%")
