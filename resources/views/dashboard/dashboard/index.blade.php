@@ -372,7 +372,7 @@
             data.ventas_vs_compras
         );
 
-        setKpiSales('Kpi Ventas', 'Indicador de ventas', data.kpi_ventas);
+        setKpiSales('Kpi Ventas', 'ACTUAL VS ANTERIOR', data.kpi_ventas);
     }
 
     function getLang() {

@@ -85,7 +85,7 @@
         ],
     */
 
-    function setKpiSales(_title, subtitulo, _data) {
+    function setKpiSales(_title, _subtitle, _data) {
 
         const formattedData = formatDataKS(_data);
 
@@ -104,7 +104,9 @@
             title: {
                 text: _title
             },
-
+            subtitle: {
+                text: _subtitle
+            },
             xAxis: {
                 categories: ['DÍA', 'MES', 'AÑO'],
                 labels: {
