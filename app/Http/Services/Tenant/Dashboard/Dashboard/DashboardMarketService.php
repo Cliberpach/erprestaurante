@@ -57,9 +57,10 @@ class DashboardMarketService
             'payment_methods'   =>  $this->s_repository->getPaymentMethodMonth($desde, $hasta),
             'cost_center'       =>  $this->s_repository->getCostCenterMonth($desde, $hasta),
             'waiter_ranking'    =>  $this->s_repository->getWaiterRankingMonth($desde, $hasta),
-            //'cuentas_cobrar'    =>  $this->getCuentasCobrar(),
+            //'cuentas_cobrar'  =>  $this->getCuentasCobrar(),
             'cuentas_pagar'     =>  $this->s_repository->getCuentasPagar(),
-            'ventas_vs_compras' =>  $this->s_repository->getVentasVsComprasAnio($year)
+            'ventas_vs_compras' =>  $this->s_repository->getVentasVsComprasAnio($year),
+            'kpi_ventas'        =>  $this->s_repository->kpiDayMonthYear()
         ];
         return $data_graficos;
     }

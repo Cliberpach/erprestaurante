@@ -441,4 +441,38 @@ class DashboardRepository
 
         return $resultados;
     }
+
+    public function kpiDayMonthYear()
+    {
+        $kpiVentas = DB::selectOne('SELECT
+
+            COALESCE(SUM(CASE WHEN DATE(created_at) = CURDATE() THEN total END),0) AS today_sales,
+
+            COALESCE(SUM(CASE
+                WHEN DATE(created_at) = CURDATE() - INTERVAL 1 DAY
+                THEN total END),0) AS sales_yesterday,
+
+            COALESCE(SUM(CASE
+                WHEN YEAR(created_at) = YEAR(CURDATE())
+                AND MONTH(created_at) = MONTH(CURDATE())
+                THEN total END),0) AS sales_month,
+
+            COALESCE(SUM(CASE
+                WHEN YEAR(created_at) = YEAR(CURDATE() - INTERVAL 1 MONTH)
+                AND MONTH(created_at) = MONTH(CURDATE() - INTERVAL 1 MONTH)
+                THEN total END),0) AS sales_previous_month,
+
+            COALESCE(SUM(CASE
+                WHEN YEAR(created_at) = YEAR(CURDATE())
+                THEN total END),0) AS sales_year,
+
+            COALESCE(SUM(CASE
+                WHEN YEAR(created_at) = YEAR(CURDATE()) - 1
+                THEN total END),0) AS sales_previous_year
+
+            FROM sales
+        ');
+
+        return $kpiVentas;
+    }
 }

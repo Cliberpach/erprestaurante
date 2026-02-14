@@ -129,6 +129,10 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     @include('dashboard.dashboard.graficos.ventas_compras_anio')
                 </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    @include('dashboard.dashboard.graficos.kpi_sales')
+                </div>
             </div>
         </div>
     </div>
@@ -367,6 +371,8 @@
             'NIVEL DE VENTAS Y COMPRAS POR AÑO',
             data.ventas_vs_compras
         );
+
+        setKpiSales('Kpi Ventas', 'Indicador de ventas', data.kpi_ventas);
     }
 
     function getLang() {
@@ -413,7 +419,7 @@
     function setMesActual() {
         const mesActual = new Date().getMonth() + 1;
         const selectMes = $('#filtro_mes');
-        selectMes.val(mesActual).trigger('change');
+        window.filterMesSelect.setValue(mesActual);
     }
 
     function cargarAnios() {
