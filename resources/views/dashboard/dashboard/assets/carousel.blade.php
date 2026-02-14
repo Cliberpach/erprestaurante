@@ -81,7 +81,6 @@
         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
             aria-current="true"></button>
         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
     </div>
 
     <div class="carousel-inner">
@@ -112,11 +111,6 @@
                         <p id="quantity_products"></p>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="carousel-item">
-            <div class="row g-3 align-items-stretch">
                 <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Utilidad Productos</div>
@@ -129,6 +123,12 @@
                         <p id="utility_dishes">S/0.00</p>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="carousel-item">
+            <div class="row g-3 align-items-stretch">
+
                 <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Monto Boletas</div>
@@ -141,11 +141,6 @@
                         <p id="total_facturas"></p>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="carousel-item">
-            <div class="row g-3 align-items-stretch">
                 <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Cuentas Pagar</div>
@@ -154,7 +149,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
