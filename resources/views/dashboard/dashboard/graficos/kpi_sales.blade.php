@@ -119,7 +119,7 @@
                 allowDecimals: false,
                 min: 0,
                 title: {
-                    text: 'TWh',
+                    text: 'Monto',
                     skew3d: true,
                     style: {
                         fontSize: '16px'

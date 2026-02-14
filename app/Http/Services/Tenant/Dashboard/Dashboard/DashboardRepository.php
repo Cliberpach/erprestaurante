@@ -470,7 +470,8 @@ class DashboardRepository
                 WHEN YEAR(created_at) = YEAR(CURDATE()) - 1
                 THEN total END),0) AS sales_previous_year
 
-            FROM sales
+            FROM sales s
+            WHERE s.sunat_status NOT IN("ANULADO","BAJA")
         ');
 
         return $kpiVentas;
