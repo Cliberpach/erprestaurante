@@ -117,28 +117,49 @@ class DashboardRepository
                 FROM sales
                 WHERE created_at BETWEEN ? AND ?
             )
+
             SELECT
+                /* UTILIDADES */
+                (SELECT COALESCE(SUM(sp.sale_price - p.purchase_price),0)
+                FROM filtered_sales fs
+                JOIN sales_products sp ON sp.sale_id = fs.id
+                JOIN products p ON p.id = sp.product_id
+                ) AS utility_products,
 
-                COALESCE(SUM(sp.sale_price - p.purchase_price), 0) AS utility_products,
-                COALESCE(SUM(sd.sale_price - d.purchase_price), 0) AS utility_dishes,
+                (SELECT COALESCE(SUM(sd.sale_price - d.purchase_price),0)
+                FROM filtered_sales fs
+                JOIN sales_dishes sd ON sd.sale_id = fs.id
+                JOIN dishes d ON d.id = sd.dish_id
+                ) AS utility_dishes,
 
-                COALESCE(SUM(CASE WHEN fs.type_sale_code = "03" THEN fs.total END), 0) AS total_boletas,
-                COALESCE(SUM(CASE WHEN fs.type_sale_code = "01" THEN fs.total END), 0) AS total_facturas,
-                COALESCE(SUM(CASE WHEN fs.type_sale_code IN ("03","01") THEN fs.total END), 0) AS total_invoices,
+                /* TOTALES */
+                (SELECT COALESCE(SUM(total),0)
+                FROM filtered_sales
+                WHERE type_sale_code = "03"
+                ) AS total_boletas,
 
-                COUNT(DISTINCT sp.id) AS quantity_products,
-                COUNT(DISTINCT sd.id) AS quantity_dishes
+                (SELECT COALESCE(SUM(total),0)
+                FROM filtered_sales
+                WHERE type_sale_code = "01"
+                ) AS total_facturas,
 
-            FROM filtered_sales fs
+                (SELECT COALESCE(SUM(total),0)
+                FROM filtered_sales
+                WHERE type_sale_code IN ("03","01")
+                ) AS total_invoices,
 
-            LEFT JOIN sales_products sp ON sp.sale_id = fs.id
-            LEFT JOIN products p ON p.id = sp.product_id
+                /* CANTIDADES */
+                (SELECT COUNT(*) FROM sales_products sp
+                JOIN filtered_sales fs ON fs.id = sp.sale_id
+                ) AS quantity_products,
 
-            LEFT JOIN sales_dishes sd ON sd.sale_id = fs.id
-            LEFT JOIN dishes d ON d.id = sd.dish_id
+                (SELECT COUNT(*) FROM sales_dishes sd
+                JOIN filtered_sales fs ON fs.id = sd.sale_id
+                ) AS quantity_dishes
             ',
             [$desde, $hasta]
         );
+
         return $report;
     }
 

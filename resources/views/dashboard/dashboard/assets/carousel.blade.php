@@ -88,25 +88,25 @@
 
         <div class="carousel-item active">
             <div class="row g-3 align-items-stretch">
-                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Utilidad</div>
                         <p id="utility_total"></p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Monto Facturación</div>
                         <p id="total_invoices"></p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Platos Vendidos</div>
                         <p id="quantity_dishes"></p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Productos Vendidos</div>
                         <p id="quantity_products"></p>
@@ -117,25 +117,25 @@
 
         <div class="carousel-item">
             <div class="row g-3 align-items-stretch">
-                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Utilidad Productos</div>
                         <p id="utility_products">S/0.00</p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Utilidad Platos</div>
                         <p id="utility_dishes">S/0.00</p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Monto Boletas</div>
                         <p id="total_boletas"></p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Monto Facturas</div>
                         <p id="total_facturas"></p>
@@ -146,7 +146,7 @@
 
         <div class="carousel-item">
             <div class="row g-3 align-items-stretch">
-                <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
                     <div class="dashboard-card">
                         <div>Cuentas Pagar</div>
                         <p id="total_supplier_accounts"></p>
