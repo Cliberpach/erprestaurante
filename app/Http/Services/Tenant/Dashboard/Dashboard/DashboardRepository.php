@@ -124,14 +124,14 @@ class DashboardRepository
 
             SELECT
                 /* UTILIDADES */
-                (SELECT COALESCE(SUM(sp.sale_price - p.purchase_price),0)
+                (SELECT COALESCE(SUM((sp.sale_price - p.purchase_price)*sp.quantity) ,0)
                 FROM filtered_sales fs
                 JOIN sales_products sp ON sp.sale_id = fs.id
                 JOIN products p ON p.id = sp.product_id
                 WHERE sp.status <> "ANULADO"
                 ) AS utility_products,
 
-                (SELECT COALESCE(SUM(sd.sale_price - d.purchase_price),0)
+                (SELECT COALESCE(SUM((sd.sale_price - d.purchase_price)*sd.quantity) * sd.quantity,0)
                 FROM filtered_sales fs
                 JOIN sales_dishes sd ON sd.sale_id = fs.id
                 JOIN dishes d ON d.id = sd.dish_id
