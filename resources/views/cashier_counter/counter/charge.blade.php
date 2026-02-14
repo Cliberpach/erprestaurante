@@ -10,7 +10,7 @@
     <div class="card">
 
         <div class="card-header">
-            <div class="row g-3 align-items-center">
+            <div class="row g-3 align-items-center mb-3">
 
                 <!-- TÍTULO -->
 
@@ -84,7 +84,16 @@
                     </div>
                 </div>
             </div>
+            <div class="row align-items-center">
+                <span class="legend-canceled me-2"></span>
+                <small class="text-muted fw-semibold">
+                    <i class="fas fa-square text-danger me-1"></i>
+                    ITEMS ELIMINADOS
+                </small>
+            </div>
         </div>
+
+
 
         <div class="card-body">
             <div class="row">
@@ -124,17 +133,36 @@
     </div>
 @endsection
 
-<style>
-    .swal2-container {
-        z-index: 9999999;
-    }
-</style>
+@section('css')
+    <style>
+        .swal2-container {
+            z-index: 9999999;
+        }
+
+        .item-canceled {
+            background-color: #ed7272;
+            color: #4a0d12;
+            border-left: 4px solid #8f1822;
+        }
+
+        .item-canceled td {
+            background-color: transparent;
+        }
+
+        .item-canceled:hover {
+            background-color: #c86a6a;
+            transition: background-color 0.2s ease;
+        }
+
+    </style>
+@endsection
 
 @section('js')
     <script>
         window.app = {
             order: @json($order),
             lstDetail: @json($lst_detail),
+            lstDetailCanceled: @json($lst_canceled),
             customerFormatted: @json($customer_formatted),
             eventsAdd: function() {
                 eventsMdlCreateCustomer();

@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Landlord\Company;
 use App\Models\Tenant\WorkShop\Vehicle;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Throwable;
 
 class FormatController extends Controller
@@ -109,6 +106,15 @@ class FormatController extends Controller
         }
 
         return $formatted;
+    }
+
+    public static function formatDetailOrder(array $products, array $dishes): array
+    {
+        $products_formatted =   FormatController::formatLstProducts($products);
+        $dishes_formatted   =   FormatController::formatLstDishes($dishes);
+
+        $details = array_merge($products_formatted, $dishes_formatted);
+        return $details;
     }
 
     public static function formatLstInventory(array $items): array

@@ -1,4 +1,4 @@
-export function paintTblDetail(lstItems) {
+export function paintTblDetail(lstItems, lstItemsCanceled) {
     let filas = ``;
     lstItems.forEach((item) => {
         filas += `<tr>
@@ -8,6 +8,19 @@ export function paintTblDetail(lstItems) {
                             <td>${formatSoles(item.sale_price)}</td>
                             <td>${formatSoles(item.total)}</td>
                         </tr>`;
+    })
+
+    console.log('canceled',lstItemsCanceled);
+    console.log('actives',lstItems);
+
+    lstItemsCanceled.forEach((item) => {
+        filas += `<tr class="item-canceled">
+                        <td>${item.quantity}</td>
+                        <td>${item.name}</td>
+                        <td>${item.type_name}</td>
+                        <td>${formatSoles(item.sale_price)}</td>
+                        <td>${formatSoles(item.total)}</td>
+                </tr>`;
     })
 
     const tbody = document.querySelector('#dt-detail tbody');

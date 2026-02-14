@@ -1,11 +1,12 @@
 import { openMdlCharge } from "../modals/action";
-import { amounts, lstDetail, setLstDetail } from "./state";
+import { amounts, lstDetail, lstDetailCanceled, setLstDetail, setLstDetailCanceled } from "./state";
 import { paintAmounts, paintTblDetail } from "./ui";
 
 export function loadDataPreview() {
     setLstDetail(app.lstDetail);
+    setLstDetailCanceled(app.lstDetailCanceled);
     setAmounts(app.order);
-    paintTblDetail(lstDetail);
+    paintTblDetail(lstDetail,lstDetailCanceled);
     paintAmounts(amounts);
 }
 

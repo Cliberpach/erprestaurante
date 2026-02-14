@@ -278,10 +278,17 @@ class OrderService
         $order_dishes       =   $this->s_repository->getOrderDishes($order_id)->toArray();
         $order_products     =   $this->s_repository->getOrderProducts($order_id)->toArray();
 
-        $lst_products       =   FormatController::formatLstProducts($order_products);
-        $lst_dishes         =   FormatController::formatLstDishes($order_dishes);
-        $lst_detail         =   array_merge($lst_products, $lst_dishes);
-        return $lst_detail;
+        $details        =   FormatController::formatDetailOrder($order_products, $order_dishes);
+        return $details;
+    }
+
+    public function getOrderDetailCanceled(int $order_id)
+    {
+        $dishes_canceled    =   $this->s_repository->getOrderDishesCanceled($order_id)->toArray();
+        $products_canceled  =   $this->s_repository->getOrderProductsCanceled($order_id)->toArray();
+
+        $details    =   FormatController::formatDetailOrder($products_canceled, $dishes_canceled);
+        return $details;
     }
 
     public function getOrderDishes(int $order_id)
@@ -292,6 +299,16 @@ class OrderService
     public function getOrderProducts(int $order_id)
     {
         return $this->s_repository->getOrderProducts($order_id);
+    }
+
+    public function getOrderDishesCanceled(int $order_id)
+    {
+        return $this->s_repository->getOrderDishesCanceled($order_id);
+    }
+
+    public function getOrderProductsCanceled(int $order_id)
+    {
+        return $this->s_repository->getOrderProductsCanceled($order_id);
     }
 
     public function setStatusInvoice(int $id, string $status, $invoice)
@@ -315,7 +332,7 @@ class OrderService
     {
         $order_id       =   $data['order_id'];
         $table_selected =   $data['table_selected'];
-        $order  =   $this->s_repository->findOrder($data['order_id']);
+        $order          =   $this->s_repository->findOrder($data['order_id']);
         $data['order']  =   $order;
         $this->s_validation->validationChangeTable($data);
         $table_old      =   $order->table_id;

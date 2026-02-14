@@ -25,7 +25,10 @@ class CounterRepository
                         'o.status_invoice',
                         'o.total',
                         'o.subtotal',
-                        'o.igv'
+                        'o.igv',
+                        
+                        'o.sale_serie',
+                        'o.sale_correlative'
                     )->first();
 
         return $order;

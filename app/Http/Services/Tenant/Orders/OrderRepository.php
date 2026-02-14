@@ -74,6 +74,18 @@ class OrderRepository
         return $order_dishes;
     }
 
+    public function getOrderProductsCanceled(int $id)
+    {
+        $order_products =   OrderProduct::where('order_id', $id)->where('status', 'ANULADO')->where('delete_status', true)->get();
+        return $order_products;
+    }
+
+    public function getOrderDishesCanceled(int $id)
+    {
+        $order_dishes =   OrderDish::where('order_id', $id)->where('status', 'ANULADO')->where('delete_status', true)->get();
+        return $order_dishes;
+    }
+
     public function deleteOrderProducts(int $order_id)
     {
         OrderProduct::where('order_id', $order_id)->delete();
