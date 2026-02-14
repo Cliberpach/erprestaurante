@@ -2,7 +2,7 @@
     .dashboard-card {
         background-color: #1e3a8a;
         color: white;
-        padding: 16px;
+        padding: 12px;
         border-radius: 15px;
         border: 3px solid white;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
