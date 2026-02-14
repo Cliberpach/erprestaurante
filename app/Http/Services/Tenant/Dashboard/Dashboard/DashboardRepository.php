@@ -19,6 +19,7 @@ class DashboardRepository
                 'sd.sale_price',
                 DB::raw('SUM(sd.total) AS total')
             )
+            ->whereNotIn('s.status', ['ANULADO', 'BAJA'])
             ->whereBetween('s.created_at', [$desde, $hasta])
             ->groupBy('d.id', 'd.name', 'sd.sale_price')
             ->orderByDesc('total')
@@ -39,6 +40,7 @@ class DashboardRepository
                 'sp.sale_price',
                 DB::raw('SUM(sp.total) AS total')
             )
+            ->whereNotIn('s.status', ['ANULADO', 'BAJA'])
             ->whereBetween('s.created_at', [$desde, $hasta])
             ->groupBy('p.id', 'p.name', 'sp.sale_price')
             ->orderByDesc('total')
@@ -179,6 +181,7 @@ class DashboardRepository
                 'p.name',
                 DB::raw('SUM(sp.quantity) as cantidad_vendida'),
             )
+            ->whereNotIn('s.status', ['ANULADO', 'BAJA'])
             ->whereBetween('s.created_at', [$desde, $hasta])
             ->groupBy('p.id', 'p.name')
             ->orderByDesc('cantidad_vendida')
@@ -202,6 +205,7 @@ class DashboardRepository
                 'd.name',
                 DB::raw('SUM(sd.quantity) as cantidad_vendida')
             )
+            ->whereNotIn('s.status', ['ANULADO', 'BAJA'])
             ->whereBetween('s.created_at', [$desde, $hasta])
             ->groupBy('d.id', 'd.name')
             ->orderByDesc('cantidad_vendida')

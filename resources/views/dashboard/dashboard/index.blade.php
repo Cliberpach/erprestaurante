@@ -324,13 +324,13 @@
 
         setProductosMes(
             'PRODUCTOS MÁS VENDIDOS DEL MES',
-            '',
+            'En ventas no anuladas',
             data.productos
         );
 
         setPlatosMes(
             'PLATOS MÁS VENDIDOS DEL MES',
-            '',
+            'En ventas no anuladas',
             data.platos
         );
 
