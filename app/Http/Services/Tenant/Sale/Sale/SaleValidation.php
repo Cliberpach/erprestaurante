@@ -215,6 +215,11 @@ class SaleValidation
         $cash_book      =   $this->s_cash->getCashBookUser($user->id);
         $lst_pays       =   json_decode($data['lst_pays']);
 
+        $roles  =   Auth::user()->getRoleNames();
+        if (!$roles->contains('CAJERO')) {
+            throw new Exception('No tienes rol de Cajero para acceder a esta funcionalidad');
+        }
+
         if ($order->status !== 'ACTIVO') {
             throw new Exception("EL PEDIDO SE ENCUENTRA: " . $order->status);
         }

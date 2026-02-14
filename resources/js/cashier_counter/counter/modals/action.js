@@ -13,7 +13,7 @@ export function actionPaymentMethod(value) {
     if (value !== 'MIXTO') {
         const inputPayment = document.querySelector(`.input-payment-${value}`);
         inputPayment.disabled = false;
-        inputPayment.value = formatSoles(amounts.totalPay);
+        inputPayment.value = formatNumber(amounts.totalPay);
         inputPayment.dispatchEvent(new Event('input', { bubbles: true }));
     } else {
         enabledInputsPayment();

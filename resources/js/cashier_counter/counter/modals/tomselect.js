@@ -14,10 +14,6 @@ export function loadPaymentMethod() {
             labelField: 'description',
             searchField: ['description', 'id'],
             create: false,
-            sortField: {
-                field: 'id',
-                direction: 'desc'
-            },
             plugins: ['clear_button'],
             render: {
                 option: (item, escape) => `

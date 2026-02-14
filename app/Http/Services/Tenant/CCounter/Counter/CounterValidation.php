@@ -6,6 +6,7 @@ use App\Http\Controllers\FormatController;
 use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Orders\OrderService;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class CounterValidation
 {
@@ -22,6 +23,11 @@ class CounterValidation
     {
         $order  =   $this->s_repository->getOrder($order_id);
 
+        $roles  =   Auth::user()->getRoleNames();
+        if (!$roles->contains('CAJERO')) {
+            throw new Exception('No tiene rol de Cajero para acceder a esta funcionalidad');
+        }
+
         if (!$order) {
             throw new Exception('PEDIDO NO DISPONIBLE');
         }
@@ -35,7 +41,7 @@ class CounterValidation
 
         $lst_detail_active      =   $this->s_order->getOrderDetail($order_id);
         $lst_detail_canceled    =   $this->s_order->getOrderDetailCanceled($order_id);
-       
+
         $payment_methods    =   UtilController::getPaymentMethods();
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
         $invoice_types      =   UtilController::getInvoiceTypes()->whereIn('id', [65, 66, 67]);

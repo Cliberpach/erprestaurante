@@ -277,6 +277,10 @@ function formatSoles(valor) {
     });
 }
 
+function formatNumber(value) {
+    return parseFloat(value).toFixed(2);
+}
+
 function redirect(routeName) {
     window.location.href = route(routeName);
 }
