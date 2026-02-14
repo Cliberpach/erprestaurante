@@ -151,11 +151,11 @@ class DashboardRepository
                 ) AS total_invoices,
 
                 /* CANTIDADES */
-                (SELECT COUNT(*) FROM sales_products sp
+                (SELECT SUM(sp.quantity) FROM sales_products sp
                 JOIN filtered_sales fs ON fs.id = sp.sale_id
                 ) AS quantity_products,
 
-                (SELECT COUNT(*) FROM sales_dishes sd
+                (SELECT SUM(sd.quantity) FROM sales_dishes sd
                 JOIN filtered_sales fs ON fs.id = sd.sale_id
                 ) AS quantity_dishes
             ',
