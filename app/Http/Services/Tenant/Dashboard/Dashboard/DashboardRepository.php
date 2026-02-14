@@ -126,12 +126,14 @@ class DashboardRepository
                 FROM filtered_sales fs
                 JOIN sales_products sp ON sp.sale_id = fs.id
                 JOIN products p ON p.id = sp.product_id
+                WHERE sp.status <> "ANULADO"
                 ) AS utility_products,
 
                 (SELECT COALESCE(SUM(sd.sale_price - d.purchase_price),0)
                 FROM filtered_sales fs
                 JOIN sales_dishes sd ON sd.sale_id = fs.id
                 JOIN dishes d ON d.id = sd.dish_id
+                WHERE sd.status <> "ANULADO"
                 ) AS utility_dishes,
 
                 /* TOTALES */
@@ -153,10 +155,12 @@ class DashboardRepository
                 /* CANTIDADES */
                 (SELECT SUM(sp.quantity) FROM sales_products sp
                 JOIN filtered_sales fs ON fs.id = sp.sale_id
+                WHERE sp.status <> "ANULADO"
                 ) AS quantity_products,
 
                 (SELECT SUM(sd.quantity) FROM sales_dishes sd
                 JOIN filtered_sales fs ON fs.id = sd.sale_id
+                WHERE sd.status <> "ANULADO"
                 ) AS quantity_dishes
             ',
             [$desde, $hasta]
