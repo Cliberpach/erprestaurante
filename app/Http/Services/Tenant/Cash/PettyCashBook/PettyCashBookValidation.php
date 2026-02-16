@@ -68,7 +68,6 @@ class PettyCashBookValidation
         }
     }
 
-
     public function validateUpdateCash(array $data, int $id)
     {
         $petty_cash_book    =   $this->s_repository->getPettyCashBook($id);

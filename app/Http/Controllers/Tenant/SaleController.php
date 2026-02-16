@@ -53,6 +53,8 @@ class SaleController extends Controller
                 's.created_at as fecha_registro',
                 's.customer_id',
                 's.customer_name',
+                DB::raw("CONCAT('CM-', LPAD(s.petty_cash_book_id, 8, '0')) as cash_book_code"),
+                's.creator_user_name',
                 DB::raw('CONCAT(s.customer_type_document,":",s.customer_document_number,"-",s.customer_name) as customer_full_name'),
                 's.serie',
                 's.correlative',
@@ -106,6 +108,9 @@ class SaleController extends Controller
                             s.correlative
                         ) LIKE ?
                     ", ["%{$keyword}%"]);
+            })
+            ->filterColumn('cash_book_code', function ($query, $keyword) {
+                $query->whereRaw("CONCAT('CM-', LPAD(s.petty_cash_book_id, 8, '0')) LIKE ?", ["%{$keyword}%"]);
             })
             ->make(true);
     }

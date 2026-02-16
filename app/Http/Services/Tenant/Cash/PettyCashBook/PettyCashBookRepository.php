@@ -222,4 +222,44 @@ class PettyCashBookRepository
         $has    =   Order::where('petty_cash_book_id', $id)->where('status', 'ACTIVO')->where('status_invoice', 'NO FACTURADO')->exists();
         return $has;
     }
+
+    public function getProductsCanceled(int $id)
+    {
+        $products   =   DB::table('orders_products as op')
+            ->join('orders as o', 'o.id', 'op.order_id')
+            ->join('sales as s', 's.id', 'o.sale_id')
+            ->where('s.petty_cash_book_id', $id)
+            ->whereNull('s.converted_from_id')
+            ->where('op.status', 'ANULADO')
+            ->select(
+                'o.code',
+                'o.creator_user_name',
+                'op.updated_at',
+                DB::raw("'PRODUCTO' as item_type"),
+                'op.product_name as item_name',
+                'op.quantity as item_quantity',
+                'op.sale_price as item_sale_price',
+                'op.total AS  item_total'
+            );
+
+        $dishes = DB::table('orders_dishes as od')
+            ->join('orders as o', 'o.id', 'od.order_id')
+            ->join('sales as s', 's.id', 'o.sale_id')
+            ->where('s.petty_cash_book_id', $id)
+            ->whereNull('s.converted_from_id')
+            ->where('od.status', 'ANULADO')
+            ->select(
+                'o.code',
+                'o.creator_user_name',
+                'od.updated_at',
+                DB::raw("'PLATO' as item_type"),
+                'od.dish_name as item_name',
+                'od.quantity AS item_quantity',
+                'od.sale_price AS item_sale_price',
+                'od.total AS item_total'
+            );
+
+        $items_canceled =   $products->unionAll($dishes)->orderBy('updated_at','desc')->get();
+        return $items_canceled;
+    }
 }

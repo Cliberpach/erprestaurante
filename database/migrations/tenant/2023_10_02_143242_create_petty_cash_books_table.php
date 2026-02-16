@@ -42,7 +42,6 @@ return new class extends Migration
             $table->unsignedBigInteger('delete_user_id')->nullable();
             $table->string('delete_user_name')->nullable();
 
-
             $table->timestamps();
         });
     }

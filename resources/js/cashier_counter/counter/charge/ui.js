@@ -2,24 +2,23 @@ export function paintTblDetail(lstItems, lstItemsCanceled) {
     let filas = ``;
     lstItems.forEach((item) => {
         filas += `<tr>
-                            <td>${item.quantity}</td>
-                            <td>${item.name}</td>
-                            <td>${item.type_name}</td>
-                            <td>${formatSoles(item.sale_price)}</td>
-                            <td>${formatSoles(item.total)}</td>
-                        </tr>`;
+                    <td>ACTIVO</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.name}</td>
+                    <td>${item.type_name}</td>
+                    <td>${formatSoles(item.sale_price)}</td>
+                    <td>${formatSoles(item.total)}</td>
+                </tr>`;
     })
-
-    console.log('canceled',lstItemsCanceled);
-    console.log('actives',lstItems);
 
     lstItemsCanceled.forEach((item) => {
         filas += `<tr class="item-canceled">
-                        <td>${item.quantity}</td>
-                        <td>${item.name}</td>
-                        <td>${item.type_name}</td>
-                        <td>${formatSoles(item.sale_price)}</td>
-                        <td>${formatSoles(item.total)}</td>
+                    <td>ELIMINADO</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.name}</td>
+                    <td>${item.type_name}</td>
+                    <td>${formatSoles(item.sale_price)}</td>
+                    <td>${formatSoles(item.total)}</td>
                 </tr>`;
     })
 

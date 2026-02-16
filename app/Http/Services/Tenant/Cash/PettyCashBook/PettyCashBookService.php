@@ -62,6 +62,7 @@ class PettyCashBookService
         $payment_methods    =   PaymentMethod::where('estado', 'ACTIVO')->get();
 
         $consolidated       =   $this->getConsolidated($id);
+        $consolidated_items =   $this->getConsolidatedItems($id);
 
         //========= EGRESOS ===========
         $exit_moneys            =   ExitMoney::where('petty_cash_book_id', $id)->where('status', true)->get();
@@ -105,7 +106,8 @@ class PettyCashBookService
 
                 'exit_moneys',
                 'consolidated',
-                'customer_pays'
+                'customer_pays',
+                'consolidated_items'
             )
         );
 
@@ -185,19 +187,19 @@ class PettyCashBookService
             ->with('pays')
             ->get();
 
+        $pays = $sales->pluck('pays')->flatten();
+
         $report_sales   =   [];
         foreach ($payment_methods as $payment_method) {
-            $item   =   [];
+            $amount = $pays
+                ->where('payment_method_id', $payment_method->id)
+                ->sum('amount');
 
-            $amount     =   SalePay::where('payment_method_id', $payment_method->id)->sum('amount');
-
-            $item       =   [
-                'payment_method_id'     =>  $payment_method->id,
-                'payment_method_name'   =>  $payment_method->description,
-                'amount'                =>  $amount
+            $report_sales[] = [
+                'payment_method_id'   => $payment_method->id,
+                'payment_method_name' => $payment_method->description,
+                'amount'              => $amount
             ];
-
-            $report_sales[] =   $item;
         }
 
         $total  =   $sales->sum('total');
@@ -331,5 +333,11 @@ class PettyCashBookService
         $programming            =   $this->s_programming->auto($cash_book);
 
         return $programming;
+    }
+
+    public function getConsolidatedItems(int $petty_cash_book_id)
+    {
+        $items_canceled  =   $this->s_repository->getProductsCanceled($petty_cash_book_id);
+        return $items_canceled;
     }
 }

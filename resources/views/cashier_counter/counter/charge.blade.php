@@ -96,6 +96,19 @@
 
 
         <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                    <label for="filter_status">
+                        <i class="fas fa-signal text-primary me-1"></i>
+                        Estado Item
+                    </label>
+                    <select name="filter_status" id="filter_status">
+                        <option value="TODO">Todo</option>
+                        <option value="ACTIVO">Activo</option>
+                        <option value="ELIMINADO">Eliminado</option>
+                    </select>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
@@ -140,20 +153,19 @@
         }
 
         .item-canceled {
-            background-color: #ed7272;
-            color: #4a0d12;
-            border-left: 4px solid #8f1822;
+            background-color: #ed7272 !important;
+            color: #4a0d12 !important;
+            border-left: 4px solid #8f1822 !important;
         }
 
         .item-canceled td {
-            background-color: transparent;
+            background-color: transparent !important;
         }
 
         .item-canceled:hover {
-            background-color: #c86a6a;
-            transition: background-color 0.2s ease;
+            background-color: #c86a6a !important;
+            transition: background-color 0.2s ease !important;
         }
-
     </style>
 @endsection
 

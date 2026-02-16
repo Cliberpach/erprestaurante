@@ -231,6 +231,10 @@ class SaleValidation
             throw new Exception("DEBES PERTENECER A UNA CAJA APERTURADA");
         }
 
+        if ($order->petty_cash_book_id !== $cash_book->petty_cash_book_id) {
+            throw new Exception("Debes pertenecer a la misma caja del pedido para poder facturarlo.");
+        }
+
         //======== RUC Y BOLETA ======
         if ($customer->type_document_abbreviation === 'RUC' && $invoice->id == 65) {
             throw new Exception("NO SE PERMITEN BOLETAS DE VENTA CON RUC!!!");

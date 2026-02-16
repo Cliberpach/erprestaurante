@@ -44,7 +44,6 @@
             word-wrap: break-word;
             border-collapse: collapse;
             margin-bottom: 30px;
-            margin-top: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
@@ -158,7 +157,8 @@
 
                 <!-- Columna 2: Información de la empresa -->
                 <td style="width: 60%; text-align: left;">
-                    <h2 style="margin: 0; font-size: 17px; color: #3a6ea5;">{{ $company->abbreviated_business_name }}</h2>
+                    <h2 style="margin: 0; font-size: 17px; color: #3a6ea5;">{{ $company->abbreviated_business_name }}
+                    </h2>
                     <p style="margin: 0; font-size: 14px; color: #555;">RUC: {{ $company->ruc }}</p>
                     <p style="margin: 0; font-size: 14px; color: #555;">{{ $company->fiscal_address }}</p>
                     <p style="margin: 0; font-size: 14px; color: #555;">Teléfono: {{ $company->phone }}</p>
@@ -211,8 +211,7 @@
         </table>
 
 
-        <h5 style="font-size:9px;">VENTAS DEL DÍA</h5>
-
+        <h5 style="font-size:9px;margin-bottom:6px;">VENTAS DEL DÍA</h5>
         <table class="table-info">
             <thead>
                 <tr>
@@ -225,7 +224,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sale_documents as $sale)
+                @foreach ($sale_documents->whereNull('converted_from_id') as $sale)
                     <tr>
                         <td>{{ $sale->serie . '-' . $sale->correlative }}</td>
                         <td>{{ $sale->customer_name }}</td>
@@ -262,8 +261,29 @@
             </tfoot>
         </table>
 
-        <h5 style="font-size:9px;">EGRESOS</h5>
+        <h5 style="font-size:9px;margin-bottom:6px;">COMPROBANTES CONVERTIDOS</h5>
+        <table class="table-info">
+            <thead>
+                <tr>
+                    <th>COMPROBANTE</th>
+                    <th>ORIGEN</th>
+                    <th>CLIENTE</th>
+                    <th>MONTO</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($sale_documents->whereNotNull('converted_from_id') as $sale)
+                    <tr>
+                        <td>{{ $sale->serie . '-' . $sale->correlative }}</td>
+                        <td>{{ $sale->converted_from_serie }}</td>
+                        <td>{{ $sale->customer_name }}</td>
+                        <td style="text-align: right;">{{ number_format($sale->total, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
+        <h5 style="font-size:9px;margin-bottom:6px;">EGRESOS</h5>
         <table class="table-info table-sm table" style="border-collapse: collapse; width: 100%;">
             <thead style="background-color: #c0c0c0; color: #000;">
                 <tr>
@@ -304,8 +324,7 @@
         </table>
 
 
-        <h5 style="font-size:9px;">COBRANZA CLIENTE</h5>
-
+        <h5 style="font-size:9px;margin-bottom:6px;">COBRANZA CLIENTE</h5>
         <table class="table-info table-sm table" style="border-collapse: collapse; width: 100%;">
             <thead style="background-color: #c0c0c0; color: #000;">
                 <tr>
@@ -436,10 +455,63 @@
         </table>
 
 
+        <h5 style="font-size:10px; margin-top:25px;">Productos anulados en pedidos</h5>
+        <table class="table-info" style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background:#f4f8fc;">
+                    <th>PEDIDO</th>
+                    <th>MOZO</th>
+                    <th>PRODUCTO</th>
+                    <th style="text-align:right;">CANT.</th>
+                    <th style="text-align:right;">P. VENTA</th>
+                    <th style="text-align:right;">TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($consolidated_items->where('item_type', 'PRODUCTO') as $item)
+                    <tr>
+                        <td>{{ $item->code }}</td>
+                        <td>{{ $item->creator_user_name }}</td>
+                        <td>{{ $item->item_name }}</td>
+                        <td style="text-align:right;">{{ $item->item_quantity }}</td>
+                        <td style="text-align:right;">S/ {{ number_format($item->item_sale_price, 2) }}</td>
+                        <td style="text-align:right;">S/ {{ number_format($item->item_total, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <h5 style="font-size:10px; margin-top:15px;">Platos anulados en pedidos</h5>
+        <table class="table-info" style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background:#f4f8fc;">
+                    <th>PEDIDO</th>
+                    <th>Mozo</th>
+                    <th>PLATO</th>
+                    <th style="text-align:right;">CANT.</th>
+                    <th style="text-align:right;">P. VENTA</th>
+                    <th style="text-align:right;">TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($consolidated_items->where('item_type', 'PLATO') as $item)
+                    <tr>
+                        <td>{{ $item->code }}</td>
+                        <td>{{ $item->creator_user_name }}</td>
+                        <td>{{ $item->item_name }}</td>
+                        <td style="text-align:right;">{{ $item->item_quantity }}</td>
+                        <td style="text-align:right;">S/ {{ number_format($item->item_sale_price, 2) }}</td>
+                        <td style="text-align:right;">S/ {{ number_format($item->item_total, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
         <!-- Footer -->
         <footer>
             <div class="footer-content">
-                <p>&copy; {{ now()->year }} {{ $company->abbreviated_business_name }} - Todos los derechos reservados</p>
+                <p>&copy; {{ now()->year }} {{ $company->abbreviated_business_name }} - Todos los derechos
+                    reservados</p>
             </div>
         </footer>
 

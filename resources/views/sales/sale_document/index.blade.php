@@ -212,12 +212,23 @@
                         $(row).addClass('row-sale-cancelled');
                     }
                 },
-                columns: [
-
-                    {
+                columns: [{
                         data: 'id',
                         name: 'id',
                         searchable: false,
+                        orderable: true,
+                        visible: false
+                    },
+                    {
+                        data: 'cash_book_code',
+                        name: 'cash_book_code',
+                        searchable: true,
+                        orderable: true
+                    },
+                    {
+                        data: 'creator_user_name',
+                        name: 's.creator_user_name',
+                        searchable: true,
                         orderable: true
                     },
                     {

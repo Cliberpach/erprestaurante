@@ -1,5 +1,6 @@
+import { customerSelect } from "../../../utils/selects/customers/state";
 import { amounts } from "../charge/state";
-import { change, customerSelect, invoiceId, lstPays, paymentMethodSelect, setChange, setInvoiceId } from "./state";
+import { change, invoiceId, lstPays, paymentMethodSelect, setChange, setInvoiceId } from "./state";
 import { desactiveBtnsInvoice, disabledInputsPayment, enabledInputsPayment, paintChange, setDataFormCharge } from "./ui";
 
 export function openMdlCharge() {

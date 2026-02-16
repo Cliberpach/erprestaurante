@@ -36,7 +36,7 @@
 
 <script>
     let customerParams = {
-        documentSearchCustomer: null
+        documentSearchCustomer: null,
     };
 
     function loadSelectMdlCustomer() {

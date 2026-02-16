@@ -1,4 +1,3 @@
-export let customerSelect = null;
 export let paymentMethodSelect = null;
 export let lstPays = [];
 export let change = 0;
@@ -7,9 +6,7 @@ export let invoiceId = null;
 export function setPaymentMethodSelect(instance) {
     paymentMethodSelect = instance;
 }
-export function setCustomerSelect(instance) {
-    customerSelect = instance;
-}
+
 export function setLstPays(instance) {
     lstPays = instance;
 }
@@ -19,8 +16,4 @@ export function setChange(instance) {
 export function setInvoiceId(instance) {
     invoiceId = instance
 }
-export function getCustomerSelect() {
-    return customerSelect;
-}
 
-window.getCustomerSelect = getCustomerSelect;

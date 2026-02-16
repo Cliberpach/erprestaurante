@@ -1,5 +1,4 @@
 @extends('layouts.template')
-
 @section('title')
     Ventas
 @endsection
@@ -8,9 +7,18 @@
     <x-card style="margin-top: 0;width:100%;">
         @csrf
         <x-slot name="headerCard">
-            <h4 class="card-title">
-                PUNTO DE VENTAS
-            </h4>
+            <div class="col-6">
+                <h4 class="card-title mb-0">
+                    PUNTO DE VENTAS
+                </h4>
+
+            </div>
+            <div class="col-6 text-end">
+                <a href="{{ route('tenant.ventas.comprobante_venta.index') }}" class="btn btn-danger btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    Volver
+                </a>
+            </div>
         </x-slot>
 
         <x-slot name="contentCard">

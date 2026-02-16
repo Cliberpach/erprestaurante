@@ -129,6 +129,8 @@ class OrderValidation
             throw new Exception('NO EXISTE NINGUNA PROGRAMACIÓN ACTIVA EN LA CAJA!!!');
         }
 
+        $vars_mdlcustomer   =   UtilController::getVarsMdlCustomer();
+
         $vars   =   [
             'types_dish'            =>  $types_dish,
             'petty_cash_book'       =>  $petty_cash_book,
@@ -145,6 +147,8 @@ class OrderValidation
             'lst_detail'            =>  $lst_detail,
             'config_delete'         =>  $config_delete
         ];
+
+        $vars   =   array_merge($vars_mdlcustomer,$vars);
 
         return $vars;
     }
