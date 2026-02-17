@@ -1,7 +1,7 @@
 export function paintTblDetail(lstItems) {
     let filas = ``;
 
-    lstItems.forEach((item,index) => {
+    lstItems.forEach((item, index) => {
 
         const rowClass = !item.order_detail_id ? 'row-new-item' : '';
 
@@ -16,10 +16,10 @@ export function paintTblDetail(lstItems) {
                     </div>
                 </th>
                 <td>${item.name}</td>
+                <td>${item.observation}</td>
                 <td>${formatSoles(item.sale_price)}</td>
                 <td>${item.quantity}</td>
                 <td>${formatSoles(item.total)}</td>
-                <td>${formatSoles(item.purchase_price)}</td>
             </tr>
         `;
     });
@@ -35,4 +35,4 @@ export function paintAmounts(amounts) {
     document.querySelector('#total_amount').innerText = formatSoles(amounts.totalPay);
 }
 
-window.paintTblDetail   =   paintTblDetail;
+window.paintTblDetail = paintTblDetail;

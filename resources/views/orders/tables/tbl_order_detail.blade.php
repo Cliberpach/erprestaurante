@@ -1,14 +1,15 @@
 <table class="table-hover table-bordered d-none d-lg-table table" id="tbl_order_detail">
-    <thead>
+    <thead class="table-light">
         <tr>
             <th scope="col">#</th>
-            <th scope="col">ITEM</th>
+            <th scope="col">Item</th>
+            <th scope="col">Obs</th>
             {{-- <th scope="col">TIPO</th>
             <th scope="col">INFO</th> --}}
-            <th scope="col">P.VENTA</th>
-            <th scope="col">CANT</th>
-            <th scope="col">TOTAL</th>
-            <th scope="col">P.COMPRA</th>
+            <th scope="col">P.Venta</th>
+            <th scope="col">Cant</th>
+            <th scope="col">Total</th>
+            {{-- <th scope="col">P.COMPRA</th> --}}
         </tr>
     </thead>
     <tbody>

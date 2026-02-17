@@ -77,6 +77,7 @@ class FormatController extends Controller
                 'total'             =>  $item['total'],
                 'type_item'         =>  'PRODUCTO',
                 'type_name'         =>  $item['category_name'] . '-' . $item['brand_name'],
+                'observation'       =>  $item['observation'],
                 'is_new'            =>  false
             ];
         }
@@ -101,6 +102,7 @@ class FormatController extends Controller
                 'total'             =>  $item['total'],
                 'type_item'         =>  'PLATO',
                 'type_name'         =>  $item['type_dish_name'],
+                'observation'       =>  $item['observation'],
                 'is_new'            =>  false
             ];
         }

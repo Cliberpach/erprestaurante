@@ -83,9 +83,7 @@ class OrderValidation
         $order_dishes       =   $this->s_repository->getOrderDishes($id)->toArray();
         $order_products     =   $this->s_repository->getOrderProducts($id)->toArray();
 
-        $lst_products       =   FormatController::formatLstProducts($order_products);
-        $lst_dishes         =   FormatController::formatLstDishes($order_dishes);
-        $lst_detail         =   array_merge($lst_products, $lst_dishes);
+        $lst_detail         =   FormatController::formatDetailOrder($order_products,$order_dishes);
 
         $table              =   Table::findOrFail($order->table_id);
         $categories         =   Category::all();

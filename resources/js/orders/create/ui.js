@@ -1,6 +1,6 @@
 export function paintTblDetail(lstItems) {
     let filas = ``;
-    lstItems.forEach((item,index) => {
+    lstItems.forEach((item, index) => {
         filas += `<tr>
                             <th>
                                 <div class="d-flex justify-content-center gap-1">
@@ -10,7 +10,6 @@ export function paintTblDetail(lstItems) {
                                         <i class="fas fa-edit"></i>
                                     </button>
 
-
                                     <button class="btn btn-danger btn-sm btnDeleteItem" type="button"
                                     data-producto-id="${item.id}" data-index="${index}">
                                         <i class="fas fa-trash"></i>
@@ -19,10 +18,10 @@ export function paintTblDetail(lstItems) {
                                 </div>
                             </th>
                             <td>${item.name}</td>
+                            <td>${formatSoles(item.observation)}</td>
                             <td>${formatSoles(item.sale_price)}</td>
                             <td>${item.quantity}</td>
                             <td>${formatSoles(item.total)}</td>
-                            <td>${formatSoles(item.purchase_price)}</td>
                         </tr>`;
     })
 
