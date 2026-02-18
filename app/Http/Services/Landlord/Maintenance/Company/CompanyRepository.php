@@ -152,7 +152,7 @@ class CompanyRepository
         return Module::with('children.grandchildren')->get();
     }
 
-    public function getTenantCompanyData(int $tenant_id = null, int $company_id = null)
+    public function getTenantCompanyData(int $company_id)
     {
         $tenant_data    =   DB::table('tenants AS t')
             ->join('companies AS c', 'c.tenant_id', 't.id')
@@ -184,9 +184,6 @@ class CompanyRepository
                 'ci.certificate_url'
             );
 
-        if ($tenant_id) {
-            $tenant_data->where('t.id', $tenant_id);
-        }
         if ($company_id) {
             $tenant_data->where('c.id', $company_id);
         }

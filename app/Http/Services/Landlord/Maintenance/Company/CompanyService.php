@@ -260,7 +260,7 @@ class CompanyService
     public function edit(int $id)
     {
         $all_modules    =   $this->s_repository->getAllModules();
-        $tenant_data    =   $this->s_repository->getTenantCompanyData(null,$id);dd($tenant_data);
+        $tenant_data    =   $this->s_repository->getTenantCompanyData($id);dd($tenant_data);
         $tenant_modules =   $this->s_repository->getTenantModules($tenant_data->database);
         $tenant_modules_children    =   $this->s_repository->getTenantModulesChildren($tenant_data->database);
         $tenant_modules_grand_children    =   $this->s_repository->getTenantModulesGrandChildren($tenant_data->database);
@@ -290,7 +290,7 @@ class CompanyService
         $this->s_validation->validationStore($data);
 
         //========= OBTENER DATA =======
-        $tenant_data                =   $this->s_repository->getTenantCompanyData(null, $id);
+        $tenant_data                =   $this->s_repository->getTenantCompanyData($id);
         $tenant                     =   $this->s_repository->findTenant($tenant_data->tenant_id);
         $data['modules']            =   $this->s_repository->getModulesLandlord($data['module_id'] ?? []);
         $data['modules_childrens']  =   $this->s_repository->getModulesChildrenLandlord($data['child_id'] ?? []);
