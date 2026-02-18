@@ -22,5 +22,15 @@ class CompanyInvoice extends Model
         'environment',
         'token_reniec',
         'status',
+        'api_user_gre',
+        'api_password_gre',
+
+        'ubigeo',
+        'department_id',
+        'province_id',
+        'district_id',
+        'department_name',
+        'province_name',
+        'district_name'
     ];
 }

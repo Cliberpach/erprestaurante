@@ -8,7 +8,6 @@ use App\Models\Landlord\Company;
 use App\Models\Plan;
 use App\Models\Province;
 use App\Models\Tenant;
-use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
 use App\Models\Tenant\Maintenance\Company\Company as TenantCompany;
 use Illuminate\Support\Facades\Hash;
 
@@ -32,10 +31,6 @@ class CompanyDto
 
     public function getDtoCompanyLandlord(array $data, Tenant $tenant)
     {
-        $department =   Department::findOrFail($data['department']);
-        $province   =   Province::findOrFail($data['province']);
-        $district   =   District::findOrFail($data['district']);
-
         $tenantDirectory = $data['domain'] . '_' . $tenant->id;
 
         $dto    =   [
@@ -43,18 +38,11 @@ class CompanyDto
             'ruc'                       =>  $data['ruc'],
             'business_name'             =>  $data['razon_social'],
             'abbreviated_business_name' =>  $data['razon_social_abreviada'],
-            'zip_code'                  =>  $district->id,
             'fiscal_address'            =>  $data['direccion_fiscal'],
             'email'                     =>  $data['correo'],
             'plan'                      =>  $data['plan_id'],
             'files_route'               =>  $tenantDirectory,
             'token_placa'               =>  "nsHeEpNSOBr8ucEFnL7OtKmVkZhefUuvoM8O1Lz7uFEOi4KtFZ54==",
-            'department_id'             =>  $department->id,
-            'province_id'               =>  $province->id,
-            'district_id'               =>  $district->id,
-            'deparment_name'            =>  $department->name,
-            'province_name'             =>  $province->name,
-            'district_name'             =>  $district->name
         ];
 
         return $dto;
@@ -62,11 +50,27 @@ class CompanyDto
 
     public function getDtoCompanyInvoiceLandlord(array $data, Company $company)
     {
+        $department =   Department::findOrFail($data['department']);
+        $province   =   Province::findOrFail($data['province']);
+        $district   =   District::findOrFail($data['district']);
+
         $dto    =   [
-            'company_id'        =>  $company->id,
-            'environment'       =>  'BETA',
-            'token_reniec'      =>  'c36358c49922c564f035d4dc2ff3492fbcfd31ee561866960f75b79f7d645d7d',
-            'plan'              =>  'FULL'
+            'company_id'            =>  $company->id,
+            'environment'           =>  'BETA',
+            'token_reniec'          =>  'c36358c49922c564f035d4dc2ff3492fbcfd31ee561866960f75b79f7d645d7d',
+            'plan'                  =>  'FULL',
+            'secondary_user'        =>  $data['secondary_user'],
+            'secondary_password'    =>  $data['secondary_password'],
+            'api_user_gre'          =>  $data['api_user_gre'],
+            'api_password_gre'      =>  $data['api_pass_gre'],
+            'certificate_password'  =>  $data['certificate_password'],
+            'ubigeo'                =>  $district->id,
+            'department_id'         =>  $department->id,
+            'province_id'           =>  $province->id,
+            'district_id'           =>  $district->id,
+            'department_name'        =>  $department->name,
+            'province_name'         =>  $province->name,
+            'district_name'         =>  $district->name
         ];
         return $dto;
     }
@@ -81,7 +85,19 @@ class CompanyDto
             'files_route'               =>  $data['files_route'],
             'tenant_id'                 =>  $data['tenant_id'],
             'fiscal_address'            =>  $data['direccion_fiscal'],
-            'zip_code'                  =>  $data['zip_code'],
+            'email'                     =>  $data['correo'],
+            'plan'                      =>  $data['plan_id'],
+        ];
+        return $dto;
+    }
+
+    public function getDtoTenantCompanyUpdate(array $data): array
+    {
+        $dto    =   [
+            'ruc'                       =>  $data['ruc'],
+            'business_name'             =>  $data['razon_social'],
+            'abbreviated_business_name' =>  $data['razon_social_abreviada'],
+            'fiscal_address'            =>  $data['direccion_fiscal'],
             'email'                     =>  $data['correo'],
             'plan'                      =>  $data['plan_id'],
         ];
@@ -90,23 +106,28 @@ class CompanyDto
 
     public function getDtoTenantCompanyInvoice(array $data, TenantCompany $company): array
     {
+        $department =   Department::findOrFail($data['department']);
+        $province   =   Province::findOrFail($data['province']);
+        $district   =   District::findOrFail($data['district']);
+
         $dto =   [
             'company_id'           => $company->id,
             'plan'                 => $company->plan,
             'environment'          => 'BETA',
-            'department_id'        => '01',
-            'province_id'          => '0101',
-            'district_id'          => '010101',
-            'department_name'      => 'LA LIBERTAD',
-            'province_name'        => 'TRUJILLO',
-            'district_name'        => 'TRUJILLO',
-            'ubigeo'               => '130101',
+            'department_id'        => $department->id,
+            'province_id'          => $province->id,
+            'district_id'          => $district->id,
+            'department_name'      => $department->name,
+            'province_name'        => $province->name,
+            'district_name'        => $district->name,
+            'ubigeo'               => $district->id,
             'urbanization'         => 'PALERMO',
             'local_code'           => '0000',
-            'secondary_user'       => 'MODDATOS',
-            'secondary_password'   => 'MODDATOS',
-            'api_user_gre'         => 'test-85e5b0ae-255c-4891-a595-0b98c65c9854',
-            'api_password_gre'     => 'test-Hty/M6QshYvPgItX2P0+Kw==',
+            'certificate_password' => $data['certificate_password'],
+            'secondary_user'       => $data['secondary_user'],
+            'secondary_password'   => $data['secondary_password'],
+            'api_user_gre'         => $data['api_user_gre'],
+            'api_password_gre'     => $data['api_pass_gre'],
         ];
         return $dto;
     }
@@ -129,14 +150,24 @@ class CompanyDto
         return $dto;
     }
 
-    public function getDtoUserTenant(array $data, Collaborator $collaborator)
+    public function getDtoUserTenant(array $data, $collaborator_id)
     {
         $dto    =   [
             'name'              =>  'ADMIN',
             'email'             =>  $data['correo'],
             'password'          =>  Hash::make($data['password']),
             'password_visible'  =>  $data['password'],
-            'collaborator_id'   =>  $collaborator->id
+            'collaborator_id'   =>  $collaborator_id
+        ];
+        return $dto;
+    }
+
+    public function getDtoUpdateUserTenant(array $data)
+    {
+        $dto    =   [
+            'email'             =>  $data['correo'],
+            'password'          =>  Hash::make($data['password']),
+            'password_visible'  =>  $data['password'],
         ];
         return $dto;
     }
@@ -227,5 +258,19 @@ class CompanyDto
                 'number_fields' => $plan->number_fields,
                 'price'         => $plan->price,
             ];
+    }
+
+    public function getDtoUpdateCompanyLandlord(array $data): array
+    {
+        $dto    =   [
+            'ruc'                       =>  $data['ruc'],
+            'business_name'             =>  $data['razon_social'],
+            'abbreviated_business_name' =>  $data['razon_social_abreviada'],
+            'fiscal_address'            =>  $data['direccion_fiscal'],
+            'email'                     =>  $data['correo'],
+            'plan'                      =>  $data['plan_id'],
+        ];
+
+        return $dto;
     }
 }

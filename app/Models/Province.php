@@ -13,6 +13,10 @@ class Province extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'id' => 'string',
+    ];
+    
     public function departaments()
     {
         return $this->belongsTo('App\Departament');

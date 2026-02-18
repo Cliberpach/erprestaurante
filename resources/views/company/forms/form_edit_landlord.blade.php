@@ -1,5 +1,6 @@
-<form id="form-empresa-store" action="" method="POST" enctype="multipart/form-data">
+<form action="" method="POST" enctype="multipart/form-data" id="form-company-edit">
     @csrf
+    @method('PUT')
     <div class="nav-align-top mb-4">
         <ul class="nav nav-pills mb-3" role="tablist">
             <li class="nav-item">
@@ -24,13 +25,12 @@
                     <div class="col-sm-6 col-12" style="border-right: 1px solid #e7eaec;">
 
                         <div class="row">
-
                             <div class="col-12 mb-3">
                                 <label class="form-label required_field" for="domain">Hostname:</label>
                                 <div class="input-group">
-                                    <input minlength="3" maxlength="63" required type="text" class="form-control input-fill"
-                                        placeholder="Nombre del dominio" id="domain" name="domain"
-                                        value="{{ old('domain') }}">
+                                    <input disabled value="{{ $tenant_data->domain }}" minlength="3" maxlength="63"
+                                        required type="text" class="form-control" placeholder="Nombre del dominio"
+                                        id="domain" name="domain">
                                     <span class="input-group-text">.comandapro.online</span>
                                 </div>
                                 <p class="domain_error msgError mb-0"></p>
@@ -40,7 +40,7 @@
                                 <label class="form-label required_field" for="ruc">RUC:</label>
                                 <div class="input-group">
                                     <input required type="text" class="form-control input-fill" id="ruc"
-                                        name="ruc" placeholder="Número de ruc" value="{{ old('ruc') }}">
+                                        name="ruc" placeholder="Número de ruc" value="{{ $tenant_data->ruc }}">
                                     <button class="btn btn-outline-primary" type="button" id="btn_consulta_sunat"
                                         style="padding-right: 10px; padding-left: 10px;"><i class="bx bx-search"></i>
                                         Sunat</button>
@@ -54,10 +54,10 @@
                                     readonly value="SIN VERIFICAR">
                             </div>
 
-                            <div class="col-12 mb-3">
+                            <div class="col-6 mb-3">
                                 <label class="form-label required_field" for="razon_social">Razón social:</label>
                                 <input required type="text" class="form-control input-fill" id="razon_social"
-                                    name="razon_social" value="{{ old('razon_social') }}">
+                                    name="razon_social" value="{{ $tenant_data->business_name }}">
                                 <p class="razon_social_error msgError mb-0"></p>
                             </div>
 
@@ -66,14 +66,24 @@
                                     Abreviada:</label>
                                 <input required type="text" class="form-control input-fill"
                                     id="razon_social_abreviada" name="razon_social_abreviada"
-                                    value="{{ old('razon_social_abreviada') }}">
+                                    value="{{ $tenant_data->abbreviated_business_name }}">
                                 <p class="razon_social_abreviada_error msgError mb-0"></p>
                             </div>
 
+
                             <div class="col-6 mb-3">
                                 <label for="direccion_fiscal" class="form-label">Dirección Fiscal</label>
-                                <textarea class="form-control input-fill" id="direccion_fiscal" name="direccion_fiscal" rows="2"></textarea>
+                                <textarea class="form-control input-fill" id="direccion_fiscal" name="direccion_fiscal" rows="2">{{ $tenant_data->fiscal_address }}</textarea>
                                 <p class="direccion_fiscal_error msgError mb-0"></p>
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-image text-primary me-1"></i> Logo
+                                </label>
+                                <input class="form-control" type="file" name="logo" id="input-logo"
+                                    accept="image/jpeg, image/webp">
+                                <span class="logo_error msgError" style="color:red;"></span>
                             </div>
 
                             <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3">
@@ -83,7 +93,8 @@
                                     data-placeholder="Seleccionar" onchange="changeDepartment(this.value)">
                                     <option></option>
                                     @foreach ($departments as $department)
-                                        <option value="{{ $department->id }}">
+                                        <option @if ($tenant_data->department_id == $department->id) selected @endif
+                                            value="{{ $department->id }}">
                                             {{ $department->name }}</option>
                                     @endforeach
                                 </select>
@@ -111,20 +122,9 @@
                             </div>
 
                             <div class="col-6 mb-3">
-                                <label class="form-label fw-bold">
-                                    <i class="fas fa-image text-primary me-1"></i> Logo
-                                </label>
-                                <input class="form-control" type="file" name="logo" id="input-logo"
-                                    accept="image/jpeg, image/webp">
-                                <span class="logo_error msgError" style="color:red;"></span>
-                            </div>
-
-                            <div class="col-6"></div>
-
-                            <div class="col-6 mb-3">
                                 <label class="form-label" for="correo">Correo:</label>
                                 <input required type="email" class="form-control input-fill" id="correo"
-                                    name="correo" value="admin@gmail.com">
+                                    name="correo" value="{{ $user->email }}">
                                 <span class="correo_error msgError" style="color:red;"></span>
                             </div>
                             <div class="col-6 mb-3">
@@ -132,7 +132,7 @@
                                     <label class="form-label" for="password">Password</label>
                                     <div class="input-group input-group-merge">
                                         <input required type="password" class="form-control input-fill"
-                                            id="password" name="password" value="123456789">
+                                            id="password" name="password" value="{{ $user->password_visible }}">
                                         <span class="input-group-text cursor-pointer">
                                             <i class="fas fa-eye"></i>
                                         </span>
@@ -140,7 +140,6 @@
                                 </div>
                                 <span class="password_error msgError" style="color:red;"></span>
                             </div>
-
                         </div>
                     </div>
 
@@ -151,8 +150,9 @@
                                 <label class="form-label" for="secondary_user">Usuario Secundario:</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                                    <input type="text" class="form-control input-fill"
-                                        placeholder="Usuario secundario" id="secondary_user" name="secondary_user">
+                                    <input value="{{ $tenant_data->secondary_user }}" type="text"
+                                        class="form-control input-fill" placeholder="" id="secondary_user"
+                                        name="secondary_user">
                                 </div>
                             </div>
 
@@ -162,7 +162,8 @@
                                         secundario:</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                        <input type="text" class="form-control input-fill" id="secondary_password"
+                                        <input value="{{ $tenant_data->secondary_password }}" type="text"
+                                            class="form-control input-fill" id="secondary_password"
                                             name="secondary_password">
                                     </div>
                                 </div>
@@ -175,9 +176,9 @@
                                     <span class="input-group-text text-primary">
                                         <i class="fas fa-user-lock"></i>
                                     </span>
-                                    <input value="" id="api_user_gre"
+                                    <input value="{{ $tenant_data->api_user_gre }}" id="api_user_gre"
                                         name="api_user_gre" type="text" class="form-control input-fill"
-                                        placeholder="USUARIO GRE">
+                                        placeholder="">
                                 </div>
                                 <p class="api_user_gre_error msgError"></p>
                             </div>
@@ -189,9 +190,9 @@
                                     <span class="input-group-text text-success">
                                         <i class="fas fa-key"></i>
                                     </span>
-                                    <input value="" id="api_pass_gre"
+                                    <input value="{{ $tenant_data->api_password_gre }}" id="api_pass_gre"
                                         name="api_pass_gre" type="text" class="form-control input-fill"
-                                        placeholder="CLAVE GRE">
+                                        placeholder="">
                                 </div>
                                 <p class="api_pass_gre_error msgError"></p>
                             </div>
@@ -201,6 +202,14 @@
 
                                 <input accept=".pem,.p12" class="form-control input-fill" id="certificate"
                                     name="certificate" type="file">
+
+                                <div class="text-dark mt-1">
+                                    @if ($tenant_data->certificate)
+                                        {{ $tenant_data->certificate }}
+                                    @else
+                                        SIN CERTIFICADO
+                                    @endif
+                                </div>
 
                                 <small class="text-primary fst-italic">
                                     Formatos permitidos: <b>.PEM</b> o <b>.P12</b>.
@@ -219,7 +228,8 @@
                                     </span>
                                     <input type="text" class="form-control input-fill" id="certificate_password"
                                         maxlength="100" name="certificate_password"
-                                        placeholder="Contraseña del certificado (.P12)" value="">
+                                        placeholder="Contraseña del certificado (.P12)"
+                                        value="{{ $tenant_data->certificate_password }}">
                                 </div>
                                 <small class="text-muted fst-italic">
                                     Obligatorio solo si el certificado es <b>.P12</b>.
@@ -241,7 +251,8 @@
                                 <select required name="plan_id" id="plan_id" class="form-select">
                                     <option value="">Seleccione ...</option>
                                     @foreach ($plans as $plan)
-                                        <option value="{{ $plan->id }}">{{ $plan->description }}</option>
+                                        <option @if ($tenant_data->plan == $plan->id) selected @endif
+                                            value="{{ $plan->id }}">{{ $plan->description }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -252,6 +263,8 @@
 
                 </div>
             </div>
+
+
             <div class="tab-pane fade" id="navs-pills-top-banco" role="tabpanel">
                 {{-- modulo --}}
                 <p>Módulos</p>
@@ -259,13 +272,14 @@
                 <div class="row">
                     @foreach ($all_modules as $module)
                         <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                            <div class="card overflow-hidden">
+                            <div class="card h-100 mb-4">
                                 <div class="card-body">
                                     <div class="card-text mb-2">
                                         <div class="form-check">
                                             <input class="form-check-input module-checkbox" type="checkbox"
                                                 id="module{{ $module->id }}" name="module_id[]"
-                                                value="{{ $module->id }}" checked>
+                                                value="{{ $module->id }}"
+                                                @if ($tenant_modules->contains('id', $module->id)) checked @endif>
                                             <label class="form-check-label" for="module{{ $module->id }}">
                                                 {{ $module->description }}
                                             </label>
@@ -277,7 +291,8 @@
                                                 <input
                                                     class="form-check-input {{ $child->grandchildren->isNotEmpty() ? 'child-grandchild-checkbox' : 'child-checkbox' }}"
                                                     type="checkbox" id="children{{ $child->id }}"
-                                                    name="child_id[]" value="{{ $child->id }}" checked>
+                                                    name="child_id[]" value="{{ $child->id }}"
+                                                    @if ($tenant_modules_children->contains('id', $child->id)) checked @endif>
                                                 <label class="form-check-label" for="children{{ $child->id }}">
                                                     {{ $child->description }}
                                                 </label>
@@ -289,7 +304,8 @@
                                                 <div class="form-check">
                                                     <input class="form-check-input grandchild-checkbox"
                                                         type="checkbox" id="grandchildren{{ $grandchild->id }}"
-                                                        name="grandchild_id[]" value="{{ $grandchild->id }}" checked>
+                                                        name="grandchild_id[]" value="{{ $grandchild->id }}"
+                                                        @if ($tenant_modules_grand_children->contains('id', $grandchild->id)) checked @endif>
                                                     <label class="form-check-label"
                                                         for="grandchildren{{ $grandchild->id }}">
                                                         {{ $grandchild->description }}

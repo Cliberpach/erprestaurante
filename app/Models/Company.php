@@ -29,11 +29,5 @@ class Company extends Model
         'lng',
         'token_placa',
         
-        'department_id',
-        'province_id',
-        'district_id',
-        'department_name',
-        'province_name',
-        'district_name'
     ];
 }

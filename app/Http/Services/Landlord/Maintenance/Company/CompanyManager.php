@@ -14,8 +14,18 @@ class CompanyManager
         $this->s_company    =   new CompanyService();
     }
 
-    public function store(array $data):Tenant
+    public function store(array $data): Tenant
     {
         return $this->s_company->store($data);
+    }
+
+    public function edit(int $id)
+    {
+        return $this->s_company->edit($id);
+    }
+
+    public function update(array $data, int $id)
+    {
+        return $this->s_company->update($data, $id);
     }
 }

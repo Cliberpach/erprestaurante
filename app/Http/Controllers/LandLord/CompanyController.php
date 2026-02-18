@@ -4,18 +4,17 @@ namespace App\Http\Controllers\LandLord;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyStoreRequest;
+use App\Http\Requests\Landlord\Maintenance\Company\CompanyUpdateRequest;
 use App\Http\Services\Landlord\Maintenance\Company\CompanyManager;
 use App\Models\Company;
 use App\Models\Department;
 use App\Models\District;
 use App\Models\Landlord\Company as LandlordCompany;
-use App\Models\Landlord\Maintenance\Company\CompanyInvoice;
 use App\Models\Module;
 use App\Models\ModuleChild;
 use App\Models\ModuleGrandChild;
 use App\Models\Plan;
 use App\Models\Province;
-use App\Models\Tenant;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -23,21 +22,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\Tenant\Maintenance\Company\Company as TenantCompany;
-use App\Models\Tenant\Maintenance\Company\CompanyInvoice as TenantCompanyInvoice;
 use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
-use App\Models\Tenant\Maintenance\Company\DocumentSerialization;
 use App\Models\Tenant\User;
 use Throwable;
 use Spatie\Permission\Models\Role;
-use App\Models\Tenant\Maintenance\Company\Module as CompanyModule;
-use App\Models\Tenant\Maintenance\Company\ModuleChild as CompanyModuleChild;
-use App\Models\Tenant\Maintenance\Company\Plan as CompanyPlan;
-use App\Services\TenantPermissionCloner;
-use App\Services\TestService;
+
 
 class CompanyController extends Controller
 {
@@ -115,67 +106,15 @@ class CompanyController extends Controller
         ));
     }
 
-    public function edit($id): View
+    public function edit($id)
     {
-
-        $all_modules    =   Module::with('children.grandchildren')->get();
-
-        $tenant_data    =   DB::select('select
-                            c.ruc,
-                            t.database
-                            from tenants as t
-                            inner join companies as c on c.tenant_id = t.id
-                            where c.id = ?', [$id])[0];
-
-        $tenant_modules =   DB::table("$tenant_data->database.modules as m")
-            ->select('m.id')
-            ->get();
-
-        $tenant_modules_children    =   DB::table("$tenant_data->database.module_children as mc")
-            ->select('mc.id')
-            ->get();
-
-        $tenant_modules_grand_children   =   DB::table("$tenant_data->database.module_grand_children as mgc")
-            ->select('mgc.id')
-            ->get();
-
-        $user   =   DB::table("$tenant_data->database.users as u")
-            ->select('u.*')
-            ->where('u.id', 1)
-            ->get()[0];
-
-        $company        =   DB::table("companies as c")
-            ->join('tenants as t', 't.id', '=', 'c.tenant_id')
-            ->select(
-                'c.id',
-                't.domain',
-                'c.ruc',
-                'c.business_name',
-                'c.abbreviated_business_name',
-                'zip_code',
-                'fiscal_address',
-                'c.plan'
-            )
-            ->where('c.id', $id)
-            ->get()[0];
-
-        $plans = Plan::select(
-            'id',
-            'description',
-            'price',
-            DB::raw('CASE WHEN number_fields > 6 THEN "SIN LÍMITE" ELSE number_fields END AS number_fields'),
-        )->get();
-
-
-        return view('company.edit_company_landlord', compact(
-            'all_modules',
-            'plans',
-            'company',
-            'tenant_modules',
-            'tenant_modules_children',
-            'tenant_modules_grand_children',
-            'user'
-        ));
+        try {
+            $view   =   $this->s_manager->edit($id);
+            return $view;
+        } catch (Throwable $th) {
+            Session::flash('message_error', $th->getMessage());
+            return back();
+        }
     }
 
 
@@ -199,6 +138,8 @@ array:19 [ // app\Http\Controllers\LandLord\CompanyController.php:251
   "plan_id" => "1"
   "certificate":File
   "certificate_password":string
+  "api_user_gre"
+  "api_pass_gree"
   "module_id" => array:12 [
     0 => "1"
     1 => "2"
@@ -272,166 +213,54 @@ array:19 [ // app\Http\Controllers\LandLord\CompanyController.php:251
     }
 
     /*
-array:17 [▼ // app\Http\Controllers\LandLord\CompanyController.php:315
-  "_token"          => "KpM9ktljkPhZJY7m8wwMzd91rXMIXg2U6WZl2dD6"
-  "_method"         => "PUT"
-  "domain"          => "acerosarequipa.localhost"
-  "ruc"             => "20370146994"
-  "estado"          => "SIN VERIFICAR"
-  "razon_social"            => "CORPORACION ACEROS AREQUIPA S.A."
-  "razon_social_abreviada"  => "CORPORACION ACEROS AREQUIPA S.A."
-  "ubigeo"                  => null
-  "direccion_fiscal"        => null
-  "correo"                  => "admin@gmail.com"
-  "password"                => "123456789"
-  "secondary_user"          => null
-  "secondary_password"      => null
-  "certificate_password"    => null
-  "plan_id"                 => "3"
-  "module_id" => array:3 [▼
-    0 => "2"
-    1 => "3"
-    2 => "6"
+array:21 [ // app\Http\Controllers\LandLord\CompanyController.php:250
+  "_token" => "HWhvHXpuXQ7xMQI8wcOOeWeAaRxhNAB4RWDf0c1u"
+  "_method" => "PUT"
+  "ruc" => "20609678047"
+  "estado" => "SIN VERIFICAR"
+  "razon_social" => "TU RESTAURANTE"
+  "razon_social_abreviada" => "TU RESTAURANTE"
+  "direccion_fiscal" => "TU RESTAURANTE"
+  "department" => "13"
+  "province" => "1301"
+  "district" => "130101"
+  "correo" => "admin@gmail.com"
+  "password" => "123456789"
+  "secondary_user" => "SOLUSER"
+  "secondary_password" => "SOLPASS"
+  "api_user_gre" => "SOLGRE"
+  "api_pass_gre" => "PASSGRE"
+  "certificate":File
+  "certificate_password" => null
+  "plan_id" => "3"
+  "module_id" => array:12 [
+    0 => "1"
+    1 => "2"
   ]
-  "child_id" => array:5 [▼
-    0 => "4"
-    1 => "5"
-    2 => "6"
-    3 => "18"
-    4 => "19"
+  "child_id" => array:37 [
+    0 => "1"
+    1 => "2"
+    2 => "3"
   ]
-  --- aveces llega grand_child_id ---
+  "logo" =>Illuminate\Http\UploadedFile {#2225}
 ]
 */
-    public function update(CompanyStoreRequest $request, $id)
+    public function update(CompanyUpdateRequest $request, $id)
     {
         try {
 
-            DB::beginTransaction();
+            $this->s_manager->update($request->toArray(), $id);
 
-            //======== OBTENEMOS EL NOMBRE DEL TENANT ===========
-            $tenant_data    =   DB::select('select
-                                c.ruc,
-                                t.database
-                                from tenants as t
-                                inner join companies as c on c.tenant_id = t.id
-                                where c.id = ?', [$id])[0];
+            Session::flash('message_success', 'EMPRESA ACTUALIZADA CON ÉXITO');
 
-
-            //========== ACTUALIZAR DATOS DE LA EMPRESA TENANT =======
-            $company                                = Company::find($id);
-            $company->ruc                           = $request->get("ruc");
-            $company->business_name                 = $request->get("razon_social");
-            $company->abbreviated_business_name     = $request->get("razon_social_abreviada");
-            $company->zip_code                      = $request->get("ubigeo");
-            $company->fiscal_address                = $request->get("direccion_fiscal");
-            $company->email                         = $request->get("correo");
-            $company->plan                          = $request->get("plan_id");
-
-            // if ($request->hasFile('certificate_url')) {
-            //     $imagen = $request->file('certificate_url');
-            //     $fileFolderPath = 'assets/img/certificado/';
-            //     $nombreImagen = $imagen->getClientOriginalName();
-            //     $suffix = 1;
-            //     $fileNameWithoutExtension = pathinfo($nombreImagen, PATHINFO_FILENAME);
-            //     while (CompanyInvoice::where('certificate_url', $nombreImagen)->exists()) {
-            //         $fileName = $fileNameWithoutExtension . "($suffix)." . $imagen->getClientOriginalExtension();
-            //         $suffix++;
-            //         $nombreImagen = $fileName;
-            //     }
-            //     $imagen->move(public_path($fileFolderPath), $nombreImagen);
-            //     $company->certificate = $nombreImagen;
-            //     $company->certificate_url = $fileFolderPath . $nombreImagen;
-            // }
-
-            $company->save();
-
-
-            //======== ACTUALIZAR MÓDULOS DE LA EMPRESA TENANT =======
-            $module_array       = $request->module_id ?? [];
-            $child_array        = $request->child_id ?? [];
-            $grandchild_array   = $request->grandchild_id ?? [];
-
-
-            $this->modules          = count($module_array) > 0 ? Module::whereIn('id', $module_array)->get() : [];
-            $this->children         = count($child_array) > 0 ? ModuleChild::whereIn('id', $child_array)->get() : [];
-            $this->grand_children   = count($grandchild_array) > 0 ? ModuleGrandChild::whereIn('id', $grandchild_array)->get() : [];
-
-            DB::table("$tenant_data->database.modules")->delete();
-
-            DB::table("$tenant_data->database.module_children")->delete();
-
-            DB::table("$tenant_data->database.module_grand_children")->delete();
-
-            DB::table("$tenant_data->database.plans")->delete();
-
-            foreach ($this->modules as $module) {
-                DB::table("$tenant_data->database.modules")
-                    ->insert([
-                        'id'            => $module->id,
-                        'description'   => $module->description,
-                        'order'         => $module->order,
-                        'created_at'    => Carbon::now(),
-                        'updated_at'    => Carbon::now(),
-                    ]);
-            }
-
-            foreach ($this->children as $children) {
-                DB::table("$tenant_data->database.module_children")
-                    ->insert([
-                        'id'            => $children->id,
-                        'module_id'     => $children->module_id,
-                        'description'   => $children->description,
-                        'route_name'    => $children->route_name,
-                        'order'         => $children->order,
-                        'created_at'    => Carbon::now(),
-                        'updated_at'    => Carbon::now(),
-                    ]);
-            }
-
-            foreach ($this->grand_children as $grand_children) {
-                DB::table("$tenant_data->database.module_grand_children")
-                    ->insert([
-                        'id' => $grand_children->id,
-                        'module_child_id' => $grand_children->module_child_id,
-                        'description' => $grand_children->description,
-                        'route_name' => $grand_children->route_name,
-                        'order' => $grand_children->order,
-                        'created_at'    => Carbon::now(),
-                        'updated_at'    => Carbon::now(),
-                    ]);
-            }
-
-            //======== ACTUALIZAR PLAN DE LA EMPRESA TENANT =======
-            $this->plan             = Plan::findOrFail($company->plan);
-
-            DB::table("$tenant_data->database.plans")
-                ->insert([
-                    'id'                => $this->plan->id,
-                    'description'       => $this->plan->description,
-                    'number_fields'     => $this->plan->number_fields,
-                    'price'             => $this->plan->price,
-                    'created_at'    => Carbon::now(),
-                    'updated_at'    => Carbon::now(),
-                ]);
-
-            //======== ACTUALIZAR CORREO Y CONTRASEÑA DEL TENANT ========
-            DB::table("$tenant_data->database.users as u")
-                ->where('u.id', '1')
-                ->update(
-                    [
-                        'u.password'           =>  Hash::make($request->get('password')),
-                        'u.password_visible'    =>  $request->get('password'),
-                        'u.email'               =>  $request->get("correo")
-                    ]
-                );
-
-            DB::commit();
-
-            return to_route("landlord.mantenimientos.empresa");
-        } catch (\Exception $ex) {
-            DB::rollback();
-            return redirect()->back()->with("error", $ex->getMessage() . '-LINE:' . $ex->getLine());
+            return response()->json(['success' => true, 'message' => 'EMPRESA ACTUALIZADA CON ÉXITO']);
+        } catch (Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
+            ]);
         }
     }
 

@@ -16,6 +16,7 @@ use App\Models\Tenant\Maintenance\Company\Module as TenantModule;
 use App\Models\Tenant\Maintenance\Company\ModuleChild as TenantModuleChild;
 use App\Models\Tenant\Maintenance\Company\Plan as TenantPlan;
 use App\Models\Tenant\User;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class CompanyRepository
@@ -30,21 +31,29 @@ class CompanyRepository
         return Company::create($dto);
     }
 
+    public function updateCompanyLandlord(int $id, $dto): Company
+    {
+        $company    =   Company::findOrFail($id);
+        $company->update($dto);
+        return $company;
+    }
+
+
     public function storeCompanyInvoiceLandlord(array $dto): CompanyInvoice
     {
         return CompanyInvoice::create($dto);
     }
 
-    public function getModules(array $modules)
+    public function getModulesLandlord(array $modules)
     {
         return Module::whereIn('id', $modules)->get();
     }
-    public function getModulesChildren(array $childrens)
+    public function getModulesChildrenLandlord(array $childrens)
     {
         return ModuleChild::whereIn('id', $childrens)->get();
     }
 
-    public function getPlan(int $id): Plan
+    public function findPlanLandlord(int $id): Plan
     {
         return Plan::findOrFail($id);
     }
@@ -54,9 +63,23 @@ class CompanyRepository
         return TenantCompany::create($dto);
     }
 
+    public function updateCompanyTenant(array $dto, int $company_tenant_id): TenantCompany
+    {
+        $tenant_company =   TenantCompany::findOrFail($company_tenant_id);
+        $tenant_company->update($dto);
+        return $tenant_company;
+    }
+
     public function storeCompanyInvoiceTenant(array $dto): TenantCompanyInvoice
     {
         return TenantCompanyInvoice::create($dto);
+    }
+
+    public function updateCompanyInvoiceTenant(array $dto): TenantCompanyInvoice
+    {
+        $instance   =   TenantCompanyInvoice::findOrFail(1);
+        $instance->update($dto);
+        return $instance;
     }
 
     public function storeCollaboratorAdminTenant(array $dto): Collaborator
@@ -95,14 +118,14 @@ class CompanyRepository
         return TenantPlan::create($dto);
     }
 
-    public function saveLogoLandlord(Company $company, string $logo_url, string $logo_name)
+    public function saveLogoLandlord(Company $company, ?string $logo_url, ?string $logo_name)
     {
         $company->logo_url  =   $logo_url;
         $company->logo      =   $logo_name;
         $company->saveQuietly();
     }
 
-    public function saveLogoTenant(TenantCompany $company, string $logo_url, string $logo_name)
+    public function saveLogoTenant(TenantCompany $company, ?string $logo_url, ?string $logo_name)
     {
         $company->logo_url  =   $logo_url;
         $company->logo      =   $logo_name;
@@ -122,5 +145,129 @@ class CompanyRepository
         $company_invoice->certificate           =   $name;
         $company_invoice->certificate_url       =   $url;
         $company_invoice->saveQuietly();
+    }
+
+    public function getAllModules()
+    {
+        return Module::with('children.grandchildren')->get();
+    }
+
+    public function getTenantCompanyData(int $tenant_id = null, int $company_id = null)
+    {
+        $tenant_data    =   DB::table('tenants AS t')
+            ->join('companies AS c', 'c.tenant_id', 't.id')
+            ->join('company_invoice AS ci', 'ci.company_id', 'c.id')
+            ->select(
+                't.database',
+                't.domain',
+                't.id as tenant_id',
+
+                'c.id',
+                'c.ruc',
+                'c.business_name',
+                'c.abbreviated_business_name',
+                'c.fiscal_address',
+                'c.plan',
+                'c.logo_url',
+                'c.files_route',
+
+                'ci.id as company_invoice_id',
+                'ci.department_id',
+                'ci.province_id',
+                'ci.district_id',
+                'ci.secondary_user',
+                'ci.secondary_password',
+                'ci.api_user_gre',
+                'ci.api_password_gre',
+                'ci.certificate_password',
+                'ci.certificate',
+                'ci.certificate_url'
+            );
+
+        if ($tenant_id) {
+            $tenant_data->where('t.id', $tenant_id);
+        }
+        if ($company_id) {
+            $tenant_data->where('c.id', $company_id);
+        }
+
+        return $tenant_data->first();
+    }
+
+    public function getTenantModules(string $database)
+    {
+        $tenant_modules =   DB::table("$database.modules AS m")
+            ->select('m.id')
+            ->get();
+        return $tenant_modules;
+    }
+
+    public function getTenantModulesChildren(string $database)
+    {
+        $tenant_childrens =   DB::table("$database.module_children AS mc")
+            ->select('mc.id')
+            ->get();
+        return $tenant_childrens;
+    }
+
+    public function getTenantModulesGrandChildren(string $database)
+    {
+        $tenant_grand_childrens =   DB::table("$database.module_grand_children AS mgc")
+            ->select('mgc.id')
+            ->get();
+        return $tenant_grand_childrens;
+    }
+
+    public function getTenantUser(string $database)
+    {
+        $user   =   DB::table("$database.users as u")
+            ->select('u.*')
+            ->where('u.id', 1)
+            ->first();
+        return $user;
+    }
+
+    public function getPlans()
+    {
+        return Plan::all();
+    }
+
+    public function deleteTenantModules($database)
+    {
+        DB::table("$database.modules")->delete();
+    }
+
+    public function deleteTenantModulesChildren($database)
+    {
+        DB::table("$database.module_children")->delete();
+    }
+
+    public function deleteTenantModulesGrandChildren($database)
+    {
+        DB::table("$database.module_grand_children")->delete();
+    }
+
+    public function deleteTenantPlans($database)
+    {
+        DB::table("$database.plans")->delete();
+    }
+
+    public function findTenant(int $tenant_id): Tenant
+    {
+        return Tenant::findOrFail($tenant_id);
+    }
+
+    public function updateUserAdminTenant($dto)
+    {
+        $user   =   User::findOrFail(1);
+        $user->update($dto);
+        return $user;
+    }
+
+    public function updateCompanyInvoiceLandlord(int $company_invoice_id, array $dto)
+    {
+        $company_invoice    =   CompanyInvoice::findOrfail($company_invoice_id);
+        $company_invoice->update($dto);
+        return $company_invoice;
     }
 }

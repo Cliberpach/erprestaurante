@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('tenant_id')->unsigned()->nullable();
             $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
-            
+
             $table->string('ruc')->unique();
             $table->string('business_name')->unique();
             $table->string('abbreviated_business_name')->unique()->nullable();
@@ -28,7 +28,6 @@ return new class extends Migration
             $table->longText('base64_logo')->nullable();
 
             $table->string('fiscal_address')->nullable();
-            $table->string('zip_code')->nullable();
             $table->string('phone')->nullable();
             $table->string('cellphone')->nullable();
             $table->string('email')->nullable();
@@ -45,19 +44,6 @@ return new class extends Migration
             $table->enum('plan', [1, 2, 3]);
 
             $table->longText('token_placa')->nullable();
-
-            $table->unsignedBigInteger('department_id')->unsigned()->nullable();
-            $table->foreign('department_id')->references('id')->on('departments');
-
-            $table->unsignedBigInteger('province_id')->unsigned()->nullable();
-            $table->foreign('province_id')->references('id')->on('provinces');
-
-            $table->unsignedBigInteger('district_id')->unsigned()->nullable();
-            $table->foreign('district_id')->references('id')->on('districts');
-
-            $table->string('department_name', 300)->nullable();
-            $table->string('province_name', 300)->nullable();
-            $table->string('district_name', 300)->nullable();
 
             $table->timestamps();
         });

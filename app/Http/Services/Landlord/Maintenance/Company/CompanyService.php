@@ -12,21 +12,25 @@ use App\Models\Tenant\Maintenance\Company\CompanyInvoice as TenantCompanyInvoice
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class CompanyService
 {
     private CompanyDto $s_dto;
     private CompanyRepository $s_repository;
+    private CompanyValidation $s_validation;
 
     public function __construct()
     {
         $this->s_dto    =   new CompanyDto();
         $this->s_repository =   new CompanyRepository();
+        $this->s_validation =   new CompanyValidation();
     }
 
     public function store(array $data): Tenant
     {
+        $this->s_validation->validationStore($data);
+
         $dto_tenant =   $this->s_dto->getDtoTenant($data);
         $tenant     =   $this->s_repository->storeTenant($dto_tenant);
 
@@ -39,8 +43,8 @@ class CompanyService
         $data['files_route']        =   $company_landlord->files_route;
         $data['tenant_id']          =   $tenant->id;
         $data['zip_code']           =   $company_landlord->district_id;
-        $data['modules']            =   $this->s_repository->getModules($data['module_id']);
-        $data['modules_childrens']  =   $this->s_repository->getModulesChildren($data['child_id']);
+        $data['modules']            =   $this->s_repository->getModulesLandlord($data['module_id']);
+        $data['modules_childrens']  =   $this->s_repository->getModulesChildrenLandlord($data['child_id']);
         $data['plan_id']            =   $data['plan_id'];
         $data['files_route']        =   $company_landlord->files_route;
         DB::connection('landlord')->commit();
@@ -80,7 +84,7 @@ class CompanyService
         $dto_collaborator_tenant    =   $this->s_dto->getDtoCollaboratorTenant();
         $collaborator_tenant        =   $this->s_repository->storeCollaboratorAdminTenant($dto_collaborator_tenant);
 
-        $dto_user_tenant            =   $this->s_dto->getDtoUserTenant($data, $collaborator_tenant);
+        $dto_user_tenant            =   $this->s_dto->getDtoUserTenant($data, $collaborator_tenant->id);
         $user_tenant                =   $this->s_repository->storeUserAdminTenant($dto_user_tenant);
 
         $this->s_repository->assignRoleAdmin($user_tenant);
@@ -137,7 +141,6 @@ class CompanyService
         Tenant::forgetCurrent();
     }
 
-
     public function operationCert(array $data, string $files_route)
     {
         if (!isset($data['certificate'])) {
@@ -145,23 +148,8 @@ class CompanyService
         }
 
         $certificateFile        =   $data['certificate'];
-        $certificate_password   =   isset($data['certificate_password']) ?? null;
+        $certificate_password   =   $data['certificate_password'] ?? null;
         $extension              =   strtolower($certificateFile->getClientOriginalExtension());
-        if (!in_array($extension, ['pem', 'p12'])) {
-            throw ValidationException::withMessages([
-                'certificate' => [
-                    'El certificado debe tener extensión .pem o .p12.'
-                ]
-            ]);
-        }
-
-        if ($extension === 'p12' && !$certificate_password) {
-            throw ValidationException::withMessages([
-                'certificate_password' => [
-                    'La contraseña del certificado es obligatoria cuando se sube un archivo P12.'
-                ]
-            ]);
-        }
 
         $pemFilename        = 'cert_production.pem';
         $directoryPath      = $files_route . '/greenter/certs/';
@@ -186,17 +174,14 @@ class CompanyService
         }
     }
 
-    public function saveCertP12ToPem($certificateFile, string $certificate_password, $pemFullPath)
+    public function saveCertP12ToPem($certificateFile, ?string $certificate_password, $pemFullPath)
     {
         $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         $opensslPath = $isWindows
             ? '"C:\Program Files\OpenSSL-Win64\bin\openssl.exe"'
             : 'openssl';
 
-        //$opensslPath = '"C:\Program Files\OpenSSL-Win64\bin\openssl.exe"';
-        /*if (!file_exists(str_replace('"', '', $opensslPath))) {
-                        throw new \Exception('OpenSSL no encontrado en el servidor');
-                    }*/
+        $legacy =   $isWindows ? '' : '-legacy ';
 
         exec($opensslPath . ' version 2>&1', $check, $checkCode);
         if ($checkCode !== 0) {
@@ -218,7 +203,7 @@ class CompanyService
         $p12Password = $certificate_password;
 
         // 1️⃣ Extraer CLAVE PRIVADA
-        $cmdPrivateKey = $opensslPath . ' pkcs12 -legacy ' .
+        $cmdPrivateKey = $opensslPath . ' pkcs12 '.$legacy .
             '-in ' . escapeshellarg($tempP12Path) . ' ' .
             '-nocerts -nodes ' .
             '-out ' . escapeshellarg($privateKeyPath) . ' ' .
@@ -232,15 +217,16 @@ class CompanyService
         }
 
         // 2️⃣ Extraer CERTIFICADO DEL CONTRIBUYENTE
-        $cmdCert = $opensslPath . ' pkcs12 -legacy ' .
+        $cmdCert = $opensslPath . ' pkcs12 '.$legacy .
             '-in ' . escapeshellarg($tempP12Path) . ' ' .
             '-clcerts -nokeys ' .
             '-out ' . escapeshellarg($certPath) . ' ' .
-            '-password pass:' . escapeshellarg($p12Password) . ' 2>&1';
+            '-password pass:' . $p12Password . ' 2>&1';
 
         exec($cmdCert, $outCert, $codeCert);
 
         if ($codeCert !== 0) {
+            dd($outCert);
             logger()->error('Error extrayendo certificado', $outCert);
             throw new Exception('Error al extraer el certificado del P12');
         }
@@ -269,5 +255,163 @@ class CompanyService
         );
 
         return implode(PHP_EOL, $matches[0]) . PHP_EOL;
+    }
+
+    public function edit(int $id)
+    {
+        $all_modules    =   $this->s_repository->getAllModules();
+        $tenant_data    =   $this->s_repository->getTenantCompanyData($id);
+        $tenant_modules =   $this->s_repository->getTenantModules($tenant_data->database);
+        $tenant_modules_children    =   $this->s_repository->getTenantModulesChildren($tenant_data->database);
+        $tenant_modules_grand_children    =   $this->s_repository->getTenantModulesGrandChildren($tenant_data->database);
+
+        $user           =   $this->s_repository->getTenantUser($tenant_data->database);
+        $plans          =   $this->s_repository->getPlans();
+        $departments    =   UtilController::getDepartments();
+        $provinces      =   UtilController::getProvinces();
+        $districts      =   UtilController::getDistricts();
+
+        return view('company.edit_company_landlord', compact(
+            'all_modules',
+            'plans',
+            'tenant_data',
+            'tenant_modules',
+            'tenant_modules_children',
+            'tenant_modules_grand_children',
+            'user',
+            'departments',
+            'provinces',
+            'districts'
+        ));
+    }
+
+    public function update(array $data, int $id)
+    {
+        $this->s_validation->validationStore($data);
+
+        //========= OBTENER DATA =======
+        $tenant_data                =   $this->s_repository->getTenantCompanyData(null, $id);
+        $tenant                     =   $this->s_repository->findTenant($tenant_data->tenant_id);
+        $data['modules']            =   $this->s_repository->getModulesLandlord($data['module_id'] ?? []);
+        $data['modules_childrens']  =   $this->s_repository->getModulesChildrenLandlord($data['child_id'] ?? []);
+        $data['files_route']        =   $tenant_data->files_route;
+
+        //========== UPDATE LANDLORD TRANSACTION =======
+        DB::connection('landlord')->beginTransaction();
+        try {
+            $dto_company_landlord   =   $this->s_dto->getDtoUpdateCompanyLandlord($data);
+            $company_landlord       =   $this->s_repository->updateCompanyLandlord($id, $dto_company_landlord);
+
+            $dto_company_invoice_landlord   =   $this->s_dto->getDtoCompanyInvoiceLandlord($data, $company_landlord);
+            $company_invoice_landlord       =   $this->s_repository->updateCompanyInvoiceLandlord($tenant_data->company_invoice_id, $dto_company_invoice_landlord);
+
+            DB::connection('landlord')->commit();
+        } catch (Throwable $e) {
+            DB::connection('landlord')->rollBack();
+            throw $e;
+        }
+
+        //========= UPDATE TENANT TRANSACTION =========
+        $res =   $this->updateDataTenant($tenant_data, $tenant, $data);
+
+        //========== MANEJO DE LOGO ===========
+        $this->updateLogo($data, $tenant_data, $company_landlord, $tenant, $res->company_tenant);
+
+        //========= MANEJO CERTIFICADO ==========
+        $this->updateCertificate($tenant_data, $data, $tenant, $company_invoice_landlord, $res->company_invoice_tenant);
+    }
+
+    public function updateDataTenant($tenant_data, Tenant $tenant, array $data)
+    {
+        $tenant->makeCurrent();
+
+        DB::connection('tenant')->beginTransaction();
+        try {
+            //=========== MODULOS =============
+            $this->s_repository->deleteTenantModulesGrandChildren($tenant_data->database);
+            $this->s_repository->deleteTenantModulesChildren($tenant_data->database);
+            $this->s_repository->deleteTenantModules($tenant_data->database);
+
+
+            $dto_modules_tenant         =   $this->s_dto->getDtoModulesTenant($data['modules']);
+            $this->s_repository->insertMasiveModulesTenant($dto_modules_tenant);
+
+            $dto_childrens_tenant       =   $this->s_dto->getDtoModulesChildrenTenant($data['modules_childrens']);
+            $this->s_repository->insertMasiveModulesChildrenTenant($dto_childrens_tenant);
+
+            //=========== PLAN ==========
+            $this->s_repository->deleteTenantPlans($tenant_data->database);
+            $dto_plan_tenant    =   $this->s_dto->getDtoPlanTenant($data['plan_id']);
+            $this->s_repository->storePlanTenant($dto_plan_tenant);
+
+            //======== USER PASSWORD ==========
+            $dto_user_tenant            =   $this->s_dto->getDtoUpdateUserTenant($data);
+            $user_tenant                =   $this->s_repository->updateUserAdminTenant($dto_user_tenant);
+
+            //========= COMPANY ==========
+            $dto_company_tenant         =   $this->s_dto->getDtoTenantCompanyUpdate($data);
+            $company_tenant             =   $this->s_repository->updateCompanyTenant($dto_company_tenant, 1);
+
+            //============= COMPANY INVOICE TENANT ===========
+            $dto_tenant_company_invoice =   $this->s_dto->getDtoTenantCompanyInvoice($data, $company_tenant);
+            $company_invoice_tenant     =   $this->s_repository->updateCompanyInvoiceTenant($dto_tenant_company_invoice);
+
+            DB::connection('tenant')->commit();
+
+            Tenant::forgetCurrent();
+            return  (object)[
+                'company_invoice_tenant'   =>  $company_invoice_tenant,
+                'company_tenant' => $company_tenant
+            ];
+        } catch (Throwable $th) {
+
+            DB::connection('tenant')->rollBack();
+            Tenant::forgetCurrent();
+            throw $th;
+        }
+    }
+
+    public function updateLogo(array $data, $tenant_data, Company $company_landlord, Tenant $tenant, TenantCompany $company_tenant)
+    {
+        $logo       =   $data['logo'] ?? null;
+        $logo_url   =   null;
+        $logo_name  =   null;
+        if ($logo) {
+
+            //========= ELIMINAR LOGO PREVIO ===========
+            if ($tenant_data->logo_url) {
+                UtilController::deleteFile($tenant_data->logo_url);
+            }
+
+            UtilController::saveFileFromLandlord($logo, 'logo_principal', $tenant_data->files_route . '/logo');
+
+            $logo_name  =   'logo_principal.' . $logo->getClientOriginalExtension();
+            $logo_url   =   'storage/' . $tenant_data->files_route . '/logo/' . $logo_name;
+        } else {
+
+            //========= ELIMINAR LOGO PREVIO ===========
+            if ($tenant_data->logo_url) {
+                UtilController::deleteFile($tenant_data->logo_url);
+            }
+        }
+
+        $this->s_repository->saveLogoLandlord($company_landlord, $logo_url, $logo_name);
+
+        $tenant->makeCurrent();
+        $this->s_repository->saveLogoTenant($company_tenant, $logo_url, $logo_name);
+        Tenant::forgetCurrent();
+    }
+
+    public function updateCertificate($tenant_data, array $data, Tenant $tenant, CompanyInvoice $company_invoice_landlord, TenantCompanyInvoice $company_invoice_tenant)
+    {
+        $certificate   =   $data['certificate'] ?? null;
+        if ($certificate) {
+            //========= ELIMINAR CERTIFICATE PREVIO ===========
+            if ($tenant_data->certificate_url) {
+                UtilController::deleteFile($tenant_data->certificate_url);
+            }
+
+            $this->saveCertificate($data, $tenant, $company_invoice_landlord, $company_invoice_tenant);
+        }
     }
 }

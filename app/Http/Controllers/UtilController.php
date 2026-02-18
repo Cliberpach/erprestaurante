@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\CompanyInvoice;
 use App\Models\Department;
 use App\Models\District;
 use App\Models\Landlord\Company;
@@ -13,6 +12,7 @@ use App\Models\Landlord\TypeIdentityDocument;
 use App\Models\Landlord\Year;
 use App\Models\Province;
 use App\Models\Tenant\DocumentSerialization;
+use App\Models\Tenant\Maintenance\Company\CompanyInvoice;
 use App\Models\Tenant\Maintenance\CostCenter;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\PaymentCondition\PaymentCondition;
@@ -51,6 +51,13 @@ class UtilController extends Controller
     public static function deleteImg(string $path)
     {
         Storage::disk('public')->delete($path);
+    }
+
+    public static function deleteFile(string $path)
+    {
+        $cleanPath = str_replace('storage/', '', $path);
+
+        Storage::disk('public')->delete($cleanPath);
     }
 
     public static function apiDni($dni)
@@ -331,5 +338,20 @@ class UtilController extends Controller
     {
         $items =   CostCenter::where('status', 'ACTIVO')->get();
         return $items;
+    }
+
+    public static function getDepartments()
+    {
+        return Department::all();
+    }
+
+    public static function getProvinces()
+    {
+        return Province::all();
+    }
+
+    public static function getDistricts()
+    {
+        return District::all();
     }
 }

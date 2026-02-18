@@ -13,6 +13,10 @@ class Department extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'id' => 'string',
+    ];
+
     public function provinces()
     {
         return $this->hasMany('App\Province');

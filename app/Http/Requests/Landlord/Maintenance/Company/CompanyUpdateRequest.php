@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Landlord\Maintenance\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CompanyStoreRequest extends FormRequest
+class CompanyUpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,14 +14,6 @@ class CompanyStoreRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        if ($this->domain) {
-            $this->merge([
-                'domain' => strtolower(
-                    preg_replace('/\s+/', '', trim($this->domain))
-                ),
-            ]);
-        }
-
         $this->merge([
             'department' => str_pad($this->department, 2, '0', STR_PAD_LEFT),
             'province'   => str_pad($this->province, 4, '0', STR_PAD_LEFT),
@@ -33,13 +25,6 @@ class CompanyStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'domain' => [
-                'required',
-                'string',
-                'min:3',
-                'max:63', //63 caracteres es el límite real de etiquetas DNS → buena práctica.
-                'regex:/^(?!-)[a-z0-9-]+(?<!-)$/'
-            ],
             'ruc' => [
                 'required',
                 Rule::unique('companies')

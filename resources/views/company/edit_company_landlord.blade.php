@@ -4,271 +4,13 @@
     Editar Empresa
 @endsection
 
-@section('css')
-@endsection
+@push('js-head')
+    @vite(['resources/js/libs/filepond.js'])
+@endpush
 
 @section('content')
     <div class="row">
-        <form action="{{ route('landlord.mantenimiento.empresas.update',['id'=>$company->id]) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            <div class="nav-align-top mb-4">
-                <ul class="nav nav-pills mb-3" role="tablist">
-                    <li class="nav-item">
-                        <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
-                            data-bs-target="#navs-pills-top-empresa" aria-controls="navs-pills-top-empresa"
-                            aria-selected="true">
-                            Empresa
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
-                            data-bs-target="#navs-pills-top-banco" aria-controls="navs-pills-top-banco"
-                            aria-selected="false">
-                            Módulos
-                        </button>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane fade active show" id="navs-pills-top-empresa" role="tabpanel">
-                        {{-- empresa --}}
-                        <div class="row">
-                            @if (session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
-                            <div class="col-sm-6 col-12" style="border-right: 1px solid #e7eaec;">
-                                <label class="form-label" for="domain">Hostname:</label>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control @error('domain') is-invalid @enderror"
-                                        placeholder="Nombre del dominio" id="domain" name="domain"
-                                        value="{{$company->domain}}"
-                                        readonly>
-                                    <span class="input-group-text">.comandapro.online</span>
-                                    <br>
-                                </div>
-                                @error('domain')
-                                    <p style="color: red; margin-top: -10px;">* {{ $message }}</p>
-                                @enderror
-                                <div class="row mb-3">
-                                    <div class="col-6">
-                                        <label class="form-label" for="ruc">RUC:</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control @error('ruc') is-invalid @enderror"
-                                                id="ruc" name="ruc" placeholder="Número de ruc"
-                                                value="{{ $company->ruc }}">
-                                            <button class="btn btn-outline-primary" type="button" id="btn_consulta_sunat"
-                                                style="padding-right: 10px; padding-left: 10px;"><i
-                                                    class="bx bx-search"></i> Sunat</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6">
-                                        <label class="form-label" for="estado">Estado:</label>
-                                        <input type="text" class="form-control text-center" id="estado" name="estado"
-                                            readonly value="SIN VERIFICAR">
-                                    </div>
-                                </div>
-                                @error('ruc')
-                                    <p style="color: red; margin-top: -10px;">* {{ $message }}</p>
-                                @enderror
-
-                                <div class="mb-3">
-                                    <label class="form-label" for="razon_social">Razón social:</label>
-                                    <input type="text" class="form-control @error('razon_social') is-invalid @enderror"
-                                        id="razon_social" name="razon_social" value="{{ $company->business_name }}">
-                                </div>
-                                @error('razon_social')
-                                    <p style="color: red; margin-top: -10px;">* {{ $message }}</p>
-                                @enderror
-
-                                <div class="row mb-3">
-                                    <div class="col-6">
-                                        <label class="form-label" for="razon_social_abreviada">Razón Social
-                                            Abreviada:</label>
-                                        <input type="text"
-                                            class="form-control @error('razon_social_abreviada') is-invalid @enderror"
-                                            id="razon_social_abreviada" name="razon_social_abreviada"
-                                            value="{{ $company->abbreviated_business_name }}">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="form-label" for="ubigeo">Ubigeo:</label>
-                                        <input type="text" class="form-control" id="ubigeo" name="ubigeo" value="{{$company->zip_code}}">
-                                    </div>
-                                </div>
-                                @error('razon_social_abreviada')
-                                    <p style="color: red; margin-top: -10px;">* {{ $message }}</p>
-                                @enderror
-
-                                <div class="mb-3">
-                                    <label for="direccion_fiscal" class="form-label">Dirección Fiscal</label>
-                                    <textarea class="form-control" id="direccion_fiscal" name="direccion_fiscal" rows="2">{{$company->fiscal_address}}</textarea>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="correo">Correo:</label>
-                                            <input type="email" class="form-control" id="correo" name="correo"
-                                                value="{{$user->email}}">
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="mb-3">
-                                            <div class="form-password-toggle">
-                                                <label class="form-label" for="password">Password</label>
-                                                <div class="input-group input-group-merge">
-                                                    <input type="password" class="form-control" id="password"
-                                                        name="password" value="{{$user->password_visible}}">
-                                                    <span class="input-group-text cursor-pointer"><i
-                                                            class="bx bx-hide"></i></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-12">
-                                <p>Facturación Electrónica</p>
-                                <div class="row mb-3">
-                                    <div class="col-6">
-                                        <label class="form-label" for="secondary_user">Usuario Secundario:</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class='bx bx-user'></i></span>
-                                            <input type="text" class="form-control" placeholder="Usuario secundario"
-                                                id="secondary_user" name="secondary_user">
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-password-toggle">
-                                            <label class="form-label" for="secondary_user">Clave de Usuario
-                                                secundario:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-text"><i class='bx bx-shield'></i></span>
-                                                <input type="password" class="form-control" id="secondary_password"
-                                                    name="secondary_password">
-                                                <span class="input-group-text cursor-pointer">
-                                                    <i class="bx bx-hide"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label" for="certificate_url">Certificado:</label>
-                                    <div class="input-group">
-                                        <input type="file" class="form-control" id="certificate_url"
-                                            name="certificate_url">
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label" for="certificate_password">Contraseña de
-                                        Certificado:</label>
-                                    <div class="input-group">
-                                        <textarea class="form-control" id="certificate_password" name="certificate_password" rows="5"></textarea>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label" for="certificate_password">
-                                        <span class="me-2">Plan</span>
-                                        <button type="button" class="btn btn-outline-primary me-1"
-                                            data-bs-toggle="modal" data-bs-target="#modal_create_plan">
-                                            Nuevo Plan
-                                        </button>
-                                    </label>
-                                    <div class="input-group">
-                                        <select name="plan_id" id="plan_id" class="form-select @error('plan_id') is-invalid @enderror">
-                                            <option value="">Seleccione ...</option>
-                                            @foreach ($plans as $plan)
-                                                <option
-                                                @if ($plan->id == $company->plan)
-                                                    selected
-                                                @endif
-                                                value="{{ $plan->id }}">{{ $plan->description }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                @error('plan_id')
-                                    <p style="color: red; margin-top: -10px;">* {{ $message }}</p>
-                                @enderror
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="navs-pills-top-banco" role="tabpanel">
-                        {{-- modulo --}}
-                        <p>Módulos</p>
-
-                        <div class="row">
-                            @foreach ($all_modules as $module)
-                                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                                    <div class="card h-100 mb-4">
-                                        <div class="card-body">
-                                            <div class="card-text mb-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input module-checkbox" type="checkbox"
-                                                        id="module{{ $module->id }}" name="module_id[]"
-                                                        value="{{ $module->id }}"
-                                                        @if ($tenant_modules->contains('id', $module->id))
-                                                            checked
-                                                        @endif>
-                                                    <label class="form-check-label" for="module{{ $module->id }}">
-                                                        {{ $module->description }}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            @foreach ($module->children as $child)
-                                                <div class="card-text mb-2" style="margin-left: 1.5rem;">
-                                                    <div class="form-check">
-                                                        <input
-                                                            class="form-check-input {{ $child->grandchildren->isNotEmpty() ? 'child-grandchild-checkbox' : 'child-checkbox' }}"
-                                                            type="checkbox" id="children{{ $child->id }}"
-                                                            name="child_id[]" value="{{ $child->id }}"
-                                                            @if ($tenant_modules_children->contains('id', $child->id))
-                                                                checked
-                                                            @endif>
-                                                        <label class="form-check-label"
-                                                            for="children{{ $child->id }}">
-                                                            {{ $child->description }}
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                @foreach ($child->grandchildren as $grandchild)
-                                                    <div class="card-text {{ $loop->last ? 'mb-2' : '' }}"
-                                                        style="margin-left: 2.5rem">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input grandchild-checkbox"
-                                                                type="checkbox" id="grandchildren{{ $grandchild->id }}"
-                                                                name="grandchild_id[]" value="{{ $grandchild->id }}"
-                                                                @if ($tenant_modules_grand_children->contains('id', $grandchild->id))
-                                                                    checked
-                                                                @endif>
-                                                            <label class="form-check-label"
-                                                                for="grandchildren{{ $grandchild->id }}">
-                                                                {{ $grandchild->description }}
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-outline-primary me-1">Registrar</button>
-                        <a href="{{ route('landlord.mantenimiento.empresa') }}"
-                            class="btn btn-outline-secondary me-1">Regresar</a>
-                    </div>
-                </div>
-            </div>
-        </form>
+        @include('company.forms.form_edit_landlord')
     </div>
 
     <!-- Create Modal -->
@@ -310,8 +52,8 @@
                                 <label for="price" class="form-label">Precio</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class='bx bx-dollar'></i></span>
-                                    <input type="text" class="form-control" placeholder="Precio del plan"
-                                        id="price" name="price">
+                                    <input type="text" class="form-control" placeholder="Precio del plan" id="price"
+                                        name="price">
                                 </div>
                             </div>
                         </div>
@@ -329,12 +71,7 @@
     </div>
 @endsection
 
-@section('css')
-@endsection
-
 @section('js')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
         $(document).on('click', '#btn_consulta_sunat', function() {
             const user_ruc = $('#ruc').val();
@@ -527,5 +264,254 @@
                 },
             });
         });
+    </script>
+
+    <script>
+        let fpLogo = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTomSelect();
+            loadFpTenant();
+            events();
+            setUbigeoPreview();
+        })
+
+        function events() {
+            document.querySelector('#form-company-edit').addEventListener('submit', (e) => {
+                e.preventDefault();
+                updateCompany(e.target);
+            })
+        }
+
+        function loadTomSelect() {
+
+            const departmentSelect = document.getElementById('department');
+            if (departmentSelect && !departmentSelect.tomselect) {
+                window.departmentSelect = new TomSelect(departmentSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'asc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
+
+            const provinceSelect = document.getElementById('province');
+            if (provinceSelect && !provinceSelect.tomselect) {
+                window.provinceSelect = new TomSelect(provinceSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'asc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
+
+            const districtSelect = document.getElementById('district');
+            if (districtSelect && !districtSelect.tomselect) {
+                window.districtSelect = new TomSelect(districtSelect, {
+                    valueField: 'id',
+                    labelField: 'description',
+                    searchField: ['description', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.description)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.description)}</div>
+                        `
+                    }
+                });
+            }
+        }
+
+        function changeDepartment(department_id) {
+
+            const lstProvinces = @json($provinces);
+            const lstDistricts = @json($districts);
+
+            let lstProvincesFiltered = [];
+
+            if (department_id) {
+
+                department_id = String(department_id).padStart(2, '0');
+
+                lstProvincesFiltered = lstProvinces.filter((province) => {
+                    return province.department_id == department_id;
+                })
+
+                window.provinceSelect.clearOptions();
+
+                lstProvincesFiltered.forEach(province => {
+                    window.provinceSelect.addOption({
+                        id: province.id,
+                        description: province.name
+                    });
+                });
+
+                window.provinceSelect.setValue(null);
+            }
+
+        }
+
+        function changeProvince(province_id) {
+
+            const lstDistricts = @json($districts);
+
+            let lstDistrictsFiltered = [];
+
+            if (province_id) {
+
+                province_id = String(province_id).padStart(4, '0');
+
+                lstDistrictsFiltered = lstDistricts.filter((district) => {
+                    return district.province_id == province_id;
+                })
+
+                window.districtSelect.clearOptions();
+
+                lstDistrictsFiltered.forEach(district => {
+                    window.districtSelect.addOption({
+                        description: district.name,
+                        id: district.id
+                    });
+                });
+
+                window.districtSelect.setValue(null);
+
+            }
+        }
+
+        function loadFpTenant() {
+            const inputImg = document.querySelector('#input-logo');
+            fpLogo = FilePond.create(inputImg, {
+                allowImagePreview: true,
+                imagePreviewHeight: 120,
+                imageCropAspectRatio: '1:1',
+                styleLayout: 'compact',
+                stylePanelAspectRatio: 0.5,
+                storeAsFile: true,
+
+                maxFileSize: '4MB',
+                acceptedFileTypes: [
+                    'image/jpeg',
+                    'image/webp',
+                    'image/avif'
+                ],
+                labelFileTypeNotAllowed: 'Formato no permitido',
+                labelMaxFileSizeExceeded: 'El archivo supera los 2 MB',
+            });
+
+            companyLogo = @json(asset($tenant_data->logo_url));
+            if (@json($tenant_data->logo_url)) {
+                fpLogo.addFile(companyLogo);
+            }
+        }
+
+        function setUbigeoPreview() {
+
+            const departmentSelect = document.getElementById("department");
+            if (departmentSelect) {
+                departmentSelect.dispatchEvent(new Event("change"));
+            }
+
+            window.provinceSelect.setValue("{{ $tenant_data->province_id }}");
+            window.districtSelect.setValue("{{ $tenant_data->district_id }}");
+
+        }
+
+        function updateCompany(formUpdateCompany) {
+            Swal.fire({
+                title: '¿Desea actualizar la empresa?',
+                text: "¡Se actualizará el tenant!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-secondary'
+                },
+                buttonsStyling: false
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+
+                        clearValidationErrors('msgError');
+
+                        Swal.fire({
+                            title: 'Actualizando empresa...',
+                            html: 'Por favor, espera',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        const id = @json($tenant_data->id);
+                        const formData = new FormData(formUpdateCompany);
+                        formData.append('_method', 'PUT');
+
+                        const res = await axios.post(route('landlord.mantenimiento.empresas.update', {
+                            id
+                        }), formData);
+                        if (res.data.success) {
+                            toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
+                            redirect("landlord.mantenimiento.empresas.index");
+                        } else {
+                            toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
+                            Swal.close();
+                        }
+                    } catch (error) {
+                        Swal.close();
+                        if (error.response && error.response.status === 422) {
+                            const errors = error.response.data.errors;
+                            paintValidationErrors(errors, 'error');
+                            toastr.error('ERRORES DE VALIDACIÓN EN EL FORMULARIO');
+                            return;
+                        } else {
+                            toastr.error(error, 'ERROR LA PETICIÓN REGISTRAR EMPRESA');
+                        }
+                    }
+                }
+            });
+        }
     </script>
 @endsection
