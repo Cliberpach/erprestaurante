@@ -70,7 +70,7 @@ class CompanyController extends Controller
                 'e.ruc',
                 'e.business_name',
                 'e.created_at',
-                't.id',
+                't.id as tenant_id',
                 't.domain',
                 'p.description as plan_name',
                 'e.email',
@@ -303,7 +303,7 @@ array:1 [ // app\Http\Controllers\LandLord\CompanyController.php:263
         try {
 
             //====== OBTENER EMPRESA =======
-            $company = LandlordCompany::find($id);
+            $company = LandlordCompany::findOrFail($id);
 
             if (!$company) {
                 throw new Exception("NO EXISTE LA EMPRESA EN LA BD!!");
