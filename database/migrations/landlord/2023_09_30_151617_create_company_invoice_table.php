@@ -33,19 +33,20 @@ return new class extends Migration
 
             $table->longText('token_reniec')->nullable();
 
-            $table->string('ubigeo', 20)->nullable();
-            $table->unsignedBigInteger('department_id')->unsigned()->nullable();
+            //========= UBIGEO =========
+            $table->char('department_id', 2)->nullable();
             $table->foreign('department_id')->references('id')->on('departments');
 
-            $table->unsignedBigInteger('province_id')->unsigned()->nullable();
+            $table->char('province_id', 4)->nullable();
             $table->foreign('province_id')->references('id')->on('provinces');
 
-            $table->unsignedBigInteger('district_id')->unsigned()->nullable();
+            $table->char('district_id', 6)->nullable();
             $table->foreign('district_id')->references('id')->on('districts');
 
-            $table->string('department_name', 300)->nullable();
-            $table->string('province_name', 300)->nullable();
-            $table->string('district_name', 300)->nullable();
+            $table->string('department_name', 160)->nullable();
+            $table->string('province_name', 160)->nullable();
+            $table->string('district_name', 160)->nullable();
+            $table->string('ubigeo', 20)->nullable();
 
             $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
 
