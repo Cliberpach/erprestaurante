@@ -29,7 +29,6 @@ Route::middleware(['auth:web', 'verified'])->group(function () {
             Route::delete('deleteTenant/{id}', [CompanyController::class, 'deleteTenant'])->name('landlord.mantenimiento.empresas.deleteTenant');
         });
 
-
         Route::get('plan', [PlanController::class, 'index'])->name('landlord.mantenimiento.plan');
         Route::post('plan', [PlanController::class, 'store'])->name('landlord.mantenimiento.planes.store');
         Route::get('plan/edit/{id}', [PlanController::class, 'edit'])->name('landlord.mantenimiento.planes.edit');

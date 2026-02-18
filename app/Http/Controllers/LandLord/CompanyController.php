@@ -4,12 +4,17 @@ namespace App\Http\Controllers\LandLord;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyStoreRequest;
+use App\Http\Services\Landlord\Maintenance\Company\CompanyManager;
 use App\Models\Company;
+use App\Models\Department;
+use App\Models\District;
 use App\Models\Landlord\Company as LandlordCompany;
+use App\Models\Landlord\Maintenance\Company\CompanyInvoice;
 use App\Models\Module;
 use App\Models\ModuleChild;
 use App\Models\ModuleGrandChild;
 use App\Models\Plan;
+use App\Models\Province;
 use App\Models\Tenant;
 use Carbon\Carbon;
 use Exception;
@@ -36,9 +41,12 @@ use App\Services\TestService;
 
 class CompanyController extends Controller
 {
+    private CompanyManager $s_manager;
+
     public function __construct()
     {
         $this->middleware('auth');
+        $this->s_manager    =   new CompanyManager();
     }
 
     private $modules;
@@ -86,7 +94,10 @@ class CompanyController extends Controller
 
     public function create(): View
     {
-        $all_modules = Module::with('children.grandchildren')->get();
+        $all_modules    =   Module::with('children.grandchildren')->get();
+        $departments    =   Department::all();
+        $provinces      =   Province::all();
+        $districts      =   District::all();
 
         $plans = Plan::select(
             'id',
@@ -95,7 +106,13 @@ class CompanyController extends Controller
             DB::raw('CASE WHEN number_fields > 6 THEN "SIN LÍMITE" ELSE number_fields END AS number_fields'),
         )->get();
 
-        return view('company.create', compact('all_modules', 'plans'));
+        return view('company.create', compact(
+            'all_modules',
+            'plans',
+            'departments',
+            'provinces',
+            'districts'
+        ));
     }
 
     public function edit($id): View
@@ -161,80 +178,54 @@ class CompanyController extends Controller
         ));
     }
 
+
+    /*
+array:19 [ // app\Http\Controllers\LandLord\CompanyController.php:251
+  "_token" => "sULo2DcbohGSxVete8SndX56VouOen08BAlGsU4p"
+  "domain" => "a"
+  "ruc" => "a"
+  "estado" => "SIN VERIFICAR"
+  "razon_social" => "a"
+  "razon_social_abreviada" => "a"
+  "direccion_fiscal" => null
+  "department" => "1"
+  "province" => "102"
+  "district" => "10204"
+  "correo" => "admin@gmail.com"
+  "password" => "123456789"
+  "secondary_user" => null
+  "secondary_password" => null
+  "certificate_password" => null
+  "plan_id" => "1"
+  "certificate":File
+  "certificate_password":string
+  "module_id" => array:12 [
+    0 => "1"
+    1 => "2"
+  ]
+  "child_id" => array:37 [
+    0 => "1"
+    1 => "2"
+  ]
+  "logo" =>Illuminate\Http\UploadedFile {#2265}
+]
+*/
     public function store(CompanyStoreRequest $request)
     {
         try {
-
             DB::beginTransaction();
 
-            $domain = strtolower($request->get("domain"));
-            $tenant = Tenant::create([
-                "name" => $request->input('razon_social'),
-                "domain" => $domain . "." . parse_url(config("app.url"), PHP_URL_HOST),
-            ]);
-
-            $tenantDirectory = "{$domain}_{$tenant->id}";
-
-            $company                                =   new Company();
-            $company->tenant_id                     =   $tenant->id;
-            $company->ruc                           =   $request->get("ruc");
-            $company->business_name                 =   $request->get("razon_social");
-            $company->abbreviated_business_name     =   $request->get("razon_social_abreviada");
-            $company->zip_code                      =   $request->get("ubigeo");
-            $company->fiscal_address                =   $request->get("direccion_fiscal");
-            $company->email                         =   $request->get("correo");
-            $company->plan                          =   $request->get("plan_id");
-            $company->files_route                   =   "{$domain}_{$tenant->id}";
-            $company->token_placa                   =  "nsHeEpNSOBr8ucEFnL7OtKmVkZhefUuvoM8O1Lz7uFEOi4KtFZ54==";
-
-            //=========== CERTIFICADO ==========
-            if ($request->hasFile('certificate_url')) {
-                $certificate                =   $request->file('certificate_url');
-                $fileFolderPath             =   'storage/' . $tenantDirectory . '/certificate/';
-                $fileName                   =   $tenant->name . '_' . $tenant->id . "_" . $certificate->getClientOriginalExtension();
-
-                $company->certificate       =   $fileName;
-                $company->certificate_url   =   $fileFolderPath . $fileName;
-            }
-
-            $company->save();
-
-            $module_array       = $request->module_id;
-            $child_array        = $request->child_id;
-            $grandchild_array   = $request->grandchild_id;
-
-
-            $this->modules          =   Module::whereIn('id', $module_array)->get();
-            $this->children         =   ModuleChild::whereIn('id', $child_array)->get();
-            //$this->grand_children   =   ModuleGrandChild::whereIn('id', $grandchild_array)->get();
-            $this->plan             =   Plan::findOrFail($company->plan);
-
-            DB::connection('landlord')->commit();
-
-            $request->merge([
-                'tenant_id'     =>  $tenant->id,
-                'tenant_name'   =>  $tenant->name,
-                'files_route'   =>  "{$domain}_{$tenant->id}",
-            ]);
-
-            $tenant->makeCurrent();
-            $this->insertDataTenant($tenant->database, $request);
-
-            //======= CREAR CARPETA DE ARCHIVOS PARA EL TENANT  EN PUBLIC/STORAGE/ ====
-            if (!Storage::disk('public')->exists($tenantDirectory)) {
-                Storage::disk('public')->makeDirectory($tenantDirectory);
-            }
-
-            Tenant::forgetCurrent();
+            $tenant =   $this->s_manager->store($request->toArray());
 
             Session::flash('message_success', 'EMPRESA REGISTRADA CON ÉXITO');
+
             return response()->json(['success' => true, 'message' => 'EMPRESA REGISTRADA CON ÉXITO']);
         } catch (Throwable $th) {
 
             DB::connection('landlord')->rollback();
 
-            if (isset($tenantDatabase)) {
-                DB::connection('landlord')->statement("DROP DATABASE IF EXISTS `{$tenantDatabase}`");
+            if (isset($tenant)) {
+                DB::connection('landlord')->statement("DROP DATABASE IF EXISTS `{$tenant->database}`");
             }
 
             Session::flash('message_error', $th->getMessage());
@@ -245,188 +236,6 @@ class CompanyController extends Controller
                 'line' => $th->getLine()
             ]);
         }
-    }
-
-    private function insertDataTenant($database, $request)
-    {
-        $files_route            =   $request->get('files_route');
-
-        $company                                =   new TenantCompany();
-        $company->ruc                           =   $request->get("ruc");
-        $company->domain                        =   $request->get('domain');
-        $company->tenant_id                     =   $request->get('tenant_id');
-        $company->files_route                   =   $request->get('files_route');
-        $company->business_name                 =   $request->get("razon_social");
-        $company->abbreviated_business_name     =   $request->get("razon_social_abreviada");
-        $company->zip_code                      =   $request->get("ubigeo");
-        $company->fiscal_address                =   $request->get("direccion_fiscal");
-        $company->email                         =   $request->get("correo");
-        $company->plan                          =   $request->get("plan_id");
-
-        if ($request->hasFile('certificate_url')) {
-            $certificate                = $request->file('certificate_url');
-            $fileFolderPath             = 'storage/' . $files_route . '/certificate/';
-            $fileName                   = $files_route . "." . $certificate->getClientOriginalExtension();
-
-            $certificate->move(public_path($fileFolderPath), $fileName);
-            $company->certificate       = $fileName;
-            $company->certificate_url   = $fileFolderPath . $fileName;
-        }
-
-        $company->save();
-
-        //========= DATOS DE FACTURACIÓN COMPANY INVOICE =========
-        TenantCompanyInvoice::create([
-            'company_id'           => $company->id,
-            'plan'                 => $company->plan,
-            'environment'          => 'BETA',
-            'department_id'        => '01',
-            'province_id'          => '0101',
-            'district_id'          => '010101',
-            'department_name'      => 'LA LIBERTAD',
-            'province_name'        => 'TRUJILLO',
-            'district_name'        => 'TRUJILLO',
-            'ubigeo'               => '130101',
-            'urbanization'         => 'PALERMO',
-            'local_code'           => '0000',
-            'secondary_user'       => 'MODDATOS',
-            'secondary_password'   => 'MODDATOS',
-            'api_user_gre'         => 'test-85e5b0ae-255c-4891-a595-0b98c65c9854',
-            'api_password_gre'     => 'test-Hty/M6QshYvPgItX2P0+Kw==',
-        ]);
-
-        //======== CLONAR ROLES Y PERMISOS ============
-        app(TenantPermissionCloner::class)->clone();
-
-        //========= CREANDO USUARIO PARA EL TENANT ========
-        $collaborator                               =   new Collaborator();
-        $collaborator->full_name                    =   'LUIS DANIEL ALVA LUJAN';
-        $collaborator->document_type_id             =   1;
-        $collaborator->document_number              =   77412431;
-        $collaborator->address                      =   'AV HUSARES 123';
-        $collaborator->phone                        =   '989392912';
-        $collaborator->work_days                    =   30;
-        $collaborator->rest_days                    =   20;
-        $collaborator->monthly_salary               =   12000;
-        $collaborator->daily_salary                 =   400;
-        $collaborator->position_id                  =   1;
-        $collaborator->document_type_abbreviation   =   'DNI';
-        $collaborator->save();
-
-        $user                       =   new User();
-        $user->name                 =   'ADMIN';
-        $user->email                =   $request->get("correo");
-        $user->password             =   Hash::make($request->get("password"));
-        $user->password_visible     =   $request->get("password");
-        $user->collaborator_id      =   $collaborator->id;
-        $user->save();
-
-        $role = Role::where('name', 'admin')->first();
-        $user->assignRole($role);
-
-        /*$this->createUserWithRole(
-            'CAJERO 1',
-            'cajero@gmail.com',
-            '123456789',
-            'CAJERO',
-            2
-        );
-        for ($i = 1; $i <= 20; $i++) {
-            $this->createUserWithRole(
-                "MESERO {$i}",
-                "mesero{$i}@gmail.com",
-                '123456789',
-                'MESERO',
-                3
-            );
-        }
-        $this->createUserWithRole(
-            'CONTADOR',
-            'contador@gmail.com',
-            '123456789',
-            'CONTADOR',
-            4
-        );
-        $this->createUserWithRole(
-            'COCINERO',
-            'cocinero@gmail.com',
-            '123456789',
-            'COCINERO',
-            5
-        );*/
-
-
-        //app(TestService::class)->createTestData();
-
-        DocumentSerialization::create([
-            'company_id'        => $company->id,
-            'document_type_id'  => 67,
-            'serie'             => 'NV01',
-            'number_limit'      => 8,
-            'destiny'           => 'NOTA DE VENTA',
-            'default'           => 'NO',
-            'final_number'      => 0,
-            'description'       => 'NOTA DE VENTA',
-        ]);
-
-        DocumentSerialization::create([
-            'company_id'        =>  $company->id,
-            'document_type_id'  =>  65,
-            'serie'             =>  'B001',
-            'number_limit'      =>  8,
-            'destiny'           =>  'BOLETA ELECTRÓNICA',
-            'default'           =>  'NO',
-            'final_number'      =>  0,
-            'description'       =>  'BOLETA ELECTRÓNICA',
-        ]);
-        DocumentSerialization::create([
-            'company_id'        =>  $company->id,
-            'document_type_id'  =>  66,
-            'serie'             =>  'F001',
-            'number_limit'      =>  8,
-            'destiny'           =>  'FACTURA ELECTRÓNICA',
-            'default'           =>  'NO',
-            'final_number'      =>  0,
-            'description'       =>  'FACTURA ELECTRÓNICA',
-        ]);
-
-
-        foreach ($this->modules as $module) {
-            CompanyModule::create([
-                'id' => $module->id,
-                'description' => $module->description,
-                'order' => $module->order,
-                'icon'  =>  $module->icon,
-                'render_order' => $module->render_order
-            ]);
-        }
-
-        foreach ($this->children as $children) {
-            CompanyModuleChild::create([
-                'id' => $children->id,
-                'module_id' => $children->module_id,
-                'description' => $children->description,
-                'route_name' => $children->route_name,
-                'order' => $children->order,
-            ]);
-        }
-
-        /*foreach ($this->grand_children as $grand_children) {
-            CompanyModuleGrandChild::create([
-                'id' => $grand_children->id,
-                'module_child_id' => $grand_children->module_child_id,
-                'description' => $grand_children->description,
-                'route_name' => $grand_children->route_name,
-                'order' => $grand_children->order,
-            ]);
-        }*/
-
-        CompanyPlan::create([
-            'id' => $this->plan->id,
-            'description' => $this->plan->description,
-            'number_fields' => $this->plan->number_fields,
-            'price' => $this->plan->price,
-        ]);
     }
 
     public function createUserWithRole(

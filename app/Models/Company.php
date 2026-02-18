@@ -12,9 +12,28 @@ class Company extends Model
     protected $guarded = [''];
 
     protected $fillable = [
-        'ruc', 'business_name', 'abbreviated_business_name', 'fiscal_address',
-        'phone', 'cellphone', 'email', 'zip_code', 'facebook',
-        'instagram', 'web', 'invoicing_status', 'logo','lat','lng','token_placa'
+        'ruc',
+        'business_name',
+        'abbreviated_business_name',
+        'fiscal_address',
+        'phone',
+        'cellphone',
+        'email',
+        'zip_code',
+        'facebook',
+        'instagram',
+        'web',
+        'invoicing_status',
+        'logo',
+        'lat',
+        'lng',
+        'token_placa',
+        
+        'department_id',
+        'province_id',
+        'district_id',
+        'department_name',
+        'province_name',
+        'district_name'
     ];
-
 }

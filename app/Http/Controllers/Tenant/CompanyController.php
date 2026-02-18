@@ -10,7 +10,6 @@ use App\Http\Requests\CompanyStoreRequest;
 use App\Http\Requests\Tenant\Maintenance\Company\CompanyInvoiceRequest;
 use Illuminate\Http\Request;
 use App\Models\Company;
-use App\Models\CompanyInvoice;
 use App\Models\Department;
 use App\Models\District;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
@@ -20,6 +19,7 @@ use App\Models\ModuleGrandChild;
 use App\Models\Province;
 use App\Models\Tenant;
 use App\Models\Tenant\DocumentSerialization;
+use App\Models\Tenant\Maintenance\Company\CompanyInvoice;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -297,8 +297,8 @@ array:16 [▼ // app\Http\Controllers\Tenant\CompanyController.php:223
             $fileName               =   $company->ruc . '.' . $file->getClientOriginalExtension();
 
             $base64_logo            =   'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
-            $company->base64_logo   =   $base64_logo; // Guardar en la columna logo_base64
-            $company->logo          =   'storage/' . $company->files_route . '/logo/' . $fileName; // Guardar la ruta en la base de datos
+            $company->base64_logo   =   $base64_logo;
+            $company->logo          =   $fileName;
             $company->logo_url      =   'storage/' . $company->files_route . '/logo/' . $fileName;
 
             $file->move($route_logo_tenant, $fileName);
@@ -380,7 +380,6 @@ array:11 [ // app\Http\Controllers\Tenant\CompanyController.php:254
                 $pemFilename        = 'cert_production.pem';
                 $directoryPath      = $company->files_route . '/greenter/certs/';
                 $pemFullPath        = storage_path('app/public/' . $directoryPath . $pemFilename);
-
 
                 if (!Storage::disk('public')->exists($directoryPath)) {
                     Storage::disk('public')->makeDirectory($directoryPath);
@@ -471,7 +470,7 @@ array:11 [ // app\Http\Controllers\Tenant\CompanyController.php:254
                 }
 
 
-                $company_invoice->certificate_url   = 'storage/' . $company->files_route . '/greenter/' . $pemFilename;
+                $company_invoice->certificate_url   = 'storage/' . $company->files_route . '/greenter/certs/' . $pemFilename;
                 $company_invoice->certificate       = $pemFilename;
                 $company_invoice->update();
             }
@@ -498,7 +497,6 @@ array:11 [ // app\Http\Controllers\Tenant\CompanyController.php:254
 
         return implode(PHP_EOL, $matches[0]) . PHP_EOL;
     }
-
 
     public function getListNumeration(Request $request)
     {

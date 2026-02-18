@@ -15,18 +15,31 @@ class CompanyInvoice extends Model
         'company_id',
         'plan',
         'environment',
+        'token_code',
+        'invoice_id',
+
         'department_id',
         'province_id',
         'district_id',
+
         'department_name',
         'province_name',
         'district_name',
+
         'ubigeo',
         'urbanization',
         'local_code',
+
         'secondary_user',
         'secondary_password',
+
         'api_user_gre',
         'api_password_gre',
+
+        'certificate',
+        'certificate_url',
+        'certificate_password',
+
+        'status',
     ];
 }

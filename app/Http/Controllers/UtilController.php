@@ -24,7 +24,6 @@ use Throwable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 
-
 class UtilController extends Controller
 {
 
@@ -36,6 +35,17 @@ class UtilController extends Controller
         Storage::disk('public')->putFileAs($path, $file, $fileName);
 
         return $path . '/' . $fileName;
+    }
+
+    public static function saveFileFromLandlord(UploadedFile $file, string $file_name, $folder): string
+    {
+        $path           =   $folder;
+        $extension      =   $file->getClientOriginalExtension();
+        $file_name      =   $file_name . '.' . $extension;
+
+        Storage::disk('public')->putFileAs($path, $file, $file_name);
+
+        return $path . '/' . $file_name;
     }
 
     public static function deleteImg(string $path)

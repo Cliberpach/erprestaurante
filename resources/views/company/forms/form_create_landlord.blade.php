@@ -1,0 +1,302 @@
+<form id="form-empresa-store" action="" method="POST" enctype="multipart/form-data">
+    @csrf
+    <div class="nav-align-top mb-4">
+        <ul class="nav nav-pills mb-3" role="tablist">
+            <li class="nav-item">
+                <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+                    data-bs-target="#navs-pills-top-empresa" aria-controls="navs-pills-top-empresa"
+                    aria-selected="true">
+                    Empresa
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                    data-bs-target="#navs-pills-top-banco" aria-controls="navs-pills-top-banco" aria-selected="false">
+                    Módulos
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade active show" id="navs-pills-top-empresa" role="tabpanel">
+                {{-- empresa --}}
+                <div class="row">
+
+                    <div class="col-sm-6 col-12" style="border-right: 1px solid #e7eaec;">
+
+                        <div class="row">
+
+                            <div class="col-12">
+                                <label class="form-label" for="domain">Hostname:</label>
+                                <div class="input-group mb-3">
+                                    <input required type="text" class="form-control input-fill"
+                                        placeholder="Nombre del dominio" id="domain" name="domain"
+                                        value="{{ old('domain') }}">
+                                    <span class="input-group-text">.comandapro.online</span>
+                                </div>
+                                <p class="domain_error msgError mb-0"></p>
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <label class="form-label" for="ruc">RUC:</label>
+                                <div class="input-group">
+                                    <input required type="text" class="form-control input-fill" id="ruc"
+                                        name="ruc" placeholder="Número de ruc" value="{{ old('ruc') }}">
+                                    <button class="btn btn-outline-primary" type="button" id="btn_consulta_sunat"
+                                        style="padding-right: 10px; padding-left: 10px;"><i class="bx bx-search"></i>
+                                        Sunat</button>
+                                </div>
+                                <p class="ruc_error msgError mb-0"></p>
+                            </div>
+
+                            <div class="col-6">
+                                <label class="form-label" for="estado">Estado:</label>
+                                <input type="text" class="form-control text-center" id="estado" name="estado"
+                                    readonly value="SIN VERIFICAR">
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label class="form-label" for="razon_social">Razón social:</label>
+                                <input required type="text" class="form-control input-fill" id="razon_social"
+                                    name="razon_social" value="{{ old('razon_social') }}">
+                                <p class="razon_social_error msgError mb-0"></p>
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <label class="form-label" for="razon_social_abreviada">Razón Social
+                                    Abreviada:</label>
+                                <input required type="text" class="form-control input-fill"
+                                    id="razon_social_abreviada" name="razon_social_abreviada"
+                                    value="{{ old('razon_social_abreviada') }}">
+                                <p class="razon_social_abreviada_error msgError mb-0"></p>
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <label for="direccion_fiscal" class="form-label">Dirección Fiscal</label>
+                                <textarea class="form-control input-fill" id="direccion_fiscal" name="direccion_fiscal" rows="2"></textarea>
+                                <p class="direccion_fiscal_error msgError mb-0"></p>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3">
+                                <label class="required_field" for="department"
+                                    style="font-weight: bold;">DEPARTAMENTO</label>
+                                <select required name="department" class="" id="department"
+                                    data-placeholder="Seleccionar" onchange="changeDepartment(this.value)">
+                                    <option></option>
+                                    @foreach ($departments as $department)
+                                        <option value="{{ $department->id }}">
+                                            {{ $department->name }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="department_error msgError" style="color:red;"></span>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3">
+                                <label class="required_field" for="province"
+                                    style="font-weight: bold;">PROVINCIA</label>
+                                <select required name="province" class="" id="province"
+                                    data-placeholder="Seleccionar" onchange="changeProvince(this.value)">
+                                    <option></option>
+                                </select>
+                                <span class="province_error msgError" style="color:red;"></span>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3">
+                                <label class="required_field" for="district"
+                                    style="font-weight: bold;">DISTRITO</label>
+                                <select required name="district" class="" id="district"
+                                    data-placeholder="Seleccionar">
+                                    <option></option>
+                                </select>
+                                <span class="district_error msgError" style="color:red;"></span>
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-image text-primary me-1"></i> Logo
+                                </label>
+                                <input class="form-control" type="file" name="logo" id="input-logo"
+                                    accept="image/jpeg, image/webp">
+                                <span class="logo_error msgError" style="color:red;"></span>
+                            </div>
+
+                            <div class="col-6"></div>
+
+                            <div class="col-6 mb-3">
+                                <label class="form-label" for="correo">Correo:</label>
+                                <input required type="email" class="form-control input-fill" id="correo"
+                                    name="correo" value="admin@gmail.com">
+                                <span class="correo_error msgError" style="color:red;"></span>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="form-password-toggle">
+                                    <label class="form-label" for="password">Password</label>
+                                    <div class="input-group input-group-merge">
+                                        <input required type="password" class="form-control input-fill"
+                                            id="password" name="password" value="123456789">
+                                        <span class="input-group-text cursor-pointer">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <span class="password_error msgError" style="color:red;"></span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <p>Facturación Electrónica</p>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label" for="secondary_user">Usuario Secundario:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                    <input type="text" class="form-control input-fill"
+                                        placeholder="Usuario secundario" id="secondary_user" name="secondary_user">
+                                </div>
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <div class="form-password-toggle">
+                                    <label class="form-label" for="secondary_user">Clave de Usuario
+                                        secundario:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                        <input type="text" class="form-control input-fill"
+                                            id="secondary_password" name="secondary_password">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold required_field" for="certificate">CERTIFICADO DIGITAL</label>
+
+                                <input accept=".pem,.p12" class="form-control input-fill" id="certificate"
+                                    name="certificate" type="file">
+
+                                <small class="text-primary fst-italic">
+                                    Formatos permitidos: <b>.PEM</b> o <b>.P12</b>.
+                                    Si sube <b>.P12</b>, se convertirá automáticamente a <b>.PEM</b>.
+                                </small>
+
+                                <p class="certificate_error msgError"></p>
+                            </div>
+
+                            <!-- PASSWORD CERTIFICADO -->
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold" for="certificate_password">CLAVE DEL CERTIFICADO</label>
+                                <div class="input-group">
+                                    <span class="input-group-text text-warning">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    <input type="text" class="form-control input-fill" id="certificate_password"
+                                        maxlength="100" name="certificate_password"
+                                        placeholder="Contraseña del certificado (.P12)" value="">
+                                </div>
+                                <small class="text-muted fst-italic">
+                                    Obligatorio solo si el certificado es <b>.P12</b>.
+                                </small>
+                                <p class="certificate_password_error msgError"></p>
+                            </div>
+
+                        </div>
+
+
+                        {{-- <div class="mb-3">
+                            <label class="form-label" for="certificate_url">Certificado:</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control input-fill" id="certificate_url"
+                                    name="certificate_url">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="certificate_password">Contraseña de
+                                Certificado:</label>
+                            <div class="input-group">
+                                <textarea class="form-control input-fill" id="certificate_password" name="certificate_password" rows="5"></textarea>
+                            </div>
+                        </div> --}}
+
+                        <div class="mb-3">
+                            <label class="form-label" for="certificate_password">
+                                <span class="me-2">Plan</span>
+                                <button type="button" class="btn btn-outline-primary me-1" data-bs-toggle="modal"
+                                    data-bs-target="#modal_create_plan">
+                                    Nuevo Plan
+                                </button>
+                            </label>
+                            <div class="input-group">
+                                <select required name="plan_id" id="plan_id" class="form-select">
+                                    <option value="">Seleccione ...</option>
+                                    @foreach ($plans as $plan)
+                                        <option value="{{ $plan->id }}">{{ $plan->description }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <p class="plan_id_error msgError mb-0"></p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="navs-pills-top-banco" role="tabpanel">
+                {{-- modulo --}}
+                <p>Módulos</p>
+
+                <div class="row">
+                    @foreach ($all_modules as $module)
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                            <div class="card overflow-hidden">
+                                <div class="card-body">
+                                    <div class="card-text mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input module-checkbox" type="checkbox"
+                                                id="module{{ $module->id }}" name="module_id[]"
+                                                value="{{ $module->id }}" checked>
+                                            <label class="form-check-label" for="module{{ $module->id }}">
+                                                {{ $module->description }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    @foreach ($module->children as $child)
+                                        <div class="card-text mb-2" style="margin-left: 1.5rem;">
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input {{ $child->grandchildren->isNotEmpty() ? 'child-grandchild-checkbox' : 'child-checkbox' }}"
+                                                    type="checkbox" id="children{{ $child->id }}"
+                                                    name="child_id[]" value="{{ $child->id }}" checked>
+                                                <label class="form-check-label" for="children{{ $child->id }}">
+                                                    {{ $child->description }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        @foreach ($child->grandchildren as $grandchild)
+                                            <div class="card-text {{ $loop->last ? 'mb-2' : '' }}"
+                                                style="margin-left: 2.5rem">
+                                                <div class="form-check">
+                                                    <input class="form-check-input grandchild-checkbox"
+                                                        type="checkbox" id="grandchildren{{ $grandchild->id }}"
+                                                        name="grandchild_id[]" value="{{ $grandchild->id }}" checked>
+                                                    <label class="form-check-label"
+                                                        for="grandchildren{{ $grandchild->id }}">
+                                                        {{ $grandchild->description }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-outline-primary me-1">Registrar</button>
+                <a href="{{ route('landlord.mantenimiento.empresas.index') }}"
+                    class="btn btn-outline-secondary me-1">Regresar</a>
+            </div>
+        </div>
+    </div>
+</form>

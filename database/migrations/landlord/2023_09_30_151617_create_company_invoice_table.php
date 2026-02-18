@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('company_invoice', function (Blueprint $table) {
             $table->id();
+
             $table->unsignedBigInteger('company_id')->unsigned()->nullable();
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+            $table->foreign('company_id')->references('id')->on('companies');
+
             $table->string('certificate')->nullable();
             $table->string('certificate_url')->nullable();
             $table->longText('certificate_password')->nullable();
@@ -22,12 +24,11 @@ return new class extends Migration
             $table->string('secondary_user')->nullable();
             $table->string('secondary_password')->nullable();
             $table->string('plan')->nullable();
-            $table->string('environment')->nullable()->default('DEMO');
+            $table->string('environment')->nullable()->default('BETA');
 
-            $table->longText('token_code')->nullable();
-            $table->BigInteger('invoice_id')->nullable();
+            $table->longText('token_reniec')->nullable();
 
-            $table->enum('status',['ACTIVE', 'CANCELED'])->default('ACTIVE');
+            $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
 
             $table->timestamps();
         });
