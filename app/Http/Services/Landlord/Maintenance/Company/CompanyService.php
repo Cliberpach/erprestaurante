@@ -260,7 +260,7 @@ class CompanyService
     public function edit(int $id)
     {
         $all_modules    =   $this->s_repository->getAllModules();
-        $tenant_data    =   $this->s_repository->getTenantCompanyData($id);dd($tenant_data);
+        $tenant_data    =   $this->s_repository->getTenantCompanyData($id);dd($id);
         $tenant_modules =   $this->s_repository->getTenantModules($tenant_data->database);
         $tenant_modules_children    =   $this->s_repository->getTenantModulesChildren($tenant_data->database);
         $tenant_modules_grand_children    =   $this->s_repository->getTenantModulesGrandChildren($tenant_data->database);

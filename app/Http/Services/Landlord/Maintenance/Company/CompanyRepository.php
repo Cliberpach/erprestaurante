@@ -156,7 +156,7 @@ class CompanyRepository
     {
         $tenant_data    =   DB::table('tenants AS t')
             ->join('companies AS c', 'c.tenant_id', 't.id')
-            ->join('company_invoice AS ci', 'ci.company_id', 'c.id')
+            ->leftJoin('company_invoice AS ci', 'ci.company_id', 'c.id')
             ->select(
                 't.database',
                 't.domain',
