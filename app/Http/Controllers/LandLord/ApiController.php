@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\LandLord;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
+use App\Models\Tenant\Maintenance\Company\Company;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\Orders\OrderDish;
 use App\Models\Tenant\Orders\OrderProduct;
