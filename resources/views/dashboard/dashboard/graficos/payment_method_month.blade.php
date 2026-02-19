@@ -146,7 +146,11 @@
             },
             plotOptions: {
                 column: {
-                    depth: 25
+                    depth: 25,
+                    dataLabels: {
+                        enabled: true,
+                        format: 'S/ {point.y:,.2f}'
+                    }
                 }
             },
             series: [{

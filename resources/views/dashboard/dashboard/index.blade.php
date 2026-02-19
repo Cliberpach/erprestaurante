@@ -336,7 +336,7 @@
 
         setPaymentMethodMonth(
             'MÉTODOS PAGO DEL MES',
-            '',
+            'En ventas no anuladas',
             data.payment_methods
         );
 

@@ -286,11 +286,13 @@ class DashboardRepository
                 $join->on('sp.payment_method_id', '=', 'p.id')
                     ->whereBetween('sp.created_at', [$desde, $hasta]);
             })
+            ->leftJoin('sales as s', 's.id', 'sp.sale_id')
             ->select(
                 'p.id',
                 'p.description as payment_method_name'
             )
             ->selectRaw('COALESCE(SUM(sp.amount), 0) as amount')
+            ->whereNotIn('s.sunat_status', ['RECHAZADO', 'ANULADO', 'ANULADO PARCIAL'])
             ->groupBy('p.id', 'p.description')
             ->orderByDesc('amount')
             ->limit(10)
