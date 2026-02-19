@@ -11,7 +11,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth:web', 'verified'])->group(function () {
 
-    Route::get('/dashboard', function () {
+    Route::get('/home', function () {
         return redirect()->route('landlord.mantenimiento.empresas.index');
     });
     //Route::get('/dashboard', [ModuleController::class, 'home'])->name('landlord.home');
