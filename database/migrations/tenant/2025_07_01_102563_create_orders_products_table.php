@@ -40,6 +40,7 @@ return new class extends Migration
             /* 🔹 STATUS */
             $table->string('status', 255)->default('PENDIENTE');
             $table->boolean('delete_status')->default(false);
+            $table->dateTime('cancellation_date')->nullable();
 
             /* 🔹 DESCRIPTION */
             $table->string('observation', 20)->nullable();

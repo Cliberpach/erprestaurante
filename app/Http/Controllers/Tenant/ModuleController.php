@@ -18,7 +18,11 @@ class ModuleController extends Controller
             return view('cashier_counter.counter.index');
         }
 
-        return view('dashboard');
+
+        if (auth()->user()->can('dashboard.dashboard.index')) {
+            return redirect()->route('tenant.dashboard.dashboard.index');
+        }
+        return view('home');
     }
 
     public function logout(Request $request)

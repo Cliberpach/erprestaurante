@@ -172,6 +172,7 @@ class OrderRepository
                 ->update([
                     'status' => 'ANULADO',
                     'updated_at' => now(),
+                    'cancellation_date' =>  now(),
                     'delete_status' => true
                 ]);
         }
@@ -182,6 +183,7 @@ class OrderRepository
                 ->update([
                     'status' => 'ANULADO',
                     'updated_at' => now(),
+                    'cancellation_date' =>  now(),
                     'delete_status' => true
                 ]);
         }

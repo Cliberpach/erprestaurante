@@ -4,7 +4,7 @@
 <meta name="description" content="">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>ComandaPro | @yield('title') </title>
-<link rel="icon" type="image/png" href="{{ asset('loginn/img/icono.png') }}">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/boxicons.css') }}">

@@ -36,8 +36,7 @@ class PettyCashBookController extends Controller
 
     public function index()
     {
-
-        $shiftList = DB::select('select * from shifts');
+        $shiftList = DB::select('SELECT * FROM shifts');
 
         return view('cash.petty-cash-book.index', compact('shiftList'));
     }
@@ -47,6 +46,7 @@ class PettyCashBookController extends Controller
         $cashes = DB::connection('tenant')
             ->table('petty_cash_books as c')
             ->join('users as u', 'u.id', 'c.user_id')
+            ->leftJoin('programming as p','p.petty_cash_book_id','c.id')
             ->select(
                 DB::raw("CONCAT('CM-', LPAD(c.id, 8, '0')) as code"),
                 'c.id',
@@ -62,7 +62,8 @@ class PettyCashBookController extends Controller
                 'c.created_at',
                 'c.updated_at',
                 'c.petty_cash_name',
-                'u.name as user_name'
+                'u.name as user_name',
+                'p.id as programming_id'
             )
             ->where('c.status', '<>', 'ANULADO')
             ->where('c.type', '<>', 'FICTICIO');
@@ -140,7 +141,11 @@ array:3 [ // app\Http\Controllers\Tenant\Cash\PettyCashBookController.php:112
     {
         try {
             $consolidated   =   $this->s_pettycashbook->getConsolidated($request->get('id'));
-            return response()->json(['success' => true, 'message' => 'CONSOLIDADO OBTENIDO', 'consolidated' => $consolidated]);
+            return response()->json([
+                'success' => true,
+                'message' => 'CONSOLIDADO OBTENIDO',
+                'consolidated' => $consolidated
+            ]);
         } catch (Throwable $th) {
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }

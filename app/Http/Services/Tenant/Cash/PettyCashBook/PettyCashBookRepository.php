@@ -5,6 +5,7 @@ namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Cash\PettyCash;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Cash\PettyCashServer;
+use App\Models\Tenant\Maintenance\Company\ModuleChild;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\Supply\Programming\Programming;
 use Illuminate\Support\Facades\DB;
@@ -234,7 +235,7 @@ class PettyCashBookRepository
             ->select(
                 'o.code',
                 'o.creator_user_name',
-                'op.updated_at',
+                'op.cancellation_date',
                 DB::raw("'PRODUCTO' as item_type"),
                 'op.product_name as item_name',
                 'op.quantity as item_quantity',
@@ -251,7 +252,7 @@ class PettyCashBookRepository
             ->select(
                 'o.code',
                 'o.creator_user_name',
-                'od.updated_at',
+                'od.cancellation_date',
                 DB::raw("'PLATO' as item_type"),
                 'od.dish_name as item_name',
                 'od.quantity AS item_quantity',
@@ -259,7 +260,9 @@ class PettyCashBookRepository
                 'od.total AS item_total'
             );
 
-        $items_canceled =   $products->unionAll($dishes)->orderBy('updated_at','desc')->get();
+        $items_canceled =   $products->unionAll($dishes)->orderBy('cancellation_date', 'desc')->get();
         return $items_canceled;
     }
+
+
 }

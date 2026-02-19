@@ -47,6 +47,7 @@ class SaleService
 
         //======= OBTENIENDO MONTOS GLOBALES =======
         $amounts                =       $this->s_calculations->calculateAmounts($validated_data->lstSale, $validated_data->igv_percentage);
+        $this->s_validations->validationAmounts($amounts, $validated_data);
 
         $lstPays                =       json_decode($data['lstPays']);
         $validated_pays         =       $this->s_validations->validationLstPays($lstPays, $amounts);

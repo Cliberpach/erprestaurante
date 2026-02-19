@@ -13,6 +13,7 @@ use App\Models\Landlord\Year;
 use App\Models\Province;
 use App\Models\Tenant\DocumentSerialization;
 use App\Models\Tenant\Maintenance\Company\CompanyInvoice;
+use App\Models\Tenant\Maintenance\Company\ModuleChild;
 use App\Models\Tenant\Maintenance\CostCenter;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\PaymentCondition\PaymentCondition;
@@ -353,5 +354,12 @@ class UtilController extends Controller
     public static function getDistricts()
     {
         return District::all();
+    }
+
+    //====== TENANT ========
+    public static function haveModuleCustomerAccounts()
+    {
+        $have   =   ModuleChild::where('route_name', 'cuentas.cliente.index')->exists();
+        return $have;
     }
 }

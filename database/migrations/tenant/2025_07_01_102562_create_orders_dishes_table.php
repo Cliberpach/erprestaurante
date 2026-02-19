@@ -37,6 +37,7 @@ return new class extends Migration
             /* 🔹 STATUS */
             $table->string('status', 255)->default('PENDIENTE');
             $table->boolean('delete_status')->default(false);
+            $table->dateTime('cancellation_date')->nullable();
 
             /* 🔹 DESCRIPTION */
             $table->string('observation', 20)->nullable();
@@ -45,8 +46,6 @@ return new class extends Migration
             $table->enum('print_status', ['IMPRESO', 'SIN_IMPRIMIR'])->default('SIN_IMPRIMIR');
             $table->enum('print_delivery_status', ['CREADO', 'ENTREGADO'])->default('CREADO');
             $table->enum('detail_printed', ['SI', 'NO'])->default('NO');
-
-            /* 🔹 NUEVAS COLUMNAS */
 
 
             /* 🔹 TIMESTAMPS */

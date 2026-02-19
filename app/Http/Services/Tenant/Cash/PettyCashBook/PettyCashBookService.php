@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 
+use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Cash\PettyCash\CashService;
 use App\Http\Services\Tenant\Supply\Programming\ProgrammingService;
 use App\Models\Company;
@@ -94,6 +95,8 @@ class PettyCashBookService
                 'cad.created_at'
             )->get();
 
+        $have_module_customer_accounts     =   UtilController::haveModuleCustomerAccounts();
+
         //====== VISTA PDF ==========
         $pdf = Pdf::loadView(
             'cash.petty-cash-book.reports.pdf-one',
@@ -107,7 +110,9 @@ class PettyCashBookService
                 'exit_moneys',
                 'consolidated',
                 'customer_pays',
-                'consolidated_items'
+                'consolidated_items',
+
+                'have_module_customer_accounts'
             )
         );
 
@@ -162,11 +167,15 @@ class PettyCashBookService
 
     public function getConsolidated(int $id)
     {
+        $haveModuleCustomerAccounts =  UtilController::haveModuleCustomerAccounts();
+
         $payment_methods            =   PaymentMethod::where('estado', 'ACTIVO')->get();
 
         $report_sales               =   $this->getReportSales($payment_methods, $id);
         $report_expenses            =   $this->getReportExpenses($payment_methods, $id);
+
         $report_customer_accounts   =   $this->getReportCustomerAccounts($payment_methods, $id);
+
         $petty_cash_book            =   $this->s_repository->getPettyCashBookInfo($id);
         $amount_close               =   $report_customer_accounts['total'] + $report_sales['total'] - $report_expenses['total'] + $petty_cash_book->initial_amount;
 
@@ -175,7 +184,8 @@ class PettyCashBookService
             'report_expenses'           =>  $report_expenses,
             'report_customer_accounts'  =>  $report_customer_accounts,
             'petty_cash_book'           =>  $petty_cash_book,
-            'amount_close'              =>  $amount_close
+            'amount_close'              =>  $amount_close,
+            'have_module_customer_accounts' =>  $haveModuleCustomerAccounts
         ];
     }
 
@@ -193,7 +203,7 @@ class PettyCashBookService
         foreach ($payment_methods as $payment_method) {
             $amount = $pays
                 ->where('payment_method_id', $payment_method->id)
-                ->sum('amount');
+                ->sum('total');
 
             $report_sales[] = [
                 'payment_method_id'   => $payment_method->id,

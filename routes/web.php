@@ -47,7 +47,7 @@ Route::middleware([
     'company.status'
 ])->group(function () {
 
-    Route::get('/dashboard', [ModuleController::class, 'home'])->name('tenant.home');
+    Route::get('/home', [ModuleController::class, 'home'])->name('tenant.home');
 
     Route::group(["prefix" => "reservas"], function () {
         Route::get('reserva', [BookController::class, 'book'])->middleware('verificar.caja')->name('tenant.reservas.reserva');

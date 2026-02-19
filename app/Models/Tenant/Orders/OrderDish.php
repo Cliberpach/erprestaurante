@@ -28,6 +28,7 @@ class OrderDish extends Model
         'total',
         'type_dish_id',
         'type_dish_name',
-        'created_at'
+        'created_at',
+        'cancellation_date'
     ];
 }

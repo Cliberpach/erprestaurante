@@ -9,9 +9,11 @@ use App\Http\Requests\Sale\SaleStoreRequest;
 use App\Http\Requests\Tenant\Sale\SaleConvertRequest;
 use App\Http\Requests\Tenant\Sale\SaleCreditNoteRequest;
 use App\Http\Services\Tenant\Sale\Sale\SaleManager;
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Company;
-use App\Models\CompanyInvoice;
 use App\Models\Landlord\Customer;
+use App\Models\Tenant\Maintenance\Company\CompanyInvoice;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
 use Exception;
@@ -117,44 +119,42 @@ class SaleController extends Controller
 
     public function create()
     {
+        $have_module_customer_accounts  =   UtilController::haveModuleCustomerAccounts();
+        $categories                     =   Category::where('status', 'ACTIVE');
+        $brands                         =   Brand::where('status', 'ACTIVE');
+        $customers                      =   Customer::where('status', 'ACTIVO')->get();
+        $company                        =   Company::findOrFail(1);
+        $payment_conditions             =   UtilController::getPaymentConditions();
 
-        $urlImagen = asset('assets/img/products/img_default.png');
-
-        $categories =   DB::select('select * from categories');
-        $brands     =   DB::select('select * from brands');
-        $customers  =   Customer::where('status', 'ACTIVO')->get();
-        $company    =   Company::find(1);
-
-        $types_identity_documents   =   UtilController::getIdentityDocuments();
-
-        $departments    =   DB::select('select * from departments');
-        $districts      =   DB::select('select * from districts');
-        $provinces      =   DB::select('select * from provinces');
+        if (!$have_module_customer_accounts) {
+            $payment_conditions         =   $payment_conditions->where('id', 1);
+        }
 
         $company_invoice    =   CompanyInvoice::find(1);
         $invoice_types      =   UtilController::getInvoiceTypes()->whereIn('id', ['65', '66', '67']);
         $payment_methods    =   PaymentMethod::where('estado', 'ACTIVO')->get();
         $customer_formatted =   FormatController::getFormatInitialCustomer(1);
-        $payment_conditions =   UtilController::getPaymentConditions();
 
-        return view(
-            'sales.sale_document.create',
+        $vars_mdl_customer          =   UtilController::getVarsMdlCustomer();
+
+        $vars   =   array_merge(
             compact(
                 'customers',
                 'categories',
                 'brands',
-                'urlImagen',
                 'company',
-                'types_identity_documents',
-                'departments',
-                'districts',
-                'provinces',
                 'payment_methods',
                 'company_invoice',
                 'invoice_types',
                 'customer_formatted',
                 'payment_conditions',
-            )
+            ),
+            $vars_mdl_customer
+        );
+
+        return view(
+            'sales.sale_document.create',
+            $vars
         );
     }
 
@@ -257,9 +257,7 @@ array:9 [ // app\Http\Services\Tenant\Sale\Sale\SaleService.php:38
         DB::beginTransaction();
         try {
 
-            $data   =   $request->toArray();
-
-            $sale   =   $this->s_sale->store($data);
+            $sale   =   $this->s_sale->store($request->toArray());
 
             DB::commit();
             return response()->json([

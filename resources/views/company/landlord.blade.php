@@ -360,6 +360,7 @@
         }
 
         function actionChangeBlockAccount(chkBlockAccount) {
+            toastr.clear();
             const companyId = chkBlockAccount.getAttribute('data-company');
             const newState = chkBlockAccount.checked;
             const oldState = !newState;
@@ -367,12 +368,15 @@
             const row = getRowById(dtCompaniesLandlord, companyId);
 
             let message = "";
+            let messageProcess = "";
             let html = "";
 
             if (newState) {
                 message = "Desea bloquear la cuenta?";
+                messageProcess = 'Bloqueando cuenta...'
             } else {
                 message = "Desea activar la cuenta?"
+                messageProcess = 'Activando cuenta...'
             }
 
             const iconAction = newState ?
@@ -421,7 +425,7 @@
                     try {
 
                         Swal.fire({
-                            title: 'Bloqueando empresa',
+                            title: messageProcess,
                             html: 'Procesando...',
                             icon: 'info',
                             allowOutsideClick: false,

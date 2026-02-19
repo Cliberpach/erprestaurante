@@ -41,12 +41,16 @@
         const lstServers = [];
 
         function openMdlOpenCash() {
+            window.cashesAvailableSelect.clearOptions();
+            window.cashesAvailableSelect.load();
+
             dtFreeServers.ajax.reload();
             $('#mdlOpenCash').modal('show');
         }
 
         function eventsMdlOpenCash() {
             loadDtFreeServers();
+            loadSelectCashBook();
             document.querySelector('#form-open-cash').addEventListener('submit', (e) => {
                 e.preventDefault();
                 openPettyCash(e.target);
@@ -113,7 +117,6 @@
                         name: 'u.name'
                     }
                 ],
-
                 language: {
                     "lengthMenu": "Mostrar _MENU_ registros por página",
                     "zeroRecords": "No se encontraron resultados",
@@ -136,6 +139,51 @@
                     }
                 }
             });
+        }
+
+        function loadSelectCashBook() {
+            const cashesAvailable = document.getElementById('cash_available_id');
+            if (cashesAvailable && !cashesAvailable.tomselect) {
+                window.cashesAvailableSelect = new TomSelect(cashesAvailable, {
+                    valueField: 'id',
+                    labelField: 'name',
+                    searchField: ['name'],
+                    create: false,
+                    placeholder: 'Seleccionar',
+                    plugins: ['clear_button'],
+                    preload: true,
+                    loadThrottle: 1000,
+                    load: async function(query, callback) {
+                        try {
+
+                            const url = route('tenant.utils.searchCashAvailable', {
+                                search: query
+                            });
+                            const response = await fetch(url);
+                            const json = await response.json();
+
+                            callback(json.data ?? []);
+                        } catch (error) {
+                            console.error("Error cargando cajas disponibles:", error);
+                            callback();
+                        }
+                    },
+                    render: {
+                        option: (item, escape) => `
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <i class="fas fa-cash-register" style="color:#1e90ff;"></i>
+                                <span>${escape(item.name)}</span>
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <i class="fas fa-cash-register" style="color:#1e90ff;"></i>
+                                <span>${escape(item.name)}</span>
+                            </div>
+                        `
+                    }
+                });
+            }
         }
 
         function openPettyCash(formOpenCash) {
@@ -234,9 +282,7 @@
 
         function reloadServersFree() {
             toastr.clear();
-            dtFreeServers.ajax.reload();
             lstServers.length = 0;
-            toastr.info('MESEROS RECARGADOS', 'SE LIMPIARON SELECCIONES');
         }
     </script>
 @endpush

@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
+
     <title>Reporte Caja</title>
     <style>
         body {
@@ -323,58 +325,57 @@
             </tbody>
         </table>
 
-
-        <h5 style="font-size:9px;margin-bottom:6px;">COBRANZA CLIENTE</h5>
-        <table class="table-info table-sm table" style="border-collapse: collapse; width: 100%;">
-            <thead style="background-color: #c0c0c0; color: #000;">
-                <tr>
-                    <th>CLIENTE</th>
-                    <th>DOC</th>
-                    <th>FECHA</th>
-                    @foreach ($payment_methods as $payment_method)
-                        <th>{{ $payment_method->description }}</th>
-                    @endforeach
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach ($customer_pays as $index => $pay)
+        @if ($have_module_customer_accounts)
+            <h5 style="font-size:9px;margin-bottom:6px;">COBRANZA CLIENTE</h5>
+            <table class="table-info table-sm table" style="border-collapse: collapse; width: 100%;">
+                <thead style="background-color: #c0c0c0; color: #000;">
                     <tr>
-                        <td>{{ $pay->customer_name }}</td>
-                        <td>{{ $pay->document_number }}</td>
-                        <td>{{ $pay->created_at }}</td>
-
+                        <th>CLIENTE</th>
+                        <th>DOC</th>
+                        <th>FECHA</th>
                         @foreach ($payment_methods as $payment_method)
-                            @php
-                                $value = 0;
-                                if ($payment_method->id === 1) {
-                                    $value += $pay->cash;
-                                }
-
-                                if ($payment_method->id !== 1 && $payment_method->id == $pay->payment_method_id) {
-                                    $value += $pay->amount;
-                                }
-                            @endphp
-                            <td style="text-align: right;">{{ number_format($value, 2, '.', ',') }}</td>
+                            <th>{{ $payment_method->description }}</th>
                         @endforeach
                     </tr>
-                @endforeach
+                </thead>
+                <tbody>
 
-                <tr style="font-weight:bold; background:#e0e0e0;">
-                    <td colspan="2" class="text-end">TOTAL</td>
-                    <td class="text-end">
-                        {{ number_format($consolidated['report_customer_accounts']['total'], 2, '.', ',') }}
-                    </td>
-                    @foreach ($consolidated['report_customer_accounts']['report'] as $item)
-                        <td style="text-align: right;">{{ number_format($item['amount'], 2, '.', ',') }}</td>
+                    @foreach ($customer_pays as $index => $pay)
+                        <tr>
+                            <td>{{ $pay->customer_name }}</td>
+                            <td>{{ $pay->document_number }}</td>
+                            <td>{{ $pay->created_at }}</td>
+
+                            @foreach ($payment_methods as $payment_method)
+                                @php
+                                    $value = 0;
+                                    if ($payment_method->id === 1) {
+                                        $value += $pay->cash;
+                                    }
+
+                                    if ($payment_method->id !== 1 && $payment_method->id == $pay->payment_method_id) {
+                                        $value += $pay->amount;
+                                    }
+                                @endphp
+                                <td style="text-align: right;">{{ number_format($value, 2, '.', ',') }}</td>
+                            @endforeach
+                        </tr>
                     @endforeach
-                </tr>
-            </tbody>
-        </table>
 
+                    <tr style="font-weight:bold; background:#e0e0e0;">
+                        <td colspan="2" class="text-end">TOTAL</td>
+                        <td class="text-end">
+                            {{ number_format($consolidated['report_customer_accounts']['total'], 2, '.', ',') }}
+                        </td>
+                        @foreach ($consolidated['report_customer_accounts']['report'] as $item)
+                            <td style="text-align: right;">{{ number_format($item['amount'], 2, '.', ',') }}</td>
+                        @endforeach
+                    </tr>
+                </tbody>
+            </table>
+        @endif
 
         <h5 style="font-size:10px; margin-top:25px;">RESUMEN POR MÉTODO DE PAGO</h5>
-
         <table class="table-info" style="width:100%; border-collapse: collapse;">
             <thead>
                 <tr style="background:#f4f8fc;">
@@ -440,12 +441,16 @@
                     {{ number_format($consolidated['report_expenses']['total'], 2, '.', ',') }}
                 </td>
             </tr>
-            <tr>
-                <th> TOTAL COBRANZA CLIENTES</th>
-                <td style="text-align:right;">
-                    {{ number_format($consolidated['report_customer_accounts']['total'], 2, '.', ',') }}
-                </td>
-            </tr>
+
+            @if ($have_module_customer_accounts)
+                <tr>
+                    <th> TOTAL COBRANZA CLIENTES</th>
+                    <td style="text-align:right;">
+                        {{ number_format($consolidated['report_customer_accounts']['total'], 2, '.', ',') }}
+                    </td>
+                </tr>
+            @endif
+
             <tr style="background:#e0f7fa;">
                 <th> MONTO CIERRE</th>
                 <td style="text-align:right; font-weight:bold;">
@@ -459,12 +464,13 @@
         <table class="table-info" style="width:100%; border-collapse: collapse;">
             <thead>
                 <tr style="background:#f4f8fc;">
-                    <th>PEDIDO</th>
-                    <th>MOZO</th>
-                    <th>PRODUCTO</th>
-                    <th style="text-align:right;">CANT.</th>
-                    <th style="text-align:right;">P. VENTA</th>
-                    <th style="text-align:right;">TOTAL</th>
+                    <th>Pedido</th>
+                    <th>Mozo</th>
+                    <th>Producto</th>
+                    <th style="text-align:right;">Cant.</th>
+                    <th style="text-align:right;">P. Venta</th>
+                    <th style="text-align:right;">Total</th>
+                    <th>Fecha</th>
                 </tr>
             </thead>
             <tbody>
@@ -476,6 +482,7 @@
                         <td style="text-align:right;">{{ $item->item_quantity }}</td>
                         <td style="text-align:right;">S/ {{ number_format($item->item_sale_price, 2) }}</td>
                         <td style="text-align:right;">S/ {{ number_format($item->item_total, 2) }}</td>
+                        <td>{{ $item->cancellation_date }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -485,12 +492,13 @@
         <table class="table-info" style="width:100%; border-collapse: collapse;">
             <thead>
                 <tr style="background:#f4f8fc;">
-                    <th>PEDIDO</th>
+                    <th>Pedido</th>
                     <th>Mozo</th>
-                    <th>PLATO</th>
-                    <th style="text-align:right;">CANT.</th>
-                    <th style="text-align:right;">P. VENTA</th>
-                    <th style="text-align:right;">TOTAL</th>
+                    <th>Plato</th>
+                    <th style="text-align:right;">Cant.</th>
+                    <th style="text-align:right;">P. Venta</th>
+                    <th style="text-align:right;">Total</th>
+                    <th>Fecha</th>
                 </tr>
             </thead>
             <tbody>
@@ -502,6 +510,7 @@
                         <td style="text-align:right;">{{ $item->item_quantity }}</td>
                         <td style="text-align:right;">S/ {{ number_format($item->item_sale_price, 2) }}</td>
                         <td style="text-align:right;">S/ {{ number_format($item->item_total, 2) }}</td>
+                        <td>{{ $item->cancellation_date }}</td>
                     </tr>
                 @endforeach
             </tbody>

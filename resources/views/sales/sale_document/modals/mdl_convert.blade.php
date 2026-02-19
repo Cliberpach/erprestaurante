@@ -1,5 +1,5 @@
 <div class="modal fade" id="mdl_convert_sale" tabindex="-1" aria-labelledby="mdl_convert_sale_label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <!-- Header -->

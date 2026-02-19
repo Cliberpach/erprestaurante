@@ -37,7 +37,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             iniciarDtCash();
-            loadSelectCashBook();
             events();
         })
 
@@ -142,7 +141,7 @@
                             });
 
                             let actions = `<div class="dropdown">
-                                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                 <i class="fas fa-cog"></i>
                                             </button>
 
@@ -171,11 +170,13 @@
                                             </a>
                                         </li>`;
 
-                            actions += `<li>
+                            if (data.status === 'ABIERTO' && !data.programming_id) {
+                                actions += `<li>
                                             <a class="dropdown-item fw-semibold text-primary" href="javascript:void(0);" onclick="programmingAuto(${data.id})">
                                                 <i class="fas fa-utensils text-primary me-1"></i> Programación
                                             </a>
                                         </li>`;
+                            }
 
 
                             actions += `</ul></div>`;
@@ -220,56 +221,6 @@
                 ],
             });
 
-        }
-
-        function loadSelectCashBook() {
-
-            const cashesAvailable = document.getElementById('cash_available_id');
-            if (cashesAvailable && !cashesAvailable.tomselect) {
-                window.cashesAvailableSelect = new TomSelect(cashesAvailable, {
-                    valueField: 'id',
-                    labelField: 'name',
-                    searchField: ['name'],
-                    create: false,
-                    placeholder: 'Seleccionar',
-                    plugins: ['clear_button'],
-                    preload: true,
-                    loadThrottle: 1000,
-                    load: async function(query, callback) {
-                        try {
-
-                            if (!query.length) {
-                                query = '';
-                            }
-
-                            const url = route('tenant.utils.searchCashAvailable', {
-                                search: query
-                            });
-                            const response = await fetch(url);
-                            const json = await response.json();
-
-                            callback(json.data ?? []);
-                        } catch (error) {
-                            console.error("Error cargando cajas disponibles:", error);
-                            callback();
-                        }
-                    },
-                    render: {
-                        option: (item, escape) => `
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <i class="fas fa-cash-register" style="color:#1e90ff;"></i>
-                                <span>${escape(item.name)}</span>
-                            </div>
-                        `,
-                        item: (item, escape) => `
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <i class="fas fa-cash-register" style="color:#1e90ff;"></i>
-                                <span>${escape(item.name)}</span>
-                            </div>
-                        `
-                    }
-                });
-            }
         }
 
         function programmingAuto(id) {

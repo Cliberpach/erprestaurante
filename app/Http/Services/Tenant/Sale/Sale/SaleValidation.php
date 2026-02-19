@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Tenant\Sale\Sale;
 
+use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Cash\PettyCashBook\PettyCashBookService;
 use App\Http\Services\Tenant\Orders\OrderService;
 use App\Models\Company;
@@ -27,30 +28,6 @@ class SaleValidation
         $this->s_repository     =   $sale_repository;
     }
 
-    //====== RESPUESTA =======
-    /*
-   {#1987 // app\Http\Controllers\Tenant\SaleController.php:136
-        +"customer": {#2022
-            +"id": 1
-            +"document_number": "99999999"
-            +"name": "VARIOS"
-            +"phone": "99999999"
-            +"type_document_abbreviation": "DNI"
-        }
-        +"user_recorder": {#2024
-            +"id": 1
-            +"name": "SUPERADMIN"
-        }
-        +"petty_cash": {#2023
-            +"petty_cash_name": "CAJA PRINCIPAL"
-            +"petty_cash_id": 1
-            +"petty_cash_book_id": 1
-            +"status": "open"
-        }
-        +"type_sale_code": "127"
-        +"type_sale_name": "NOTA DE VENTA"
-    }
-    */
     public function validationStore($data): object
     {
         //====== VALIDANDO USUARIO REGISTRADOR DEBE EXISTIR ======
@@ -60,17 +37,15 @@ class SaleValidation
             throw new Exception("EL USUARIO REGISTRADOR NO EXISTE EN LA BD!!!");
         }
 
+        //=========== CAJA ==========
         $cash_service   =   new PettyCashBookService();
         $petty_cash     =   $cash_service->getCashBookUser($user_recorder->id);
-
         if (!$petty_cash) {
-            throw new Exception("EL USUARIO NO SE ENCUENTRA EN UNA CAJA APERTURADA!!!");
+            throw new Exception("El usuario no forma parte de una Caja aperturada!!!");
         }
 
         //======= VALIDACION TIPO DE VENTA Y CLIENTE =========
         $type_sale      =   GeneralTableDetail::findOrFail($data['type_sale']);
-        $type_sale_name =   null;
-
         $customer       =   Customer::findOrFail($data['customer_id']);
 
         //======== RUC Y BOLETA ======
@@ -82,9 +57,6 @@ class SaleValidation
         if ($customer->type_document_abbreviation === 'DNI' && $type_sale->id == '1') {
             throw new Exception("NO SE PERMITEN FACTURAS DE VENTA CON DNI!!!");
         }
-
-
-        $type_sale_name =   $type_sale->name;
 
         //======= VALIDANDO DETALLE DE LA VENTA =======
         $lstSale    =   json_decode($data['lstSale']);
@@ -98,7 +70,12 @@ class SaleValidation
             throw new Exception("EL PORCENTAJE DE IGV DEL DOCUMENTO DE VENTA NO CORRESPONDE AL DE LA EMPRESA!!!");
         }
 
-        //========= DATES =========
+        //========= PAYMENT CONDITION =========
+        $have_module_customer_accounts  =   UtilController::haveModuleCustomerAccounts();
+        if (!$have_module_customer_accounts && $data['payment_condition_id'] != 1) {
+            throw new Exception("No tiene permitido ventas al crédito");
+        }
+
         $registration_date      =   now();
         $payment_condition      =   PaymentCondition::findOrFail($data['payment_condition_id']);
         $nro_days               =   (int) $payment_condition->nro_days;
@@ -112,7 +89,7 @@ class SaleValidation
             'petty_cash'        =>  $petty_cash,
             'type_sale_id'      =>  $type_sale->id,
             'type_sale_code'    =>  $type_sale->symbol,
-            'type_sale_name'    =>  $type_sale_name,
+            'type_sale_name'    =>  $type_sale->name,
             'igv_percentage'    =>  $data['igv_percentage'],
             'lstSale'           =>  $lstSale,
             'type'              =>  'PRODUCTOS',
@@ -123,6 +100,13 @@ class SaleValidation
 
             'lst_pays'          =>  $lst_pays
         ];
+    }
+
+    public function validationAmounts($amounts, $data)
+    {
+        if ($amounts->total > 700 && $data->type_sale_code == '03' && $data->customer->id === 1) {
+            throw new Exception("Se require DNI del cliente en boletas con monto mayor a 700 soles");
+        }
     }
 
     public static function validationLstPays(array $lstPays, object $amounts): array
@@ -243,6 +227,11 @@ class SaleValidation
         //======== DNI Y FACTURA ======
         if ($customer->type_document_abbreviation === 'DNI' && $invoice->id == 66) {
             throw new Exception("NO SE PERMITEN FACTURAS DE VENTA CON DNI!!!");
+        }
+
+        //======== BOLETAS > 700 - DNI OBLIGATORIO ==========
+        if ($invoice->id == 65 && (float)$order->total > 700 && $customer->id == 1) {
+            throw new Exception("Se require DNI del cliente en boletas con monto mayor a 700 soles");
         }
 
         //======== PAGO =========

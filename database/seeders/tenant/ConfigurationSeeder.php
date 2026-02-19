@@ -22,5 +22,6 @@ class ConfigurationSeeder extends Seeder
         $configuration->description =   'Contraseña eliminar';
         $configuration->property    =   '123456789';
         $configuration->save();
+
     }
 }

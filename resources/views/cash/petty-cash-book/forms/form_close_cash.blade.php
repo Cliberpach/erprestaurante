@@ -27,7 +27,7 @@
         <div class="row mt-2">
 
             <!-- VENTAS -->
-            <div class="col-lg-4 col-md-6 col-sm-12 col-12 mt-3">
+            <div class="col-lg-4 col-md-6 col-sm-12 col-12 mt-3 card-sales">
                 <div class="rounded border p-0 shadow-sm" style="background:#f8fafc;">
                     <div class="rounded-top d-flex align-items-center px-3 py-2" style="background:#22c55e;">
                         <i class="fa-solid fa-cash-register me-2 text-white"></i>
@@ -41,7 +41,7 @@
             </div>
 
             <!-- EGRESOS -->
-            <div class="col-lg-4 col-md-6 col-sm-12 col-12 mt-3">
+            <div class="col-lg-4 col-md-6 col-sm-12 col-12 mt-3 card-expenses">
                 <div class="rounded border p-0 shadow-sm" style="background:#f8fafc;">
                     <div class="rounded-top d-flex align-items-center px-3 py-2" style="background:#ef4444;">
                         <i class="fa-solid fa-file-invoice-dollar me-2 text-white"></i>
@@ -55,7 +55,7 @@
             </div>
 
             <!-- CUENTAS CLIENTE -->
-            <div class="col-lg-4 col-md-6 col-sm-12 col-12 mt-3">
+            <div class="col-lg-4 col-md-6 col-sm-12 col-12 mt-3 card-customer-accounts">
                 <div class="rounded border p-0 shadow-sm" style="background:#f8fafc;">
                     <div class="rounded-top d-flex align-items-center px-3 py-2" style="background:#3b82f6;">
                         <i class="fa-solid fa-users me-2 text-white"></i>
