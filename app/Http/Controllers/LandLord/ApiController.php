@@ -9,7 +9,6 @@ use App\Models\Tenant\Orders\OrderDish;
 use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\Sales\Sale\Sale;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
