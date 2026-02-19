@@ -89,7 +89,7 @@
                                 .replace(':id', data.id);
 
                             let options = `  <div class="btn-group">
-                                <button type="button" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button type="button" class="dropdown-toggle btn btn-primary btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-grip"></i>
                                 </button>
                                 <ul class="dropdown-menu" style="max-height: 100px; overflow-y: auto;">`;
