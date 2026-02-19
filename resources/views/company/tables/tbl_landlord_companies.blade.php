@@ -6,14 +6,10 @@
             <th data-priority="4" class="minw-100px">Ruc</th>
             <th data-priority="5" class="minw-100px">Plan</th>
             <th data-priority="6" class="minw-100px">Correo</th>
+            <th style="max-width: 20px; white-space: normal;">Bloquear cuenta</th>
             <th class="minw-100px">Facturación</th>
             <th class="minw-100px">Fecha Registro</th>
             <th data-priority="2">Acción</th>
-            <!-- <th>TOTAL COMPROBANTES</th> -->
-            <!-- <th>BLOQUEAR CUENTA</th> -->
-            <!-- <th>PAGOS</th>
-      <th>ESTADO CUENTA</th>
-      <th>EDITAR</th> -->
         </tr>
     </thead>
     <tbody>

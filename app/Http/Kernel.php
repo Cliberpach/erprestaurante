@@ -74,6 +74,6 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         // Otros middlewares...
         'validar.plan'      => \App\Http\Middleware\PlanMiddleware::class,
-        //'verificar.caja'    => \App\Http\Middleware\VerificarCajaAbierta::class, // Asegúrate de agregar esta línea
+        'company.status' => \App\Http\Middleware\Tenant\CheckCompanyStatus::class,
     ];
 }

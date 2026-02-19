@@ -203,7 +203,7 @@ class CompanyService
         $p12Password = $certificate_password;
 
         // 1️⃣ Extraer CLAVE PRIVADA
-        $cmdPrivateKey = $opensslPath . ' pkcs12 '.$legacy .
+        $cmdPrivateKey = $opensslPath . ' pkcs12 ' . $legacy .
             '-in ' . escapeshellarg($tempP12Path) . ' ' .
             '-nocerts -nodes ' .
             '-out ' . escapeshellarg($privateKeyPath) . ' ' .
@@ -217,7 +217,7 @@ class CompanyService
         }
 
         // 2️⃣ Extraer CERTIFICADO DEL CONTRIBUYENTE
-        $cmdCert = $opensslPath . ' pkcs12 '.$legacy .
+        $cmdCert = $opensslPath . ' pkcs12 ' . $legacy .
             '-in ' . escapeshellarg($tempP12Path) . ' ' .
             '-clcerts -nokeys ' .
             '-out ' . escapeshellarg($certPath) . ' ' .
@@ -413,5 +413,35 @@ class CompanyService
 
             $this->saveCertificate($data, $tenant, $company_invoice_landlord, $company_invoice_tenant);
         }
+    }
+
+    public function blockAccount(array $data, int $id)
+    {
+        $tenant_data    =   $this->s_repository->getTenantCompanyData($id);
+        $tenant         =   $this->s_repository->findTenant($tenant_data->tenant_id);
+        $company_landlord   =   null;
+
+        DB::connection('landlord')->beginTransaction();
+        try {
+            $company_landlord   =   $this->s_repository->blockAccountLandlord($id, $data['block_account']);
+
+            DB::connection('landlord')->commit();
+        } catch (Throwable $e) {
+            DB::connection('landlord')->rollBack();
+            throw $e;
+        }
+
+        $tenant->makeCurrent();
+        DB::connection('tenant')->beginTransaction();
+        try {
+            $this->s_repository->blockAccountTenant($data['block_account']);
+            DB::connection('tenant')->commit();
+            Tenant::forgetCurrent();
+        } catch (Throwable $e) {
+            DB::connection('tenant')->rollBack();
+            throw $e;
+        }
+
+        return $company_landlord;
     }
 }

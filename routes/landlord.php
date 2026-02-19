@@ -27,6 +27,7 @@ Route::middleware(['auth:web', 'verified'])->group(function () {
             Route::post('resetearClave', [CompanyController::class, 'resetearClave'])->name('landlord.mantenimiento.empresas.resetearClave');
             Route::put('update/{id}', [CompanyController::class, 'update'])->name('landlord.mantenimiento.empresas.update');
             Route::delete('deleteTenant/{id}', [CompanyController::class, 'deleteTenant'])->name('landlord.mantenimiento.empresas.deleteTenant');
+            Route::put('block_account/{id}', [CompanyController::class, 'blockAccount'])->name('landlord.mantenimiento.empresas.bloquearEmpresa');
         });
 
         Route::get('plan', [PlanController::class, 'index'])->name('landlord.mantenimiento.plan');

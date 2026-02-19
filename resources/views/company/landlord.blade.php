@@ -37,7 +37,12 @@
         })
 
         function events() {
-
+            document.addEventListener('click', (e) => {
+                const targetChkBlock = e.target.closest('.chk-block_account');
+                if (targetChkBlock) {
+                    actionChangeBlockAccount(targetChkBlock);
+                }
+            })
         }
 
         function startDataTableCompanies() {
@@ -46,7 +51,7 @@
             dtCompaniesLandlord = new DataTable('#tbl_landlord_companies', {
                 serverSide: true,
                 processing: true,
-                responsive:true,
+                responsive: true,
                 ajax: {
                     url: urlGetCompanies,
                     type: 'GET'
@@ -78,6 +83,26 @@
                     {
                         data: 'email',
                         name: 'email'
+                    },
+                    {
+                        data: 'block_account',
+                        name: 'e.block_account',
+                        searchable: false,
+                        orderable: false,
+                        render: function(data, type, row, meta) {
+                            const checked = data == 1 ? 'checked' : '';
+
+                            let option = `<div class="form-check form-switch text-center">
+                                <input
+                                    ${checked}
+                                    class="form-check-input chk-block_account"
+                                    type="checkbox"
+                                    value="${data}"
+                                    data-company="${row.id}"
+                                >
+                            </div>`;
+                            return option;
+                        },
                     },
                     {
                         data: 'invoicing_status',
@@ -333,6 +358,121 @@
                 }
             });
         }
+
+        function actionChangeBlockAccount(chkBlockAccount) {
+            const companyId = chkBlockAccount.getAttribute('data-company');
+            const newState = chkBlockAccount.checked;
+            const oldState = !newState;
+            chkBlockAccount.checked = oldState;
+            const row = getRowById(dtCompaniesLandlord, companyId);
+
+            let message = "";
+            let html = "";
+
+            if (newState) {
+                message = "Desea bloquear la cuenta?";
+            } else {
+                message = "Desea activar la cuenta?"
+            }
+
+            const iconAction = newState ?
+                '<i class="fas fa-user-lock text-danger fa-3x mb-3"></i>' :
+                '<i class="fas fa-user-check text-success fa-3x mb-3"></i>';
+
+            html = `
+            <div class="text-center small">
+
+                    ${iconAction}
+
+                            <div class="mb-2">
+                                <strong>Empresa:</strong><br>
+                                ${row.business_name}
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>RUC:</strong><br>
+                                ${row.ruc}
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>Dominio:</strong><br>
+                                ${row.domain}
+                            </div>
+                </div>
+            `;
+
+            Swal.fire({
+                title: message,
+                html: html,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí',
+                cancelButtonText: 'No',
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-secondary'
+                },
+                buttonsStyling: false
+            }).then(async (result) => {
+
+                if (result.isConfirmed) {
+
+                    try {
+
+                        Swal.fire({
+                            title: 'Bloqueando empresa',
+                            html: 'Procesando...',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        const formData = new FormData();
+                        formData.append('_method', 'PUT');
+                        formData.append('block_account', newState ? 1 : 0);
+
+                        const res = await axios.post(route('landlord.mantenimiento.empresas.bloquearEmpresa',
+                            companyId), formData);
+
+                        if (res.data.success) {
+                            chkBlockAccount.checked = newState;
+                            toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
+                        } else {
+                            toastr.error(res.data.message, 'Error en el servidor al bloquear empresa');
+                        }
+
+                    } catch (error) {
+                        const message =
+                            error.response?.data?.message ||
+                            error.message ||
+                            'Error inesperado';
+
+                        toastr.error(message, 'Error en la petición bloquear empresa');
+                    } finally {
+                        Swal.close();
+                    }
+
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Operación cancelada',
+                        text: 'No se realizaron acciones',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    });
+
+                }
+
+            });
+        }
     </script>
-    <script src="{{ asset('assets/js/utils.js') }}"></script>
 @endsection

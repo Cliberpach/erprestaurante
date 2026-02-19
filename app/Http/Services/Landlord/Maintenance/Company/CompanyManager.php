@@ -28,4 +28,9 @@ class CompanyManager
     {
         return $this->s_company->update($data, $id);
     }
+
+    public function blockAccount(array $data, int $id)
+    {
+        return $this->s_company->blockAccount($data, $id);
+    }
 }

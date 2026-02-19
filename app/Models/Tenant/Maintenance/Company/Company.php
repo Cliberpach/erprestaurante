@@ -11,7 +11,7 @@ class Company extends Model
     protected $table = 'companies';
     protected $guarded = [''];
     protected $connection = 'tenant';
-    
+
     protected $fillable = [
         'ruc',
         'business_name',
@@ -28,6 +28,7 @@ class Company extends Model
         'logo',
         'lat',
         'lng',
-        'token_placa'
+        'token_placa',
+        'block_account'
     ];
 }

@@ -267,4 +267,22 @@ class CompanyRepository
         $company_invoice->update($dto);
         return $company_invoice;
     }
+
+    public function blockAccountLandlord(int $company_id, int $status)
+    {
+        $company_landlord                   =   Company::findOrFail($company_id);
+        $company_landlord->block_account    =   $status;
+        $company_landlord->save();
+
+        return $company_landlord;
+    }
+
+    public function blockAccountTenant(int $status)
+    {
+        $company_landlord                   =   TenantCompany::findOrFail(1);
+        $company_landlord->block_account    =   $status;
+        $company_landlord->save();
+
+        return $company_landlord;
+    }
 }

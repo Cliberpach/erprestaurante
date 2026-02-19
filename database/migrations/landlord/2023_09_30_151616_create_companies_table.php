@@ -44,6 +44,7 @@ return new class extends Migration
             $table->enum('plan', [1, 2, 3]);
 
             $table->longText('token_placa')->nullable();
+            $table->boolean('block_account')->default(false);
 
             $table->timestamps();
         });

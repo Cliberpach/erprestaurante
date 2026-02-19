@@ -37,15 +37,17 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-
-
 Route::get('user/tenant', [UserController::class, 'index'])->name('tenant.users.index');
 Route::post('user/create', [UserController::class, 'store'])->name('tenant.users.create');
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+    'company.status'
+])->group(function () {
 
     Route::get('/dashboard', [ModuleController::class, 'home'])->name('tenant.home');
-
 
     Route::group(["prefix" => "reservas"], function () {
         Route::get('reserva', [BookController::class, 'book'])->middleware('verificar.caja')->name('tenant.reservas.reserva');
@@ -125,4 +127,3 @@ Route::group(['prefix' => 'consultas'], function () {
     Route::get('/comprobante/cdr', [QuerySaleController::class, 'cdr'])->name('consultarComprobante.cdr');
 });
 Route::get('consultas/{hash}', [BankAccountController::class, 'searchSale'])->name('tenant.utils.searchSale');
-

@@ -49,5 +49,7 @@ class Company extends Model
         'department_name',
         'province_name',
         'district_name',
+
+        'block_account'
     ];
 }

@@ -6,16 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyStoreRequest;
 use App\Http\Requests\Landlord\Maintenance\Company\CompanyUpdateRequest;
 use App\Http\Services\Landlord\Maintenance\Company\CompanyManager;
-use App\Models\Company;
 use App\Models\Department;
 use App\Models\District;
 use App\Models\Landlord\Company as LandlordCompany;
 use App\Models\Module;
-use App\Models\ModuleChild;
-use App\Models\ModuleGrandChild;
 use App\Models\Plan;
 use App\Models\Province;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -39,12 +35,6 @@ class CompanyController extends Controller
         $this->middleware('auth');
         $this->s_manager    =   new CompanyManager();
     }
-
-    private $modules;
-    private $children;
-    private $grand_children;
-    private $plan;
-
 
     public function index()
     {
@@ -74,7 +64,8 @@ class CompanyController extends Controller
                 't.domain',
                 'p.description as plan_name',
                 'e.email',
-                'e.invoicing_status'
+                'e.invoicing_status',
+                'e.block_account'
             )
             ->where('status', '1')
             ->get();
@@ -339,6 +330,24 @@ array:1 [ // app\Http\Controllers\LandLord\CompanyController.php:263
             return response()->json(['success' => true, 'message' => 'EMPRESA ELIMINADA!!!']);
         } catch (\Throwable $th) {
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    public function blockAccount(Request $request, $id)
+    {
+        try {
+
+            $company_landlord   =   $this->s_manager->blockAccount($request->toArray(), $id);
+            $message            =   $company_landlord->block_account ? 'EMPRESA BLOQUEADA CON ÉXITO' : 'EMPRESA ACTIVADA CON ÉXITO';
+
+            return response()->json(['success' => true, 'message' => $message]);
+        } catch (Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ]);
         }
     }
 }

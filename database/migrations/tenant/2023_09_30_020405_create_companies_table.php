@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('abbreviated_business_name')->unique()->nullable();
 
             $table->string('domain')->nullable();
-            $table->string('files_route',200)->nullable();
+            $table->string('files_route', 200)->nullable();
             $table->string('tenant_id')->nullable();
 
             $table->string('logo_url')->nullable();
@@ -44,6 +44,7 @@ return new class extends Migration
             $table->enum('status', [0, 1])->nullable()->default(1);
             $table->decimal('igv', 10, 4)->unsigned()->default(18);
 
+            $table->boolean('block_account')->default(false);
 
             // Plan
             $table->enum('plan', [1, 2, 3]);
