@@ -277,6 +277,8 @@ class SaleDto
             $_item['payment_method_name']   =   $payment->description;
             $_item['amount']                =   $item->amount;
             $_item['sale_id']               =   $sale->id;
+            $_item['created_at']            =   Carbon::now();
+            $_item['updated_at']            =   Carbon::now();
             $dto[]                          =   $_item;
         }
         return $dto;

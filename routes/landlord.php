@@ -10,7 +10,6 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-
 Route::middleware(['auth:web', 'verified'])->group(function () {
 
     Route::get('/home', function () {

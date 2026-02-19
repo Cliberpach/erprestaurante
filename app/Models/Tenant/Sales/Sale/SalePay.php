@@ -16,6 +16,8 @@ class SalePay extends Model
         'payment_method_id',
         'payment_method_name',
         'sale_id',
-        'amount'
+        'amount',
+        'created_at',
+        'updated_at'
     ];
 }
