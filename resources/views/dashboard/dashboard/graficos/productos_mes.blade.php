@@ -124,7 +124,15 @@
             },
             plotOptions: {
                 column: {
-                    depth: 25
+                    depth: 25,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y}',
+                        style: {
+                            fontSize: '11px',
+                            fontWeight: 'bold'
+                        }
+                    }
                 }
             },
             series: [{
