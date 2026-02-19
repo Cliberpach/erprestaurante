@@ -3,17 +3,22 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandLord\ApiController;
 use App\Http\Controllers\LandLord\CompanyController;
+use App\Http\Controllers\LandLord\ModuleController;
 use App\Http\Controllers\LandLord\PlanController;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
+
 Route::middleware(['auth:web', 'verified'])->group(function () {
 
     Route::get('/home', function () {
         return redirect()->route('landlord.mantenimiento.empresas.index');
     });
+
+    Route::get("/logout", [ModuleController::class, 'logout'])->name('module.logout');
+
     //Route::get('/dashboard', [ModuleController::class, 'home'])->name('landlord.home');
 
     Route::group(["prefix" => "mantenimiento"], function () {
