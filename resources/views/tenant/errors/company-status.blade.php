@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cuenta Bloqueada — ComandaPro</title>
+    <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}">
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap"
         rel="stylesheet" />
@@ -31,7 +32,10 @@
             --ff-body: 'DM Sans', sans-serif;
         }
 
-        html,
+        html {
+            min-height: 100%;
+        }
+
         body {
             min-height: 100vh;
             background: var(--bg);
@@ -40,7 +44,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 40px 0;
         }
 
         /* ── Atmospheric background ── */
@@ -113,6 +119,7 @@
             z-index: 1;
             max-width: 560px;
             width: 90%;
+            margin: auto;
             background: linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
             border: 1px solid var(--border);
             border-radius: 4px;
@@ -460,6 +467,32 @@
                 font-size: 1.6rem;
             }
         }
+
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--gold), #a8823a);
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, var(--gold-lt), var(--gold));
+        }
+
+        * {
+            scrollbar-width: thin;
+            /* Firefox */
+            scrollbar-color: var(--gold) var(--bg);
+            /* Firefox */
+        }
     </style>
 </head>
 
@@ -535,21 +568,6 @@
                     <div class="info-value">Suscripción vencida o pago pendiente</div>
                 </div>
             </div>
-            {{-- <div class="info-row">
-                <div class="info-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                        <line x1="16" y1="2" x2="16" y2="6" />
-                        <line x1="8" y1="2" x2="8" y2="6" />
-                        <line x1="3" y1="10" x2="21" y2="10" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="info-label">Fecha de bloqueo</div>
-                    <div class="info-value" id="blockDate">—</div>
-                </div>
-            </div> --}}
             <div class="info-row">
                 <div class="info-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -575,7 +593,7 @@
                 </svg>
                 Contactar Soporte
             </a>
-            <a href="{{route('login')}}" class="btn-secondary">
+            <a href="{{ route('login') }}" class="btn-secondary">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12" />
@@ -592,18 +610,6 @@
 
     </div>
 
-    {{-- <script>
-        // Fecha actual formateada
-        const now = new Date();
-        const opts = {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        };
-        document.getElementById('blockDate').textContent = now.toLocaleDateString('es-PE', opts);
-    </script> --}}
 </body>
 
 </html>
