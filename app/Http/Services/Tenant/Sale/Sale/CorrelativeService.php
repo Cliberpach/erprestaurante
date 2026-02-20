@@ -5,6 +5,7 @@ namespace App\Http\Services\Tenant\Sale\Sale;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\Tenant\DocumentSerialization;
+use App\Models\Tenant\Sales\Sale\Sale;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -25,22 +26,19 @@ class CorrelativeService
         $serie              =   null;
 
         //======= CONTABILIZANDO SI HAY DOCUMENTOS DE VENTA EMITIDOS PARA EL TYPE SALE ======
-        $sales_documents    =   DB::select('SELECT
-                                count(*) AS cant
-                                FROM sales AS s
-                                WHERE s.type_sale_id = ?', [$type_sale_id])[0];
+        $count_sales        =   Sale::where('type_sale_id',$type_sale_id)->count();
 
         $serialization      =   DocumentSerialization::where('company_id',1)->where('document_type_id',$type_sale_id)->first();
 
         //==== SI LA CANT ES 0 =====
-        if ($sales_documents->cant === 0) {
+        if ($count_sales === 0) {
 
             //====== INICIAR DESDE EL STARTING NUMBER =======
             $correlative        =   $serialization->start_number;
             $serie              =   $serialization->serie;
         } else {
             //======= EN CASO YA EXISTAN DOCUMENTOS DE VENTA DEL TYPE SALE ======
-            $correlative        =   $sales_documents->cant  +   1;
+            $correlative        =   $count_sales->cant  +   1;
             $serie              =   $serialization->serie;
         }
 
