@@ -164,7 +164,7 @@
                         "searchable": false,
                         "orderable": true,
                         render: function(data) {
-                            return formatDateTime(data);
+                            return data;
                         }
                     },
                     {
