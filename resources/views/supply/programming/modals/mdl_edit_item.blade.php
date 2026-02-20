@@ -14,9 +14,11 @@
 
                 <div class="col-12">
                     <div style="display:flex;justify-content:end;">
-                        <button type="button" style="margin-right:5px;" class="btn btn-secondary mr-1"
+                        <button type="button" style="margin-right:5px;" class="btn btn-danger mr-1"
                             data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" form="formEditItem" class="btn btn-primary">Guardar</button>
+                        <button type="submit" form="formEditItem" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
                     </div>
                     <span style="color:rgb(219, 155, 35);font-size:14px;font-weight:bold;display:block;">Los campos con
                         * son obligatorios</span>
@@ -33,6 +35,12 @@
     };
 
     function eventsMdlEditItem() {
+
+        const modal = document.getElementById('mdlEditItem');
+        modal.addEventListener('shown.bs.modal', function() {
+            actionOpenMdlEditItem();
+        });
+
         document.addEventListener('click', (e) => {
 
             const btnEdit = e.target.closest('.btnEditItem');
@@ -156,6 +164,11 @@
 
         document.querySelector('#item_cantidad_edit').value = producto_find.quantity;
         product_edition.product_id = producto_find.product_id;
+
+    }
+
+    function actionOpenMdlEditItem() {
+        document.querySelector('#item_cantidad_edit').focus();
 
     }
 </script>

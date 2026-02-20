@@ -52,6 +52,12 @@
                         "searchable": false
                     },
                     {
+                        data: 'programming_code',
+                        name: 'programming_code',
+                        searchable: true,
+                        orderable: false,
+                    },
+                    {
                         data: 'petty_cash_book_code',
                         name: 'petty_cash_book_code',
                         searchable: true,
@@ -119,24 +125,45 @@
                         className: "text-center",
                         render: function(data) {
 
-                            return `
-                            <div class="btn-group">
-                                <button
-                                    class="btn btn-warning btn-sm modificarDetalle"
-                                    onclick="redirectParams('tenant.abastecimiento.platos.edit',${data.id})"
-                                    type="button"
-                                    title="Modificar">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-                                <a
-                                    class="btn btn-danger btn-sm"
-                                    href="#"
-                                    onclick="eliminar(${data.id})"
-                                    title="Eliminar">
-                                    <i class="fa fa-trash"></i>
-                                </a>
-                            </div>
-                        `;
+                            let actions = ` <div class="dropdown">
+                                            <button
+                                                class="btn btn-warning btn-sm dropdown-toggle"
+                                                type="button"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <i class="fa fa-gear"></i>
+                                            </button>
+
+                                            <ul class="dropdown-menu">`;
+
+                            if (data.status === 'ACTIVO') {
+                                actions += `<li>
+                                            <a class="dropdown-item" href="#"
+                                            onclick="redirectParams('tenant.abastecimiento.programacion.edit', ${data.id})">
+                                                <i class="fa fa-edit me-2 text-warning"></i> Modificar
+                                            </a>
+                                        </li>
+
+                                        <li><hr class="dropdown-divider"></li>
+
+                                        <li>
+                                            <a class="dropdown-item text-danger" href="#"
+                                            onclick="eliminar(${data.id})">
+                                                <i class="fa fa-trash me-2"></i> Eliminar
+                                            </a>
+                                        </li>`;
+                            }
+
+                            actions += `<li>
+                                            <a class="dropdown-item" href="#"
+                                            onclick="redirectParams('tenant.abastecimiento.programacion.show', ${data.id})">
+                                                <i class="fa fa-eye me-2 text-primary"></i> Ver
+                                            </a>
+                                        </li>`;
+
+                            actions += `</ul></div>`;
+
+                            return actions;
                         }
                     }
                 ],
@@ -184,35 +211,30 @@
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-2" style="font-size: 1.2rem;">
 
-                        <div class="mb-1">
-                            <i class="fas fa-user text-primary me-1 small"></i>
-                            <span class="fw-bold small">Nombre:</span><br>
-                            <span class="text-muted small">${fila.name}</span>
+                      <div class="mb-1">
+                            <i class="fas fa-clipboard-list text-primary me-1 small"></i>
+                            <span class="fw-bold small">Programación:</span><br>
+                            <span class="text-muted small">${fila.programming_code}</span>
                         </div>
 
                         <div class="mb-1">
-                            <i class="fas fa-utensils text-info me-1 small"></i>
-                            <span class="fw-bold small">Tipo:</span><br>
-                            <span class="text-muted small">${fila.type_dish_name}</span>
+                            <i class="fas fa-cash-register text-success me-1 small"></i>
+                            <span class="fw-bold small">Caja:</span><br>
+                            <span class="text-muted small">${fila.petty_cash_name}</span>
                         </div>
 
                         <div class="mb-1">
-                            <i class="fas fa-flag text-success me-1 small"></i>
-                            <span class="fw-bold small">P.Costo:</span><br>
-                            <span class="text-muted small">${formatSoles(fila.purchase_price)}</span>
+                            <i class="fas fa-arrow-right-arrow-left text-warning me-1 small"></i>
+                            <span class="fw-bold small">Mov Caja:</span><br>
+                            <span class="text-muted small">${fila.petty_cash_book_code}</span>
                         </div>
 
-                        <div class="mb-1">
-                            <i class="fas fa-tag text-warning me-1 small"></i>
-                            <span class="fw-bold small">P.Venta:</span><br>
-                            <span class="text-muted small">${formatSoles(fila.sale_price)}</span>
-                        </div>
                     </div>
                 </div>
             `;
 
             Swal.fire({
-                title: '¿Desea eliminar el plato?',
+                title: '¿Desea eliminar la programación?',
                 html: `${htmlInfo}`,
                 icon: 'question',
                 showCancelButton: true,
@@ -223,7 +245,7 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                        title: 'Eliminando plato...',
+                        title: 'Eliminando programación...',
                         html: `
                             <div style="display:flex; align-items:center; justify-content:center; flex-direction:column;">
                                 <i class="fa fa-spinner fa-spin fa-3x text-primary mb-3"></i>
@@ -235,21 +257,21 @@
                     });
 
                     try {
-                        const res = await axios.delete(route('tenant.abastecimiento.platos.destroy', id));
+                        const res = await axios.delete(route('tenant.abastecimiento.programacion.destroy', id));
                         if (res.data.success) {
                             toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
                             dtItems.ajax.reload();
                         } else {
-                            toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
+                            toastr.error(res.data.message, 'Error en el servidor');
                         }
                     } catch (error) {
-                        toastr.error(error, 'ERROR EN LA PETICIÓN ELIMINAR PLATO');
+                        toastr.error(error, 'Error en la petición eliminar programación');
                     } finally {
                         Swal.close();
                     }
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: 'Cancelado',
                         text: 'La solicitud ha sido cancelada.',
                         icon: 'error',

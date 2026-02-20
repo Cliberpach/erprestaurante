@@ -9,16 +9,17 @@ use Exception;
 class ProgrammingValidation
 {
     private PettyCashBookService $pcb_service;
+    private ProgrammingRepository $s_repository;
 
-    public function __construct()
+    public function __construct(ProgrammingRepository $s_repository)
     {
-        $this->pcb_service   =   new PettyCashBookService();
+        $this->pcb_service  =   new PettyCashBookService();
+        $this->s_repository =   $s_repository;
     }
 
-    public function validationStore(array $datos)
+    public function validationStore(array $data)
     {
-
-        $petty_cash_id      =   $datos['cash_available_id'];
+        $petty_cash_id      =   $data['cash_available_id'];
         $petty_cash_book    =   $this->pcb_service->getCashBookCash($petty_cash_id);
 
         if (!$petty_cash_book) {
@@ -33,11 +34,11 @@ class ProgrammingValidation
             throw new Exception("EL MOVIMIENTO DE CAJA: CM-" . $petty_cash_book->petty_cash_book_id . " YA TIENE UNA PROGRAMACIÓN ACTIVA");
         }
 
-        $datos['petty_cash_book_id']   =   $petty_cash_book->petty_cash_book_id;
-        $datos['petty_cash_name']      =   $petty_cash_book->petty_cash_name;
-        $datos['petty_cash_id']        =   $petty_cash_book->petty_cash_id;
+        $data['petty_cash_book_id']   =   $petty_cash_book->petty_cash_book_id;
+        $data['petty_cash_name']      =   $petty_cash_book->petty_cash_name;
+        $data['petty_cash_id']        =   $petty_cash_book->petty_cash_id;
 
-        $lst_detail    =   json_decode($datos['lst_detail'], true);
+        $lst_detail    =   json_decode($data['lst_detail'], true);
         if (empty($lst_detail) || count($lst_detail) == 0) {
             throw new Exception("Debe agregar al menos un detalle a la programación.");
         }
@@ -45,6 +46,33 @@ class ProgrammingValidation
         $datos['lst_detail']    =   $lst_detail;
 
         return $datos;
+    }
+
+    public function validationUpdate(array $data, int $id)
+    {
+        $programming        =   $data['programming'];
+
+        if ($programming->status != 'ACTIVO') {
+            throw new Exception("La programación se encuentra con estado: " . $programming->status);
+        }
+
+        $petty_cash_book    =   $this->s_repository->belongsPettyCashBookActive($id);
+        if ($petty_cash_book === false) {
+            throw new Exception("La programación pertenece a más de una caja abierta");
+        }
+        if ($petty_cash_book === null) {
+            throw new Exception("La programación no pertenece a ninguna caja abierta");
+        }
+
+
+
+        $lst_detail         =   json_decode($data['lst_detail'], true);
+        if (empty($lst_detail) || count($lst_detail) == 0) {
+            throw new Exception("Debe agregar al menos un detalle a la programación.");
+        }
+        $data['lst_detail']    =   $lst_detail;
+
+        return $data;
     }
 
     public function validationAuto(PettyCashBook $petty_cash_book)

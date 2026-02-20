@@ -28,12 +28,26 @@ class ProgrammingDto
         return $dto;
     }
 
+     public function getDtoUpdate(array $data)
+    {
+        $dto  = [];
+
+        $dto['editor_user_id']       =   Auth::user()->id;
+        $dto['editor_user_name']     =   Auth::user()->name;
+
+        $lst_detail                  =   $data['lst_detail'];
+        $dto['quantity_dishes']      =   count($lst_detail);
+        $dto['total']                =   collect($lst_detail)->sum('quantity');
+
+        return $dto;
+    }
+
     public function getDtoDetail(array $datos, Programming $programming)
     {
         $lst_detail                  =   $datos['lst_detail'];
 
         $dto = [];
-        foreach ($lst_detail as $key => $item) {
+        foreach ($lst_detail as $item) {
             $_item  =   [
                 'programming_id'    =>  $programming->id,
                 'dish_id'           =>  $item['product_id'],
@@ -56,34 +70,6 @@ class ProgrammingDto
         return $dto;
     }
 
-    public function getDtoUpdate(array $datos, int $id)
-    {
-
-        $dto    =   [
-            'name'              =>  mb_strtoupper($datos['name'], 'UTF-8'),
-            'type_dish_id'      =>  $datos['type_dish_id'],
-            'purchase_price'    =>  $datos['purchase_price'],
-            'sale_price'        =>  $datos['sale_price'],
-        ];
-
-        if (isset($datos['img']) && $datos['img'] instanceof UploadedFile) {
-
-            $carpet_company =   Company::findOrFail(1)->files_route;
-            $file           =   $datos['img'];
-            $extension      =   $file->getClientOriginalExtension();
-            $count          =   $id;
-            $filename       =   'dish_' . $count . '.' . $extension;
-
-            $dto['img_route']   =   "storage/{$carpet_company}/dishes/images/{$filename}";
-            $dto['img_name']    =   $filename;
-        } else {
-            $dto['img_route']   =   null;
-            $dto['img_name']    =   null;
-        }
-
-        return $dto;
-    }
-
     public function getDtoAuto(PettyCashBook $petty_cash_book)
     {
         $dto['petty_cash_book_id']   =   $petty_cash_book->id;
@@ -100,7 +86,7 @@ class ProgrammingDto
 
     public function getDtoLstAuto(Programming $programming)
     {
-        $dishes =   Dish::with('typeDish')->where('status','ACTIVO')->get();
+        $dishes =   Dish::with('typeDish')->where('status', 'ACTIVO')->get();
         $dto    =   [];
         foreach ($dishes as $dish) {
 
@@ -119,6 +105,32 @@ class ProgrammingDto
                 'sale_price'     => $dish->sale_price,
 
                 'status'         => 'ACTIVO'
+            ];
+
+            $dto[]  =   $_item;
+        }
+
+        return $dto;
+    }
+
+    public function formatLstView($detail)
+    {
+        $dto    =   [];
+        foreach ($detail as $item) {
+
+            $_item  =    [
+
+                'programming_id' => $item->programming_id,
+                'product_id'     => $item->dish_id,
+
+                'product_name'   => $item->dish_name,
+                'type_dish_name' => $item->type_dish_name,
+
+                'quantity'       => (int)$item->quantity,
+
+                'purchase_price' => $item->purchase_price,
+                'sale_price'     => $item->sale_price,
+
             ];
 
             $dto[]  =   $_item;

@@ -28,7 +28,7 @@ return new class extends Migration
             $table->decimal('quantity_dishes', 16, 6)->unsigned();
             $table->decimal('total', 16, 6)->unsigned();
 
-            $table->enum('status', ['ACTIVO', 'ANULADO','CERRADO'])->default('ACTIVO');
+            $table->enum('status', ['ACTIVO', 'ANULADO', 'CERRADO'])->default('ACTIVO');
 
             $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->string('creator_user_name')->nullable();
@@ -36,6 +36,8 @@ return new class extends Migration
             $table->string('editor_user_name')->nullable();
             $table->unsignedBigInteger('delete_user_id')->nullable();
             $table->string('delete_user_name')->nullable();
+            $table->unsignedBigInteger('closer_user_id')->nullable();
+            $table->string('closer_user_name')->nullable();
 
             $table->timestamps();
         });

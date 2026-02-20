@@ -2,6 +2,7 @@
     <thead class="table-light">
         <tr>
             <th class="minw-100px">#</th>
+            <th class="minw-100px">PROG</th>
             <th class="minw-200">MOV</th>
             <th class="minw-100px">CAJA</th>
             <th class="minw-100px">CAJERO</th>

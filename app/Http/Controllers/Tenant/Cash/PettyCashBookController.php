@@ -46,8 +46,10 @@ class PettyCashBookController extends Controller
         $cashes = DB::connection('tenant')
             ->table('petty_cash_books as c')
             ->join('users as u', 'u.id', 'c.user_id')
-            ->leftJoin('programming as p','p.petty_cash_book_id','c.id')
-            ->select(
+            ->leftJoin('programming as p', function ($join) {
+                $join->on('p.petty_cash_book_id', '=', 'c.id')
+                    ->where('p.status', 'ACTIVO');
+            })->select(
                 DB::raw("CONCAT('CM-', LPAD(c.id, 8, '0')) as code"),
                 'c.id',
                 'c.petty_cash_id',

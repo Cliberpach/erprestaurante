@@ -40,7 +40,10 @@ Route::group(["prefix" => "abastecimiento"], function () {
     Route::group(["prefix" => "programacion"], function () {
         Route::get('index', [ProgrammingController::class, 'index'])->name('tenant.abastecimiento.programacion.index');
         Route::get('create', [ProgrammingController::class, 'create'])->name('tenant.abastecimiento.programacion.create');
+        Route::get('edit/{id}', [ProgrammingController::class, 'edit'])->name('tenant.abastecimiento.programacion.edit');
         Route::get('getList', [ProgrammingController::class, 'getList'])->name('tenant.abastecimiento.programacion.getList');
         Route::post('store', [ProgrammingController::class, 'store'])->name('tenant.abastecimiento.programacion.store');
+        Route::put('update/{id}', [ProgrammingController::class, 'update'])->name('tenant.abastecimiento.programacion.update');
+        Route::delete('destroy/{id}', [ProgrammingController::class, 'destroy'])->name('tenant.abastecimiento.programacion.destroy');
     });
 });

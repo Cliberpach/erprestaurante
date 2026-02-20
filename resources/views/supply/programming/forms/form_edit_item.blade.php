@@ -57,7 +57,7 @@
                 required
                 type="text"
                 id="item_cantidad_edit"
-                class="form-control inputEnteroPositivo"
+                class="form-control inputEnteroPositivo input-fill"
                 placeholder="Ingrese la cantidad"
             >
         </div>

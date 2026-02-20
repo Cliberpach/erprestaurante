@@ -30,6 +30,9 @@ class Programming extends Model
 
         'delete_user_id',
         'delete_user_name',
+
+        'closer_user_id',
+        'closer_user_name'
     ];
 
 
@@ -37,22 +40,29 @@ class Programming extends Model
     {
         parent::boot();
 
-        static::creating(function ($quote) {
+        static::creating(function ($model) {
             if (auth()->check()) {
-                $quote->creator_user_id = auth()->id();
-                $quote->creator_user_name = auth()->user()->name;
+                $model->creator_user_id = auth()->id();
+                $model->creator_user_name = auth()->user()->name;
             }
         });
 
-        static::updating(function ($quote) {
+        static::updating(function ($model) {
             if (auth()->check()) {
-                $quote->editor_user_id = auth()->id();
-                $quote->editor_user_name = auth()->user()->name;
+                $model->editor_user_id = auth()->id();
+                $model->editor_user_name = auth()->user()->name;
             }
-            if ($quote->isDirty('status') && $quote->status === 'ANULADO') {
+            if ($model->isDirty('status') && $model->status === 'ANULADO') {
                 if (auth()->check()) {
-                    $quote->delete_user_id = auth()->id();
-                    $quote->delete_user_name = auth()->user()->name;
+                    $model->delete_user_id = auth()->id();
+                    $model->delete_user_name = auth()->user()->name;
+                }
+            }
+
+            if ($model->isDirty('status') && $model->status === 'CERRADO') {
+                if (auth()->check()) {
+                    $model->closer_user_id = auth()->id();
+                    $model->closer_user_name = auth()->user()->name;
                 }
             }
         });

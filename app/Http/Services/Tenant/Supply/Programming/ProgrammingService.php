@@ -2,8 +2,11 @@
 
 namespace App\Http\Services\Tenant\Supply\Programming;
 
+use App\Http\Controllers\UtilController;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Supply\Programming\Programming;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class ProgrammingService
 {
@@ -15,7 +18,7 @@ class ProgrammingService
     {
         $this->s_repository =   new ProgrammingRepository();
         $this->s_dto        =   new ProgrammingDto();
-        $this->s_validation =   new ProgrammingValidation();
+        $this->s_validation =   new ProgrammingValidation($this->s_repository);
     }
 
     public function store(array $data): Programming
@@ -30,14 +33,21 @@ class ProgrammingService
         return $item;
     }
 
+
     public function update(array $data, int $id): Programming
     {
-        $dto            =   $this->s_dto->getDtoUpdate($data, $id);
+        $instance               =   $this->s_repository->find($id);
+        $data['programming']    =   $instance;
+        $data                   =   $this->s_validation->validationUpdate($data, $id);
 
-        $dish_preview   =   $this->s_repository->find($id);
-        $item           =   $this->s_repository->update($dto, $id);
+        $dto_update =   $this->s_dto->getDtoUpdate($data);
+        $instance   =   $this->s_repository->update($dto_update, $id);
 
-        return $item;
+        $this->s_repository->deleteDetail($id);
+
+        $dto        =   $this->s_dto->getDtoDetail($data, $instance);
+        $this->s_repository->insertDetail($dto);
+        return $instance;
     }
 
     public function getOne(int $id): Programming
@@ -47,7 +57,9 @@ class ProgrammingService
 
     public function destroy(int $id): Programming
     {
-        return $this->s_repository->destroy($id);
+        $instance   =   $this->s_repository->destroy($id);
+        $this->s_repository->cancelDetails($id);
+        return  $instance;
     }
 
     public function setStatus(int $id, string $status)
@@ -65,7 +77,7 @@ class ProgrammingService
         $this->s_repository->decreaseLstStock($lst_items);
     }
 
-    public function auto(PettyCashBook $petty_cash_book):Programming
+    public function auto(PettyCashBook $petty_cash_book): Programming
     {
         $this->s_validation->validationAuto($petty_cash_book);
         $dto        =   $this->s_dto->getDtoAuto($petty_cash_book);
@@ -73,5 +85,25 @@ class ProgrammingService
         $dto_lst    =   $this->s_dto->getDtoLstAuto($item);
         $this->s_repository->insertDetail($dto_lst);
         return $item;
+    }
+
+    public function edit(int $id): View
+    {
+        $types_dish         =   UtilController::getTypesDish();
+        $user               =   Auth::user();
+        $roles              =   $user->getRoleNames();
+        $detail             =   $this->s_repository->getDetail($id);
+        $detail_formatted   =   $this->s_dto->formatLstView($detail);
+        $programming        =   $this->s_repository->findFull($id);
+
+        $vars   =   [
+            'types_dish'    =>  $types_dish,
+            'user'          =>  $user,
+            'roles'         =>  $roles,
+            'detail'        =>  $detail_formatted,
+            'programming'   =>  $programming
+        ];
+
+        return view('supply.programming.edit', $vars);
     }
 }
