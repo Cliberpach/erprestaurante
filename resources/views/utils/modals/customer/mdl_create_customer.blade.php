@@ -262,10 +262,10 @@
 
                 toastr.info(res.message);
             } else {
-                toastr.error(res.message, 'ERROR EN EL SERVIDOR AL CONSULTAR DOCUMENTO');
+                toastr.error(res.message);
             }
         } catch (error) {
-            toastr.error(error, 'ERROR EN LA PETICIÓN CONSULTAR DOCUMENTO');
+            toastr.error(error, 'Error al consultar documento');
         } finally {
             ocultarAnimacion1();
         }

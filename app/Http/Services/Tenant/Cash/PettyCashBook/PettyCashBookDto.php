@@ -3,6 +3,7 @@
 namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 
 use App\Models\Tenant\Cash\PettyCash;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class PettyCashBookDto
@@ -23,19 +24,22 @@ class PettyCashBookDto
         return $dto;
     }
 
-    public function getDtoCashServers(array $data,int $petty_cash_book_id){
+    public function getDtoCashServers(array $data, int $petty_cash_book_id)
+    {
         $dto = [];
         foreach ($data as $item) {
             $_item = [
-                'petty_cash_book_id'   =>  $petty_cash_book_id,
-                'user_id'              =>  $item
+                'petty_cash_book_id'    =>  $petty_cash_book_id,
+                'user_id'               =>  $item,
+                'created_at'            =>  Carbon::now(),
+                'updated_at'            =>  Carbon::now()
             ];
             $dto[]  =   $_item;
         }
         return $dto;
     }
 
-     public function getDtoUpdate(array $datos,int $id)
+    public function getDtoUpdate(array $datos, int $id)
     {
 
         $petty_cash =   PettyCash::findOrFail($datos['petty_cash_id']);

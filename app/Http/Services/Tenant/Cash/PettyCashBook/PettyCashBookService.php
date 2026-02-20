@@ -11,7 +11,6 @@ use App\Models\Tenant\Accounts\CustomerAccountDetail;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
-use App\Models\Tenant\Sales\Sale\SalePay;
 use App\Models\Tenant\Supply\Programming\Programming;
 use App\Models\Tenant\User;
 use Barryvdh\DomPDF\Facade\Pdf;
