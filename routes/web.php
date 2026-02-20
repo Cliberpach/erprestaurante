@@ -21,6 +21,7 @@ use App\Http\Controllers\Tenant\WorkShop\ServiceController;
 use App\Http\Controllers\Tenant\WorkShop\VehicleController;
 use App\Http\Controllers\Tenant\WorkShop\YearController;
 use App\Http\Controllers\UtilController;
+use App\Models\Tenant\Maintenance\Company\Company;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +85,24 @@ Route::middleware([
     Route::get("landlord/dni/{dni}", [ApiController::class, 'apiDni']);
 
     Route::get("/logout", [ModuleController::class, 'logout'])->name('module.logout');
+});
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+
+    Route::get('/company-blocked', function () {
+
+        $company = Company::findOrFail(1);
+
+        if (!$company->block_account) {
+            return redirect('/');
+        }
+
+        return view('tenant.errors.company-status');
+    })->name('company.blocked');
 });
 
 Route::group(["prefix" => "utils"], function () {

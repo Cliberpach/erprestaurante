@@ -24,9 +24,17 @@ class CheckCompanyStatus
             now()->addHour(6),
             fn() => Company::findOrFail(1)
         );
-        //$company    =   Company::findOrFail(1);
 
         if ($company->block_account) {
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => 'Tu cuenta ha sido temporalmente bloqueada. Por favor, contacta a nuestro equipo de soporte para reactivar tu servicio.',
+                    'code' => 403,
+                    'success' => false
+                ], 403);
+            }
+
             return response()->view('tenant.errors.company-status', [], 403);
         }
 

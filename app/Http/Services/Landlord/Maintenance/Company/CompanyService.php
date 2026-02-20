@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
+use Illuminate\Support\Facades\Cache;
 
 class CompanyService
 {
@@ -417,8 +418,8 @@ class CompanyService
 
     public function blockAccount(array $data, int $id)
     {
-        $tenant_data    =   $this->s_repository->getTenantCompanyData($id);
-        $tenant         =   $this->s_repository->findTenant($tenant_data->tenant_id);
+        $tenant_data        =   $this->s_repository->getTenantCompanyData($id);
+        $tenant             =   $this->s_repository->findTenant($tenant_data->tenant_id);
         $company_landlord   =   null;
 
         DB::connection('landlord')->beginTransaction();
@@ -434,8 +435,12 @@ class CompanyService
         $tenant->makeCurrent();
         DB::connection('tenant')->beginTransaction();
         try {
+        
             $this->s_repository->blockAccountTenant($data['block_account']);
             DB::connection('tenant')->commit();
+
+            Cache::forget("company_status_" . $tenant->id);
+
             Tenant::forgetCurrent();
         } catch (Throwable $e) {
             DB::connection('tenant')->rollBack();

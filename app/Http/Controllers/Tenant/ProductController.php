@@ -173,7 +173,7 @@ array:11 [ // app\Http\Controllers\Tenant\ProductController.php:127
         DB::beginTransaction();
         try {
             $product            =   Product::findOrFail($id);
-            $product->status    =   'INACTIVE';
+            $product->status    =   'ANULADO';
             $product->update();
 
             $this->deleteImg($product);
@@ -462,7 +462,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
                 'b.name as brand_name',
                 'c.name as category_name',
                 'wp.warehouse_id'
-            );
+            )->where('p.status','ACTIVO');
 
         if ($categoria_id) {
             $products  =   $products->where('p.category_id', $categoria_id);

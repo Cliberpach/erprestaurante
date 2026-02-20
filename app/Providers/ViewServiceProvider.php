@@ -23,6 +23,7 @@ class ViewServiceProvider extends ServiceProvider
     public function boot(\App\Services\MenuService $menuService)
     {
         View::composer('layouts.template', function ($view) use ($menuService) {
+            // debug dd($view->getName());
 
             if (!auth()->check()) return;
 

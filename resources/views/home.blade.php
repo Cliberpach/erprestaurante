@@ -111,7 +111,7 @@
                                 Empresa activa
                             </p>
                             <div class="fw-bold" style="font-size:1rem;">
-                                {{ $company->abbreviated_business_name }}
+                                ComandaPro
                             </div>
                             <div class="text-muted small">Sistema en línea</div>
                         </div>

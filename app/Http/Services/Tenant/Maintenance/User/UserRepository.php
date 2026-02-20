@@ -17,6 +17,7 @@ class UserRepository
             ->join('roles as r', 'r.id', 'mhr.role_id')
             ->whereNull('pcs.user_id')
             ->where('r.name', 'MESERO')
+            ->where('u.status','ACTIVO')
             ->select(
                 'u.id',
                 'u.name as user_name',
