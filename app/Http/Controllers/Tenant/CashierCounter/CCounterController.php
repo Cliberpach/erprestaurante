@@ -73,7 +73,13 @@ class CCounterController extends Controller
             $items->whereDate('o.created_at', '<=', $filter_end_date);
         }
 
-        return DataTables::of($items)->make(true);
+        return DataTables::of($items)
+            ->editColumn('created_at', function ($row) {
+                return $row->created_at
+                    ->timezone(config('app.timezone')) 
+                    ->format('Y-m-d H:i:s');
+            })
+            ->make(true);
     }
 
     /*
