@@ -13,5 +13,7 @@ class PettyCashServer extends Model
     protected $fillable = [
         'petty_cash_book_id',
         'user_id',
+        'created_at',
+        'updated_at'
     ];
 }
