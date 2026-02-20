@@ -93,7 +93,7 @@ class NoteReleaseController extends Controller
                 'p.stock_min',
                 'b.name as brand_name',
                 'c.name as category_name',
-            );
+            )->where('p.status', 'ACTIVO');
 
         if ($categoria_id) {
             $products  =   $products->where('p.category_id', $categoria_id);

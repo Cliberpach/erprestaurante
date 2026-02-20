@@ -23,72 +23,75 @@ class NoteIncomeController extends Controller
 {
     protected NoteIncomeManager $s_note_income;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->s_note_income    =   new NoteIncomeManager();
     }
 
-    public function index(){
+    public function index()
+    {
         return view('inventory.note_income.index');
     }
 
-    public function getNoteIncome(Request $request){
+    public function getNoteIncome(Request $request)
+    {
 
         $notes_income    =   DB::table('notes_income as ni')
-                            ->select(
-                              'ni.id',
-                              'ni.created_at',
-                              'ni.user_recorder_name',
-                              'ni.observation',
-                            )
-                            ->where('ni.estado','!=','ANULADO')
-                            ->orderByDesc('ni.created_at');
+            ->select(
+                'ni.id',
+                'ni.created_at',
+                'ni.user_recorder_name',
+                'ni.observation',
+            )
+            ->where('ni.estado', '!=', 'ANULADO')
+            ->orderByDesc('ni.created_at');
 
-        if($request->get('product_id')){
-            $notes_income =   $notes_income->where('k.product_id',$request->get('product_id'));
+        if ($request->get('product_id')) {
+            $notes_income =   $notes_income->where('k.product_id', $request->get('product_id'));
         }
 
-        if($request->get('date_start')){
+        if ($request->get('date_start')) {
             $notes_income = $notes_income->whereRaw('DATE(k.created_at) >= ?', [$request->get('date_start')]);
         }
 
-        if($request->get('date_end')){
+        if ($request->get('date_end')) {
             $notes_income = $notes_income->whereRaw('DATE(k.created_at) <= ?', [$request->get('date_end')]);
         }
 
         return DataTables::of($notes_income)->make(true);
-
     }
 
-    public function getProducts(Request $request){
+    public function getProducts(Request $request)
+    {
 
         $categoria_id   =   $request->get('categoria_id');
         $marca_id       =   $request->get('marca_id');
 
         $products = DB::table('products as p')
-                    ->leftJoin('warehouse_products as wp', function($join) {
-                        $join->on('wp.product_id', '=', 'p.id')
-                            ->where('wp.warehouse_id', '=', 1); // Filtrar por almacen_id = 1
-                    })
-                    ->join('brands as b', 'b.id', '=', 'p.brand_id')
-                    ->join('categories as c', 'c.id', '=', 'p.category_id')
-                    ->select(
-                        'p.id',
-                        'p.brand_id',
-                        'p.category_id',
-                        'p.name',
-                        'p.sale_price',
-                        DB::raw('IFNULL(wp.stock, 0) as stock'),
-                        'p.stock_min',
-                        'b.name as brand_name',
-                        'c.name as category_name',
-                    );
+            ->leftJoin('warehouse_products as wp', function ($join) {
+                $join->on('wp.product_id', '=', 'p.id')
+                    ->where('wp.warehouse_id', '=', 1); // Filtrar por almacen_id = 1
+            })
+            ->join('brands as b', 'b.id', '=', 'p.brand_id')
+            ->join('categories as c', 'c.id', '=', 'p.category_id')
+            ->select(
+                'p.id',
+                'p.brand_id',
+                'p.category_id',
+                'p.name',
+                'p.sale_price',
+                DB::raw('IFNULL(wp.stock, 0) as stock'),
+                'p.stock_min',
+                'b.name as brand_name',
+                'c.name as category_name',
+            )->where('p.status', 'ACTIVO');
 
-        if($categoria_id){
-            $products  =   $products->where('p.category_id',$categoria_id);
+        if ($categoria_id) {
+            $products  =   $products->where('p.category_id', $categoria_id);
         }
 
-        if($marca_id){
-            $products  =   $products->where('p.brand_id',$marca_id);
+        if ($marca_id) {
+            $products  =   $products->where('p.brand_id', $marca_id);
         }
 
         $products  =   $products->get();
@@ -97,7 +100,8 @@ class NoteIncomeController extends Controller
         return DataTables::of($products)->make(true);
     }
 
-    public function create(){
+    public function create()
+    {
 
         $categories                 =   Category::all();
         $brands                     =   Brand::all();
@@ -105,12 +109,12 @@ class NoteIncomeController extends Controller
                                         *
                                         from
                                         users as u
-                                        where u.id = ?',[Auth::user()->id])[0];
+                                        where u.id = ?', [Auth::user()->id])[0];
 
-        return view('inventory.note_income.create',compact('categories','brands','colaborador_registrador'));
+        return view('inventory.note_income.create', compact('categories', 'brands', 'colaborador_registrador'));
     }
 
-/*
+    /*
 array:4 [ // app\Http\Controllers\Tenant\NoteIncomeController.php:11
   "user_recorder_id"    => 1
   "user_recorder_name"  => "SUPERADMIN"
@@ -123,7 +127,8 @@ array:4 [ // app\Http\Controllers\Tenant\NoteIncomeController.php:11
                             "warehouse_id":1}]
 ]
 */
-    public function storeToStock(Request $request){
+    public function storeToStock(Request $request)
+    {
 
         try {
 
@@ -157,34 +162,35 @@ array:4 [ // app\Http\Controllers\Tenant\NoteIncomeController.php:11
 
                 //===== GRABANDO KARDEX ======
                 $request_kardex     =   new Request();
-                $request_kardex->merge([  'product_id'      =>  $product->product_id,
-                                        'brand_id'          =>  $product->brand_id,
-                                        'category_id'       =>  $product->category_id,
-                                        'quantity'          =>  $product->quantity,
-                                        'price_sale'        =>  null,
-                                        'amount'            =>  null,
-                                        'type'              =>  'INGRESO',
-                                        'document'          =>  'NI-'.$note_income->id,
-                                        'product_name'      =>  $product->product_name,
-                                        'brand_name'        =>  $product->brand_name,
-                                        'category_name'     =>  $product->category_name,
-                                        'stock_previous'    =>  0,
-                                        'stock_later'       =>  $product->quantity,
-                                        'note_income_id'    =>  $note_income->id,
-                                        'customer_id'           =>  null,
-                                        'customer_name'         =>  null,
-                                        'user_recorder_id'      =>  Auth::user()->id,
-                                        'user_recorder_name'    =>  Auth::user()->name]);
+                $request_kardex->merge([
+                    'product_id'      =>  $product->product_id,
+                    'brand_id'          =>  $product->brand_id,
+                    'category_id'       =>  $product->category_id,
+                    'quantity'          =>  $product->quantity,
+                    'price_sale'        =>  null,
+                    'amount'            =>  null,
+                    'type'              =>  'INGRESO',
+                    'document'          =>  'NI-' . $note_income->id,
+                    'product_name'      =>  $product->product_name,
+                    'brand_name'        =>  $product->brand_name,
+                    'category_name'     =>  $product->category_name,
+                    'stock_previous'    =>  0,
+                    'stock_later'       =>  $product->quantity,
+                    'note_income_id'    =>  $note_income->id,
+                    'customer_id'           =>  null,
+                    'customer_name'         =>  null,
+                    'user_recorder_id'      =>  Auth::user()->id,
+                    'user_recorder_name'    =>  Auth::user()->name
+                ]);
 
                 KardexController::store($request_kardex);
             }
 
 
-            return (object)['success'=>true,'note_income_id'=>$note_income->id];
-
+            return (object)['success' => true, 'note_income_id' => $note_income->id];
         } catch (Throwable $th) {
 
-            return (object)['success'=>false,'message'=>$th->getMessage()];
+            return (object)['success' => false, 'message' => $th->getMessage()];
         }
     }
 
@@ -199,7 +205,8 @@ array:4 [ // app\Http\Controllers\Tenant\NoteIncomeController.php:11
         "observation"       => "y dale U"
     ]
     */
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         DB::beginTransaction();
         try {
 
@@ -208,27 +215,29 @@ array:4 [ // app\Http\Controllers\Tenant\NoteIncomeController.php:11
 
             DB::commit();
 
-            Session::flash('note_income_success','NOTA DE INGRESO REGISTRADA!!');
-            return response()->json(['success'=>true,'message'=>'NOTA DE INGRESO REGISTRADA!!!']);
+            Session::flash('note_income_success', 'NOTA DE INGRESO REGISTRADA!!');
+            return response()->json(['success' => true, 'message' => 'NOTA DE INGRESO REGISTRADA!!!']);
         } catch (Throwable $th) {
             DB::rollBack();
-            return response()->json(['success'=>false,'message'=>$th->getMessage(),'line'=>$th->getLine(),'file'=>$th->getFile()]);
+            return response()->json(['success' => false, 'message' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile()]);
         }
     }
 
-    public static function getStock($product_id){
+    public static function getStock($product_id)
+    {
 
         //======= VERIFICANDO SI EXISTE PRODUCTO EN EL ALMACÉN =======
         $warehouse_product          =   DB::select('select
                                         wp.stock
                                         from warehouse_products as wp
                                         where wp.warehouse_id = 1
-                                        and wp.product_id = ?',[$product_id]);
+                                        and wp.product_id = ?', [$product_id]);
 
         return $warehouse_product[0]->stock;
     }
 
-    public static function validationLstNote($lstNoteIncome){
+    public static function validationLstNote($lstNoteIncome)
+    {
 
         foreach ($lstNoteIncome as $item) {
 
@@ -248,11 +257,11 @@ array:4 [ // app\Http\Controllers\Tenant\NoteIncomeController.php:11
                                                 from products as p
                                                 inner join brands as br on br.id = p.brand_id
                                                 inner join categories as c on c.id = p.category_id
-                                                where p.id = ?',[$item->product_id]);
+                                                where p.id = ?', [$item->product_id]);
 
 
-            if(count($product_exists) === 0){
-                throw new Exception("EL PRODUCTO ".$item->product_name." NO EXISTE EN LA BD!!!");
+            if (count($product_exists) === 0) {
+                throw new Exception("EL PRODUCTO " . $item->product_name . " NO EXISTE EN LA BD!!!");
             }
 
             $item->product_name     =   $product_exists[0]->name;
@@ -260,36 +269,36 @@ array:4 [ // app\Http\Controllers\Tenant\NoteIncomeController.php:11
             $item->category_name    =   $product_exists[0]->category_name;
             $item->brand_id         =   $product_exists[0]->brand_id;
             $item->category_id      =   $product_exists[0]->category_id;
-
         }
 
         return $lstNoteIncome;
     }
 
-    public function show($id){
+    public function show($id)
+    {
 
         try {
             $note_income    =   DB::select('select ni.*
                                 from notes_income as ni
                                 where ni.estado = "ACTIVO"
-                                and ni.id = ?',[$id]);
+                                and ni.id = ?', [$id]);
 
-            if(count($note_income) === 0){
+            if (count($note_income) === 0) {
                 throw new Exception("NO EXISTA LA NOTA DE INGRESO EN LA BD!!!");
             }
 
             $note_income_detail =   DB::select('select nid.*
                                     from notes_income_detail as nid
-                                    where nid.note_income_id = ?',[$id]);
+                                    where nid.note_income_id = ?', [$id]);
 
-            return response()->json(['success'=>true,
-            'message'=>'OPERACIÓN COMPLETADA',
-            'note_income'=>$note_income[0],'note_income_detail'=>$note_income_detail]);
-
+            return response()->json([
+                'success' => true,
+                'message' => 'OPERACIÓN COMPLETADA',
+                'note_income' => $note_income[0],
+                'note_income_detail' => $note_income_detail
+            ]);
         } catch (\Throwable $th) {
-            return response()->json(['success'=>false,'message'=>$th->getMessage()]);
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
     }
-
-
 }
