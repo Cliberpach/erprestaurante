@@ -8,13 +8,12 @@ use Spatie\Multitenancy\Models\Tenant;
 
 class MenuService
 {
-    public function getMenuForUser($user)
+    public function getMenuForUser($user,$tenant_id)
     {
-        $tenantId = Tenant::current()?->id ?? 'landlord';
         $roleNames = $user->roles->pluck('name')->implode('_');
 
         return Cache::remember(
-            "menu_{$tenantId}_{$roleNames}",
+            "menu_{$tenant_id}_{$roleNames}",
             now()->addHours(6),
             fn() => $this->buildMenu($user)
         );

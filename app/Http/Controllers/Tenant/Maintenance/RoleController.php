@@ -123,6 +123,7 @@ class RoleController extends Controller
             app(PermissionRegistrar::class)->forgetCachedPermissions();
             $tenantId = Tenant::current()?->id ?? 'landlord';
             Cache::forget("menu_{$tenantId}_{$rol_name_preview}");
+            Cache::forget("search_modules_{$tenantId}_{$rol_name_preview}");
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'ROL ACTUALIZADO CON ÉXITO']);

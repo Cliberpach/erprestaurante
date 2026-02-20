@@ -304,8 +304,11 @@ function setText(selectInstance, text) {
 }
 
 function formatDateTime(data) {
-    return data
-        .replace('T', ' ')
-        .replace('Z', '')
-        .replace(/\.\d+$/, '');
+    const date = new Date(data);
+
+    return date.toLocaleString('es-PE', {
+        timeZone: 'America/Lima',
+        hour12: false
+    });
 }
+

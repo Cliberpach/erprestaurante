@@ -5,6 +5,7 @@ namespace App\Http\Middleware\Tenant;
 use App\Models\Tenant\Maintenance\Company\Company;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckCompanyStatus
@@ -16,7 +17,14 @@ class CheckCompanyStatus
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $company    =   Company::findOrFail(1);
+        $tenantId = \Spatie\Multitenancy\Models\Tenant::current()?->id ?? 'landlord';
+
+        $company = Cache::remember(
+            "company_status_{$tenantId}",
+            now()->addHour(6),
+            fn() => Company::findOrFail(1)
+        );
+        //$company    =   Company::findOrFail(1);
 
         if ($company->block_account) {
             return response()->view('tenant.errors.company-status', [], 403);

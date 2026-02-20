@@ -72,7 +72,7 @@ class PettyCashBookController extends Controller
             ->filterColumn('code', function ($query, $keyword) {
                 $query->whereRaw("CONCAT('CM-', LPAD(c.id, 8, '0')) LIKE ?", ["%{$keyword}%"]);
             })
-            ->toJson();
+            ->make(true);
     }
 
     /*

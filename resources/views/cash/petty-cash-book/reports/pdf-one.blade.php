@@ -460,7 +460,7 @@
         </table>
 
 
-        <h5 style="font-size:10px; margin-top:25px;">Productos anulados en pedidos</h5>
+        <h5 style="font-size:10px; margin-top:25px;">Productos anulados en pedidos cobrados</h5>
         <table class="table-info" style="width:100%; border-collapse: collapse;">
             <thead>
                 <tr style="background:#f4f8fc;">
@@ -488,7 +488,7 @@
             </tbody>
         </table>
 
-        <h5 style="font-size:10px; margin-top:15px;">Platos anulados en pedidos</h5>
+        <h5 style="font-size:10px; margin-top:15px;">Platos anulados en pedidos cobrados</h5>
         <table class="table-info" style="width:100%; border-collapse: collapse;">
             <thead>
                 <tr style="background:#f4f8fc;">

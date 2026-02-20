@@ -228,7 +228,9 @@ class PettyCashBookRepository
     {
         $products   =   DB::table('orders_products as op')
             ->join('orders as o', 'o.id', 'op.order_id')
-            ->where('o.petty_cash_book_id', $id)
+            ->join('sales as s', 's.id', 'o.sale_id')
+            ->where('s.petty_cash_book_id', $id)
+            ->whereNull('s.converted_from_id')
             ->where('op.status', 'ANULADO')
             ->select(
                 'o.code',
@@ -243,7 +245,9 @@ class PettyCashBookRepository
 
         $dishes = DB::table('orders_dishes as od')
             ->join('orders as o', 'o.id', 'od.order_id')
-            ->where('o.petty_cash_book_id', $id)
+            ->join('sales as s', 's.id', 'o.sale_id')
+            ->where('s.petty_cash_book_id', $id)
+            ->whereNull('s.converted_from_id')
             ->where('od.status', 'ANULADO')
             ->select(
                 'o.code',

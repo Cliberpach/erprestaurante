@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\Models\Tenant;
 
 class ViewServiceProvider extends ServiceProvider
@@ -19,39 +20,43 @@ class ViewServiceProvider extends ServiceProvider
         //
     }
 
-    public function boot()
+    public function boot(\App\Services\MenuService $menuService)
     {
-        View::composer('*', function ($view) {
+        View::composer('layouts.template', function ($view) use ($menuService) {
 
-            $base       =   Tenant::checkCurrent() ? 'tenant' : 'landlord';
-            $tenantId   =   Tenant::checkCurrent() ? Tenant::current()->id : null;
-            $company    =   null;
+            if (!auth()->check()) return;
 
-            if (!auth()->check()) {
-                return;
+            $isTenant   =   Tenant::checkCurrent();
+            $base       =   $isTenant ? 'tenant' : 'landlord';
+            $tenantId   =   $isTenant ? Tenant::current()->id : 'landlord';
+            $user       =   auth()->user();
+            $user->loadMissing('roles');
+
+            $company = null;
+            if ($isTenant) {
+                $company = Cache::remember(
+                    "company_tenant_{$tenantId}",
+                    now()->addHours(12),
+                    fn() => Company::findOrFail(1)
+                );
             }
 
-            if ($base === 'tenant') {
-                $company    =   Company::findOrFail(1);
-            }
-
-            $user = auth()->user();
-            $menu = app(\App\Services\MenuService::class)->getMenuForUser($user);
-
-            $view->with('modules', $menu);
-            $view->with('base', $base . '.');
-            $view->with('lst_search_modules', $this->getLstSearchModules($base, $user));
-            $view->with('tenant_id', $tenantId);
-            $view->with('company', $company);
+            $view->with([
+                'modules'            => $menuService->getMenuForUser($user, $tenantId),
+                'base'               => $base . '.',
+                'lst_search_modules' => $this->getLstSearchModules($user, $tenantId),
+                'tenant_id'          => $tenantId,
+                'company'            => $company,
+            ]);
         });
     }
 
-    public function getLstSearchModules(string $base, $user)
+    public function getLstSearchModules($user, $tenant_id)
     {
         $roleNames = $user->roles->pluck('name')->sort()->implode('_');
 
         return Cache::remember(
-            "search_modules_{$base}_{$roleNames}",
+            "search_modules_{$tenant_id}_{$roleNames}",
             now()->addHours(6),
             function () use ($user) {
 
