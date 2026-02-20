@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('cost_center', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name',200);
+            $table->string('name', 200);
+
+            $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
 
             /* 🔹 AUDIT */
             $table->unsignedBigInteger('creator_user_id')->nullable();
