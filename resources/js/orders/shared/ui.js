@@ -4,7 +4,7 @@ export function paintCardsDetail(detalle) {
     const container = document.getElementById('cards_dishes');
     container.innerHTML = '';
 
-    detalle.forEach((item) => {
+    detalle.forEach((item,index) => {
         container.innerHTML += `
             <div class="card mb-2 border-0 shadow-sm" style="height:auto;">
                 <div class="card-body py-2">
@@ -27,13 +27,15 @@ export function paintCardsDetail(detalle) {
                         <div class="d-flex gap-1">
                             <button class="btn btn-info btn-sm btnEditItem"
                                 type="button"
-                                data-producto-id="${item.id}">
+                                data-producto-id="${item.id}"
+                                data-index="${index}">
                                 <i class="fas fa-edit"></i>
                             </button>
 
                             <button class="btn btn-danger btn-sm btnDeleteItem"
                                 type="button"
-                                data-producto-id="${item.id}">
+                                data-producto-id="${item.id}"
+                                data-index="${index}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
