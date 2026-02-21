@@ -130,7 +130,7 @@ class OrderDto
             $_item['sale_price']        =   $product->sale_price;
             $_item['quantity']          =   $item->quantity;
             $_item['purchase_price']    =   $product->purchase_price;
-            $_item['total']             =   $product->sale_price * $item->quantity;
+            $_item['total']             =   (float)$product->sale_price * (float)$item->quantity;
             $_item['category_id']       =   $product->category_id;
             $_item['brand_id']          =   $product->brand_id;
             $_item['category_name']     =   $category->name;

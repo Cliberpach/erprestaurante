@@ -25,13 +25,6 @@ export function paintCardsDetail(detalle) {
 
                         <!-- ACTIONS -->
                         <div class="d-flex gap-1">
-                            <button class="btn btn-info btn-sm btnEditItem"
-                                type="button"
-                                data-producto-id="${item.id}"
-                                data-index="${index}">
-                                <i class="fas fa-edit"></i>
-                            </button>
-
                             <button class="btn btn-danger btn-sm btnDeleteItem"
                                 type="button"
                                 data-producto-id="${item.id}"

@@ -199,6 +199,8 @@ class SaleDto
             $factor     =   (100 + $sale->igv_percentage) / 100;
 
             $s_dto['created_at']                =   Carbon::now();
+            $s_dto['updated_at']                =   Carbon::now();
+
             $s_dto['sale_id']                   =   $sale->id;
             $s_dto['warehouse_id']              =   $item->warehouse_id;
             $s_dto['warehouse_name']            =   $item->warehouse_name;
@@ -383,7 +385,12 @@ class SaleDto
         $details =   [];
         foreach ($lst_detail as $item) {
             $_item  =   [];
-            $_item['codProducto']       =   $item->item_id . '-' . $item->item_name;
+
+            $raw_code   = $item->item_id . '-' . $item->item_name;
+            $code       = str_replace(' ', '_', $raw_code);
+            $code       = preg_replace('/[^A-Za-z0-9\-_]/', '', $code);
+
+            $_item['codProducto']       =   substr($code, 0, 30);
             $_item['unidad']            =   'NIU';
             $_item['descripcion']       =   $item->item_name;
             $_item['cantidad']          =   $item->quantity;
