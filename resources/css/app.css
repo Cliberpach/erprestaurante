@@ -13,7 +13,8 @@
 
 
 .input-fill {
-    background-color: #fffde7; /* amarillo muy suave */
+    background-color: #fffde7;
+    /* amarillo muy suave */
     border: 1px solid #e0dca3;
     border-radius: 6px;
     transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -37,3 +38,12 @@
     color: #7c3aed;
 }
 
+
+
+.swal2-container {
+    z-index: 99999992 !important;
+}
+
+#toast-container {
+    z-index: 99999992 !important;
+}

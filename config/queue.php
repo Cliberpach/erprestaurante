@@ -34,8 +34,17 @@ return [
             'driver' => 'sync',
         ],
 
+        // 'database' => [
+        //     'driver' => 'database',
+        //     'table' => 'jobs',
+        //     'queue' => 'default',
+        //     'retry_after' => 90,
+        //     'after_commit' => false,
+        // ],
+
         'database' => [
             'driver' => 'database',
+            'connection' => 'landlord',
             'table' => 'jobs',
             'queue' => 'default',
             'retry_after' => 90,
@@ -85,7 +94,7 @@ return [
     */
 
     'batching' => [
-        'database' => env('DB_CONNECTION', 'mysql'),
+        'database' => 'landlord',
         'table' => 'job_batches',
     ],
 
@@ -102,7 +111,7 @@ return [
 
     'failed' => [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
-        'database' => env('DB_CONNECTION', 'mysql'),
+        'database' => 'landlord',
         'table' => 'failed_jobs',
     ],
 

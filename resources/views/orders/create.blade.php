@@ -51,12 +51,6 @@
     </div>
 @endsection
 
-<style>
-    .swal2-container {
-        z-index: 9999999;
-    }
-</style>
-
 @section('js')
     <script>
         window.app = {

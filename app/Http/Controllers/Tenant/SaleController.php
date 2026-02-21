@@ -34,12 +34,18 @@ class SaleController extends Controller
 
     public function index()
     {
-        $invoice_types      =   UtilController::getInvoiceTypes()->whereIn('id', ['65', '66']);
-        $customer_formatted =   FormatController::getFormatInitialCustomer(1);
-        return view('sales.sale_document.index', compact(
-            'invoice_types',
-            'customer_formatted'
-        ));
+        $invoice_types              =   UtilController::getInvoiceTypes()->whereIn('id', ['65', '66']);
+        $customer_formatted         =   FormatController::getFormatInitialCustomer(1);
+        $vars_mdl_customer          =   UtilController::getVarsMdlCustomer();
+
+        $vars                       =   array_merge(
+            compact(
+                'invoice_types',
+                'customer_formatted',
+            ),
+            $vars_mdl_customer
+        );
+        return view('sales.sale_document.index', $vars);
     }
 
     public function getSales(Request $request)

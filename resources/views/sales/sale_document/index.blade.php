@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+    @include('utils.modals.customer.mdl_create_customer')
     @include('sales.sale_document.modals.mdl_nota_credito')
     @include('sales.sale_document.modals.mdl_convert')
     <div class="card overflow-hidden">
@@ -182,6 +183,7 @@
             startDataTableSales();
             eventsMdlConvert();
             eventsMdlNc();
+            eventsMdlCreateCustomer();
         }
 
         function startDataTableSales() {

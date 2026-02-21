@@ -3,10 +3,12 @@
 namespace App\Models\Tenant\Sales\Sale;
 
 use App\Http\Services\Tenant\Sale\Sale\SaleService;
+use App\Models\Tenant\InvoiceDispatchLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Spatie\Multitenancy\Models\Tenant;
 
 class Sale extends Model
 {
@@ -140,6 +142,18 @@ class Sale extends Model
                     $model->deletor_user_name = auth()->user()->name;
                 }
             }
+        });
+
+        static::created(function (Sale $sale) {
+            if (!in_array($sale->type_sale_code, ['01', '03'])) return;
+
+            InvoiceDispatchLog::create([
+                'tenant_id'        => Tenant::current()->id, // spatie multitenancy
+                'invoiceable_id'   => $sale->id,
+                'invoiceable_type' => Sale::class,
+                'status'           => InvoiceDispatchLog::STATUS_PENDING,
+                'expires_at'       => now()->addDays(3), // SUNAT: 3 días
+            ]);
         });
     }
 }

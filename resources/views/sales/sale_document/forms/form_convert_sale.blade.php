@@ -19,10 +19,15 @@
 
         <!-- Cliente -->
         <div class="col-12">
-            <label for="customer_id_mc" class="form-label fw-semibold">
-                <i class="fas fa-user-tag text-primary me-1"></i>
-                Cliente
-            </label>
+
+            <div class="mb-3">
+                <label for="customer_id_mc" class="form-label fw-semibold">
+                    <i class="fas fa-user-tag text-primary me-1"></i>
+                    Cliente
+                </label>
+                <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlNewCustomer();"
+                    style="margin-left:4px;"></i>
+            </div>
 
             <select class="form-select" name="customer_id_mc" id="customer_id_mc">
             </select>

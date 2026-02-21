@@ -34,6 +34,12 @@
     </div>
 </div>
 
+<style>
+    #mdlCreateCustomer {
+        z-index: 99999991;
+    }
+</style>
+
 <script>
     let customerParams = {
         documentSearchCustomer: null,
@@ -484,7 +490,11 @@
         };
 
         let instanceSelect = null;
-        const customerSelect = getCustomerSelect();
+        let customerSelect = null;
+
+        if (typeof getCustomerSelect === 'function') {
+            customerSelect = getCustomerSelect();
+        }
 
         if (window.clientSelect) {
             instanceSelect = window.clienteSelect;
@@ -492,10 +502,15 @@
         if (customerSelect) {
             instanceSelect = customerSelect;
         }
+        if (window.customerSelectMc) {
+            instanceSelect = window.customerSelectMc;
+        }
 
         console.log('instance', instanceSelect);
 
         if (!instanceSelect.options[option.id]) {
+            instanceSelect.clear();
+            instanceSelect.clearOptions();
             instanceSelect.addOption(option);
         }
         instanceSelect.setValue(option.id);

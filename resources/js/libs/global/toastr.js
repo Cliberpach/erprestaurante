@@ -9,3 +9,4 @@ toastr.options = {
 };
 
 window.toastr = toastr;
+
