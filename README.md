@@ -197,7 +197,7 @@ El scheduler ejecutará automáticamente:
 php artisan migrate --path=database/migrations/landlord --database=landlord --force
 
 # Migrar tablas de cada tenant (invoice_dispatch_logs, etc.)
-php artisan tenants:migrate --force
+php artisan tenants:artisan "migrate --path=database/migrations/tenant --force"
 
 # Sincronizar ventas históricas al sistema de dispatch
 php artisan invoices:sync-pending
