@@ -49,7 +49,7 @@ class Kernel extends ConsoleKernel
                     ->onQueue('invoice-retries'); // cola exclusiva de reintentos
             });
         })
-            ->hourly()                      // Cada hora en punto (1am, 2am, 3am...)
+            ->everyTwelveHours()            // Cada 12 horas en punto (1am, 2am, 3am...)
             ->name('retry-failed-invoices') // Nombre único para identificarla
             ->withoutOverlapping(30);       // Si tarda más de 30min, no ejecutar encima
 
