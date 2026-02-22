@@ -1,77 +1,320 @@
-# ErpDEportivoApp
+# 🚀 Guía de Despliegue en Producción (VPS Linux)
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Requisitos
+- PHP 8.2+
+- MySQL
+- Redis
+- Supervisor
+- Composer
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+## 1. 📦 Instalar Redis en VPS
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```bash
+sudo apt update
+sudo apt install redis-server
 
--   [Simple, fast routing engine](https://laravel.com/docs/routing).
--   [Powerful dependency injection container](https://laravel.com/docs/container).
--   Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
--   Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
--   Database agnostic [schema migrations](https://laravel.com/docs/migrations).
--   [Robust background job processing](https://laravel.com/docs/queues).
--   [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# Habilitar Redis para que inicie automáticamente
+sudo systemctl enable redis-server
+sudo systemctl start redis-server
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+# Verificar que Redis está corriendo
+redis-cli ping  # debe responder: PONG
 
-## Learning Laravel
+# Instalar extensión PHP para Redis (importante: usar tu versión de PHP)
+sudo apt install php8.2-redis
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+# Reiniciar PHP8.2-module
+sudo systemctl restart apache2
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+# Verificar que la extensión está cargada
+php -m | grep redis  # debe mostrar: redis
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 2. ⚙️ Configurar `.env` en Producción
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://tudominio.com
 
-### Premium Partners
+# ============ BASE DE DATOS ============
+DB_CONNECTION=tenant
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_password
 
--   **[Vehikl](https://vehikl.com/)**
--   **[Tighten Co.](https://tighten.co)**
--   **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
--   **[64 Robots](https://64robots.com)**
--   **[Cubet Techno Labs](https://cubettech.com)**
--   **[Cyber-Duck](https://cyber-duck.co.uk)**
--   **[Many](https://www.many.co.uk)**
--   **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
--   **[DevSquad](https://devsquad.com)**
--   **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
--   **[OP.GG](https://op.gg)**
--   **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
--   **[Lendio](https://lendio.com)**
+LANDLORD_HOST=127.0.0.1
+LANDLORD_DATABASE=nombre_bd_landlord
+LANDLORD_USERNAME=tu_usuario
+LANDLORD_PASSWORD=tu_password
+LANDLORD_PORT=3306
 
-## Contributing
+# ============ QUEUE CON REDIS ============
+QUEUE_CONNECTION=redis
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# ============ REDIS ============
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 3. 🔭 Instalar y Configurar Laravel Horizon
 
-## Security Vulnerabilities
+### Instalar Horizon (en desarrollo, luego subir con git)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# En desarrollo (Windows) — ignorar extensiones de Linux
+composer require laravel/horizon --ignore-platform-reqs
 
-## License
+# Publicar configuración
+php artisan horizon:install
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### En el VPS (ya con el código subido)
 
-## Requierements
+```bash
+cd /var/www/erprestaurante
+composer install --no-dev --optimize-autoloader
+```
 
-This project is made in
+### Configurar `config/horizon.php`
 
-Laravel 10
-PHP 8.2
-Composer 2.5 or higher
-XAMPP V3.3.0
+```php
+'environments' => [
+    'production' => [
+        'supervisor-1' => [
+            'connection'      => 'redis',
+            'queue'           => ['invoices', 'invoice-retries', 'default'],
+            'balance'         => 'auto',
+            'minProcesses'    => 1,
+            'maxProcesses'    => 5,
+            'balanceMaxShift' => 1,
+            'balanceCooldown' => 3,
+            'tries'           => 1,
+            'timeout'         => 120,
+        ],
+    ],
+
+    'local' => [
+        'supervisor-1' => [
+            'connection'   => 'redis',
+            'queue'        => ['invoices', 'invoice-retries', 'default'],
+            'balance'      => 'simple',
+            'processes'    => 3,
+            'tries'        => 1,
+        ],
+    ],
+],
+```
+
+### Configurar acceso al Dashboard de Horizon
+
+En `app/Providers/HorizonServiceProvider.php`:
+
+```php
+protected function gate(): void
+{
+    Gate::define('viewHorizon', function ($user = null) {
+        // Permitir solo a admins por email
+        return in_array(optional($user)->email, [
+            'admin@tudominio.com',
+        ]);
+
+        // O temporalmente para pruebas:
+        // return true;
+    });
+}
+```
+
+---
+
+## 4. 🛡️ Instalar y Configurar Supervisor
+
+```bash
+sudo apt install supervisor
+
+# Crear configuración para Horizon
+sudo nano /etc/supervisor/conf.d/horizon.conf
+```
+
+Contenido del archivo:
+
+```ini
+[program:horizon]
+process_name=%(program_name)s
+command=php /var/www/erprestaurante/artisan horizon
+autostart=true
+autorestart=true
+user=root
+redirect_stderr=true
+stdout_logfile=/var/www/erprestaurante/storage/logs/horizon.log
+stopwaitsecs=3600
+```
+
+```bash
+# Activar Horizon con Supervisor
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start horizon
+
+# Verificar que está corriendo
+sudo supervisorctl status
+# Debe mostrar: horizon   RUNNING   pid XXXXX, uptime 0:00:XX
+```
+
+---
+
+## 5. ⏰ Configurar Cron (Scheduler)
+
+```bash
+crontab -e
+
+# Agregar esta línea:
+* * * * * cd /var/www/erprestaurante && php artisan schedule:run >> /dev/null 2>&1
+
+# Verificar que se guardó:
+crontab -l
+```
+
+El scheduler ejecutará automáticamente:
+- **1:00 AM** — Envío nocturno de boletas y facturas a SUNAT
+- **Cada hora** — Reintentos de documentos fallidos
+
+---
+
+## 6. 🗄️ Migraciones en Producción
+
+```bash
+# Migrar tablas del landlord (jobs, failed_jobs)
+php artisan migrate --path=database/migrations/landlord --database=landlord --force
+
+# Migrar tablas de cada tenant (invoice_dispatch_logs, etc.)
+php artisan tenants:migrate --force
+
+# Sincronizar ventas históricas al sistema de dispatch
+php artisan invoices:sync-pending
+```
+
+---
+
+## 7. 🚀 Script de Deploy
+
+Crea `deploy.sh` en la raíz del proyecto:
+
+```bash
+#!/bin/bash
+echo "🚀 Iniciando deploy..."
+
+git pull origin main
+
+composer install --no-dev --optimize-autoloader
+
+php artisan config:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+php artisan migrate --path=database/migrations/landlord --database=landlord --force
+php artisan tenants:migrate --force
+
+# Reiniciar Horizon para tomar cambios
+php artisan horizon:terminate
+sudo supervisorctl restart horizon
+
+echo "✅ Deploy completado"
+```
+
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+---
+
+## 8. 🖥️ Acceder al Dashboard de Horizon
+
+```
+https://tudominio.com/horizon
+```
+
+### Qué ver en el Dashboard:
+
+| Métrica | Descripción |
+|---|---|
+| **Status: Active** | Horizon corriendo correctamente |
+| **Total Processes** | Workers activos escuchando colas |
+| **Jobs Per Minute** | Rendimiento actual |
+| **Failed Jobs** | Documentos que fallaron |
+| **Completed Jobs** | Documentos enviados exitosamente |
+
+---
+
+## 9. 🔄 Comandos Útiles
+
+```bash
+# Ver estado de Horizon
+sudo supervisorctl status
+
+# Reiniciar Horizon (después de un deploy)
+php artisan horizon:terminate
+sudo supervisorctl restart horizon
+
+# Ver logs de Horizon
+tail -f /var/www/erprestaurante/storage/logs/horizon.log
+
+# Ver logs de Laravel
+tail -f /var/www/erprestaurante/storage/logs/laravel.log
+
+# Ver jobs fallidos
+php artisan queue:failed
+
+# Reintentar todos los jobs fallidos
+php artisan queue:retry all
+
+# Ver estado de envíos de comprobantes
+php artisan invoices:status
+
+# Sincronizar ventas sin log
+php artisan invoices:sync-pending
+```
+
+---
+
+## 10. 📊 Flujo del Sistema de Envío Automático
+
+```
+1:00 AM (todos los días)
+    └── Scheduler dispara automáticamente
+            └── Por cada tenant registrado:
+                    └── ProcessTenantInvoicesJob
+                            └── Busca sales con status PENDIENTE
+                                    └── SendInvoiceJob (por cada documento)
+                                            ├── ACEPTADO  → status = ACEPTADO ✅
+                                            ├── RECHAZADO → status = FALLIDO ❌ (no reintenta)
+                                            └── PENDIENTE → reintenta con backoff:
+                                                    15min → 1h → 3h → 8h → 24h
+
+Cada hora:
+    └── Reintenta documentos fallidos temporalmente
+            └── Respeta expiración de 3 días (SUNAT)
+```
+
+---
+
+## 11. ⚠️ Diferencias Dev vs Producción
+
+| | Windows Dev | VPS Linux Producción |
+|---|---|---|
+| **Queue driver** | `database` | `redis` |
+| **Workers** | `php artisan queue:work` | Horizon via Supervisor |
+| **Scheduler** | `php artisan schedule:work` | Cron cada minuto |
+| **Horizon UI** | ❌ No disponible | ✅ `tudominio.com/horizon` |
+| **Instalar Horizon** | `--ignore-platform-reqs` | Normal |
