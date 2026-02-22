@@ -288,7 +288,7 @@ su - deploy
 pm2 save
 ```
 
-#Variables confi pm2 linux
+#Variables config pm2 linux
 Crear archivo `ecosystem.config.cjs` en la raíz del proyecto:
 ```javascript
 module.exports = {
