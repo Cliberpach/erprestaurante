@@ -286,9 +286,11 @@ sudo env PATH=... (el comando que te dio pm2 startup)
 # Volver a deploy y guardar el estado actual
 su - deploy
 pm2 save
+```
 
 #Variables confi pm2 linux
-crear ecosystem.config.cjs:
+Crear archivo `ecosystem.config.cjs` en la raíz del proyecto:
+```javascript
 module.exports = {
   apps: [
     {
@@ -300,21 +302,19 @@ module.exports = {
       max_memory_restart: "512M",
       env: {
         NODE_ENV: "production",
-
-        // ⚡ Configuración de la app Pusher / Soketi
         SOKETI_DEFAULT_APP_ID: "1",
         SOKETI_DEFAULT_APP_KEY: "app-key",
         SOKETI_DEFAULT_APP_SECRET: "app-secret",
-
-        // 🔥 Esto es lo que hace que veas los eventos en vivo
         SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES: "true",
         SOKETI_DEBUG: "true"
       }
     }
   ]
 };
+```
 
-#Variables config pm2 windows 
+###Variables config pm2 windows 
+```
 $env:SOKETI_DEBUG = "true"
 $env:SOKETI_HOST = "127.0.0.1" 
 $env:SOKETI_PORT = "6001"
@@ -322,7 +322,7 @@ $env:SOKETI_DEFAULT_APP_ID = "1"
 $env:SOKETI_DEFAULT_APP_KEY = "app-key"
 $env:SOKETI_DEFAULT_APP_SECRET = "app-secret"
 $env:SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES = "true"
-
+```
 
 luego iniciar con pm2:
 cd /var/www/erprestaurante
