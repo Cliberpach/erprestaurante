@@ -4,8 +4,11 @@
 - PHP 8.2+
 - MySQL
 - Redis
-- Supervisor
+- Supervisor (para Horizon)
 - Composer
+- Node.js v18+ via NVM (para Soketi)
+- PM2 (para gestionar Soketi)
+- Soketi v0.39+ (WebSockets)
 
 ---
 
@@ -25,8 +28,8 @@ redis-cli ping  # debe responder: PONG
 # Instalar extensión PHP para Redis (importante: usar tu versión de PHP)
 sudo apt install php8.2-redis
 
-# Reiniciar PHP8.2-module
-sudo systemctl restart apache2
+# Reiniciar PHP-FPM
+sudo systemctl restart php8.2-fpm
 
 # Verificar que la extensión está cargada
 php -m | grep redis  # debe mostrar: redis
@@ -197,6 +200,7 @@ El scheduler ejecutará automáticamente:
 php artisan migrate --path=database/migrations/landlord --database=landlord --force
 
 # Migrar tablas de cada tenant (invoice_dispatch_logs, etc.)
+# IMPORTANTE: este proyecto usa tenants:artisan, no tenants:migrate
 php artisan tenants:artisan "migrate --path=database/migrations/tenant --force"
 
 # Sincronizar ventas históricas al sistema de dispatch
@@ -205,7 +209,159 @@ php artisan invoices:sync-pending
 
 ---
 
-## 7. 🚀 Script de Deploy
+## 7. 🔌 Instalar Soketi (WebSockets) con NVM + PM2
+
+Soketi reemplaza a Pusher Cloud — corre en tu propio servidor.
+Se gestiona con **PM2** (no Supervisor) porque es Node.js.
+
+### 7.1 Instalar NVM y Node.js
+
+```bash
+# Cambiar al usuario deploy (NO usar root para esto)
+su - deploy
+
+# Instalar NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+# Recargar el perfil
+source ~/.bashrc
+
+# Verificar NVM
+nvm --version
+
+# Instalar Node.js v18 (LTS recomendado para Soketi)
+su - deploy
+nvm install 18
+nvm use 18
+nvm alias default 18
+
+# Verificar
+node -v   # debe mostrar v18.x.x
+npm -v
+```
+
+### 7.2 Instalar PM2 y Soketi
+
+```bash
+# Estando como usuario deploy
+su - deploy
+npm install -g pm2
+npm install -g @soketi/soketi
+
+# Verificar instalaciones
+pm2 --version      # ej: 6.0.14
+soketi --version   # ej: 0.39.7
+```
+
+### 7.3 Iniciar Soketi con PM2
+
+```bash
+# Estando como usuario deploy
+pm2 start /home/deploy/.nvm/versions/node/v18.20.8/bin/soketi \
+    --name soketi \
+    -- start --host 0.0.0.0 --port 6001 --log-level debug
+
+# Verificar que está corriendo
+pm2 list
+# Debe mostrar: soketi | online
+
+# Ver detalles
+pm2 show soketi
+```
+
+### 7.4 Configurar PM2 para auto-inicio al reboot
+
+```bash
+# Estando como usuario deploy — genera el comando de startup
+pm2 startup
+# Te mostrará un comando para ejecutar como root, algo como:
+# sudo env PATH=$PATH:/home/deploy/.nvm/versions/node/v18.20.8/bin \
+#   /home/deploy/.nvm/versions/node/v18.20.8/lib/node_modules/pm2/bin/pm2 \
+#   startup systemd -u deploy --hp /home/deploy
+
+# Copia y ejecuta ESE comando como root:
+exit  # salir de deploy
+sudo env PATH=... (el comando que te dio pm2 startup)
+
+# Volver a deploy y guardar el estado actual
+su - deploy
+pm2 save
+
+#Variables confi pm2 linux
+crear ecosystem.config.cjs:
+module.exports = {
+  apps: [
+    {
+      name: "soketi",
+      script: "soketi",
+      args: "start --host 0.0.0.0 --port 6001 --log-level debug",
+      watch: false,
+      autorestart: true,
+      max_memory_restart: "512M",
+      env: {
+        NODE_ENV: "production",
+
+        // ⚡ Configuración de la app Pusher / Soketi
+        SOKETI_DEFAULT_APP_ID: "1",
+        SOKETI_DEFAULT_APP_KEY: "app-key",
+        SOKETI_DEFAULT_APP_SECRET: "app-secret",
+
+        // 🔥 Esto es lo que hace que veas los eventos en vivo
+        SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES: "true",
+        SOKETI_DEBUG: "true"
+      }
+    }
+  ]
+};
+
+#Variables config pm2 windows 
+$env:SOKETI_DEBUG = "true"
+$env:SOKETI_HOST = "127.0.0.1" 
+$env:SOKETI_PORT = "6001"
+$env:SOKETI_DEFAULT_APP_ID = "1"
+$env:SOKETI_DEFAULT_APP_KEY = "app-key"
+$env:SOKETI_DEFAULT_APP_SECRET = "app-secret"
+$env:SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES = "true"
+
+
+luego iniciar con pm2:
+cd /var/www/erprestaurante
+pm2 start ecosystem.config.cjs
+```
+
+### 7.5 Comandos útiles de PM2
+
+```bash
+# Estando como usuario deploy:
+pm2 list                    # ver todos los procesos
+pm2 show soketi             # detalles de soketi
+pm2 logs soketi             # ver logs en tiempo real
+pm2 logs soketi --lines 100 # últimas 100 líneas
+pm2 restart soketi          # reiniciar soketi
+pm2 stop soketi             # detener soketi
+pm2 monit                   # monitor de CPU y memoria
+```
+
+### 7.6 Configurar `.env` para Soketi
+
+```env
+BROADCAST_CONNECTION=pusher
+
+PUSHER_APP_ID=1
+PUSHER_APP_KEY=app-key
+PUSHER_APP_SECRET=app-secret
+PUSHER_APP_CLUSTER=mt1
+PUSHER_HOST=127.0.0.1
+PUSHER_PORT=6001
+PUSHER_SCHEME=http
+```
+
+> ⚠️ **Nota:** Soketi NO se gestiona con Supervisor — usar PM2 porque es Node.js.
+> Supervisor solo gestiona procesos PHP (Horizon).
+
+---
+
+## 8. 🚀 Script de Deploy
 
 Crea `deploy.sh` en la raíz del proyecto:
 
@@ -222,8 +378,11 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+# Migrar landlord
 php artisan migrate --path=database/migrations/landlord --database=landlord --force
-php artisan tenants:migrate --force
+
+# Migrar todos los tenants
+php artisan tenants:artisan "migrate --path=database/migrations/tenant --force"
 
 # Reiniciar Horizon para tomar cambios
 php artisan horizon:terminate
@@ -239,7 +398,7 @@ chmod +x deploy.sh
 
 ---
 
-## 8. 🖥️ Acceder al Dashboard de Horizon
+## 9. 🖥️ Acceder al Dashboard de Horizon
 
 ```
 https://tudominio.com/horizon
@@ -257,7 +416,7 @@ https://tudominio.com/horizon
 
 ---
 
-## 9. 🔄 Comandos Útiles
+## 10. 🔄 Comandos Útiles
 
 ```bash
 # Ver estado de Horizon
@@ -288,7 +447,7 @@ php artisan invoices:sync-pending
 
 ---
 
-## 10. 📊 Flujo del Sistema de Envío Automático
+## 11. 📊 Flujo del Sistema de Envío Automático
 
 ```
 1:00 AM (todos los días)
@@ -309,7 +468,7 @@ Cada hora:
 
 ---
 
-## 11. ⚠️ Diferencias Dev vs Producción
+## 12. ⚠️ Diferencias Dev vs Producción
 
 | | Windows Dev | VPS Linux Producción |
 |---|---|---|
@@ -318,3 +477,25 @@ Cada hora:
 | **Scheduler** | `php artisan schedule:work` | Cron cada minuto |
 | **Horizon UI** | ❌ No disponible | ✅ `tudominio.com/horizon` |
 | **Instalar Horizon** | `--ignore-platform-reqs` | Normal |
+| **WebSockets** | Soketi local | Soketi via PM2 |
+
+---
+
+## 13. 🏗️ Stack Completo en Producción
+
+| Servicio | Gestor | Puerto |
+|---|---|---|
+| **Apache2** | systemd | 80, 443 |
+| **MySQL** | systemd | 3306 |
+| **Redis** | systemd | 6379 |
+| **Horizon** (Laravel Queue) | Supervisor | - |
+| **Soketi** (WebSockets) | PM2 (usuario deploy) | 6001 |
+| **Scheduler** | Cron | - |
+
+```bash
+# Ver estado de todos los servicios
+sudo supervisorctl status          # Horizon
+su - deploy -c "pm2 list"          # Soketi
+sudo systemctl status redis        # Redis
+sudo systemctl status apache2      # Apache
+```
