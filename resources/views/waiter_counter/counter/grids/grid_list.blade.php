@@ -1,4 +1,7 @@
 <div class="row mb-3">
+    <div class="quick-table-access">
+        <input type="text" id="table-number-jump" class="form-control input-fill" placeholder="Mesa #">
+    </div>
     <div class="col-12">
 
         <div class="btn-group w-100" role="group" id="table-filters">
@@ -22,7 +25,6 @@
 
 <div class="container-fluid" id="circles-container">
     <div id="tables-grid" class="row g-4">
-
     </div>
 </div>
 
@@ -252,12 +254,14 @@
 <script>
     let circlesTables = null;
     let tablePage = 0;
-    const tableLength = 16;
+    const tableLength = 20;
 
     let touchStartX = 0;
     let touchStartY = 0;
     let touchEndX = 0;
     let touchEndY = 0;
+
+    let tableSearchTimer;
 
     function eventsGridList() {
 
@@ -287,8 +291,10 @@
         });
 
         document.getElementById('table-number-jump').addEventListener('input', e => {
-            console.log(e.target.value);
-            actionIputTableSearch(e);
+            clearTimeout(tableSearchTimer);
+            tableSearchTimer = setTimeout(() => {
+                actionIputTableSearch(e);
+            }, 1000);
         });
     }
 
@@ -515,7 +521,7 @@
 
         if (!tableNumber) return;
 
-        const index = circlesTables.data.findIndex(t => t.table_id == tableNumber);
+        const index = circlesTables.data.findIndex(t => t.table_name == tableNumber);
 
         if (index === -1) return;
 

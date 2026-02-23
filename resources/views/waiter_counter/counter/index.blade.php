@@ -4,6 +4,8 @@
     Mostrador Mozo
 @endsection
 
+@section('app-page-head','d-none')
+
 @section('content')
     @include('waiter_counter.counter.modals.mdl_show')
     @include('waiter_counter.counter.modals.mdl_change_table')
@@ -23,11 +25,7 @@
 
         </div>
 
-        <div class="card-body p-0 pb-2 mostrador-container">
-
-            <div class="quick-table-access">
-                <input type="number" id="table-number-jump" class="form-control" placeholder="Mesa #">
-            </div>
+        <div class="card-body mostrador-container p-0 pb-2">
 
             <!-- Vista Círculos -->
             <div id="view-circles">

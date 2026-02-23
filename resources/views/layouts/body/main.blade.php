@@ -1,6 +1,6 @@
 <div class="container">
 
-    <div class="app-page-head">
+    <div class="app-page-head @yield('app-page-head')">
         <h1 class="app-page-title">@yield('title')</h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
