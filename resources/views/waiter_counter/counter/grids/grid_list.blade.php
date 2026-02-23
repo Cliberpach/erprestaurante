@@ -160,7 +160,9 @@
     const tableLength = 16;
 
     let touchStartX = 0;
+    let touchStartY = 0;
     let touchEndX = 0;
+    let touchEndY = 0;
 
     function eventsGridList() {
 
@@ -197,10 +199,13 @@
         const area = document.getElementById('circles-container');
         area.addEventListener('touchstart', e => {
             touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
         });
 
         area.addEventListener('touchend', e => {
             touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+
             handleSwipe();
         });
     }
@@ -344,14 +349,18 @@
 
     function handleSwipe() {
 
-        const swipeDistance = touchEndX - touchStartX;
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
 
-        if (Math.abs(swipeDistance) < 60) return; // ⭐ filtro anti-movimientos pequeños
+        // ⭐⭐⭐ CLAVE → si el gesto es más vertical → IGNORAR
+        if (Math.abs(diffY) > Math.abs(diffX)) return;
 
-        if (swipeDistance < 0) {
-            nextPage(); // ← swipe izquierda
+        if (Math.abs(diffX) < 80) return; // umbral más realista para tablet 👌
+
+        if (diffX < 0) {
+            nextPage();
         } else {
-            prevPage(); // ← swipe derecha
+            prevPage();
         }
     }
 
