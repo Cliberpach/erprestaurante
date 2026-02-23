@@ -14,6 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        //======== REVIZAR EN LINUX PRODUCCION ========== php artisan schedule:list
+
         //=========== TAREA 1: ENVÍO NOCTURNO ===========
         // Se ejecuta todos los días a la 1AM automáticamente
         $schedule->call(function () {

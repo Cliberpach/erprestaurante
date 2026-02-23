@@ -1,7 +1,28 @@
 <div class="row mb-3">
-    <div class="col-md-4 col-sm-6">
-        <input type="text" id="table-search" class="form-control form-control-sm"
-            placeholder="🔍 Buscar mesa, cliente, código...">
+    <div class="col-12">
+
+        <div class="btn-group w-100" role="group" id="table-filters">
+
+            <button type="button"
+                class="btn btn-light active filter-btn"
+                data-filter="all">
+                Todas
+            </button>
+
+            <button type="button"
+                class="btn btn-light filter-btn"
+                data-filter="free">
+                🔵 Libres
+            </button>
+
+            <button type="button"
+                class="btn btn-light filter-btn"
+                data-filter="occupied">
+                🔴 Ocupadas
+            </button>
+
+        </div>
+
     </div>
 </div>
 
@@ -74,3 +95,77 @@
         opacity: .9;
     }
 </style>
+
+
+<style>
+    #table-filters {
+        background: #f8f9fa;
+        padding: 4px;
+        border-radius: 12px;
+    }
+
+    #table-filters .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-weight: 500;
+        color: #6c757d;
+        transition: all 0.2s ease;
+    }
+
+    #table-filters .btn:hover {
+        background: #e9ecef;
+    }
+
+    #table-filters .btn.active {
+        background: #212529;
+        color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .filter-btn {
+        min-width: 110px;
+        /* ideal para tablet */
+    }
+</style>
+
+
+<script>
+    function eventsGridList() {
+        const buttons = document.querySelectorAll('#table-filters button');
+
+        buttons.forEach(button => {
+
+            button.addEventListener('click', () => {
+
+                buttons.forEach(btn => btn.classList.remove('active'));
+
+                button.classList.add('active');
+
+                const filter = button.dataset.filter;
+
+                filterTables(filter);
+            });
+
+        });
+    }
+
+    function filterTables(filter) {
+
+        document.querySelectorAll('.table-circle').forEach(table => {
+
+            if (filter === 'all') {
+                table.classList.remove('d-none');
+                return;
+            }
+
+            if (table.dataset.status === filter) {
+                table.classList.remove('d-none');
+            } else {
+                table.classList.add('d-none');
+            }
+
+        });
+
+    }
+</script>

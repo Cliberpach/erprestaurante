@@ -53,6 +53,7 @@
             eventsMdlOrderShow();
             eventsMdlChangeTbl();
             eventsMdlDeleteOrder();
+            eventsGridList();
         }
 
         function toOrderCreate(tableId) {

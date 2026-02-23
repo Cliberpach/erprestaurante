@@ -51,56 +51,6 @@
             $('#mdlDeleteOrder').modal('show');
         }
 
-        async function getTablesFree() {
-            try {
-                toastr.clear();
-                mostrarAnimacion1();
-
-                const url = route('tenant.mostrador_mesero.mostrador.getTablesFree');
-
-                const res = await axios.get(url);
-
-                if (res.data.success) {
-                    toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
-                    return res.data.data;
-                } else {
-                    toastr.error(res.message, 'ERROR EN EL SERVIDOR');
-                    return null;
-                }
-
-            } catch (error) {
-                toastr.error(error, 'ERROR EN LA PETICIÓN OBTENER MESAS LIBRES');
-                return null;
-            } finally {
-                ocultarAnimacion1();
-            }
-        }
-
-        function paintTablesFree(data) {
-            if (!data) return;
-            const tbody = document.querySelector('#dt-tables-free tbody');
-            let rows = ``;
-            data.forEach((table) => {
-                rows += `
-                <tr class="row-tbl-change" data-table="${table.id}" data-table-name="${table.name}">
-                    <td>${table.id}</td>
-                    <td style="text-align:center;">${table.name}</td>
-                </tr>
-                `
-            })
-            tbody.innerHTML = rows;
-        }
-
-        function actionTblSelected(row, table) {
-            const tableId = row.getAttribute('data-table');
-            const tableName = row.getAttribute('data-table-name');
-            paramsMdlDeleteOrder.tableSelected.id = tableId;
-            paramsMdlDeleteOrder.tableSelected.name = tableName;
-
-            table.querySelectorAll('.row-tbl-selected').forEach(r => r.classList.remove('row-tbl-selected'));
-            row.classList.add('row-tbl-selected');
-        }
-
         function deleteOrder(formDeleteOrder) {
             toastr.clear();
             Swal.fire({
