@@ -9,7 +9,9 @@
     @include('waiter_counter.counter.modals.mdl_change_table')
     @include('waiter_counter.counter.modals.mdl_delete_order')
     <div class="card overflow-hidden">
+
         <div class="card-header d-flex align-items-center justify-content-between">
+
             <h6 class="card-title mb-0">Mostrador Mozo</h6>
             <div class="d-flex flex-wrap gap-2">
                 <div class="btn-group btn-group-sm" role="group">
@@ -17,10 +19,15 @@
                         <i class="fas fa-sync-alt me-1"></i> Refrescar mostrador
                     </button>
                 </div>
-
             </div>
+
         </div>
-        <div class="card-body p-0 pb-2">
+
+        <div class="card-body p-0 pb-2 mostrador-container">
+
+            <div class="quick-table-access">
+                <input type="number" id="table-number-jump" class="form-control" placeholder="Mesa #">
+            </div>
 
             <!-- Vista Círculos -->
             <div id="view-circles">
@@ -80,6 +87,5 @@
                 loadTablesAsCircles();
             }
         }
-
     </script>
 @endsection

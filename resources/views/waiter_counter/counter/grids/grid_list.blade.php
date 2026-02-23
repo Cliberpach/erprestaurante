@@ -45,7 +45,7 @@
 <div id="swipe-hint" class="swipe-hint">
     <span>Desliza para navegar</span>
     <br>
-    <span>⟵ ⟶</span>
+    <span style="text-align: center;">⟵ ⟶</span>
 </div>
 
 <style>
@@ -196,6 +196,58 @@
         transform: translateX(-50%) translateY(0);
     }
 </style>
+<style>
+    .quick-table-access {
+        position: fixed;
+        top: 140px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 110px;
+        z-index: 9999;
+    }
+
+    .mostrador-container {
+        position: relative;
+    }
+</style>
+<style>
+    #table-number-jump {
+        height: 38px;
+        font-size: 16px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .table-card.table-highlight {
+
+        background: #ffc107 !important;
+        /* 🔥 forzamos */
+        color: #000 !important;
+
+        transform: scale(1.15);
+
+        box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.9),
+            0 10px 25px rgba(0, 0, 0, 0.35);
+
+        transition: all 0.2s ease;
+    }
+
+    @keyframes tableFlash {
+
+        0% {
+            background-color: inherit;
+        }
+
+        40% {
+            background-color: #ffc107;
+        }
+
+        /* 🔥 flash */
+        100% {
+            background-color: inherit;
+        }
+    }
+</style>
 
 <script>
     let circlesTables = null;
@@ -232,6 +284,11 @@
 
         area.addEventListener('touchend', e => {
             actionTouchend(e);
+        });
+
+        document.getElementById('table-number-jump').addEventListener('input', e => {
+            console.log(e.target.value);
+            actionIputTableSearch(e);
         });
     }
 
@@ -451,5 +508,51 @@
         setTimeout(() => {
             hint.classList.remove('show');
         }, 6000);
+    }
+
+    function actionIputTableSearch(e) {
+        const tableNumber = parseInt(e.target.value);
+
+        if (!tableNumber) return;
+
+        const index = circlesTables.data.findIndex(t => t.table_id == tableNumber);
+
+        if (index === -1) return;
+
+        const targetPage = Math.floor(index / tableLength);
+
+        if (targetPage !== tablePage) {
+            tablePage = targetPage;
+            loadTablesAsCircles();
+        }
+
+        highlightTable(tableNumber);
+    }
+
+    function highlightTable(tableNumber) {
+
+        const tableEl = document.querySelector(
+            `.table-card[data-table="${tableNumber}"]`
+        );
+
+        if (!tableEl) return;
+
+        // ⭐⭐⭐ 1️⃣ Scroll automático elegante
+        tableEl.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center', // 👈 MUY IMPORTANTE
+            inline: 'center'
+        });
+
+        // ⭐⭐⭐ 2️⃣ Esperamos que termine el scroll
+        setTimeout(() => {
+
+            tableEl.classList.add('table-highlight');
+
+            setTimeout(() => {
+                tableEl.classList.remove('table-highlight');
+            }, 700);
+
+        }, 300); // 👈 delay fino UX 👌
     }
 </script>
