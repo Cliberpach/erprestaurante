@@ -26,8 +26,13 @@
             </div>
             <div class="row">
                 <div class="col-12" style="display:flex;justify-content:end;">
-                    <button class="btn btn-primary" style="margin-right: 10px;" onclick="downloadExcel();">EXCEL</button>
-                    <button class="btn btn-primary" onclick="downloadPdf();">PDF</button>
+                    <button class="btn btn-success me-2 px-3 shadow-sm" onclick="downloadExcel();">
+                        <i class="fas fa-file-excel me-2"></i> Excel
+                    </button>
+
+                    <button class="btn btn-danger px-3 shadow-sm" onclick="downloadPdf();">
+                        <i class="fas fa-file-pdf me-2"></i> PDF
+                    </button>
                 </div>
                 <div class="col-12">
                     @include('inventory.inventory.tables.tbl_list_inventory')
