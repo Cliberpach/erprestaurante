@@ -42,6 +42,16 @@
 
 </div>
 
+<div id="swipe-hint" class="swipe-hint">
+    ⟵ Desliza para navegar ⟶
+</div>
+
+<style>
+    #circles-container{
+        position: relative;
+    }
+</style>
+
 <style>
     .table-card {
         width: 100%;
@@ -154,6 +164,37 @@
     }
 </style>
 
+<style>
+    .swipe-hint {
+        position: absolute;
+        /* ⭐ ya no fixed */
+        top: 15px;
+        /* ⭐ visible SIEMPRE */
+        left: 50%;
+        transform: translateX(-50%);
+
+        background: rgba(0, 0, 0, 0.65);
+        color: white;
+
+        padding: 6px 14px;
+        border-radius: 18px;
+
+        font-size: 13px;
+        font-weight: 500;
+
+        opacity: 0;
+        pointer-events: none;
+
+        transition: opacity .25s ease, transform .25s ease;
+        z-index: 10;
+    }
+
+    .swipe-hint.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+</style>
+
 <script>
     let circlesTables = null;
     let tablePage = 0;
@@ -169,7 +210,7 @@
         const buttons = document.querySelectorAll('#table-filters button');
         buttons.forEach(button => {
             button.addEventListener('click', () => {
-                actionBtnFilter(button,buttons);
+                actionBtnFilter(button, buttons);
             });
         });
 
@@ -365,7 +406,7 @@
         loadTablesAsCircles();
     }
 
-    function actionBtnFilter(button,buttons) {
+    function actionBtnFilter(button, buttons) {
         buttons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
         tablePage = 0;
@@ -398,5 +439,15 @@
         touchEndY = e.changedTouches[0].screenY;
 
         handleSwipe();
+    }
+
+    function showSwipeHint() {
+        const hint = document.getElementById('swipe-hint');
+
+        hint.classList.add('show');
+
+        setTimeout(() => {
+            hint.classList.remove('show');
+        }, 6000);
     }
 </script>

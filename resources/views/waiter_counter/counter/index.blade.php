@@ -46,6 +46,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             setView('circles');
             loadTablesAsCircles();
+            showSwipeHint();
             events();
         })
 
@@ -62,7 +63,7 @@
             });
         }
 
-    
+
         function setView(view) {
             localStorage.setItem('mostrador_view', view);
 
