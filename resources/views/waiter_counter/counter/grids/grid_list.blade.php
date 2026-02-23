@@ -169,44 +169,26 @@
         const buttons = document.querySelectorAll('#table-filters button');
         buttons.forEach(button => {
             button.addEventListener('click', () => {
-                buttons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                tablePage = 0;
-                loadTablesAsCircles();
+                actionBntFilter();
             });
-
         });
 
         document.getElementById('nextPage').addEventListener('click', () => {
-
-            const total = circlesTables.recordsFiltered;
-
-            if ((tablePage + 1) * tableLength >= total) return;
-
-            tablePage++;
-            loadTablesAsCircles();
+            actionNextPage();
         });
 
         document.getElementById('prevPage').addEventListener('click', () => {
-
-            if (tablePage === 0) return;
-
-            tablePage--;
-            loadTablesAsCircles();
+            actionPrevPage();
         });
 
 
         const area = document.getElementById('circles-container');
         area.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
+            actionTouchStart();
         });
 
         area.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
-
-            handleSwipe();
+            actionTouchend();
         });
     }
 
@@ -381,5 +363,40 @@
 
         tablePage--;
         loadTablesAsCircles();
+    }
+
+    function actionBtnFilter() {
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        tablePage = 0;
+        loadTablesAsCircles();
+    }
+
+    function actionNextPage() {
+        const total = circlesTables.recordsFiltered;
+
+        if ((tablePage + 1) * tableLength >= total) return;
+
+        tablePage++;
+        loadTablesAsCircles();
+    }
+
+    function actionPrevPage() {
+        if (tablePage === 0) return;
+
+        tablePage--;
+        loadTablesAsCircles();
+    }
+
+    function actionTouchStart() {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }
+
+    function actionTouched() {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+
+        handleSwipe();
     }
 </script>
