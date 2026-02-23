@@ -43,12 +43,13 @@
 </div>
 
 <div id="swipe-hint" class="swipe-hint">
-    Desliza para navegar
-    ⟵ ⟶
+    <span>Desliza para navegar</span>
+    <br>
+    <span>⟵ ⟶</span>
 </div>
 
 <style>
-    #circles-container{
+    #circles-container {
         position: relative;
     }
 </style>
