@@ -9,11 +9,9 @@
         @csrf
         <div class="card-header d-flex justify-content-between flex-row">
             <h4 class="card-title">KARDEX</h4>
-
             <div class="input-group-append">
 
             </div>
-
         </div>
         <div class="card-body">
             <div class="row align-items-end mb-3">
