@@ -169,7 +169,7 @@
         const buttons = document.querySelectorAll('#table-filters button');
         buttons.forEach(button => {
             button.addEventListener('click', () => {
-                actionBtnFilter(button);
+                actionBtnFilter(button,buttons);
             });
         });
 
@@ -365,7 +365,7 @@
         loadTablesAsCircles();
     }
 
-    function actionBtnFilter(button) {
+    function actionBtnFilter(button,buttons) {
         buttons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
         tablePage = 0;
