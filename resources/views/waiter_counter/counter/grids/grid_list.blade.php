@@ -169,7 +169,7 @@
         const buttons = document.querySelectorAll('#table-filters button');
         buttons.forEach(button => {
             button.addEventListener('click', () => {
-                actionBntFilter();
+                actionBtnFilter(button);
             });
         });
 
@@ -184,11 +184,11 @@
 
         const area = document.getElementById('circles-container');
         area.addEventListener('touchstart', e => {
-            actionTouchStart();
+            actionTouchStart(e);
         });
 
         area.addEventListener('touchend', e => {
-            actionTouchend();
+            actionTouchend(e);
         });
     }
 
@@ -365,7 +365,7 @@
         loadTablesAsCircles();
     }
 
-    function actionBtnFilter() {
+    function actionBtnFilter(button) {
         buttons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
         tablePage = 0;
@@ -388,12 +388,12 @@
         loadTablesAsCircles();
     }
 
-    function actionTouchStart() {
+    function actionTouchStart(e) {
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
     }
 
-    function actionTouched() {
+    function actionTouched(e) {
         touchEndX = e.changedTouches[0].screenX;
         touchEndY = e.changedTouches[0].screenY;
 
