@@ -43,7 +43,8 @@
 </div>
 
 <div id="swipe-hint" class="swipe-hint">
-    ⟵ Desliza para navegar ⟶
+    Desliza para navegar
+    ⟵ ⟶
 </div>
 
 <style>
