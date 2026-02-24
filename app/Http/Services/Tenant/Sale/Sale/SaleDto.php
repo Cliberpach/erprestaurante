@@ -154,6 +154,7 @@ class SaleDto
         $dto['payment_condition_days']      = 0;
 
         $dto['payment_status']              = "PAGADO";
+        $dto['pending_print']               = "SI";
 
         return $dto;
     }
