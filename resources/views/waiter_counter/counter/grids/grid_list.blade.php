@@ -532,13 +532,14 @@
             loadTablesAsCircles();
         }
 
-        highlightTable(tableNumber);
+        const tableIdSearched   =   circlesTables.data[index].table_id;
+        highlightTable(tableIdSearched);
     }
 
-    function highlightTable(tableNumber) {
+    function highlightTable(tableIdSearched) {
 
         const tableEl = document.querySelector(
-            `.table-card[data-table="${tableNumber}"]`
+            `.table-card[data-table="${tableIdSearched}"]`
         );
 
         if (!tableEl) return;
