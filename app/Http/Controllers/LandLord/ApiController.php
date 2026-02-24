@@ -234,10 +234,11 @@ success: true
         $recibo     = Sale::where('id', '=', $idrecibo)->first();
         $detalles   = $recibo->getDetails();
 
-        $CodPedido = -1;
-        foreach ($detalles as $dd) {
-            if ($CodPedido == -1) $CodPedido = $dd->order_id;
-        }
+        $CodPedido = $recibo->order_id;
+       
+        // foreach ($detalles as $dd) {
+        //     if ($CodPedido == -1) $CodPedido = $dd->order_id;
+        // }
 
         $arrayRecibo = array();
         $fila = [
