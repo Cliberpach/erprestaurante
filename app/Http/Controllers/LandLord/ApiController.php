@@ -125,7 +125,7 @@ success: true
             ->where('sunat_status', '<>', 'ANULADO')
             ->where('pending_print', 'SI')
             ->select('id AS idrecibo')
-            ->whereIn('typse_sale_code', ['01', '03'])
+            ->whereIn('type_sale_code', ['01', '03'])
             ->orderby('id', 'asc')
             ->get();
 
