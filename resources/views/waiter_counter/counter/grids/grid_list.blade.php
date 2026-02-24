@@ -522,6 +522,7 @@
         if (!tableNumber) return;
 
         const index = circlesTables.data.findIndex(t => t.table_name == tableNumber);
+        console.log('index',index);
         if (index === -1) return;
 
         const targetPage = Math.floor(index / tableLength);
@@ -532,6 +533,7 @@
         }
 
         const tableIdSearched   =   circlesTables.data[index].table_id;
+        console.log('id searched',tableIdSearched);
         highlightTable(tableIdSearched);
     }
 
