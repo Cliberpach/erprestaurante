@@ -522,7 +522,10 @@
 
         if (!tableNumber) return;
 
-        const index = circlesTables.data.findIndex(t => t.table_name == tableNumber);
+        const index = circlesTables.data.findIndex(t =>
+            t.table_name.includes(tableNumber)
+        );
+
         console.log('index', index);
         if (index === -1) return;
 
