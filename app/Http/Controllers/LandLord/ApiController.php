@@ -125,6 +125,7 @@ success: true
             ->where('sunat_status', '<>', 'ANULADO')
             ->where('pending_print', 'SI')
             ->select('id AS idrecibo')
+            ->whereIn('typse_sale_code', ['01', '03'])
             ->orderby('id', 'asc')
             ->get();
 
@@ -235,7 +236,7 @@ success: true
         $detalles   = $recibo->getDetails();
 
         $CodPedido = $recibo->order_id;
-       
+
         // foreach ($detalles as $dd) {
         //     if ($CodPedido == -1) $CodPedido = $dd->order_id;
         // }
