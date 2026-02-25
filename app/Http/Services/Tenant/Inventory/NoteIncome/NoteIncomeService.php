@@ -24,7 +24,6 @@ class NoteIncomeService
 
     public function store(array $data)
     {
-
         //======== VALIDACIÓN COMPLEJA =======
         $this->s_validations->validationStore($data);
 

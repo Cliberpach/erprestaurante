@@ -175,29 +175,29 @@
 
                             return `
                             <div class="btn-group dropup">
-                            <button type="button" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa-solid fa-grip"></i>
-                            </button>
-                            <ul class="dropdown-menu" style="max-height: 150px; overflow-y: auto;">
-                                <li>
-                                    <a class="dropdown-item" href="javascript:void(0);" onclick="openMdlShowProducto(${data.id})">
-                                        <i class="fa-solid fa-eye"></i> Ver
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="javascript:void(0);" onclick="openMdlEdit(${data.id})">
-                                        <i class="fa-solid fa-pen-to-square"></i> Editar
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="javascript:void(0);" onclick="eliminarProducto(${data.id})">
-                                        <i class="fa-solid fa-trash"></i> Eliminar
-                                    </a>
-                                </li>
-                            </ul>
+                                <button type="button" class="dropdown-toggle btn btn-primary btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-grip text-white"></i>
+                                </button>
+                                <ul class="dropdown-menu" style="max-height: 150px; overflow-y: auto;">
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="openMdlShowProducto(${data.id})">
+                                            <i class="fa-solid fa-eye text-primary me-2"></i> Ver
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="openMdlEdit(${data.id})">
+                                            <i class="fa-solid fa-pen-to-square text-warning me-2"></i> Editar
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="eliminarProducto(${data.id})">
+                                            <i class="fa-solid fa-trash text-danger me-2"></i> Eliminar
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
-                        `;
+                            `;
                         },
                         name: 'actions',
                         orderable: false,

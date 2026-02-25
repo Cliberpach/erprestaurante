@@ -53,7 +53,10 @@ class ProductController extends Controller
         $products   =   DB::table('products as p')
             ->join('categories as c', 'c.id', 'p.category_id')
             ->join('brands as b', 'b.id', 'p.brand_id')
-            ->select(
+            ->leftJoin('warehouse_products as wp', function ($join) {
+                $join->on('wp.product_id', '=', 'p.id')
+                    ->where('wp.warehouse_id', 1);
+            })->select(
                 'p.id',
                 'p.name',
                 'p.description',
@@ -63,7 +66,8 @@ class ProductController extends Controller
                 'b.name as brand_name',
                 'p.sale_price',
                 'p.purchase_price',
-                'p.stock',
+                'wp.warehouse_id',
+                DB::raw('COALESCE(wp.stock, 0) as stock'),
                 'p.stock_min',
                 'p.code_factory',
                 'p.code_bar',
@@ -462,7 +466,7 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
                 'b.name as brand_name',
                 'c.name as category_name',
                 'wp.warehouse_id'
-            )->where('p.status','ACTIVO');
+            )->where('p.status', 'ACTIVO');
 
         if ($categoria_id) {
             $products  =   $products->where('p.category_id', $categoria_id);
