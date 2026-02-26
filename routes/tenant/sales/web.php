@@ -10,18 +10,18 @@ use Illuminate\Support\Facades\Route;
 Route::group(["prefix" => "ventas"], function () {
 
     Route::group(["prefix" => "ventas"], function () {
-        Route::get('index', [SaleController::class, 'index'])->name('tenant.ventas.comprobante_venta.index')->middleware('validar.plan:ventas');
-        Route::get('create', [SaleController::class, 'create'])->name('tenant.ventas.comprobante_venta.create')->middleware('validar.plan:ventas');
-        Route::get('getProductos', [SaleController::class, 'getProductos'])->name('tenant.ventas.comprobante_venta.getProductos')->middleware('validar.plan:ventas');
-        Route::get('validateStock', [SaleController::class, 'validateStock'])->name('tenant.ventas.comprobante_venta.validateStock')->middleware('validar.plan:ventas');
-        Route::post('store', [SaleController::class, 'store'])->name('tenant.ventas.comprobante_venta.store')->middleware('validar.plan:ventas');
-        Route::post('send_sunat', [SaleController::class, 'send_sunat'])->name('tenant.ventas.comprobante_venta.send_sunat')->middleware('validar.plan:ventas');
-        Route::get('getSales', [SaleController::class, 'getSales'])->name('tenant.ventas.comprobante_venta.getSales')->middleware('validar.plan:ventas');
-        Route::get('pdf_voucher/{id}/{size?}', [SaleController::class, 'pdf_voucher'])->name('tenant.ventas.comprobante_venta.pdf_voucher')->middleware('validar.plan:ventas');
-        Route::get('downloadXml/{id}', [SaleController::class, 'downloadXml'])->name('tenant.ventas.comprobante_venta.downloadXml')->middleware('validar.plan:ventas');
-        Route::get('downloadCdr/{id}', [SaleController::class, 'downloadCdr'])->name('tenant.ventas.comprobante_venta.downloadCdr')->middleware('validar.plan:ventas');
-        Route::post('convert', [SaleController::class, 'convert'])->name('tenant.ventas.comprobante_venta.convert')->middleware('validar.plan:ventas');
-        Route::post('annular', [SaleController::class, 'annular'])->name('tenant.ventas.comprobante_venta.annular')->middleware('validar.plan:ventas');
+        Route::get('index', [SaleController::class, 'index'])->name('tenant.ventas.comprobante_venta.index');
+        Route::get('create', [SaleController::class, 'create'])->name('tenant.ventas.comprobante_venta.create');
+        Route::get('getProductos', [SaleController::class, 'getProductos'])->name('tenant.ventas.comprobante_venta.getProductos');
+        Route::get('validateStock', [SaleController::class, 'validateStock'])->name('tenant.ventas.comprobante_venta.validateStock');
+        Route::post('store', [SaleController::class, 'store'])->name('tenant.ventas.comprobante_venta.store');
+        Route::post('send_sunat', [SaleController::class, 'send_sunat'])->name('tenant.ventas.comprobante_venta.send_sunat');
+        Route::get('getSales', [SaleController::class, 'getSales'])->name('tenant.ventas.comprobante_venta.getSales');
+        Route::get('pdf_voucher/{id}/{size?}', [SaleController::class, 'pdf_voucher'])->name('tenant.ventas.comprobante_venta.pdf_voucher');
+        Route::get('downloadXml/{id}', [SaleController::class, 'downloadXml'])->name('tenant.ventas.comprobante_venta.downloadXml');
+        Route::get('downloadCdr/{id}', [SaleController::class, 'downloadCdr'])->name('tenant.ventas.comprobante_venta.downloadCdr');
+        Route::post('convert', [SaleController::class, 'convert'])->name('tenant.ventas.comprobante_venta.convert');
+        Route::post('annular', [SaleController::class, 'annular'])->name('tenant.ventas.comprobante_venta.annular');
 
         Route::get('comprobante-electronico', [SaleController::class, 'electronicReceipt'])->name('tenant.ventas.comprobante_electronico');
         Route::get('cotizacion', [SaleController::class, 'quotation'])->name('tenant.ventas.cotizacion');
@@ -50,12 +50,12 @@ Route::group(["prefix" => "ventas"], function () {
     });
 
     Route::group(["prefix" => "notas_credito"], function () {
-        Route::get('index/{sale?}', [CreditNoteController::class, 'index'])->name('tenant.ventas.notas_credito.index')->middleware('validar.plan:ventas');
-        Route::get('getAll', [CreditNoteController::class, 'getAll'])->name('tenant.ventas.notas_credito.getAll')->middleware('validar.plan:ventas');
-        Route::post('send_sunat', [CreditNoteController::class, 'sendSunat'])->name('tenant.ventas.notas_credito.send_sunat')->middleware('validar.plan:ventas');
-        Route::get('pdf-one/{id}', [CreditNoteController::class, 'pdfOne'])->name('tenant.ventas.notas_credito.pdfOne')->middleware('validar.plan:ventas');
-        Route::get('downloadXml/{id}', [CreditNoteController::class, 'downloadXml'])->name('tenant.ventas.notas_credito.downloadXml')->middleware('validar.plan:ventas');
-        Route::get('downloadCdr/{id}', [CreditNoteController::class, 'downloadCdr'])->name('tenant.ventas.notas_credito.downloadCdr')->middleware('validar.plan:ventas');
+        Route::get('index/{sale?}', [CreditNoteController::class, 'index'])->name('tenant.ventas.notas_credito.index');
+        Route::get('getAll', [CreditNoteController::class, 'getAll'])->name('tenant.ventas.notas_credito.getAll');
+        Route::post('send_sunat', [CreditNoteController::class, 'sendSunat'])->name('tenant.ventas.notas_credito.send_sunat');
+        Route::get('pdf-one/{id}', [CreditNoteController::class, 'pdfOne'])->name('tenant.ventas.notas_credito.pdfOne');
+        Route::get('downloadXml/{id}', [CreditNoteController::class, 'downloadXml'])->name('tenant.ventas.notas_credito.downloadXml');
+        Route::get('downloadCdr/{id}', [CreditNoteController::class, 'downloadCdr'])->name('tenant.ventas.notas_credito.downloadCdr');
     });
 
     Route::group(["prefix" => "condiciones_pago"], function () {
