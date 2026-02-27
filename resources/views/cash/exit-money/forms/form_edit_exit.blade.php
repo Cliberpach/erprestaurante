@@ -8,7 +8,7 @@
 
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-solid fa-money-bill-wave text-primary fs-5"></i>
-                <h5 class="fw-semibold mb-0">Registrar Egreso</h5>
+                <h5 class="fw-semibold mb-0">Actualizar Egreso</h5>
             </div>
 
             <div class="d-flex gap-2">
