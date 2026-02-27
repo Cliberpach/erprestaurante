@@ -115,6 +115,21 @@
                 </div>
             </div>
 
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-bold" for="discount_cash">
+                    <i class="fas fa-cash-register text-secondary"></i>
+                    Descontar de Caja
+                </label>
+                <div class="form-check form-switch">
+                    <input
+                    @if ($exit_money->discount_cash)
+                        checked
+                    @endif
+                    class="form-check-input" type="checkbox" id="discount_cash" name="discount_cash"
+                        style="transform: scale(1.3); cursor: pointer;">
+                </div>
+            </div>
+
         </div>
 
         <!-- DETALLES -->

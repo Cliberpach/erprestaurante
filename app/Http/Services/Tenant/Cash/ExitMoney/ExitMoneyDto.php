@@ -28,7 +28,7 @@ class ExitMoneyDto
         $dto['user_id']             =   Auth::user()->id;
         $dto['petty_cash_book_id']  =   $cash_book->id;
         $dto['total']               =   $data['total'];
-        $dto['discount_cash']       =   $data['discount_cash'] ?? false;
+        $dto['discount_cash']       =   isset($data['discount_cash'])?true:false;
 
         return $dto;
     }
@@ -70,7 +70,7 @@ class ExitMoneyDto
         $dto['supplier_id']         =   $data['supplier_id'];
         $dto['user_id']             =   Auth::user()->id;
         $dto['total']               =   $data['total'];
-        $dto['discount_cash']       =   $data['discount_cash'] ?? false;
+        $dto['discount_cash']       =   isset($data['discount_cash'])?true:false;
 
         return $dto;
     }
