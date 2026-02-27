@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tenant\Cash;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenant\Cash\ExitMoney\ExitMoneyStoreRequest;
+use App\Http\Services\Tenant\Cash\ExitMoney\ExitMoneyManager;
 use App\Models\Company;
 use App\Models\ExitMoney;
 use App\Models\ExitMoneyDetail;
@@ -23,6 +24,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ExitMoneyController extends Controller
 {
+    private ExitMoneyManager $s_manager;
+
+    public function __construct()
+    {
+        $this->s_manager    =   new ExitMoneyManager();
+    }
+
     public function index(Request $request)
     {
         $exit_money = ExitMoney::where('status', true);
@@ -76,20 +84,20 @@ class ExitMoneyController extends Controller
         ));
     }
 
-    /*
-array:9 [ // app\Http\Controllers\Tenant\Cash\ExitMoneyController.php:80
-  "_token" => "4Q9IT0dQOZrZPohhHXaaOSiZJTZEJajvdeXtAcQJ"
-  "proof_payment" => "4"
+/*
+array:9 [ // app\Http\Services\Tenant\Cash\ExitMoney\ExitMoneyService.php:17
+  "_token" => "PeilvRFtef7E82iE3STPnekKKLcyC6TsPTPsHLBS"
+  "proof_payment" => "1"
   "number" => "B002"
-  "date" => "2026-02-12"
-  "supplier_id" => "2"
-  "cost_center" => "3"
+  "date" => "2026-02-27"
   "payment_method_id" => "1"
+  "supplier_id" => "1"
+  "cost_center" => "3"
   "description" => array:1 [
     0 => "ALMUERZO"
   ]
   "total" => array:1 [
-    0 => "80"
+    0 => "12"
   ]
 ]
 */
@@ -98,56 +106,11 @@ array:9 [ // app\Http\Controllers\Tenant\Cash\ExitMoneyController.php:80
         DB::beginTransaction();
         try {
 
-            $petty_cash = DB::table('petty_cash_books')
-                ->where('user_id', Auth::id())
-                ->where('status', 'ABIERTO')
-                ->orderByDesc('id')
-                ->first();
-
-            if (!$petty_cash) {
-                throw new Exception("NO FORMAS PARTE DE UNA CAJA ABIERTA");
-            }
-
-            $payment_method =   PaymentMethod::findOrFail($request->get('payment_method_id'));
-            $cost_center    =   CostCenter::findOrFail($request->get('cost_center'));
-
-            $exit_money = new ExitMoney();
-            $exit_money->proof_payment_id = $request->proof_payment;
-            $exit_money->payment_method_id = $payment_method->id;
-            $exit_money->payment_method_name    =   $payment_method->description;
-            $exit_money->number = $request->number;
-            $exit_money->date = $request->date;
-            $exit_money->cost_center_id = $request->cost_center;
-            $exit_money->cost_center_name   =   $cost_center->name;
-            $exit_money->supplier_id = $request->supplier_id;
-            $exit_money->user_id = Auth::id();
-            $exit_money->petty_cash_book_id =   $petty_cash->id;
-            $exit_money->total = 0;
-
-            $exit_money->save();
-
-            // if ($cajaAbierta->closing_amount == null) {
-            //     $cajaAbierta->closing_amount = $cajaAbierta->initial_amount;
-            // }
-
-            for ($i = 0; $i < count($request->description); $i++) {
-                $booking_detail = new ExitMoneyDetail();
-                $booking_detail->exit_money_id = $exit_money->id;
-                $booking_detail->description = $request->description[$i];
-                $booking_detail->total = $request->total[$i];
-                $booking_detail->save();
-
-                DB::table('exit_money')->where('id', $exit_money->id)->increment('total', $request->total[$i]);
-            }
-
-            // $exit_money_total_actualizado = DB::table('exit_money')->where('id', $exit_money->id)->value('total');
-
-            // $cajaAbierta->closing_amount = $cajaAbierta->closing_amount - $exit_money_total_actualizado;
-            // $cajaAbierta->save();
+            $exit   =   $this->s_manager->store($request->toArray());
 
             Session::flash('message_success', 'EGRESO REGISTRADO CON ÉXITO');
 
-            DB::commit();
+            //DB::commit();
             return response()->json(['success' => true, 'message' => 'EGRESO REGISTRADO CON ÉXITO']);
         } catch (Throwable $th) {
             DB::rollBack();

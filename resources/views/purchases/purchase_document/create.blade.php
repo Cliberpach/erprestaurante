@@ -101,7 +101,6 @@
             })
 
             document.querySelector('#payment_condition_id').addEventListener('change', setExpirationDate);
-
         }
 
         function loadSelectsPurchases() {

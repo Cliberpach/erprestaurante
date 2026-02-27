@@ -7,6 +7,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/loader/loader1.css',
+                'resources/css/sales/sales-index.css',
 
                 'resources/js/app.js',
                 'resources/js/global/main.js',
@@ -19,6 +20,8 @@ export default defineConfig({
                 'resources/js/libs/filepond.js',
                 //'resources/js/libs/calendar.js',
                 'resources/js/libs/lightgalery.js',
+                'resources/js/utils/utils.js',
+
             ],
             refresh: [
                 ...refreshPaths,

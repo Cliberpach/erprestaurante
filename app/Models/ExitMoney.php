@@ -14,14 +14,15 @@ class ExitMoney extends Model
         'proof_payment_id',
         'supplier_id',
         'user_id',
-        'payment_method_name',
         'number',
         'date',
-        'reason',
         'total',
         'status',
         'payment_method_id',
-        'petty_cash_book_id'
+        'payment_method_name',
+        'petty_cash_book_id',
+        'cost_center_id',
+        'cost_center_name',
     ];
 
     public function supplier()

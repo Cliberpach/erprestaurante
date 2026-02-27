@@ -71,65 +71,13 @@
                 </div>
 
             </div>
-
-            <div class="row align-items-center text-muted mb-2" style="font-size: 0.85rem;">
-                <div class="d-flex align-items-center col-auto">
-                    <span
-                        style="
-                        width: 12px;
-                        height: 12px;
-                        background-color: #6f42c1;
-                        border-radius: 3px;
-                        display: inline-block;
-                        margin-right: 6px;
-                        opacity: .6;
-                    ">
-                    </span>
-                    <i class="fas fa-right-left mx-1" style="color:#6f42c1;"></i>
-                    <span>Venta convertida</span>
-                </div>
-            </div>
         </div>
 
         <div class="card-body p-0 pb-2">
-            @include('sales.sale_document.tables.tbl_list_sales')
+            @include('sales.credit_notes.tables.tbl_list')
         </div>
     </div>
 @endsection
-
-<style>
-    /* Ventas convertidas */
-    .row-sale-converted {
-        background: linear-gradient(90deg,
-                rgba(111, 66, 193, 0.35),
-                rgba(111, 66, 193, 0.10)) !important;
-
-        border-left: 8px solid #6f42c1;
-        box-shadow: inset 6px 0 0 rgba(111, 66, 193, 0.15);
-
-        transition:
-            background 0.25s ease,
-            box-shadow 0.25s ease,
-            transform 0.15s ease;
-    }
-
-    /* Hover con presencia */
-    .row-sale-converted:hover {
-        background: linear-gradient(90deg,
-                rgba(111, 66, 193, 0.45),
-                rgba(111, 66, 193, 0.18)) !important;
-
-        box-shadow:
-            inset 6px 0 0 rgba(111, 66, 193, 0.25),
-            0 2px 10px rgba(111, 66, 193, 0.15);
-    }
-
-    /* Texto ligeramente más fuerte */
-    .row-sale-converted td {
-        vertical-align: middle;
-        font-weight: 500;
-    }
-</style>
 
 @section('js')
     <script>
@@ -145,14 +93,14 @@
         }
 
         function startDataTableSales() {
-            const urlGetSales = '{{ route('tenant.ventas.notas_credito.getAll') }}';
+            const url = '{{ route('tenant.ventas.notas_credito.getAll') }}';
 
             dtNotes = new DataTable('#tbl_list_sales', {
                 responsive: true,
                 serverSide: true,
                 processing: true,
                 ajax: {
-                    url: urlGetSales,
+                    url: url,
                     type: 'GET',
                     data: function(d) {
                         d.customer_id = $('#customer_id').val();
@@ -170,12 +118,22 @@
                         $(row).addClass('row-sale-converted');
                     }
                 },
-                columns: [
-
-                    {
+                columns: [{
                         data: 'id',
                         name: 'cn.id',
                         searchable: false,
+                        orderable: true
+                    },
+                    {
+                        data: 'cash_book_code',
+                        name: 'cash_book_code',
+                        searchable: true,
+                        orderable: true
+                    },
+                    {
+                        data: 'creator_user_name',
+                        name: 'cn.creator_user_name',
+                        searchable: true,
                         orderable: true
                     },
                     {

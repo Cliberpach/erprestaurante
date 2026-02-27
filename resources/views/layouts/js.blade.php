@@ -23,7 +23,9 @@
         error: @json(session('message_error'))
     };
 </script>
+
 @vite(['resources/js/global/main.js'])
+@vite(['resources/js/utils/utils.js'])
 
 @yield('js')
 @stack('js-script')

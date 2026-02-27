@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\Tenant\Maintenance\BankAccount;
 
-use App\Models\Company;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
+use App\Models\Tenant\Maintenance\Company\Company;
 
 class BankAccountDto
 {

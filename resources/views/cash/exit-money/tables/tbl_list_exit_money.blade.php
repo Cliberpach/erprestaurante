@@ -3,7 +3,7 @@
         <tr>
             <th>#</th>
             <th>Fecha de emisión</th>
-            <th>Razón</th>
+            <th>Centro Costos</th>
             <th>Proveedor</th>
             <th>Número</th>
             <th>Total</th>

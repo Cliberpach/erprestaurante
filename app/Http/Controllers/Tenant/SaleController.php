@@ -37,11 +37,13 @@ class SaleController extends Controller
         $invoice_types              =   UtilController::getInvoiceTypes()->whereIn('id', ['65', '66']);
         $customer_formatted         =   FormatController::getFormatInitialCustomer(1);
         $vars_mdl_customer          =   UtilController::getVarsMdlCustomer();
+        $filter_invoices            =   UtilController::getInvoiceTypes()->whereIn('id',['65','66','67']);
 
         $vars                       =   array_merge(
             compact(
                 'invoice_types',
                 'customer_formatted',
+                'filter_invoices'
             ),
             $vars_mdl_customer
         );
@@ -54,6 +56,7 @@ class SaleController extends Controller
         $filter_start_date  =   $request->get('start_date');
         $filter_end_date    =   $request->get('end_date');
         $filter_sunat       =   $request->get('status');
+        $filter_type_sale   =   $request->get('type_sale');
 
         $sales    =   DB::table('sales as s')
             ->select(
@@ -97,6 +100,9 @@ class SaleController extends Controller
         }
         if ($filter_sunat) {
             $sales->where('s.sunat_status', $filter_sunat);
+        }
+        if (in_array($filter_type_sale, ['65', '66', '67'])) {
+            $sales->where('s.type_sale_id', $filter_type_sale);
         }
 
         return DataTables::of($sales)
@@ -207,42 +213,6 @@ class SaleController extends Controller
         return DataTables::of($products)
             ->make(true);
     }
-
-    public function validateStock(Request $request)
-    {
-        try {
-
-            $product    =   DB::select(
-                'select
-                            wp.*
-                            from warehouse_products as wp
-                            where
-                            wp.product_id = ?
-                            and wp.warehouse_id = "1"',
-                [$request->get('product_id')]
-            );
-
-            if (count($product) === 0) {
-                throw new Exception("EL PRODUCTO NO EXISTE EN LA BD!!");
-            }
-
-            if ($product[0]->stock < $request->get('cant')) {
-
-                $message    =   "EL STOCK (" . $product[0]->stock . "), ES MENOR A LA CANTIDAD (" . $request->get('cant') . ")";
-
-                return response()->json([
-                    'success' => false,
-                    'message' => $message,
-                    'stock' => $product[0]->stock
-                ]);
-            }
-
-            return response()->json(['success' => true, 'message' => "CANTIDAD VÁLIDA"]);
-        } catch (\Throwable $th) {
-            return response()->json(['success' => false, 'message' => $th->getMessage(), 'stock' => 0]);
-        }
-    }
-
 
     /*
 array:9 [ // app\Http\Services\Tenant\Sale\Sale\SaleService.php:38

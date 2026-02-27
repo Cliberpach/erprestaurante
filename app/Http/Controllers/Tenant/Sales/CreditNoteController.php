@@ -42,6 +42,8 @@ class CreditNoteController extends Controller
                 'cn.created_at',
                 'cn.customer_id',
                 'cn.customer_name',
+                DB::raw("CONCAT('CM-', LPAD(cn.petty_cash_book_id, 8, '0')) as cash_book_code"),
+                'cn.creator_user_name',
                 DB::raw('CONCAT(cn.customer_type_document,":",cn.customer_document_number,"-",cn.customer_name) as customer_full_name'),
                 'cn.serie',
                 'cn.correlative',
@@ -93,6 +95,9 @@ class CreditNoteController extends Controller
                             cn.correlative
                         ) LIKE ?
                     ", ["%{$keyword}%"]);
+            })
+            ->filterColumn('cash_book_code', function ($query, $keyword) {
+                $query->whereRaw("CONCAT('CM-', LPAD(cn.petty_cash_book_id, 8, '0')) LIKE ?", ["%{$keyword}%"]);
             })
             ->make(true);
     }

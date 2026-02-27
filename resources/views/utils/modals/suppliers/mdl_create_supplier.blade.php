@@ -20,6 +20,10 @@
 
 
 <script>
+    let supplierParams = {
+        documentSearchCustomer: null,
+    };
+
     function eventsMdlCreateProveedor() {
         loadSelectMdlSupplier();
         document.querySelector('#formRegistrarProveedor').addEventListener('submit', (e) => {

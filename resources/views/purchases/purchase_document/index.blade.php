@@ -287,7 +287,6 @@
             window.location.href = @json(route('tenant.compras.documento_compra.create'));
         }
 
-
         function eliminarProveedor(id) {
             toastr.clear();
             let row = getRowById(dtPurchaseDocuments, id);

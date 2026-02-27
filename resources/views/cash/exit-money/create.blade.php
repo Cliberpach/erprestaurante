@@ -5,32 +5,9 @@
 @endsection
 
 @section('content')
-    @if (session('datos'))
-        <div class="alert alert-warning alert-dismissible" role="alert">
-            {{ session('datos') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <div class="card">
         @include('cash.exit-money.forms.form_create_exit')
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            calcularTotalEgreso();
-        })
-    </script>
 
     @include('cash.exit-money.create-supplier-modal')
     @include('cash.exit-money.create-proof-payment-modal')
@@ -41,6 +18,7 @@
 @section('js')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            calcularTotalEgreso();
             events();
             loadSelectsExit();
         });
@@ -218,7 +196,7 @@
                     <td width="60%"><input type="text" name="description[]" class="form-control" oninput="this.value = this.value.toUpperCase()"></td>
                     <td width="10%"><input type="text" name="total[]" class="form-control text-center" oninput="calcularTotalEgreso()"></td>
                     <td>
-                        <button type="button" class="btn btn-danger" onclick="deleteRow(this)"><i class='bx bx-trash-alt'></i></button>
+                        <button type="button" class="btn btn-danger" onclick="deleteRow(this)"><i class='fas fa-trash'></i></button>
                     </td>
                 </tr>
             `;
@@ -356,6 +334,43 @@
                     }
                 });
             }
+
+
+            window.supplierSelect = new TomSelect('#supplier_id', {
+                valueField: 'id',
+                labelField: 'full_name',
+                searchField: ['full_name'],
+                plugins: ['clear_button'],
+                placeholder: 'Seleccione un proveedor',
+                maxOptions: 20,
+                create: false,
+                preload: false,
+                load: async (query, callback) => {
+                    if (!query.length) return callback();
+                    try {
+                        const url = route('tenant.utils.searchSupplier', {
+                            q: query
+                        });
+                        const response = await fetch(url);
+                        if (!response.ok) throw new Error('Error al buscar proveedores');
+                        const data = await response.json();
+                        const results = data.data ?? [];
+                        callback(results);
+                    } catch (error) {
+                        console.error('Error cargando clientes:', error);
+                        callback();
+                    }
+                },
+                render: {
+                    option: (item, escape) => `
+                        <div>
+                            <strong>${escape(item.full_name)}</strong><br>
+                            <small>${escape(item.email ?? '')}</small>
+                        </div>
+                    `,
+                    item: (item, escape) => `<div>${escape(item.full_name)}</div>`
+                }
+            });
         }
     </script>
 @endsection

@@ -4,6 +4,10 @@
     Ventas
 @endsection
 
+@section('app-page-head', 'd-none')
+
+@vite(['resources/css/sales/sales-index.css'])
+
 @section('content')
     @include('utils.modals.customer.mdl_create_customer')
     @include('sales.sale_document.modals.mdl_nota_credito')
@@ -15,17 +19,24 @@
                 <div class="col-6">
                     <h6 class="card-title mb-0">LISTA DE VENTAS</h6>
                 </div>
-                <div class="col-6" style="text-align: end;">
-                    <div class="input-group-append">
-                        <button onclick="goToSaleCreate()" type="button" data-bs-whatever="Nueva caja"
-                            class="btn btn-primary btn-add-new" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            <div class="lign-items-center d-flex align-items-center">
-                                <i class="fas fa-plus pe-1"></i>
-                                <p class="mb-0 ml-2"> NUEVO</p>
-                            </div>
-                        </button>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-2 text-end">
+                    <div class="row">
+                        <div class="col-12">
+                            <button onclick="goToSaleCreate()" type="button" data-bs-whatever="Nueva caja"
+                                class="btn btn-primary btn-add-new" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <div class="lign-items-center d-flex align-items-center">
+                                    <i class="fas fa-plus pe-1"></i>
+                                    <p class="mb-0 ml-2"> Nuevo</p>
+                                </div>
+                            </button>
+                            <button type="button" id="btn-filter" class="btn btn-warning" onclick="filterData();">
+                                <i class="fas fa-filter mr-1"></i> Filtrar
+                            </button>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <div class="row mb-2">
@@ -52,7 +63,6 @@
                         <option value="ANULADO">ANULADO</option>
                         <option value="ANULADO PARCIAL">ANULADO PARCIAL</option>
                     </select>
-                    <p class="status_error msgError mb-0"></p>
                 </div>
 
                 <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 mb-2">
@@ -69,10 +79,17 @@
                     <input type="date" class="form-control" id="end_date" name="end_date">
                 </div>
 
-                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 mb-2 text-end">
-                    <button type="button" id="btn-filter" class="btn btn-primary btn-block" onclick="filterData();">
-                        <i class="fas fa-filter mr-1"></i> Filtrar
-                    </button>
+
+                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 mb-2">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-circle-check text-primary mr-1"></i> Tipo:
+                    </label>
+                    <select class="form-control" id="type_sale" name="type_sale" data-placeholder="Seleccionar">
+                        <option value=""></option>
+                        @foreach ($filter_invoices as $type)
+                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
             </div>
@@ -102,80 +119,12 @@
     </div>
 @endsection
 
-<style>
-    /* Ventas convertidas */
-    .row-sale-converted {
-        background: linear-gradient(90deg,
-                rgba(111, 66, 193, 0.35),
-                rgba(111, 66, 193, 0.10)) !important;
-
-        border-left: 8px solid #6f42c1;
-        box-shadow: inset 6px 0 0 rgba(111, 66, 193, 0.15);
-
-        transition:
-            background 0.25s ease,
-            box-shadow 0.25s ease,
-            transform 0.15s ease;
-    }
-
-    /* Hover con presencia */
-    .row-sale-converted:hover {
-        background: linear-gradient(90deg,
-                rgba(111, 66, 193, 0.45),
-                rgba(111, 66, 193, 0.18)) !important;
-
-        box-shadow:
-            inset 6px 0 0 rgba(111, 66, 193, 0.25),
-            0 2px 10px rgba(111, 66, 193, 0.15);
-    }
-
-    /* Texto ligeramente más fuerte */
-    .row-sale-converted td {
-        vertical-align: middle;
-        font-weight: 500;
-    }
-
-
-    /*======== VENTAS ANULADAS =======*/
-    /* Ventas anuladas */
-    .row-sale-cancelled {
-        background: linear-gradient(90deg,
-                rgba(255, 193, 7, 0.35),
-                rgba(255, 193, 7, 0.10)) !important;
-
-        border-left: 8px solid #ffc107;
-        box-shadow: inset 6px 0 0 rgba(255, 193, 7, 0.18);
-
-        transition:
-            background 0.25s ease,
-            box-shadow 0.25s ease,
-            transform 0.15s ease;
-    }
-
-    /* Hover con presencia */
-    .row-sale-cancelled:hover {
-        background: linear-gradient(90deg,
-                rgba(255, 193, 7, 0.45),
-                rgba(255, 193, 7, 0.18)) !important;
-
-        box-shadow:
-            inset 6px 0 0 rgba(255, 193, 7, 0.28),
-            0 2px 10px rgba(255, 193, 7, 0.18);
-    }
-
-    /* Texto ligeramente más fuerte */
-    .row-sale-cancelled td {
-        vertical-align: middle;
-        font-weight: 500;
-    }
-</style>
-
 @section('js')
     <script>
         let dtSales = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadSelectIndex();
+            loadSelectSalesIndex();
             events();
         })
 
@@ -201,6 +150,7 @@
                         d.start_date = $('#start_date').val();
                         d.end_date = $('#end_date').val();
                         d.status = $('#status').val();
+                        d.type_sale = $('#type_sale').val();
                     }
                 },
                 order: [
@@ -338,9 +288,9 @@
 
                             let acciones = `<div class="btn-group float-end">
                                                 <button
-                                                    class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle"
+                                                    class="btn btn-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle"
                                                     type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="fi fi-rr-menu-dots"></i>
+                                                    <i class="fa-solid fa-gear"></i>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">`;
 
@@ -415,7 +365,7 @@
             });
         }
 
-        function loadSelectIndex() {
+        function loadSelectSalesIndex() {
             window.customerSelect = new TomSelect('#customer_id', {
                 valueField: 'id',
                 labelField: 'full_name',
@@ -458,6 +408,9 @@
                     }
                 }
             });
+
+            window.typeSaleFilterSelect = loadSimpleSelect('type_sale');
+            window.statusSunatFilter = loadSimpleSelect('status');
         }
 
         function goToSaleCreate() {
