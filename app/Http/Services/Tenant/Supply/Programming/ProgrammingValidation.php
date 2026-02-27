@@ -21,7 +21,7 @@ class ProgrammingValidation
     {
         $petty_cash_id      =   $data['cash_available_id'];
         $petty_cash_book    =   $this->pcb_service->getCashBookCash($petty_cash_id);
-        dd($petty_cash_book);
+
         if (!$petty_cash_book) {
             throw new Exception("Debes seleccionar una caja abierta.");
         }
@@ -43,9 +43,9 @@ class ProgrammingValidation
             throw new Exception("Debe agregar al menos un detalle a la programación.");
         }
 
-        $datos['lst_detail']    =   $lst_detail;
+        $data['lst_detail']    =   $lst_detail;
 
-        return $datos;
+        return $data;
     }
 
     public function validationUpdate(array $data, int $id)
