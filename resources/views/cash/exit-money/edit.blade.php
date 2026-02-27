@@ -4,181 +4,156 @@
     Egresos
 @endsection
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-@endsection
-
 @section('content')
-    @if (session('datos'))
-        <div class="alert alert-warning alert-dismissible" role="alert">
-            {{ session('datos') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
-    <div class="card">
-        <form action="{{ route('tenant.egreso.update', $exit_money->id) }}" method="POST">
-            @csrf
-            @method('PUT')
-            <div class="card-header d-flex justify-content-between flex-row">
-                <h4 class="card-title">EDITAR EGRESO</h4>
-
-                <div class="input-group-append">
-                    <a href="{{ route('tenant.cajas.egreso') }}" class="btn btn-secondary">Cancelar</a>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </div>
-
-            <div class="card-body">
-                <div class="d-flex justify-content-start">
-                    <div class="form-group mb-3 me-3">
-                        <div class="d-flex align-items-center">
-                            <label for="proof_payment">Tipo de comprobante </label>
-                            <button class="btn btn-rounded p-0" type="button" onclick="openCreateProofPaymentModal()">
-                                [<i class='bx bx-plus'></i> Nuevo]
-                            </button>
-                        </div>
-                        <select name="proof_payment" id="proof_payment" class="form-control">
-                            @foreach ($proof_payments as $proof_payment)
-                                <option value="{{ $proof_payment->id }}"
-                                    {{ $exit_money->exit_money == $proof_payment->id ? 'selected' : '' }}>
-                                    {{ $proof_payment->description }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form group me-3">
-                        <label for="number">Número</label>
-                        <input type="text" name="number" id="number" class="form-control"
-                            value="{{ $exit_money->number }}">
-                    </div>
-
-                    <div class="form group me-3">
-                        <label for="date">Fecha de emisión</label>
-                        <input type="date" name="date" id="date" class="form-control"
-                            value="{{ $exit_money->date }}">
-                    </div>
-
-                    <div class="form-group me-3">
-                        <div class="d-flex align-items-center">
-                            <label for="supplier_id">Proveedores </label>
-                            <button class="btn btn-rounded p-0" type="button" onclick="openCreateSupplierModal()">
-                                [<i class='bx bx-plus'></i> Nuevo]
-                            </button>
-                        </div>
-                        <select name="supplier_id" id="supplier_id" class="form-control" style="width: 441.06px;">
-                            @foreach ($suppliers as $supplier)
-                                <option value="{{ $supplier->id }}"
-                                    {{ $exit_money->supplier_id == $supplier->id ? 'selected' : '' }}>
-                                    {{ $supplier->document_number }} - {{ $supplier->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <button type="button" class="btn btn-primary" onclick="addRow()">Agregar detalle</button>
-            </div>
-
-
-            <div class="row">
-                <div class="col">
-                    <table id="egreso-detail" style="width:100%" class="table-hover table">
-                        <thead>
-                            <tr>
-                                <th width="10%">#</th>
-                                <th>Descripción</th>
-                                <th width="20%">Total</th>
-                                <th width="10%"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="body-table">
-                            @foreach ($exit_money_detail as $exit_money)
-                                <tr>
-                                    <td width="5%">{{ $loop->iteration }}</td>
-                                    <td width="60%">
-                                        <input type="text" name="description[]" class="form-control"
-                                            value="{{ $exit_money->description }}" oninput="this.value = this.value.toUpperCase()">
-                                    </td>
-                                    <td width="10%">
-                                        <input type="text" name="total[]" class="form-control text-center"
-                                            value="{{ $exit_money->total }}" oninput="calcularTotalEgreso()">
-                                    </td>
-                                    <td></td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                    <div class="text-end mt-4 p-5">
-                        <strong>Total acumulado: <span id="total-del-egreso">0.00</span></strong>
-                    </div>
-
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded',()=>{
-            calcularTotalEgreso();
-        })
-    </script>
-
     @include('cash.exit-money.create-supplier-modal')
     @include('cash.exit-money.create-proof-payment-modal')
-@endsection
+    @include('utils.modals.cost_center.mdl_create')
 
+    <div class="card">
+        @include('cash.exit-money.forms.form_edit_exit')
+    </div>
+@endsection
 
 @section('js')
     <script>
-        let i = 2;
+        let exitDetails = [];
+        let counter = 1;
 
-        function calcularTotalEgreso(){
-            let total = 0;
-            let totalAcumulado = document.getElementById('total-del-egreso');
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPreviewData();
+            calcularTotalEgreso();
+            events();
+            loadSelectsExit();
+        });
 
-            document.querySelectorAll('input[name="total[]"]').forEach(function(input) {
-            const valor = parseFloat(input.value) || 0;
-            total += valor;
-            });
+        function events() {
+            eventsMdlCostCenter();
 
-            totalAcumulado.innerText = total.toFixed(2);
+
+            document.querySelector('#form-create-exit-money').addEventListener('submit', (e) => {
+                e.preventDefault();
+                updateExitMoney(e.target);
+            })
+
         }
 
+        /* ===============================
+           AGREGAR ITEM
+        ================================= */
         function addRow() {
-            fila = `
+
+            const newItem = {
+                id: Date.now(),
+                description: '',
+                total: 0
+            };
+
+            exitDetails.push(newItem);
+
+            renderTable();
+        }
+
+
+        /* ===============================
+           RENDERIZAR TABLA
+        ================================= */
+        function renderTable() {
+
+            const tbody = document.querySelector('#egreso-detail tbody');
+            tbody.innerHTML = '';
+
+            exitDetails.forEach((item, index) => {
+
+                const row = `
                 <tr>
-                    <td width="5%">${i++}</td>
-                    <td width="60%"><input type="text" name="description[]" class="form-control" oninput="this.value = this.value.toUpperCase()"></td>
-                    <td width="10%"><input type="text" name="total[]" class="form-control text-center" oninput="calcularTotalEgreso()"></td>
+                    <td class="text-center">${index + 1}</td>
+
                     <td>
-                        <button type="button" class="btn btn-danger" onclick="deleteRow(this)"><i class='bx bx-trash-alt'></i></button>
+                        <input type="text"
+                            class="form-control input-fill"
+                            value="${item.description}"
+                            oninput="updateDescription(${item.id}, this.value)">
+                    </td>
+
+                    <td>
+                        <input type="number"
+                            step="0.01"
+                            class="form-control text-end inputDecimalPositivo input-fill"
+                            value="${item.total}"
+                            oninput="updateTotal(${item.id}, this.value)">
+                    </td>
+
+                    <td class="text-center">
+                        <button type="button"
+                            class="btn btn-danger btn-sm"
+                            onclick="deleteRow(${item.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `;
 
-            $("#egreso-detail tbody").append(fila);
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+
             calcularTotalEgreso();
         }
 
-        function deleteRow(button) {
-            var row = button.parentNode.parentNode;
-            var table = document.getElementById("egreso-detail");
-            table.deleteRow(row.rowIndex);
+
+        /* ===============================
+           ACTUALIZAR DESCRIPCIÓN
+        ================================= */
+        function updateDescription(id, value) {
+
+            const item = exitDetails.find(d => d.id === id);
+            if (item) {
+                item.description = value.toUpperCase();
+            }
+        }
+
+
+        /* ===============================
+           ACTUALIZAR TOTAL
+        ================================= */
+        function updateTotal(id, value) {
+
+            const item = exitDetails.find(d => d.id === id);
+            if (item) {
+                item.total = parseFloat(value) || 0;
+            }
+
             calcularTotalEgreso();
+        }
+
+
+        /* ===============================
+           ELIMINAR ITEM
+        ================================= */
+        function deleteRow(id) {
+
+            exitDetails = exitDetails.filter(d => d.id !== id);
+
+            renderTable();
+        }
+
+
+        /* ===============================
+           CALCULAR TOTAL
+        ================================= */
+        function calcularTotalEgreso() {
+            let total = exitDetails.reduce((sum, item) => {
+                return sum + item.total;
+            }, 0);
+
+            document.getElementById('total-del-egreso').innerText = total.toFixed(2);
+        }
+
+
+        /* ===============================
+           OBTENER DATA PARA ENVIAR
+        ================================= */
+        function getDetailsForSubmit() {
+            return exitDetails;
         }
 
         function openCreateSupplierModal() {
@@ -187,6 +162,203 @@
 
         function openCreateProofPaymentModal() {
             $('#createProofPaymentModal').modal('toggle');
+        }
+
+        function validateExitDetails(details) {
+
+            let errors = [];
+
+            if (!Array.isArray(details) || details.length === 0) {
+                errors.push('Debe agregar al menos un detalle.');
+                return errors;
+            }
+
+            for (let i = 0; i < details.length; i++) {
+
+                const item = details[i];
+
+                if (!item.description || item.description.trim() === '') {
+                    errors.push(`La descripción está vacía en la fila ${i + 1}.`);
+                }
+
+                if (item.total === null || item.total === undefined || item.total <= 0) {
+                    errors.push(`El total debe ser mayor a 0 en la fila ${i + 1}.`);
+                }
+
+                if (errors.length >= 2) {
+                    break;
+                }
+            }
+
+            return errors;
+        }
+
+        async function updateExitMoney(formUpdateExitMoney) {
+            toastr.clear();
+
+            const errors = validateExitDetails(exitDetails);
+            if (errors.length > 0) {
+                toastr.error(errors.join('\n'));
+                return;
+            }
+
+            const result = await Swal.fire({
+                title: '¿Desea actualizar el egreso?',
+                text: "Confirmar",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'SI, registrar',
+                cancelButtonText: 'NO',
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-secondary'
+                },
+                buttonsStyling: false
+            });
+
+            if (result.isConfirmed) {
+
+                try {
+
+                    clearValidationErrors('msgError');
+
+                    Swal.fire({
+                        title: 'Actualizando egreso...',
+                        text: 'Por favor espere',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    const id = @json($exit_money->id);
+                    const formData = new FormData(formUpdateExitMoney);
+                    formData.append('_method', 'PUT');
+                    formData.append('lstDetails', JSON.stringify(exitDetails));
+
+                    const res = await axios.post(route('tenant.cajas.egresos.update', {
+                        id
+                    }), formData);
+
+                    if (res.data.success) {
+                        toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
+                        redirect('tenant.cajas.egresos.index');
+                    } else {
+                        toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
+                        Swal.close();
+                    }
+
+                } catch (error) {
+
+                    Swal.close();
+
+                    if (error.response && error.response.status === 422) {
+                        const errors = error.response.data.errors;
+                        paintValidationErrors(errors, 'error');
+                        return;
+                    }
+
+                    toastr.error('Ocurrió un error inesperado', 'ERROR');
+                }
+
+            } else {
+
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Operación cancelada',
+                    text: 'No se realizaron acciones.',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-secondary'
+                    },
+                    buttonsStyling: false
+                });
+
+            }
+        }
+
+        function loadSelectsExit() {
+            const costCenterSelect = document.getElementById('cost_center');
+            if (costCenterSelect && !costCenterSelect.tomselect) {
+                window.costCenterSelect = new TomSelect(costCenterSelect, {
+                    valueField: 'id',
+                    labelField: 'name',
+                    searchField: ['name', 'id'],
+                    create: false,
+                    sortField: {
+                        field: 'id',
+                        direction: 'desc'
+                    },
+                    plugins: ['clear_button'],
+                    render: {
+                        option: (item, escape) => `
+                            <div>
+                                ${escape(item.name)}
+                            </div>
+                        `,
+                        item: (item, escape) => `
+                            <div>${escape(item.name)}</div>
+                        `
+                    }
+                });
+            }
+
+            const initialSupplier = @json($supplier_formatted);
+            window.supplierSelect = new TomSelect('#supplier_id', {
+                valueField: 'id',
+                labelField: 'full_name',
+                searchField: ['full_name'],
+                options: [initialSupplier],
+                items: [initialSupplier.id],
+                plugins: ['clear_button'],
+                placeholder: 'Seleccione un proveedor',
+                maxOptions: 20,
+                create: false,
+                preload: false,
+                load: async (query, callback) => {
+                    if (!query.length) return callback();
+                    try {
+                        const url = route('tenant.utils.searchSupplier', {
+                            q: query
+                        });
+                        const response = await fetch(url);
+                        if (!response.ok) throw new Error('Error al buscar proveedores');
+                        const data = await response.json();
+                        const results = data.data ?? [];
+                        callback(results);
+                    } catch (error) {
+                        console.error('Error cargando clientes:', error);
+                        callback();
+                    }
+                },
+                render: {
+                    option: (item, escape) => `
+                        <div>
+                            <strong>${escape(item.full_name)}</strong><br>
+                            <small>${escape(item.email ?? '')}</small>
+                        </div>
+                    `,
+                    item: (item, escape) => `<div>${escape(item.full_name)}</div>`
+                }
+            });
+        }
+
+        function loadPreviewData() {
+            const exitDetailsPreview = @json($exit_money_detail);
+            let parsedDetails = [];
+
+            exitDetailsPreview.forEach(item => {
+
+                exitDetails.push({
+                    id: item.id,
+                    description: item.description,
+                    total: parseFloat(item.total)
+                });
+
+            });
+            renderTable();
         }
     </script>
 @endsection

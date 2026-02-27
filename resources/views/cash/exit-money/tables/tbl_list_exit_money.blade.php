@@ -2,12 +2,14 @@
     <thead class="table-light">
         <tr>
             <th>#</th>
-            <th>Fecha de emisión</th>
-            <th>Centro Costos</th>
+            <th>Caja</th>
+            <th>Fecha emisión</th>
+            <th data-priority="4">Centro Costos</th>
             <th>Proveedor</th>
-            <th>Número</th>
-            <th>Total</th>
-            <th>Acciones</th>
+            <th data-priority="1">Número</th>
+            <th data-priority="3">Total</th>
+            <th>Descontar Caja</th>
+            <th data-priority="2">Acción</th>
         </tr>
     </thead>
 </table>

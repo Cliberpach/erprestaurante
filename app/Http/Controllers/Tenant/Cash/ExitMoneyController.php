@@ -3,20 +3,19 @@
 namespace App\Http\Controllers\Tenant\Cash;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\FormatController;
 use App\Http\Requests\Tenant\Cash\ExitMoney\ExitMoneyStoreRequest;
+use App\Http\Requests\Tenant\Cash\ExitMoney\ExitMoneyUpdateRequest;
 use App\Http\Services\Tenant\Cash\ExitMoney\ExitMoneyManager;
 use App\Models\Company;
-use App\Models\ExitMoney;
-use App\Models\ExitMoneyDetail;
 use App\Models\ProofPayment;
 use App\Models\Supplier;
-use App\Models\Tenant\Cash\PettyCashBook;
+use App\Models\Tenant\Cash\ExitMoney\ExitMoney;
+use App\Models\Tenant\Cash\ExitMoney\ExitMoneyDetail;
 use App\Models\Tenant\Maintenance\CostCenter;
 use App\Models\Tenant\PaymentMethod;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Throwable;
@@ -53,19 +52,21 @@ class ExitMoneyController extends Controller
         $query = DB::connection('tenant')
             ->table('exit_money as em')
             ->join('suppliers as s', 's.id', '=', 'em.supplier_id')
+            ->join('petty_cash_books as pcb', 'pcb.id', 'em.petty_cash_book_id')
             ->select(
                 'em.id',
                 'em.date',
                 'em.cost_center_name',
                 's.name as supplier_name',
                 'em.number',
-                'em.total'
+                'em.total',
+                'em.discount_cash',
+                DB::raw("CONCAT('CM-', LPAD(pcb.id, 8, '0')) as cash_book_code"),
             )
             ->where('em.status', 1);
 
         return DataTables::of($query)->toJson();
     }
-
 
     public function create()
     {
@@ -84,21 +85,16 @@ class ExitMoneyController extends Controller
         ));
     }
 
-/*
-array:9 [ // app\Http\Services\Tenant\Cash\ExitMoney\ExitMoneyService.php:17
-  "_token" => "PeilvRFtef7E82iE3STPnekKKLcyC6TsPTPsHLBS"
+    /*
+array:8 [ // app\Http\Controllers\Tenant\Cash\ExitMoneyController.php:108
+  "_token" => "plI5G8t5WW6JnSFBbtKhdipddMLzgqzr1XxElaSW"
   "proof_payment" => "1"
-  "number" => "B002"
+  "number" => "B002-11"
   "date" => "2026-02-27"
   "payment_method_id" => "1"
   "supplier_id" => "1"
   "cost_center" => "3"
-  "description" => array:1 [
-    0 => "ALMUERZO"
-  ]
-  "total" => array:1 [
-    0 => "12"
-  ]
+  "lstDetails" => "[{"id":1772229118616,"description":"ALMUERZO","total":10}]"
 ]
 */
     public function store(ExitMoneyStoreRequest $request)
@@ -108,10 +104,10 @@ array:9 [ // app\Http\Services\Tenant\Cash\ExitMoney\ExitMoneyService.php:17
 
             $exit   =   $this->s_manager->store($request->toArray());
 
-            Session::flash('message_success', 'EGRESO REGISTRADO CON ÉXITO');
+            Session::flash('message_success', 'Egreso registrado con éxito');
 
-            //DB::commit();
-            return response()->json(['success' => true, 'message' => 'EGRESO REGISTRADO CON ÉXITO']);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Egreso registrado con éxito']);
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
@@ -125,117 +121,67 @@ array:9 [ // app\Http\Services\Tenant\Cash\ExitMoney\ExitMoneyService.php:17
         $company = Company::first();
 
 
-        $pdf = Pdf::loadView('cash.exit-money.pdf', compact('exit_money', 'exit_money_detail', 'company'));
+        $pdf = Pdf::loadView('cash.exit-money.reports.pdf-one', compact('exit_money', 'exit_money_detail', 'company'));
 
         return $pdf->stream('egreso_' . $exit_money->id . '.pdf');
     }
 
     public function editExit($id)
     {
-        $exit_money = ExitMoney::findOrFail($id);
-        $exit_money_detail = ExitMoneyDetail::where('exit_money_id', $exit_money->id)->get();
-        $suppliers = Supplier::all();
-        $proof_payments = ProofPayment::all();
+        $proof_payments     =   ProofPayment::all();
+        $payment_methods    =   PaymentMethod::where('estado', 'ACTIVO')->get();
         $cost_center        =   CostCenter::where('status', 'ACTIVO')->get();
+        $exit_money         =   ExitMoney::findOrFail($id);
+        $exit_money_detail  =   ExitMoneyDetail::where('exit_money_id', $exit_money->id)->get();
+        $supplier_formatted =   FormatController::getFormatSupplier($exit_money->supplier_id);
 
         return view('cash.exit-money.edit', compact(
+            'proof_payments',
+            'payment_methods',
+            'cost_center',
             'exit_money',
             'exit_money_detail',
-            'suppliers',
-            'proof_payments',
-            'cost_center'
+            'supplier_formatted'
         ));
     }
 
-    public function updateExit(Request $request, $id)
+
+    /*
+array:9 [ // app\Http\Controllers\Tenant\Cash\ExitMoneyController.php:145
+  "_token" => "plI5G8t5WW6JnSFBbtKhdipddMLzgqzr1XxElaSW"
+  "proof_payment" => "1"
+  "number" => "B002-12"
+  "date" => null
+  "payment_method_id" => "1"
+  "supplier_id" => "1"
+  "cost_center" => "3"
+  "_method" => "PUT"
+  "lstDetails" => "[{"id":1772230768407,"description":"A","total":10}]"
+]
+*/
+    public function updateExit(ExitMoneyUpdateRequest $request, $id)
     {
+        try {
+            $exit_money =   $this->s_manager->update($request->toArray(), $id);
+            Session::flash('message_success', 'Egreso actualizado con éxito');
 
-        $request->validate([
-            'proof_payment' => 'required',
-            'number' => 'required',
-            'date' => 'required|date',
-            'supplier_id' => 'required|exists:suppliers,id',
-            'description.*' => 'required|string',
-            'total.*' => 'required|numeric|min:0',
-        ], [
-            'proof_payment.required' => 'El tipo de comprobante es obligatorio.',
-            'number.required' => 'El número es obligatorio.',
-            'date.required' => 'La fecha de emisión es obligatoria.',
-            'date.date' => 'La fecha debe tener un formato válido.',
-            'supplier_id.required' => 'Debe seleccionar un proveedor.',
-            'supplier_id.exists' => 'El proveedor seleccionado no es válido.',
-            'description.*.required' => 'La descripción es obligatoria.',
-            'description.*.string' => 'La descripción debe ser un texto.',
-            'total.*.required' => 'El total es obligatorio.',
-            'total.*.numeric' => 'El total debe ser un número válido.',
-            'total.*.min' => 'El total debe ser un valor positivo.',
-        ]);
-
-        // Buscar el registro de egreso de dinero actual
-        $exit_money = ExitMoney::findOrFail($id);
-        $cajaAbierta = PettyCashBook::where('status', 'open')->first();
-
-        // Guardar el total actual antes de actualizar
-        $totalAnterior = $exit_money->total;
-
-        // Actualizar los datos de ExitMoney
-        $exit_money->proof_payment_id = $request->proof_payment;
-        $exit_money->number = $request->number;
-        $exit_money->date = $request->date;
-        $exit_money->supplier_id = $request->supplier_id;
-        $exit_money->total = 0; // Reseteamos a 0 porque vamos a recalcularlo con los nuevos detalles
-        $exit_money->save();
-
-        // Eliminar los detalles antiguos
-        DB::table('exit_money_detail')->where('exit_money_id', $id)->delete();
-
-        // Asegurarse de que la caja tiene un monto inicial de cierre
-        if ($cajaAbierta->closing_amount == null) {
-            $cajaAbierta->closing_amount = $cajaAbierta->initial_amount;
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Egreso actualizado con éxito']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
-
-        // Recalcular el total con los nuevos detalles y agregar detalles de la transacción
-        for ($i = 0; $i < count($request->description); $i++) {
-            $booking_detail = new ExitMoneyDetail();
-            $booking_detail->exit_money_id = $exit_money->id;
-            $booking_detail->description = $request->description[$i];
-            $booking_detail->total = $request->total[$i];
-            $booking_detail->save();
-
-            // Incrementar el total del registro de exit_money
-            DB::table('exit_money')->where('id', $exit_money->id)->increment('total', $request->total[$i]);
-        }
-
-        // Obtener el nuevo total actualizado
-        $totalActualizado = DB::table('exit_money')->where('id', $exit_money->id)->value('total');
-
-        // Calcular la diferencia entre el total anterior y el total actualizado
-        $diferencia = $totalActualizado - $totalAnterior;
-
-        // Actualizar el closing_amount solo con la diferencia
-        $cajaAbierta->closing_amount -= $diferencia;
-        $cajaAbierta->save();
-
-        return redirect()->route('tenant.cajas.egreso');
     }
-
 
     public function destroy($id)
     {
         DB::beginTransaction();
         try {
-            $exit_money         = ExitMoney::findOrFail($id);
-            $exit_money->status = false;
-            $exit_money->save();
 
-            $caja                   =   PettyCashBook::where('id', $exit_money->petty_cash_book_id)->first();
-            $totalActualizado       =   DB::table('exit_money')->where('id', $exit_money->id)->value('total');
-            $caja->closing_amount   =   $caja->closing_amount + $totalActualizado;
-
-            $caja->save();
+            $exit_money =   $this->s_manager->destroy($id);
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'EGRESO ELIMINADO CON ÉXITO']);
+            return response()->json(['success' => true, 'message' => 'Egreso eliminado con éxito']);
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);

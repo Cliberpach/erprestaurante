@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('date');
 
             $table->unsignedBigInteger('cost_center_id');
-            $table->string('cost_center_name',200);
+            $table->string('cost_center_name', 200);
 
             $table->double('total');
             $table->boolean('status')->default(true);
@@ -35,6 +35,15 @@ return new class extends Migration
             $table->unsignedBigInteger('petty_cash_book_id');
             $table->string('payment_method_name', 160);
 
+            $table->boolean('discount_cash')->default(false);
+
+            $table->unsignedBigInteger('creator_user_id')->nullable();
+            $table->unsignedBigInteger('editor_user_id')->nullable();
+            $table->unsignedBigInteger('deletor_user_id')->nullable();
+
+            $table->string('deletor_user_name')->nullable();
+            $table->string('editor_user_name')->nullable();
+            $table->string('creator_user_name')->nullable();
         });
     }
 

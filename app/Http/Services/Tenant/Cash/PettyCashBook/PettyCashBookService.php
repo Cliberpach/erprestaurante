@@ -6,8 +6,8 @@ use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Cash\PettyCash\CashService;
 use App\Http\Services\Tenant\Supply\Programming\ProgrammingService;
 use App\Models\Company;
-use App\Models\ExitMoney;
 use App\Models\Tenant\Accounts\CustomerAccountDetail;
+use App\Models\Tenant\Cash\ExitMoney\ExitMoney;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
@@ -220,6 +220,7 @@ class PettyCashBookService
     {
         $expenses = ExitMoney::where('petty_cash_book_id', $id)
             ->where('status', '1')
+            ->where('discount_cash', true)
             ->get();
 
         $report_expenses = [];

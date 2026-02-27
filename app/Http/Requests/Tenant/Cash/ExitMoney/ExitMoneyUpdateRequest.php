@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
 
-class ExitMoneyStoreRequest extends FormRequest
+class ExitMoneyUpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {

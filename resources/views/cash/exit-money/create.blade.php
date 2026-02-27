@@ -17,6 +17,9 @@
 
 @section('js')
     <script>
+        let exitDetails = [];
+        let counter = 1;
+
         document.addEventListener('DOMContentLoaded', function() {
             calcularTotalEgreso();
             events();
@@ -26,204 +29,131 @@
         function events() {
             eventsMdlCostCenter();
 
-            const proofPaymentSelect = document.getElementById('proof_payment');
-            const identityDocumentSelect = document.getElementById('identity_document');
-            const documentNumberInput = document.getElementById('document_number');
 
             document.querySelector('#form-create-exit-money').addEventListener('submit', (e) => {
                 e.preventDefault();
                 storeExitMoney(e.target);
             })
 
-            proofPaymentSelect.addEventListener('change', function() {
-                const selectedProofPayment = proofPaymentSelect.options[proofPaymentSelect.selectedIndex]
-                    .text;
+        }
 
-                if (selectedProofPayment === 'BOLETA ELECTRÓNICA' || selectedProofPayment ===
-                    'FACTURA ELECTRÓNICA') {
-                    identityDocumentSelect.innerHTML = `
-                    <option value="DNI">DNI</option>
-                    <option value="RUC">RUC</option>
-                `;
-                } else {
-                    identityDocumentSelect.innerHTML = `
-                    <option value="DNI">DNI</option>
-                `;
-                }
-            });
+        /* ===============================
+           AGREGAR ITEM
+        ================================= */
+        function addRow() {
 
-            documentNumberInput.addEventListener('input', function() {
-                const identifyDocument = identityDocumentSelect.value;
-                const userDocument = documentNumberInput.value;
+            const newItem = {
+                id: Date.now(),
+                description: '',
+                total: 0
+            };
 
-                if (identifyDocument === 'RUC' && userDocument.length > 11) {
-                    documentNumberInput.value = userDocument.slice(0, 11);
-                } else if (identifyDocument === 'DNI' && userDocument.length > 8) {
-                    documentNumberInput.value = userDocument.slice(0, 8);
-                }
-            });
+            exitDetails.push(newItem);
 
-            document.addEventListener('click', function(event) {
-                if (event.target && event.target.id === 'btn_consulta_sunat') {
-                    const userDocument = document.getElementById('document_number').value;
-                    const identifyDocument = document.getElementById('identity_document').value;
-
-                    if (identifyDocument === 'RUC' && userDocument.length === 11) {
-                        Swal.fire({
-                            title: 'Consultar',
-                            text: "¿Desea consultar RUC a Sunat?",
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonColor: "#696cff",
-                            confirmButtonText: 'Si, Confirmar',
-                            cancelButtonText: "No, Cancelar",
-                            showLoaderOnConfirm: true,
-                            preConfirm: function() {
-                                var url = '/landlord/ruc/' + userDocument;
-                                return fetch(url, {
-                                        method: 'GET',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Accept': 'application/json'
-                                        }
-                                    }).then(response => response.json())
-                                    .catch(error => {
-                                        console.error('Error al consultar la API:', error);
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: 'Hubo un problema al consultar la API.'
-                                        });
-                                    });
-                            },
-                            allowOutsideClick: function() {
-                                return !Swal.isLoading();
-                            }
-                        }).then(function(result) {
-                            if (result.isConfirmed) {
-                                var data = result.value;
-                                if (data.success === false) {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Oops...',
-                                        text: 'RUC inválido o no existe!'
-                                    });
-                                } else {
-                                    document.getElementById('name').value = data.data.nombre_o_razon_social;
-                                    document.getElementById('address').value = data.data.direccion;
-                                }
-                            }
-                        }).catch(function(error) {
-                            console.error('Error al consultar la API:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Hubo un problema al consultar la API.'
-                            });
-                        });
-                    } else if (identifyDocument === 'DNI' && userDocument.length === 8) {
-                        Swal.fire({
-                            title: 'Consultar',
-                            text: "¿Desea consultar DNI a Sunat?",
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonColor: "#696cff",
-                            confirmButtonText: 'Si, Confirmar',
-                            cancelButtonText: "No, Cancelar",
-                            showLoaderOnConfirm: true,
-                            preConfirm: function() {
-                                var url = '/landlord/dni/' + userDocument;
-                                return fetch(url, {
-                                        method: 'GET',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Accept': 'application/json'
-                                        }
-                                    }).then(response => response.json())
-                                    .catch(error => {
-                                        console.error('Error al consultar la API:', error);
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: 'Hubo un problema al consultar la API.'
-                                        });
-                                    });
-                            },
-                            allowOutsideClick: function() {
-                                return !Swal.isLoading();
-                            }
-                        }).then(function(result) {
-                            if (result.isConfirmed) {
-                                var data = result.value;
-                                if (data.success === false) {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Oops...',
-                                        text: 'DNI inválido o no existe!'
-                                    });
-                                } else {
-                                    document.getElementById('name').value = data.data.nombre_completo;
-                                    document.getElementById('address').value = '';
-                                }
-                            }
-                        }).catch(function(error) {
-                            console.error('Error al consultar la API:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Hubo un problema al consultar la API.'
-                            });
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Mala escritura de RUC o DNI'
-                        });
-                    }
-                }
-            });
+            renderTable();
         }
 
 
+        /* ===============================
+           RENDERIZAR TABLA
+        ================================= */
+        function renderTable() {
 
-        let i = 2;
+            const tbody = document.querySelector('#egreso-detail tbody');
+            tbody.innerHTML = '';
 
-        function addRow() {
-            fila = `
+            exitDetails.forEach((item, index) => {
+
+                const row = `
                 <tr>
-                    <td width="5%">${i++}</td>
-                    <td width="60%"><input type="text" name="description[]" class="form-control" oninput="this.value = this.value.toUpperCase()"></td>
-                    <td width="10%"><input type="text" name="total[]" class="form-control text-center" oninput="calcularTotalEgreso()"></td>
+                    <td class="text-center">${index + 1}</td>
+
                     <td>
-                        <button type="button" class="btn btn-danger" onclick="deleteRow(this)"><i class='fas fa-trash'></i></button>
+                        <input type="text"
+                            class="form-control input-fill"
+                            value="${item.description}"
+                            oninput="updateDescription(${item.id}, this.value)">
+                    </td>
+
+                    <td>
+                        <input type="number"
+                            step="0.01"
+                            class="form-control text-end inputDecimalPositivo input-fill"
+                            value="${item.total}"
+                            oninput="updateTotal(${item.id}, this.value)">
+                    </td>
+
+                    <td class="text-center">
+                        <button type="button"
+                            class="btn btn-danger btn-sm"
+                            onclick="deleteRow(${item.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `;
 
-            $("#egreso-detail tbody").append(fila);
-            calcularTotalEgreso();
-        }
-
-        function calcularTotalEgreso() {
-            let total = 0;
-            let totalAcumulado = document.getElementById('total-del-egreso');
-
-            document.querySelectorAll('input[name="total[]"]').forEach(function(input) {
-                const valor = parseFloat(input.value) || 0;
-                total += valor;
+                tbody.insertAdjacentHTML('beforeend', row);
             });
 
-            totalAcumulado.innerText = total.toFixed(2);
+            calcularTotalEgreso();
         }
 
 
+        /* ===============================
+           ACTUALIZAR DESCRIPCIÓN
+        ================================= */
+        function updateDescription(id, value) {
 
-        function deleteRow(button) {
-            var row = button.parentNode.parentNode;
-            var table = document.getElementById("egreso-detail");
-            table.deleteRow(row.rowIndex);
+            const item = exitDetails.find(d => d.id === id);
+            if (item) {
+                item.description = value.toUpperCase();
+            }
+        }
+
+
+        /* ===============================
+           ACTUALIZAR TOTAL
+        ================================= */
+        function updateTotal(id, value) {
+
+            const item = exitDetails.find(d => d.id === id);
+            if (item) {
+                item.total = parseFloat(value) || 0;
+            }
+
             calcularTotalEgreso();
+        }
+
+
+        /* ===============================
+           ELIMINAR ITEM
+        ================================= */
+        function deleteRow(id) {
+
+            exitDetails = exitDetails.filter(d => d.id !== id);
+
+            renderTable();
+        }
+
+
+        /* ===============================
+           CALCULAR TOTAL
+        ================================= */
+        function calcularTotalEgreso() {
+            let total = exitDetails.reduce((sum, item) => {
+                return sum + item.total;
+            }, 0);
+
+            document.getElementById('total-del-egreso').innerText = total.toFixed(2);
+        }
+
+
+        /* ===============================
+           OBTENER DATA PARA ENVIAR
+        ================================= */
+        function getDetailsForSubmit() {
+            return exitDetails;
         }
 
         function openCreateSupplierModal() {
@@ -234,9 +164,43 @@
             $('#createProofPaymentModal').modal('toggle');
         }
 
-        async function storeExitMoney(formStoreExitMoney) {
+        function validateExitDetails(details) {
 
+            let errors = [];
+
+            if (!Array.isArray(details) || details.length === 0) {
+                errors.push('Debe agregar al menos un detalle.');
+                return errors;
+            }
+
+            for (let i = 0; i < details.length; i++) {
+
+                const item = details[i];
+
+                if (!item.description || item.description.trim() === '') {
+                    errors.push(`La descripción está vacía en la fila ${i + 1}.`);
+                }
+
+                if (item.total === null || item.total === undefined || item.total <= 0) {
+                    errors.push(`El total debe ser mayor a 0 en la fila ${i + 1}.`);
+                }
+
+                if (errors.length >= 2) {
+                    break;
+                }
+            }
+
+            return errors;
+        }
+
+        async function storeExitMoney(formStoreExitMoney) {
             toastr.clear();
+
+            const errors = validateExitDetails(exitDetails);
+            if (errors.length > 0) {
+                toastr.error(errors.join('\n'));
+                return;
+            }
 
             const result = await Swal.fire({
                 title: '¿Desea registrar la salida de dinero?',
@@ -270,6 +234,7 @@
                     });
 
                     const formData = new FormData(formStoreExitMoney);
+                    formData.append('lstDetails', JSON.stringify(exitDetails));
                     const res = await axios.post(route('tenant.cajas.egresos.store'), formData);
 
                     if (res.data.success) {

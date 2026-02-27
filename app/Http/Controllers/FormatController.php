@@ -60,6 +60,30 @@ class FormatController extends Controller
         return $customer_formatted;
     }
 
+    public static function getFormatSupplier(int $supplier_id): array
+    {
+        $supplier   =   DB::table('suppliers as s')
+            ->select(
+                's.id',
+                DB::raw('CONCAT(s.type_document_abbreviation,":",s.document_number,"-",s.name) as full_name'),
+                's.email'
+            )
+            ->where('s.id', $supplier_id)
+            ->first();
+
+        if (!$supplier) {
+            return [];
+        }
+
+        $supplier_formatted = [
+            'id'        => $supplier->id,
+            'full_name' => $supplier->full_name,
+            'email'     => $supplier->email,
+        ];
+
+        return $supplier_formatted;
+    }
+
     public static function formatLstProducts(array $items): array
     {
         $formatted = [];

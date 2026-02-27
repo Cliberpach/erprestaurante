@@ -62,6 +62,13 @@
                         searchable: false
                     },
                     {
+                        data: 'cash_book_code',
+                        name: 'cash_book_code',
+                        className: "text-center",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
                         data: 'date',
                         name: 'em.date',
                         className: "text-center",
@@ -96,7 +103,32 @@
                         orderable: true,
                         searchable: false,
                         render: function(data) {
-                            return "S/ " + parseFloat(data).toFixed(2);
+                            return formatSoles(data);
+                        }
+                    },
+                    {
+                        data: 'discount_cash',
+                        name: 'em.discount_cash',
+                        className: "text-center align-middle",
+                        orderable: true,
+                        searchable: false,
+                        render: function(data) {
+
+                            if (data == 1 || data === true) {
+                                return `
+                                    <span class="badge rounded-pill bg-primary-subtle text-primary fw-semibold px-2 py-1">
+                                        <i class="fas fa-cash-register me-1"></i>
+                                        Descontado
+                                    </span>
+                                `;
+                            } else {
+                                return `
+                                    <span class="badge rounded-pill bg-danger-subtle text-danger fw-semibold px-2 py-1">
+                                        <i class="fas fa-ban me-1"></i>
+                                        No descontado
+                                    </span>
+                                `;
+                            }
                         }
                     },
                     {
@@ -104,31 +136,56 @@
                         searchable: false,
                         className: "text-center",
                         render: function(data) {
-                            const pdfUrl = `{{ route('tenant.cajas.egresos.pdf', ':id') }}`.replace(':id', data
-                                .id);
-                            const editUrl = `{{ route('tenant.cajas.egresos.edit', ':id') }}`.replace(':id', data
-                                .id);
+
+                            const pdfUrl = `{{ route('tenant.cajas.egresos.pdf', ':id') }}`
+                                .replace(':id', data.id);
+
+                            const editUrl = `{{ route('tenant.cajas.egresos.edit', ':id') }}`
+                                .replace(':id', data.id);
 
                             return `
-                                <div class="d-flex justify-content-center gap-1">
-                                    <a class="btn btn-info btn-sm" href="${pdfUrl}">
-                                        Ver
-                                    </a>
-
-                                    <a class="btn btn-primary btn-sm" href="${editUrl}">
-                                        Editar
-                                    </a>
-
-                                    <button class="btn btn-danger btn-sm" onclick="anularExitMoney(${data.id})">
-                                        Anular
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-primary border dropdown-toggle"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
                                     </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                            href="${pdfUrl}" target="_blank">
+                                                <i class="fas fa-file-pdf text-danger"></i>
+                                                PDF
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                            href="${editUrl}">
+                                                <i class="fas fa-pen text-primary"></i>
+                                                Editar
+                                            </a>
+                                        </li>
+
+                                        <li><hr class="dropdown-divider"></li>
+
+                                        <li>
+                                            <button class="dropdown-item d-flex align-items-center gap-2 text-danger"
+                                                    onclick="anularExitMoney(${data.id})">
+                                                <i class="fas fa-ban"></i>
+                                                Anular
+                                            </button>
+                                        </li>
+
+                                    </ul>
                                 </div>
                             `;
                         }
                     }
-
                 ],
-
                 language: {
                     decimal: "",
                     emptyTable: "No hay datos disponibles en la tabla",
@@ -156,7 +213,7 @@
 
         function anularExitMoney(id) {
             const fila = getRowById(dtExitMoneys, id);
-            const reason = fila.reason;
+            const costCenterName = fila.cost_center_name;
             const total = parseFloat(fila.total).toFixed(2);
             const date = fila.date;
             const supplier = fila.supplier_name;
@@ -173,7 +230,7 @@
                     </p>
                     <p class="mb-2">
                         <i class="fas fa-receipt text-primary me-2"></i>
-                        <strong>Motivo:</strong> ${reason}
+                        <strong>Motivo:</strong> ${costCenterName}
                     </p>
                     <p class="mb-0">
                         <i class="fas fa-dollar-sign text-success me-2"></i>

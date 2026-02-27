@@ -1,13 +1,14 @@
 <form id="form-create-exit-money" method="POST">
     @csrf
 
+
     <!-- HEADER -->
     <div class="card-header border-0 py-3">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-solid fa-money-bill-wave text-primary fs-5"></i>
-                <h5 class="fw-semibold mb-0">Editar Egreso</h5>
+                <h5 class="fw-semibold mb-0">Registrar Egreso</h5>
             </div>
 
             <div class="d-flex gap-2">
@@ -35,7 +36,7 @@
                 </label>
                 <select name="proof_payment" id="proof_payment" class="form-select">
                     @foreach ($proof_payments as $proof_payment)
-                        <option value="{{ $proof_payment->id }}">
+                        <option @if ($exit_money->proof_payment_id == $proof_payment->id) selected @endif value="{{ $proof_payment->id }}">
                             {{ $proof_payment->description }}
                         </option>
                     @endforeach
@@ -48,8 +49,8 @@
                     <i class="fa-solid fa-hashtag text-secondary me-1"></i>
                     Número
                 </label>
-                <input required type="text" name="number" id="number" class="form-control input-fill"
-                    placeholder="Ingrese número">
+                <input value="{{ $exit_money->number }}" required type="text" name="number" id="number"
+                    class="form-control input-fill" placeholder="Ingrese número">
             </div>
 
             <!-- Fecha -->
@@ -58,7 +59,7 @@
                     <i class="fa-solid fa-calendar-day text-secondary me-1"></i>
                     Fecha de emisión
                 </label>
-                <input type="date" name="date" id="date" class="form-control" value="{{ $date }}"
+                <input type="date" name="date" id="date" class="form-control" value="{{ $exit_money->date }}"
                     readonly>
             </div>
 
@@ -70,7 +71,7 @@
                 </label>
                 <select name="payment_method_id" id="payment_method_id" class="form-select">
                     @foreach ($payment_methods as $payment_method)
-                        <option value="{{ $payment_method->id }}">
+                        <option @if ($exit_money->payment_method_id == $payment_method->id) selected @endif value="{{ $payment_method->id }}">
                             {{ $payment_method->description }}
                         </option>
                     @endforeach
@@ -103,7 +104,7 @@
                     <select name="cost_center" id="cost_center" class="form-select" data-placeholder="Seleccionar">
                         <option value=""></option>
                         @foreach ($cost_center as $item)
-                            <option value="{{ $item->id }}">
+                            <option value="{{ $item->id }}" @if ($exit_money->cost_center_id == $item->id) selected @endif>
                                 {{ $item->name }}
                             </option>
                         @endforeach
@@ -111,17 +112,6 @@
                     <button class="btn btn-warning" type="button" onclick="openMdlCostCenter()">
                         <i class="fa-solid fa-plus"></i>
                     </button>
-                </div>
-            </div>
-
-            <div class="col-md-3 mb-3">
-                <label class="form-label fw-bold" for="discount_cash">
-                    <i class="fas fa-cash-register text-secondary"></i>
-                    Descontar de Caja
-                </label>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="discount_cash" name="discount_cash"
-                        style="transform: scale(1.3); cursor: pointer;">
                 </div>
             </div>
 
