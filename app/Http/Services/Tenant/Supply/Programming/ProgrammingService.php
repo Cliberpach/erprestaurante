@@ -29,7 +29,7 @@ class ProgrammingService
 
         $dto    =   $this->s_dto->getDtoDetail($data, $item);
         $this->s_repository->insertDetail($dto);
-        dd('y dale U');
+      
         return $item;
     }
 
