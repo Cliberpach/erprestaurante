@@ -33,7 +33,6 @@ class ProgrammingService
         return $item;
     }
 
-
     public function update(array $data, int $id): Programming
     {
         $instance               =   $this->s_repository->find($id);

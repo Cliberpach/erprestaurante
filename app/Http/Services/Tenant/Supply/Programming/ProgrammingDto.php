@@ -2,12 +2,10 @@
 
 namespace App\Http\Services\Tenant\Supply\Programming;
 
-use App\Models\Company;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\Programming\Programming;
 use App\Models\Tenant\Supply\TypeDish\TypeDish;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 
 class ProgrammingDto

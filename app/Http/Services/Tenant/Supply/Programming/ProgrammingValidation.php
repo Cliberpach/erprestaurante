@@ -21,7 +21,7 @@ class ProgrammingValidation
     {
         $petty_cash_id      =   $data['cash_available_id'];
         $petty_cash_book    =   $this->pcb_service->getCashBookCash($petty_cash_id);
-
+        dd($petty_cash_book);
         if (!$petty_cash_book) {
             throw new Exception("Debes seleccionar una caja abierta.");
         }
