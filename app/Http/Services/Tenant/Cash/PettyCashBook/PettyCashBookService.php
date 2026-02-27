@@ -65,7 +65,8 @@ class PettyCashBookService
         $consolidated_items =   $this->getConsolidatedItems($id);
 
         //========= EGRESOS ===========
-        $exit_moneys            =   ExitMoney::where('petty_cash_book_id', $id)->where('status', true)->get();
+        $exit_moneys            =   ExitMoney::where('petty_cash_book_id', $id)
+                                    ->where('status', true)->where('discount_cash', true)->get();
 
         //======= OBTENER DATOS DE LA EMPRESA ========
         $company = Company::first();
