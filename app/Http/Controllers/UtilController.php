@@ -12,6 +12,7 @@ use App\Models\Landlord\TypeIdentityDocument;
 use App\Models\Landlord\Year;
 use App\Models\Province;
 use App\Models\Tenant\DocumentSerialization;
+use App\Models\Tenant\Maintenance\Company\Company as CompanyTenant;
 use App\Models\Tenant\Maintenance\Company\CompanyInvoice;
 use App\Models\Tenant\Maintenance\Company\ModuleChild;
 use App\Models\Tenant\Maintenance\CostCenter;
@@ -30,7 +31,7 @@ class UtilController extends Controller
 
     public static function saveImg(UploadedFile $file, string $fileName, $folder): string
     {
-        $files_route                =   Company::findOrFail(1)->files_route;
+        $files_route                =   CompanyTenant::findOrFail(1)->files_route;
         $path                       =   $files_route . '/' . $folder;
 
         Storage::disk('public')->putFileAs($path, $file, $fileName);
