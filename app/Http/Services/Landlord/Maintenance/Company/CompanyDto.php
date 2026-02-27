@@ -87,6 +87,7 @@ class CompanyDto
             'fiscal_address'            =>  $data['direccion_fiscal'],
             'email'                     =>  $data['correo'],
             'plan'                      =>  $data['plan_id'],
+            'igv'                       =>  10.5
         ];
         return $dto;
     }

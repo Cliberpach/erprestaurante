@@ -47,7 +47,6 @@ class CompanyService
         $data['modules']            =   $this->s_repository->getModulesLandlord($data['module_id']);
         $data['modules_childrens']  =   $this->s_repository->getModulesChildrenLandlord($data['child_id']);
         $data['plan_id']            =   $data['plan_id'];
-        $data['files_route']        =   $company_landlord->files_route;
         DB::connection('landlord')->commit();
 
         $data_tenant                =   $this->insertDataTenant($tenant, $data);
@@ -435,7 +434,7 @@ class CompanyService
         $tenant->makeCurrent();
         DB::connection('tenant')->beginTransaction();
         try {
-        
+
             $this->s_repository->blockAccountTenant($data['block_account']);
             DB::connection('tenant')->commit();
 

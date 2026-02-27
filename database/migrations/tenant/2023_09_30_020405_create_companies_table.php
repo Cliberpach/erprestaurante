@@ -42,7 +42,7 @@ return new class extends Migration
             // Facturacion Electronica
             $table->enum('invoicing_status', [0, 1])->default(0);
             $table->enum('status', [0, 1])->nullable()->default(1);
-            $table->decimal('igv', 10, 4)->unsigned()->default(18);
+            $table->decimal('igv', 10, 4)->unsigned()->default(10.5);
 
             $table->boolean('block_account')->default(false);
 
