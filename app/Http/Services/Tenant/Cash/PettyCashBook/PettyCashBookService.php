@@ -66,7 +66,7 @@ class PettyCashBookService
 
         //========= EGRESOS ===========
         $exit_moneys            =   ExitMoney::where('petty_cash_book_id', $id)
-                                    ->where('status', true)->where('discount_cash', true)->get();
+            ->where('status', true)->where('discount_cash', true)->get();
 
         //======= OBTENER DATOS DE LA EMPRESA ========
         $company = Company::first();
@@ -95,7 +95,8 @@ class PettyCashBookService
                 'cad.created_at'
             )->get();
 
-        $have_module_customer_accounts     =   UtilController::haveModuleCustomerAccounts();
+        $have_module_customer_accounts      =   UtilController::haveModuleCustomerAccounts();
+        $consolidated_cash                  =   $this->consolidatedCash($petty_cash_book, $consolidated);
 
         //====== VISTA PDF ==========
         $pdf = Pdf::loadView(
@@ -112,7 +113,8 @@ class PettyCashBookService
                 'customer_pays',
                 'consolidated_items',
 
-                'have_module_customer_accounts'
+                'have_module_customer_accounts',
+                'consolidated_cash'
             )
         );
 
@@ -124,6 +126,20 @@ class PettyCashBookService
 
         //======= VISUALIZAR PDF ==========
         return $pdf->stream('caja_movimiento' . $petty_cash_book->id . '.pdf');
+    }
+
+    public function consolidatedCash($petty_cash_book, $consolidated)
+    {
+        $initial_amount     =   $petty_cash_book->initial_amount;
+        $sales_amount       =   $consolidated['report_sales']['report'][0]['amount'];
+        $expenses_amount    =   $consolidated['report_expenses']['report'][0]['amount'];
+        $total              =   $initial_amount + $sales_amount - $expenses_amount;
+        return (object)[
+            'initial_amount'    =>  $initial_amount,
+            'sales_amount'      =>  $sales_amount,
+            'expenses_amount'   =>  $expenses_amount,
+            'total'             =>  $total
+        ];
     }
 
     function totalEgresosPorMetodoPago($paymentMethods, $exitMoneys): array

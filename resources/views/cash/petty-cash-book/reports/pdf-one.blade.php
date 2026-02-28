@@ -420,8 +420,37 @@
             </tbody>
         </table>
 
-        <h5 style="font-size:10px; margin-top:25px;">RESUMEN FINAL</h5>
 
+        <h5 style="font-size:10px; margin-top:25px;">RESUMEN DE EFECTIVO</h5>
+        <table class="table-info table-sm table" style="border-collapse: collapse; width: 100%;">
+            <tr>
+                <th>SALDO INICIAL</th>
+                <td style="text-align:right;">
+                    {{ number_format($consolidated_cash->initial_amount, 2, '.', ',') }}
+                </td>
+            </tr>
+            <tr>
+                <th> TOTAL VENTAS</th>
+                <td style="text-align:right;">
+                    {{ number_format($consolidated_cash->sales_amount, 2, '.', ',') }}
+                </td>
+            </tr>
+            <tr>
+                <th> TOTAL EGRESOS</th>
+                <td style="text-align:right;">
+                    {{ number_format($consolidated_cash->expenses_amount, 2, '.', ',') }}
+                </td>
+            </tr>
+
+            <tr style="background:#e0f7fa;">
+                <th>TOTAL</th>
+                <td style="text-align:right; font-weight:bold;">
+                    {{ number_format($consolidated_cash->total, 2, '.', ',') }}
+                </td>
+            </tr>
+        </table>
+
+        <h5 style="font-size:10px; margin-top:25px;">RESUMEN FINAL</h5>
         <table class="table-info table-sm table" style="border-collapse: collapse; width: 100%;">
             <tr>
                 <th>SALDO INICIAL</th>
