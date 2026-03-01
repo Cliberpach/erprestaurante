@@ -80,6 +80,9 @@ class DatabaseSeeder extends Seeder
     {
         // example: $this->call(ModuleSeeder::class);
         // note: no olvida llamar al seeder en use part
+        $this->call(DepartmentSeeder::class);
+        $this->call(ProvinceSeeder::class);
+        $this->call(DistrictSeeder::class);
         $this->call(ModuleSeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(LandlordPositionSeeder::class);
