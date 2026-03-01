@@ -1,5 +1,5 @@
 <?php
-ob_start();
+ob_start(); //====== USAR EN DOCKER CON WINDOWS ======
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
