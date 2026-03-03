@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Auth;
 class ModuleController extends Controller
 {
     public function home()
-    {        
+    {
 
         if (auth()->user()->hasRole('MESERO')) {
-            return view('waiter_counter.counter.index');
+            return redirect()->route('tenant.mostrador_mesero.mostrador.index');
         }
         if (auth()->user()->hasRole('CAJERO')) {
             return view('cashier_counter.counter.index');

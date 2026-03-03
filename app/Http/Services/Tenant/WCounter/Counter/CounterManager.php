@@ -49,8 +49,13 @@ class CounterManager
         return $this->s_service->changeTable($data);
     }
 
-    public function destroy(array $data,int $id): Order
+    public function destroy(array $data, int $id): Order
     {
-        return $this->s_service->destroy($data,$id);
+        return $this->s_service->destroy($data, $id);
+    }
+
+    public function addPay(array $data, int $id): Order
+    {
+        return $this->s_service->addPay($data, $id);
     }
 }

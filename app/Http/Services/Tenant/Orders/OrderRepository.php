@@ -5,6 +5,8 @@ namespace App\Http\Services\Tenant\Orders;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\Orders\OrderDish;
 use App\Models\Tenant\Orders\OrderProduct;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OrderRepository
@@ -243,5 +245,14 @@ class OrderRepository
 
         $this->cancelOrderDishes($id);
         $this->cancelOrderProducts($id);
+    }
+
+    public function auditPayRef(Order $order)
+    {
+        $user                       =   Auth::user();
+        $order->payref_user_id      =   $user->id;
+        $order->payref_user_name    =   $user->name;
+        $order->payref_date         =   Carbon::now();
+        $order->save();
     }
 }

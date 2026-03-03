@@ -59,4 +59,9 @@ class CounterService
     {
         return $this->s_order->destroy($data, $id);
     }
+
+    public function addPay(array $data, int $id): Order
+    {
+        return $this->s_order->addPay($data, $id);
+    }
 }

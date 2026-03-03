@@ -363,4 +363,27 @@ class OrderService
 
         return $order;
     }
+
+    public function addPay(array $data, int $id): Order
+    {
+        $order  =   $this->s_repository->findOrder($id);
+        $data['order']  =   $order;
+        $this->s_validation->validationAddPay($data);
+
+        $dto    =   $this->s_dto->getDtoAddPay($data);
+
+        $payref_img_name_prev  =   $order->payref_img_name;
+
+        //========= SAVE VOUCHER ===========
+        if (isset($data['voucher'])) {
+            if ($payref_img_name_prev) {
+                UtilController::deleteFile($order->payref_img_url);
+            }
+            UtilController::saveImg($data['voucher'], $dto['payref_img_name'], 'orders/payrefs/');
+        }
+
+        $order  =   $this->s_repository->update($id, $dto);
+
+        return $order;
+    }
 }

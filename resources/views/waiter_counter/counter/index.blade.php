@@ -4,12 +4,14 @@
     Mostrador Mozo
 @endsection
 
-@section('app-page-head','d-none')
+@section('app-page-head', 'd-none')
 
 @section('content')
     @include('waiter_counter.counter.modals.mdl_show')
     @include('waiter_counter.counter.modals.mdl_change_table')
     @include('waiter_counter.counter.modals.mdl_delete_order')
+    @include('waiter_counter.counter.modals.mdl_charge')
+
     <div class="card overflow-hidden">
 
         <div class="card-header d-flex align-items-center justify-content-between">
@@ -60,6 +62,7 @@
             eventsMdlChangeTbl();
             eventsMdlDeleteOrder();
             eventsGridList();
+            eventsMdlCharge();
         }
 
         function toOrderCreate(tableId) {

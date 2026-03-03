@@ -59,6 +59,10 @@ class Order extends Model
         'payref_img_url',
         'payref_img_name',
         'payref_name',
+        
+        'payref_user_id',
+        'payref_user_name',
+        'payref_date',
 
         'sale_id',
         'sale_serie',

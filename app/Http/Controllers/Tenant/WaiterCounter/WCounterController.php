@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Tenant\WaiterCounter;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Tenant\WaiterCounter\WaiterCounterAddPayRequest;
 use App\Http\Requests\Tenant\WaiterCounter\WaiterCounterStoreRequest;
 use App\Http\Services\Tenant\Supply\Table\TableService;
 use App\Http\Services\Tenant\WCounter\Counter\CounterManager;
+use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Supply\Table\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -25,7 +27,8 @@ class WCounterController extends Controller
 
     public function index(): View
     {
-        return view('waiter_counter.counter.index');
+        $payment_methods    =   PaymentMethod::where('estado', 'ACTIVO')->get();
+        return view('waiter_counter.counter.index', compact('payment_methods'));
     }
 
     public function getAll(Request $request)
@@ -261,6 +264,31 @@ array:2 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:23
             $order  =   $this->s_manager->destroy($request->toArray(), $id);
             DB::commit();
             return response()->json(['success' => true, 'message' => 'PEDIDO ELIMINADO CON ÉXITO']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ]);
+        }
+    }
+
+    /*
+array:3 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:281
+  "payment_method" => "2"
+  "_method" => "PUT"
+  "voucher" =Illuminate\Http\UploadedFile {#2363}
+]
+*/
+    public function addPay(WaiterCounterAddPayRequest $request, int $id)
+    {
+        DB::beginTransaction();
+        try {
+            $order  =   $this->s_manager->addPay($request->toArray(), $id);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Pago guardado en pedido con éxito']);
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json([

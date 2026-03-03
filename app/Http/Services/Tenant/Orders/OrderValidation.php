@@ -83,7 +83,7 @@ class OrderValidation
         $order_dishes       =   $this->s_repository->getOrderDishes($id)->toArray();
         $order_products     =   $this->s_repository->getOrderProducts($id)->toArray();
 
-        $lst_detail         =   FormatController::formatDetailOrder($order_products,$order_dishes);
+        $lst_detail         =   FormatController::formatDetailOrder($order_products, $order_dishes);
 
         $table              =   Table::findOrFail($order->table_id);
         $categories         =   Category::all();
@@ -146,7 +146,7 @@ class OrderValidation
             'config_delete'         =>  $config_delete
         ];
 
-        $vars   =   array_merge($vars_mdlcustomer,$vars);
+        $vars   =   array_merge($vars_mdlcustomer, $vars);
 
         return $vars;
     }
@@ -499,6 +499,25 @@ class OrderValidation
 
         if ($password_bd !== $password) {
             throw new Exception("Contraseña incorrecta");
+        }
+    }
+
+
+    public function validationAddPay(array $data)
+    {
+        $user   =   Auth::user();
+        $order  =   $data['order'];
+        if (!$user->hasRole('MESERO')) {
+            throw new Exception('NO TIENES PERMISOS DE MESERO PARA REALIZAR ESTA ACCIÓN!!!');
+        }
+        if ($user->id != $order->creator_user_id) {
+            throw new Exception("ESTA PEDIDO LE PERTENECE A OTRO MESERO");
+        }
+        if ($order->status !== 'ACTIVO') {
+            throw new Exception('No se permite agregar el pago, PEDIDO CON ESTADO: ' . $order->status);
+        }
+        if ($order->status_invoice !== 'NO FACTURADO') {
+            throw new Exception('No se puede agregar el pago, PEDIDO YA FACTURADO');
         }
     }
 }

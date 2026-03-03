@@ -7,10 +7,12 @@ use App\Models\Category;
 use App\Models\Company;
 use App\Models\Landlord\Customer;
 use App\Models\Product;
+use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\TypeDish\TypeDish;
 use App\Models\Tenant\Warehouse;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class OrderDto
 {
@@ -55,7 +57,9 @@ class OrderDto
 
         if (isset($data['voucher'])) {
             $files_route            =   Company::findOrFail(1)->files_route;
-            $file_name              =   uniqid() . '_' . trim($data['voucher']->getClientOriginalName());
+            $extension              =   $data['voucher']->getClientOriginalExtension();
+
+            $file_name              =   uniqid() . '_voucher.' . $extension;
             $dto['payref_img_url']  =   $files_route . '/orders/payrefs/' . $file_name;
             $dto['payref_img_name'] =   $file_name;
         }
@@ -174,5 +178,28 @@ class OrderDto
             'igv'               =>  $igv,
             'igv_percentage'    =>  $igv_percentage
         ];
+    }
+
+    public function getDtoAddPay(array $data): array
+    {
+        $dto    =   [];
+        if (isset($data['voucher'])) {
+
+            $payment_method         =   PaymentMethod::findOrFail($data['payment_method']);
+            $dto['payref_id']       =   $payment_method->id;
+            $dto['payref_name']     =   $payment_method->description;
+
+            $user                   =   Auth::user();
+            $files_route            =   Company::findOrFail(1)->files_route;
+            $extension              =   $data['voucher']->getClientOriginalExtension();
+
+            $file_name              =   uniqid() . '_voucher.' . $extension;
+            $dto['payref_img_url']  =   $files_route . '/orders/payrefs/' . $file_name;
+            $dto['payref_img_name'] =   $file_name;
+            $dto['payref_user_id']  =   $user->id;
+            $dto['payref_user_name'] =   $user->name;
+            $dto['payref_date']     =   now();
+        }
+        return $dto;
     }
 }

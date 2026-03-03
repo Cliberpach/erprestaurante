@@ -14,10 +14,10 @@
             <!-- BODY -->
             <div class="modal-body">
 
-                <div class="row g-3 text-center">
+                <div class="row g-3 justify-content-center text-center">
 
                     <!-- EDITAR -->
-                    <div class="col-3">
+                    <div class="col-2">
                         <button type="button" id="btnEditOrder"
                             class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
                             <i class="fas fa-edit fs-2 text-primary mb-1"></i>
@@ -26,7 +26,7 @@
                     </div>
 
                     <!-- PRECUENTA -->
-                    <div class="col-3">
+                    <div class="col-2">
                         <button type="button" id="btnPreCuenta"
                             class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
                             <i class="fas fa-receipt fs-2 text-warning mb-1"></i>
@@ -35,7 +35,7 @@
                     </div>
 
                     <!-- CAMBIAR MESA -->
-                    <div class="col-3">
+                    <div class="col-2">
                         <button type="button" id="btnChangeTable"
                             class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
                             <i class="fas fa-chair fs-2 text-info mb-1"></i>
@@ -44,11 +44,20 @@
                     </div>
 
                     <!-- ELIMINAR -->
-                    <div class="col-3">
+                    <div class="col-2">
                         <button type="button" id="btnDeleteOrder"
                             class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
                             <i class="fas fa-trash-alt fs-2 text-danger mb-1"></i>
                             <span class="fw-semibold text-danger small">Eliminar</span>
+                        </button>
+                    </div>
+
+                    <!-- COBRAR -->
+                    <div class="col-2">
+                        <button type="button" id="btnChargeOrder"
+                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
+                            <i class="fas fa-cash-register fs-2 text-success mb-1"></i>
+                            <span class="fw-semibold text-success small">Cobrar</span>
                         </button>
                     </div>
 
@@ -217,6 +226,10 @@
 
             document.querySelector('#btnDeleteOrder').addEventListener('click', (e) => {
                 openMdlDeleteOrder(paramsMdlShow.orderId);
+            })
+
+            document.querySelector('#btnChargeOrder').addEventListener('click', (e) => {
+                openMdlCharge(paramsMdlShow.order);
             })
         }
 
