@@ -29,7 +29,9 @@ class CounterRepository
 
                         'o.sale_serie',
                         'o.sale_correlative',
-                        'o.payref_img_url'
+                        'o.payref_img_url',
+                        'o.customer_id',
+                        'o.customer_type_document_abbreviation'
                     )->first();
 
         return $order;

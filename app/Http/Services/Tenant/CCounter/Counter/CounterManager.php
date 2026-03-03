@@ -3,7 +3,6 @@
 namespace App\Http\Services\Tenant\CCounter\Counter;
 
 use App\Models\Tenant\Sales\Sale\Sale;
-use Illuminate\Contracts\View\View;
 
 class CounterManager
 {

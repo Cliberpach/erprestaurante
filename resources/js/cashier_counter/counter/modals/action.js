@@ -23,8 +23,18 @@ export function actionPaymentMethod(value) {
 
 export function setConfigDefault() {
     paymentMethodSelect.setValue(2);
-    customerSelect.setValue(1);
-    const invoiceCard = document.querySelector('#invoice-type-67');
+
+    const values = Object.keys(customerSelect.options);
+    if (values.length > 0) {
+        customerSelect.setValue(values[0]);
+    }
+
+    let invoiceCard = document.querySelector('#invoice-type-67');
+
+    if (app.order.customer_type_document_abbreviation === 'RUC') {
+        invoiceCard = document.querySelector('#invoice-type-66');
+    }
+
     if (invoiceCard) {
         invoiceCard.dispatchEvent(new MouseEvent('click', {
             bubbles: true,

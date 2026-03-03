@@ -14,27 +14,6 @@
                 @include('cashier_counter.counter.forms.form_charge')
             </div>
 
-            {{-- <div class="modal-footer d-flex justify-content-between align-items-center flex-wrap">
-                <div class="text-warning small">
-                    <i class="fa fa-exclamation-circle"></i>
-                    Los campos marcados con asterisco (<label class="required"></label>) son obligatorios.
-                </div>
-                <div class="mt-sm-0 mt-2 text-end">
-                    <button type="submit" form="form_create_color" class="btn btn-primary btn-sm">
-                        <i class="fa fa-save"></i> Guardar
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">
-                        <i class="fa fa-times"></i> Cancelar
-                    </button>
-                </div>
-            </div> --}}
-
         </div>
     </div>
 </div>
-
-<style>
-    .swal2-container {
-        z-index: 9999999;
-    }
-</style>

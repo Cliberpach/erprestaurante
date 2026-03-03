@@ -43,9 +43,9 @@ class CounterValidation
         $lst_detail_canceled    =   $this->s_order->getOrderDetailCanceled($order_id);
 
         $payment_methods    =   UtilController::getPaymentMethods();
-        $customer_formatted =   FormatController::getFormatInitialCustomer(1);
         $invoice_types      =   UtilController::getInvoiceTypes()->whereIn('id', [65, 66, 67]);
-
+        $customer_formatted =   FormatController::getFormatInitialCustomer($order->customer_id);
+      
         $vars_mdl_customer  =   UtilController::getVarsMdlCustomer();
 
         $vars   =   [

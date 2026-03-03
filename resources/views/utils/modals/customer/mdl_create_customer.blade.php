@@ -36,7 +36,7 @@
 
 <style>
     #mdlCreateCustomer {
-        z-index: 99999991;
+        z-index: 99998;
     }
 </style>
 
