@@ -20,7 +20,11 @@ export function loadFilePond() {
         labelFileTypeNotAllowed: 'Solo se permiten imágenes PNG,JPG,JPEG',
         fileValidateTypeLabelExpectedTypes: 'Formatos válidos: PNG, JPG, JPEG',
         labelMaxFileSizeExceeded: 'El archivo es demasiado grande',
-        labelMaxFileSize: 'El tamaño máximo permitido es 4 MB'
+        labelMaxFileSize: 'El tamaño máximo permitido es 4 MB',
+        labelIdle: `
+            Arrastra y suelta el voucher o <span class="filepond--label-action">Examinar</span><br>
+            <small>Máx 4MB • JPG, PNG, JPEG</small>
+        `,
     });
 
     setFpVoucher(fpVoucher)

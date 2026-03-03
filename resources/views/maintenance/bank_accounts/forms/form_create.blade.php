@@ -8,7 +8,7 @@
                 <span class="input-group-text" id="basic-addon1">
                     <i class="fas fa-user"></i>
                 </span>
-                <input maxlength="160" required id="holder" name="holder" type="text" class="form-control"
+                <input maxlength="160" required id="holder" name="holder" type="text" class="form-control input-fill"
                     placeholder="Titular" aria-label="Holder" aria-describedby="basic-addon1">
             </div>
             <span class="holder_error msgError text-danger"></span>
@@ -20,7 +20,7 @@
                 <span class="input-group-text">
                     <i class="fas fa-dollar-sign"></i>
                 </span>
-                <select name="currency" id="currency" class="select2_account form-select">
+                <select name="currency" id="currency" class="select2_account form-select input-fill">
                     <option value="SOLES">SOLES</option>
                     <option value="DOLARES">DÓLARES</option>
                 </select>
@@ -35,7 +35,7 @@
                     <i class="fas fa-university"></i>
                 </span>
                 <input maxlength="160" required id="account_number" name="account_number" type="text"
-                    class="form-control" placeholder="Cuenta" aria-label="Account Number"
+                    class="form-control input-fill" placeholder="Cuenta" aria-label="Account Number"
                     aria-describedby="basic-addon1">
             </div>
             <span class="account_number_error msgError text-danger"></span>
@@ -47,7 +47,7 @@
                 <span class="input-group-text" id="basic-addon1">
                     <i class="fas fa-exchange-alt"></i>
                 </span>
-                <input maxlength="100" id="cci" name="cci" type="text" class="form-control"
+                <input maxlength="100" id="cci" name="cci" type="text" class="form-control input-fill"
                     placeholder="CCI" aria-label="CCI" aria-describedby="basic-addon1">
             </div>
             <span class="cci_error msgError text-danger"></span>
@@ -59,7 +59,7 @@
                 <span class="input-group-text" id="basic-addon1">
                     <i class="fas fa-mobile-alt"></i>
                 </span>
-                <input maxlength="100" id="phone" name="phone" type="text" class="form-control"
+                <input maxlength="100" id="phone" name="phone" type="text" class="form-control input-fill"
                     placeholder="Celular" aria-label="Phone" aria-describedby="basic-addon1">
             </div>
             <span class="phone_error msgError text-danger"></span>

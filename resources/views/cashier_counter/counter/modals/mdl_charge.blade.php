@@ -6,7 +6,6 @@
                 <i class="fa fa-cogs text-primary me-2"></i>
                 <div>
                     <h5 class="modal-title mb-0" id="mdl_charge_label">Cobrar Pedido</h5>
-                    <small class="text-muted">Cobrar Pedido.</small>
                 </div>
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>

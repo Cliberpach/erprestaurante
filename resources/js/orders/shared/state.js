@@ -16,6 +16,7 @@ export const elementsUI = {
     inputStock: document.querySelector('#item_stock'),
     inputObservation: document.querySelector('#observation_item'),
     imgQrPayment: document.querySelector('#img-qr-payment'),
+    lgQrPayment: document.querySelector('.lg-item'),
     inputVoucher: document.querySelector('#voucher')
 }
 

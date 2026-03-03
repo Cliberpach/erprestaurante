@@ -26,9 +26,10 @@ class CounterRepository
                         'o.total',
                         'o.subtotal',
                         'o.igv',
-                        
+
                         'o.sale_serie',
-                        'o.sale_correlative'
+                        'o.sale_correlative',
+                        'o.payref_img_url'
                     )->first();
 
         return $order;

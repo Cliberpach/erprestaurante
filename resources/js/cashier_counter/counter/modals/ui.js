@@ -16,6 +16,7 @@ export function enabledInputsPayment() {
 
 export function setDataFormCharge(amounts) {
     document.querySelector('#total-mdlcharge').textContent = formatSoles(amounts.totalPay);
+    document.querySelector('#qr-img-preview').src = app.payrefImgUrl;
 }
 
 export function paintChange(charge) {

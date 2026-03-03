@@ -89,7 +89,8 @@
                         <i class="fas fa-user text-info me-1"></i>
                         Cliente
                     </label>
-                    <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlNewCustomer();" style="margin-left:4px;"></i>
+                    <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlNewCustomer();"
+                        style="margin-left:4px;"></i>
                     <select class="form-control" id="customer_id_mdlcharge" name="customer_id"></select>
                     <p class="customer_id_mdlcharge_error msgError mb-0"></p>
                 </div>
@@ -100,6 +101,26 @@
                         <i class="fas fa-cash-register me-1"></i>
                         COBRAR
                     </button>
+                </div>
+
+                <!-- QR PREVIEW -->
+                <div class="col-12">
+                    <div class="qr-box rounded-4 p-4 text-center">
+                        <div class="qr-header mb-2">
+                            <i class="fas fa-qrcode me-1"></i>
+                            Img Pago
+                        </div>
+
+                        <!-- Lightbox wrapper -->
+                        <a href="#" id="qr-link-preview" data-lightbox="qr-preview">
+                            <img src="" id="qr-img-preview" class="img-fluid qr-img" draggable="false"
+                                style="max-height: 200px;object-fit:contain;max-width:200px;" alt="Img pago">
+                        </a>
+
+                        <div class="qr-helper small mt-2">
+                            Click para ver en pantalla completa
+                        </div>
+                    </div>
                 </div>
 
             </div>

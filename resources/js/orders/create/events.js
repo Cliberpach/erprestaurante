@@ -29,9 +29,13 @@ function eventsClick() {
         }
 
     })
+
+    document.querySelector('.btn-view-qr').addEventListener('click', (e) => {
+        actionPaymentMethodsChange();
+    })
 }
 
-function eventsChange(){
+function eventsChange() {
     window.paymentMethodsSelect.on('change', () => actionPaymentMethodsChange());
 }
 

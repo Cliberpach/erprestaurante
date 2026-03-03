@@ -62,6 +62,7 @@
                 eventsMdlProductos();
                 eventsMdlEditItem();
                 eventsMdlCreateCustomer();
+                eventsMdlQrPay();
             }
         };
     </script>

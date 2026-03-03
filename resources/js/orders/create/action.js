@@ -225,20 +225,25 @@ async function validationAddItem() {
 }
 
 export async function actionPaymentMethodsChange() {
-
+    toastr.clear();
     const paymentMethodId = window.paymentMethodsSelect.getValue();
-    if (!paymentMethodId) return;
+    if (!paymentMethodId) {
+        toastr.error('Debes seleccionar un método de pago!!!');
+        return;
+    };
 
     mostrarAnimacion1();
     const res = await getBankAccountPayment(paymentMethodId);
-
     if (!res) {
         ocultarAnimacion1();
+        return;
     }
 
     const urlQrPayment = res.data.bank_account.qr_url;
     if (urlQrPayment) {
         elementsUI.imgQrPayment.src = urlQrPayment;
+        elementsUI.lgQrPayment.setAttribute('data-src', urlQrPayment);
+        setImgQrPayment();
     }
 
     ocultarAnimacion1();

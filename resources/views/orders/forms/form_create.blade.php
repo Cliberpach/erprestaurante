@@ -103,7 +103,7 @@
                         <!-- Stock -->
                         <div class="col-lg-2 col-md-2 col-sm-3 col-3">
                             <label class="form-label fw-bold">Stock</label>
-                            <input id="item_stock"  readonly type="text" class="form-control">
+                            <input id="item_stock" readonly type="text" class="form-control">
 
                             {{-- <div class="input-group">
                                 <span class="input-group-text bg-light">
@@ -128,8 +128,7 @@
                         <!-- Precio venta -->
                         <div class="col-lg-2 col-md-2 col-sm-3 col-3">
                             <label class="form-label fw-bold">P.Venta</label>
-                            <input id="sale_price" readonly type="text" class="form-control"
-                                placeholder="">
+                            <input id="sale_price" readonly type="text" class="form-control" placeholder="">
                             {{-- <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fa-solid fa-tag"></i>
@@ -142,8 +141,8 @@
                         <!-- Cantidad -->
                         <div class="col-lg-2 col-md-2 col-sm-3 col-3">
                             <label class="form-label fw-bold">Cantidad</label>
-                            <input id="cantidad" type="text"
-                                class="form-control inputEnteroPositivo input-fill" placeholder="">
+                            <input id="cantidad" type="text" class="form-control inputEnteroPositivo input-fill"
+                                placeholder="">
                             {{-- <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fa-solid fa-layer-group"></i>
@@ -210,7 +209,7 @@
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
             <div class="row">
-                <div class="col-12 mb-3">
+                <div class="col-lg-9 col-md-9 col-sm-6 col-12 mb-3">
                     <label for="payment_method" class="form-label fw-bold">Método de Pago</label>
                     <select name="payment_method" id="payment_method" class="form-control">
                         <option value="">Seleccionar método de pago</option>
@@ -220,7 +219,12 @@
                     </select>
                     <p class="payment_method_error msgError mb-0"></p>
                 </div>
-                <div class="col-12">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-12 mb-3" style="margin:auto 0 0 0;">
+                    <button type="button" class="btn btn-primary btn-sm btn-view-qr mt-2">
+                        <i class="fas fa-qrcode mr-1"></i> Ver QR
+                    </button>
+                </div>
+                <div class="col-12 mb-3">
                     <label class="form-label fw-bold">
                         <i class="fas fa-qrcode text-success me-1"></i> Voucher Pago
                     </label>
