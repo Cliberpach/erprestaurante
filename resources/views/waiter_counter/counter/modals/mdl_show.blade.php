@@ -229,7 +229,7 @@
             })
 
             document.querySelector('#btnChargeOrder').addEventListener('click', (e) => {
-                openMdlCharge(paramsMdlShow.order);
+                openOfFCharge(paramsMdlShow.order);
             })
         }
 

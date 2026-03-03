@@ -56,12 +56,16 @@ class OrderDto
         }
 
         if (isset($data['voucher'])) {
+            $user                   =   Auth::user();
             $files_route            =   Company::findOrFail(1)->files_route;
             $extension              =   $data['voucher']->getClientOriginalExtension();
 
             $file_name              =   uniqid() . '_voucher.' . $extension;
             $dto['payref_img_url']  =   $files_route . '/orders/payrefs/' . $file_name;
             $dto['payref_img_name'] =   $file_name;
+            $dto['payref_user_id']  =   $user->id;
+            $dto['payref_user_name']=   $user->name;
+            $dto['payref_date']     =   now();
         }
 
         return $dto;

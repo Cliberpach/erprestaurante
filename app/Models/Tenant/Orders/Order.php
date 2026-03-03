@@ -59,7 +59,7 @@ class Order extends Model
         'payref_img_url',
         'payref_img_name',
         'payref_name',
-        
+
         'payref_user_id',
         'payref_user_name',
         'payref_date',
@@ -74,7 +74,11 @@ class Order extends Model
 
         'date_pending_print',
         'date_pending_order_print',
-        'date_change_table'
+        'date_change_table',
+
+        'cashier_id',
+        'cashier_name',
+        'cashier_date'
     ];
 
     protected $guarded = ['code'];

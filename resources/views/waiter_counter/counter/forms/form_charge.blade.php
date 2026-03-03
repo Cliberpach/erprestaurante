@@ -15,20 +15,6 @@
         </span>
     </div>
 
-    <!-- QR: prioridad visual en móvil -->
-    <div class="mb-3 text-center">
-        <p class="text-muted small mb-2">
-            <i class="fas fa-mobile-screen me-1"></i>Muestra este QR al cliente para el pago
-        </p>
-
-        <div class="div-qr-payment">
-            <a class="lg-qr-payment" data-src="">
-                <img src="" id="imgQrMdlCharge" style="height:300px;object-fit: cover;">
-            </a>
-        </div>
-
-    </div>
-
     <!-- Método de pago -->
     <div class="mb-3">
         <label for="payment_method" class="form-label fw-bold">Método de Pago</label>
@@ -39,6 +25,22 @@
             @endforeach
         </select>
         <p class="payment_method_error msgError mb-0"></p>
+    </div>
+
+    <div class="mt-2 text-center">
+        <button type="button" id="btnReopenQr" class="btn btn-outline-primary btn-sm btn-show-qr">
+            <i class="fas fa-qrcode me-1"></i> Ver QR
+        </button>
+    </div>
+
+    <!-- QR: prioridad visual en móvil -->
+    <div class="mb-3 text-center">
+        <div class="div-qr-payment d-none">
+            <a class="lg-qr-payment" data-src="">
+                <img src="" id="imgQrMdlCharge" style="height:300px;object-fit: cover;">
+            </a>
+        </div>
+
     </div>
 
     <!-- Foto del comprobante de pago -->

@@ -44,7 +44,6 @@ class OrderService
         $dto            =   $this->s_dto->getDtoStore($data);
         $order          =   $this->s_repository->store($dto);
 
-
         $collect_detail =   collect($data['lst_detail']);
         $lst_dishes     =   $collect_detail->where('type_item', 'PLATO')->toArray();
         $lst_products   =   $collect_detail->where('type_item', 'PRODUCTO')->toArray();

@@ -116,12 +116,16 @@ class OrderRepository
 
     public function setStatusInvoice(int $id, string $status, $invoice)
     {
+        $user                       =   Auth::user();
         $order                      =   Order::findOrFail($id);
         $order->status_invoice      =   $status;
         $order->status              =   'FINALIZADO';
         $order->sale_id             =   $invoice->id;
         $order->sale_serie          =   $invoice->serie;
         $order->sale_correlative    =   $invoice->correlative;
+        $order->cashier_id          =   $user->id;
+        $order->cashier_name        =   $user->name;
+        $order->cashier_date        =   now();
         $order->save();
     }
 

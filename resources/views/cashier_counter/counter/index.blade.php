@@ -67,12 +67,6 @@
     </div>
 @endsection
 
-<style>
-    .swal2-container {
-        z-index: 9999999;
-    }
-</style>
-
 @section('js')
     <script>
         let dtList = null;
@@ -95,9 +89,6 @@
                 maxOptions: 20,
                 create: false,
                 preload: false,
-                // onType: (str) => {
-                //     lastCustomerQuery = str;
-                // },
                 load: async (query, callback) => {
                     if (!query.length) return callback();
                     try {
@@ -107,9 +98,6 @@
                         const data = await response.json();
                         const results = data.data ?? [];
                         callback(results);
-                        // if (results.length === 0) {
-                        //     customerParams.documentSearchCustomer = lastCustomerQuery;
-                        // }
                     } catch (error) {
                         callback();
                     }
@@ -144,7 +132,8 @@
                 initComplete: function() {
                     $('.dt-search')
                         .append(
-                            '<small class="text-muted d-block mt-1" style="text-align:start;">Busca por: Mesa, Usuario, Cliente</small>');
+                            '<small class="text-muted d-block mt-1" style="text-align:start;">Busca por: Mesa, Usuario, Cliente</small>'
+                        );
                 },
                 "columns": [{
                         data: 'order_id',
@@ -159,6 +148,24 @@
                         "orderable": true
                     },
                     {
+                        data: 'code',
+                        name: 'o.code',
+                        "searchable": true,
+                        "orderable": true
+                    },
+                    {
+                        data: 'creator_user_name',
+                        name: 'o.creator_user_name',
+                        searchable: true,
+                        orderable: true,
+                    },
+                    {
+                        data: 'cashier_name',
+                        name: 'o.cashier_name',
+                        "searchable": false,
+                        "orderable": false
+                    },
+                    {
                         data: 'created_at',
                         name: 'o.created_at',
                         "searchable": false,
@@ -166,12 +173,6 @@
                         render: function(data) {
                             return data;
                         }
-                    },
-                    {
-                        data: 'creator_user_name',
-                        name: 'o.creator_user_name',
-                        searchable: true,
-                        orderable: true,
                     },
                     {
                         data: 'customer_name',

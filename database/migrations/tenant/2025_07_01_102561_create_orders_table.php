@@ -49,10 +49,19 @@ return new class extends Migration
 
             $table->unsignedBigInteger('payref_id')->nullable()->comment('ID de la referencia de pago (payref)');
             $table->foreign('payref_id')->references('id')->on('payment_methods');
-
             $table->string('payref_name', 160)->nullable()->comment('Nombre de la referencia de pago (payref)');
             $table->longText('payref_img_url')->nullable()->comment('Imagen de la referencia de pago (payref)');
             $table->longText('payref_img_name')->nullable()->comment('Nombre de la imagen de la referencia de pago (payref)');
+            $table->unsignedBigInteger('payref_user_id')->nullable()->comment('Usuario que agrega pago referencia');
+            $table->foreign('payref_user_id')->references('id')->on('users');
+            $table->string('payref_user_name', 255)->nullable()->comment('Nombre usuario que agrega pago referencia');
+            $table->dateTime('payref_date')->nullable()->comment('Fecha en la que se agrega pago referencia');
+
+            //======== CAJERO ==========
+            $table->unsignedBigInteger('cashier_id')->nullable()->comment('Cajero que cobra el pedido');
+            $table->foreign('cashier_id')->references('id')->on('users');
+            $table->string('cashier_id',255)->nullable()->comment('Nombre cajero que cobra el pedido');
+            $table->dateTime('cashier_date')->nullable()->comment('Fecha cobro de pedido');
 
             /* 🔹 PRINT CONFIGURATION */
             $table->enum('pending_print', ['SI', 'NO'])->default('NO');

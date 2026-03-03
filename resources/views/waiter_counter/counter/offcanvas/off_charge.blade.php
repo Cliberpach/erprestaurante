@@ -5,46 +5,59 @@
     @vite(['resources/js/libs/lightgalery.js'])
 @endpush
 
-<div class="modal fade" id="mdlCharge" tabindex="-1" aria-labelledby="mdlChargeLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content shadow">
+<div class="offcanvas offcanvas-end shadow-lg" tabindex="-1" id="mdlCharge" aria-labelledby="mdlChargeLabel"
+    style="--bs-offcanvas-width: min(100%, 420px);">
 
-            <!-- HEADER -->
-            <div class="modal-header">
-                <h5 class="modal-title d-flex align-items-center gap-2" id="mdlChargeLabel">
-                    <i class="fas fa-receipt text-primary"></i>
-                    Cobrar orden
-                </h5>
-                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-
-            <!-- BODY -->
-            <div class="modal-body p-3">
-                @include('waiter_counter.counter.forms.form_charge')
-            </div>
-
-            <!-- FOOTER -->
-            <div class="modal-footer">
-                <button class="btn btn-primary w-100" id="btn-charge" type="submit" form="formCharge">
-                    <i class="fas fa-circle-check me-1"></i> Confirmar cobro
-                </button>
-            </div>
-
-        </div>
+    <!-- HANDLE visual tipo app móvil -->
+    <div class="pb-1 pt-2 text-center">
+        <div class="bg-secondary-subtle rounded-pill mx-auto" style="width:40px;height:5px;"></div>
     </div>
+
+    <!-- HEADER -->
+    <div class="offcanvas-header border-bottom pb-2 pt-1">
+        <h5 class="offcanvas-title d-flex align-items-center gap-2" id="mdlChargeLabel">
+            <i class="fas fa-receipt text-primary"></i>
+            Cobrar orden
+        </h5>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+
+    <!-- BODY -->
+    <div class="offcanvas-body p-3">
+        @include('waiter_counter.counter.forms.form_charge')
+    </div>
+
+    <!-- FOOTER -->
+    <div class="border-top p-3">
+        <button class="btn btn-primary w-100" id="btn-charge" type="submit" form="formCharge">
+            <i class="fas fa-circle-check me-1"></i> Confirmar cobro
+        </button>
+    </div>
+
 </div>
 
+<style>
+    .offcanvas {
+        z-index: 100000;
+    }
+
+    .offcanvas-backdrop {
+        z-index: 10000;
+    }
+</style>
+
 <script>
-    const paramsMdlCharge = {
+    const paramsOffCharge = {
         fpImgPay: null,
         order: null,
         lgQrPayment: null
     };
 
-    function openMdlCharge(order) {
-        paramsMdlCharge.order = order;
+    function openOfFCharge(order) {
+        paramsOffCharge.order = order;
         paintOrderMdlCharge(order);
-        $('#mdlCharge').modal('show');
+        const oc = new bootstrap.Offcanvas(document.getElementById('mdlCharge'));
+        oc.show();
     }
 
     function eventsMdlCharge() {
@@ -52,6 +65,7 @@
         loadFpMdlCharge();
         eChangeMdlCharge();
         eSubmitMdlCharge();
+        eClickMdlCharge();
 
         document.getElementById('mdlCharge').addEventListener('hidden.bs.modal', function() {
             clearMdlCharge();
@@ -69,6 +83,12 @@
         window.paymentMethodSelect.on('change', () => actionPaymentMethodsChange());
     }
 
+    function eClickMdlCharge() {
+        document.querySelector('.btn-show-qr').addEventListener('click', (e) => {
+            actionPaymentMethodsChange();
+        })
+    }
+
     function loadSelectMdlCharge() {
         window.paymentMethodSelect = loadSimpleSelect('payment_method');
     }
@@ -76,7 +96,7 @@
     function loadFpMdlCharge() {
         const inputLogo = document.querySelector('#inputVoucher');
 
-        paramsMdlCharge.fpImgPay = FilePond.create(inputLogo, {
+        paramsOffCharge.fpImgPay = FilePond.create(inputLogo, {
             allowImagePreview: true,
             imagePreviewHeight: 120,
             imageCropAspectRatio: '1:1',
@@ -159,12 +179,12 @@
     }
 
     function setImgQrPayment() {
-        if (paramsMdlCharge.lgQrPayment) {
-            paramsMdlCharge.lgQrPayment.destroy();
+        if (paramsOffCharge.lgQrPayment) {
+            paramsOffCharge.lgQrPayment.destroy();
         }
 
         const divQrPayment = document.querySelector('.div-qr-payment');
-        paramsMdlCharge.lgQrPayment = lightGallery(divQrPayment, {
+        paramsOffCharge.lgQrPayment = lightGallery(divQrPayment, {
             selector: '.lg-qr-payment',
             plugins: [lgThumbnail, lgZoom],
             appendSubHtmlTo: '.lg-qr-payment',
@@ -173,6 +193,9 @@
                 showCloseIcon: true,
             }
         });
+
+        paramsOffCharge.lgQrPayment.openGallery(0);
+
     }
 
     async function actionFormCharge(formCharge) {
@@ -212,13 +235,14 @@
                 const formData = new FormData(formCharge);
                 formData.append('_method', 'PUT');
 
-                const orderId = paramsMdlCharge.order.order_id;
+                const orderId = paramsOffCharge.order.order_id;
 
                 const res = await axios.post(route('tenant.mostrador_mesero.mostrador.addPay', orderId), formData);
 
                 if (res.data.success) {
                     toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
-                    $('#mdlCharge').modal('hide');
+                    const oc = new bootstrap.Offcanvas(document.getElementById('mdlCharge'));
+                    oc.hide();
                     Swal.close();
                 } else {
                     toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
@@ -251,6 +275,6 @@
     }
 
     function clearMdlCharge() {
-        paramsMdlCharge.fpImgPay.removeFiles();
+        paramsOffCharge.fpImgPay.removeFiles();
     }
 </script>

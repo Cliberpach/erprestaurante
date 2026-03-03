@@ -57,7 +57,9 @@ class CCounterController extends Controller
                 'o.customer_name',
                 'r.status',
                 'o.total',
-                'o.customer_id'
+                'o.customer_id',
+                'o.code',
+                'o.cashier_name'
             );
 
         if ($filter_status) {
@@ -76,7 +78,7 @@ class CCounterController extends Controller
         return DataTables::of($items)
             ->editColumn('created_at', function ($row) {
                 return $row->created_at
-                    ->timezone(config('app.timezone')) 
+                    ->timezone(config('app.timezone'))
                     ->format('Y-m-d H:i:s');
             })
             ->make(true);

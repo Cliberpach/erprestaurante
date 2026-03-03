@@ -10,7 +10,7 @@
     @include('waiter_counter.counter.modals.mdl_show')
     @include('waiter_counter.counter.modals.mdl_change_table')
     @include('waiter_counter.counter.modals.mdl_delete_order')
-    @include('waiter_counter.counter.modals.mdl_charge')
+    @include('waiter_counter.counter.offcanvas.off_charge')
 
     <div class="card overflow-hidden">
 
