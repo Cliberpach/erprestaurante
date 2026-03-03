@@ -202,6 +202,18 @@
                         orderable: true
                     },
                     {
+                        data: 'converted_to_serie',
+                        name: 'converted_to_serie',
+                        searchable: false,
+                        orderable: false
+                    },
+                    {
+                        data: 'converted_from_serie',
+                        name: 'converted_from_serie',
+                        searchable: false,
+                        orderable: false
+                    },
+                    {
                         data: 'total',
                         name: 'total',
                         searchable: false,

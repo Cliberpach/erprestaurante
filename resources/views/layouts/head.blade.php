@@ -56,7 +56,7 @@
 
 <!-- begin::GXON Required Stylesheet -->
 <link rel="stylesheet" href="{{ asset('assets/libs/flaticon/css/all/all.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/libs/lucide/lucide.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('assets/libs/lucide/lucide.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('assets/libs/fontawesome/css/all.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/libs/simplebar/simplebar.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/libs/node-waves/waves.css') }}">
@@ -64,7 +64,7 @@
 <!-- end::GXON Required Stylesheet -->
 
 <!-- begin::GXON CSS Stylesheet -->
-<link rel="stylesheet" href="{{ asset('assets/libs/flatpickr/flatpickr.min.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('assets/libs/flatpickr/flatpickr.min.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('assets/libs/datatables/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/style-own.css') }}">

@@ -9,11 +9,16 @@ use App\Models\Tenant;
 use App\Services\TenantPermissionCloner;
 use App\Models\Tenant\Maintenance\Company\Company as TenantCompany;
 use App\Models\Tenant\Maintenance\Company\CompanyInvoice as TenantCompanyInvoice;
+use App\Services\TestService;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
+use App\Models\Tenant\User;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class CompanyService
 {
@@ -100,6 +105,8 @@ class CompanyService
 
         $dto_plan                   =   $this->s_dto->getDtoPlanTenant($data['plan_id']);
         $plan_tenant                =   $this->s_repository->storePlanTenant($dto_plan);
+
+        $this->dataTestTenant();
 
         return (object)[
             'company_tenant'            =>  $tenant_company,
@@ -447,5 +454,75 @@ class CompanyService
         }
 
         return $company_landlord;
+    }
+
+    public function dataTestTenant()
+    {
+        $this->createUserWithRole(
+            'CAJERO 1',
+            'cajero@gmail.com',
+            '123456789',
+            'CAJERO',
+            2
+        );
+        for ($i = 1; $i <= 20; $i++) {
+            $this->createUserWithRole(
+                "MESERO {$i}",
+                "mesero{$i}@gmail.com",
+                '123456789',
+                'MESERO',
+                3
+            );
+        }
+        $this->createUserWithRole(
+            'CONTADOR',
+            'contador@gmail.com',
+            '123456789',
+            'CONTADOR',
+            4
+        );
+        $this->createUserWithRole(
+            'COCINERO',
+            'cocinero@gmail.com',
+            '123456789',
+            'COCINERO',
+            5
+        );
+
+
+        app(TestService::class)->createTestData();
+    }
+
+    public function createUserWithRole(
+        string $name,
+        string $email,
+        string $password,
+        string $roleName,
+        int $positionId
+    ): void {
+        $collaborator = new Collaborator();
+        $collaborator->full_name                  = $name;
+        $collaborator->document_type_id           = 1;
+        $collaborator->document_number            = rand(70000000, 79999999);
+        $collaborator->address                    = 'DIRECCION DEMO';
+        $collaborator->phone                      = '9' . rand(10000000, 99999999);
+        $collaborator->work_days                  = 30;
+        $collaborator->rest_days                  = 20;
+        $collaborator->monthly_salary             = 1500;
+        $collaborator->daily_salary               = 50;
+        $collaborator->position_id                = $positionId;
+        $collaborator->document_type_abbreviation = 'DNI';
+        $collaborator->save();
+
+        $user = new User();
+        $user->name             = strtoupper($name);
+        $user->email            = $email;
+        $user->password         = Hash::make($password);
+        $user->password_visible = $password;
+        $user->collaborator_id  = $collaborator->id;
+        $user->save();
+
+        $role = Role::where('name', $roleName)->firstOrFail();
+        $user->assignRole($role);
     }
 }

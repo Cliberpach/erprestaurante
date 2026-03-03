@@ -117,7 +117,7 @@
                 @if ($module->icon && file_exists($iconPath))
                     {!! file_get_contents($iconPath) !!}
                 @else
-                    <i class="fi fi-rr-file"></i>
+                    <i class="fas fa-file"></i>
                 @endif
                 <span class="menu-label">{{ $module->description }}</span>
             </a>

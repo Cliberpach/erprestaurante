@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('status')->default('PENDIENTE'); // pending|processing|sent|failed|expired
             $table->integer('attempts')->default(0);      // intentos realizados
             $table->integer('max_attempts')->default(5);  // máximo de intentos
-            $table->timestamp('next_retry_at')->nullable(); // cuándo reintenta
-            $table->timestamp('expires_at');               // +3 días desde emisión (SUNAT)
-            $table->timestamp('sent_at')->nullable();       // cuándo se envió ok
+            $table->dateTime('next_retry_at')->nullable(); // cuándo reintenta
+            $table->dateTime('expires_at');               // +3 días desde emisión (SUNAT)
+            $table->dateTime('sent_at')->nullable();       // cuándo se envió ok
             $table->json('last_error')->nullable();         // último error guardado
             $table->json('metadata')->nullable();           // respuesta SUNAT, extras
             $table->timestamps();

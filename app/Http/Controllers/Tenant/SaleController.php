@@ -85,7 +85,9 @@ class SaleController extends Controller
                 's.converted_from_id',
                 's.pay_status',
                 's.petty_cash_book_id',
-                's.petty_cash_name'
+                's.petty_cash_name',
+                's.converted_to_serie',
+                's.converted_from_serie'
             )
             ->where('s.status', '!=', 'ANULADO');
 

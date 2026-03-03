@@ -20,11 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\Tenant\Maintenance\Collaborator\Collaborator;
-use App\Models\Tenant\User;
 use Throwable;
-use Spatie\Permission\Models\Role;
-
 
 class CompanyController extends Controller
 {
@@ -168,39 +164,6 @@ array:19 [ // app\Http\Controllers\LandLord\CompanyController.php:251
                 'line' => $th->getLine()
             ]);
         }
-    }
-
-    public function createUserWithRole(
-        string $name,
-        string $email,
-        string $password,
-        string $roleName,
-        int $positionId
-    ): void {
-        $collaborator = new Collaborator();
-        $collaborator->full_name                  = $name;
-        $collaborator->document_type_id           = 1;
-        $collaborator->document_number            = rand(70000000, 79999999);
-        $collaborator->address                    = 'DIRECCION DEMO';
-        $collaborator->phone                      = '9' . rand(10000000, 99999999);
-        $collaborator->work_days                  = 30;
-        $collaborator->rest_days                  = 20;
-        $collaborator->monthly_salary             = 1500;
-        $collaborator->daily_salary               = 50;
-        $collaborator->position_id                = $positionId;
-        $collaborator->document_type_abbreviation = 'DNI';
-        $collaborator->save();
-
-        $user = new User();
-        $user->name             = strtoupper($name);
-        $user->email            = $email;
-        $user->password         = Hash::make($password);
-        $user->password_visible = $password;
-        $user->collaborator_id  = $collaborator->id;
-        $user->save();
-
-        $role = Role::where('name', $roleName)->firstOrFail();
-        $user->assignRole($role);
     }
 
     /*
