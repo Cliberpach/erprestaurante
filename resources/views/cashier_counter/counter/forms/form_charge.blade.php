@@ -49,7 +49,7 @@
         </div>
 
         <!-- LADO IZQUIERDO -->
-        <div class="col-lg-6 col-md-6 col-12">
+        <div class="col-lg-6 col-md-6 col-12 col-payments">
             <div class="row g-3">
 
                 <div class="col-12">

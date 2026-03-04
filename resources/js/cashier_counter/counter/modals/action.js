@@ -45,6 +45,23 @@ export function setConfigDefault() {
     }
 }
 
+export function onKeyDownPayment(e) {
+    const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'];
+
+    // Permitir teclas de control
+    if (allowed.includes(e.key)) return;
+
+    // Permitir solo dígitos
+    if (/^[0-9]$/.test(e.key)) return;
+
+    // Permitir punto decimal solo si no hay ya uno
+    if (e.key === '.' && !e.target.value.includes('.')) return;
+
+    // Bloquear todo lo demás: +, -, *, letras, etc.
+    e.preventDefault();
+}
+
+
 export function actionInputPayment(e) {
     const paymentId = e.target.getAttribute('data-id');
     const raw = e.target.value;

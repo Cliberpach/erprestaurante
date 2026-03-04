@@ -1,4 +1,4 @@
-import { actionBtnInvoice, actionFormCharge, actionInputPayment, actionPaymentMethod } from "./action";
+import { actionBtnInvoice, actionFormCharge, actionInputPayment, actionPaymentMethod, onKeyDownPayment } from "./action";
 import { paymentMethodSelect } from "./state";
 
 export function eventsMdlCharge() {
@@ -8,12 +8,21 @@ export function eventsMdlCharge() {
     eventsInputMdlCharge();
     eventsClickMdlCharge();
     eventsSubmitMdlCharge();
+    eventsKeyDown();
 }
 
 function eventsInputMdlCharge() {
     document.addEventListener('input', (e) => {
         if (e.target.classList.contains('input-payment')) {
             actionInputPayment(e);
+        }
+    })
+}
+
+function eventsKeyDown() {
+    document.querySelector('.col-payments').addEventListener('keydown', (e) => {
+        if (e.target.classList.contains('input-payment')) {
+            onKeyDownPayment(e);
         }
     })
 }
