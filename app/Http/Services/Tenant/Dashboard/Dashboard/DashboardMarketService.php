@@ -6,6 +6,7 @@ use App\Exports\Tenant\Dashboard\CostCenterMonthExport;
 use App\Exports\Tenant\Dashboard\DishesMonthExport;
 use App\Exports\Tenant\Dashboard\PaymentMethodMonthExport;
 use App\Exports\Tenant\Dashboard\ProductoStockMinExport;
+use App\Exports\Tenant\Dashboard\ProductsMonthExport;
 use App\Models\Company;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -712,7 +713,7 @@ class DashboardMarketService
         $monthName = strtoupper(Carbon::create()->month($month)->translatedFormat('F'));
         $data['month']  =   $monthName;
         return Excel::download(
-            new DishesMonthExport($report, (object)$data, $company),
+            new ProductsMonthExport($report, (object)$data, $company),
             'productos_mes_' . Carbon::now()->format('Y_m_d_H_i_s') . '.xlsx'
         );
     }

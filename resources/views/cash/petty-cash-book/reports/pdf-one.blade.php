@@ -226,7 +226,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sale_documents->whereNull('converted_from_id') as $sale)
+                @foreach ($consolidated['report_sales']['sales']->whereNull('converted_from_id') as $sale)
                     <tr>
                         <td>{{ $sale->serie . '-' . $sale->correlative }}</td>
                         <td>{{ $sale->customer_name }}</td>
@@ -235,6 +235,9 @@
                         @foreach ($payment_methods as $payment_method)
                             @php
                                 $amount = $sale->paidByMethod($payment_method->id);
+                                if ($payment_method->id == 1) {
+                                    $amount -= $sale->change_pay;
+                                }
                             @endphp
 
                             <td class="text-end">
@@ -274,7 +277,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sale_documents->whereNotNull('converted_from_id') as $sale)
+                @foreach ($consolidated['report_sales']['sales']->whereNotNull('converted_from_id') as $sale)
                     <tr>
                         <td>{{ $sale->serie . '-' . $sale->correlative }}</td>
                         <td>{{ $sale->converted_from_serie }}</td>
@@ -299,7 +302,7 @@
             </thead>
             <tbody>
 
-                @foreach ($exit_moneys as $index => $egreso)
+                @foreach ($consolidated['report_expenses']['exit_moneys'] as $index => $egreso)
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $egreso->supplier->name }}</td>

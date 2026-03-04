@@ -13,7 +13,7 @@
         <table>
             <tr>
                 <td style="width: 220px; font-weight: bold;">EMPRESA</td>
-                <td style="font-size: 12px;">{{ $company->abbreviated_business_name  }}</td>
+                <td style="font-size: 12px;">{{ $company->abbreviated_business_name }}</td>
             </tr>
             <tr>
                 <td style="width: 220px; font-weight: bold;">RUC</td>
@@ -67,6 +67,9 @@
                     <th width="30"
                         style="background:#1B587C;color:white;text-align: center;border:1px solid #4EA4D8;text-transform: uppercase">
                         PLATO</th>
+                    <th width="30"
+                        style="background:#1B587C;color:white;text-align: center;border:1px solid #4EA4D8;text-transform: uppercase">
+                        TIPO</th>
                     <th width="15"
                         style="background:#1B587C;color:white;text-align: center;border:1px solid #4EA4D8;text-transform: uppercase">
                         P.VENTA</th>
@@ -84,6 +87,7 @@
                     <tr>
                         <td>{{ $dato->quantity }}</td>
                         <td>{{ $dato->name }}</td>
+                        <td>{{ $dato->type_dish_name }}</td>
                         <td>{{ $dato->sale_price }}</td>
                         <td>{{ $dato->total }}</td>
                     </tr>
@@ -93,7 +97,8 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p>&copy; {{ now()->year }} {{ $company->abbreviated_business_name  }} - Todos los derechos reservados</p>
+            <p>&copy; {{ now()->year }} {{ $company->abbreviated_business_name }} - Todos los derechos reservados
+            </p>
         </div>
     </div>
 </body>

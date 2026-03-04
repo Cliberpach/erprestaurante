@@ -53,6 +53,14 @@
     "isEntry": true,
     "src": "resources/css/sales/sales-index.css"
   },
+  "resources/js/alerts/main.js": {
+    "file": "assets/main-b7015ba5.js",
+    "imports": [
+      "_index-dd82ac63.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/alerts/main.js"
+  },
   "resources/js/app.css": {
     "file": "assets/app-d4213a05.css",
     "src": "resources/js/app.css"

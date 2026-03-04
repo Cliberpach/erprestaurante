@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Notifications;
+namespace App\Http\Controllers\Tenant\Notifications;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\Api\AlertApp;
@@ -16,15 +16,6 @@ class NotificationController extends Controller
      */
     public function getNotifications(Request $request)
     {
-        $tenant = Tenant::current();
-
-        if (! $tenant) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tenant no detectado'
-            ], 400);
-        }
-
         $page     = (int) $request->get('page', 1);
         $perPage = 20;
 
@@ -35,6 +26,7 @@ class NotificationController extends Controller
         $formatted = collect($notifications->items())->map(function ($alert) {
             return [
                 'id'          => $alert->id,
+                'type'        => $alert->type,
                 'content'     => $alert->content,
                 'sent_at'     => $alert->sent_at,
                 'created_at'  => $alert->created_at,

@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/css/sales/sales-index.css',
 
                 'resources/js/app.js',
+                'resources/js/alerts/main.js',
                 'resources/js/global/main.js',
                 'resources/js/orders/create/main.js',
                 'resources/js/orders/edit/main.js',

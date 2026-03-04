@@ -12,9 +12,11 @@ class DashboardRepository
         $dishes  =   DB::table('sales_dishes as sd')
             ->join('sales as s', 's.id', '=', 'sd.sale_id')
             ->join('dishes as d', 'd.id', '=', 'sd.dish_id')
+            ->join('types_dish as td', 'td.id', 'd.type_dish_id')
             ->select(
                 'd.id',
                 'd.name',
+                'td.name as type_dish_name',
                 DB::raw('SUM(sd.quantity) as quantity'),
                 'sd.sale_price',
                 DB::raw('SUM(sd.total) AS total')
@@ -22,7 +24,12 @@ class DashboardRepository
             ->where('sd.status', '<>', 'ANULADO')
             ->whereNotIn('s.status', ['ANULADO', 'BAJA'])
             ->whereBetween('s.created_at', [$desde, $hasta])
-            ->groupBy('d.id', 'd.name', 'sd.sale_price')
+            ->groupBy(
+                'd.id',
+                'd.name',
+                'sd.sale_price',
+                'td.name'
+            )
             ->orderByDesc('total')
             ->get();
 
@@ -34,9 +41,13 @@ class DashboardRepository
         $dishes  =   DB::table('sales_products as sp')
             ->join('sales as s', 's.id', '=', 'sp.sale_id')
             ->join('products as p', 'p.id', '=', 'sp.product_id')
+            ->join('categories as c', 'c.id', 'p.category_id')
+            ->join('brands as b', 'b.id', 'p.brand_id')
             ->select(
                 'p.id',
                 'p.name',
+                'c.name as category_name',
+                'b.name as brand_name',
                 DB::raw('SUM(sp.quantity) as quantity'),
                 'sp.sale_price',
                 DB::raw('SUM(sp.total) AS total')
@@ -44,7 +55,13 @@ class DashboardRepository
             ->where('sp.status', '<>', 'ANULADO')
             ->whereNotIn('s.status', ['ANULADO', 'BAJA'])
             ->whereBetween('s.created_at', [$desde, $hasta])
-            ->groupBy('p.id', 'p.name', 'sp.sale_price')
+            ->groupBy(
+                'p.id',
+                'p.name',
+                'sp.sale_price',
+                'c.name',
+                'b.name'
+            )
             ->orderByDesc('total')
             ->get();
 

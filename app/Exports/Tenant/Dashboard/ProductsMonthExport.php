@@ -21,7 +21,7 @@ class ProductsMonthExport  implements FromView
 
     public function view(): View
     {
-        return view('dashboard.dashboard.excel.dishes_month', [
+        return view('dashboard.dashboard.excel.products_month', [
             'data'                      =>  $this->data,
             'filters'                   =>  $this->filters,
             'company'                   =>  $this->company
