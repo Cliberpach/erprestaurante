@@ -4,8 +4,8 @@ import { eventsCCounter } from "./events"
 import { loadSelectsCharge } from "./tomselect";
 
 document.addEventListener('DOMContentLoaded', () => {
-    mainMdlCharge();
     loadDataPreview();
+    mainMdlCharge();
     loadSelectsCharge();
     eventsCCounter();
     app.eventsAdd();

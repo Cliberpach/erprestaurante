@@ -252,7 +252,7 @@ class SaleValidation
             throw new Exception("NO SE ADMITEN MONTOS MENORES A 0");
         }
         if ($has_repeats) {
-            throw new Exception("NO DETECTARON PAGOS REPETIDOS");
+            throw new Exception("SE DETECTARON MÉTODOS DE PAGO REPETIDOS");
         }
 
         //========= VUELTO ========

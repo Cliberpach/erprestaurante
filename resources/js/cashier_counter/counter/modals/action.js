@@ -1,11 +1,12 @@
 import { customerSelect } from "../../../utils/selects/customers/state";
 import { amounts } from "../charge/state";
-import { change, invoiceId, lstPays, paymentMethodSelect, setChange, setInvoiceId } from "./state";
-import { desactiveBtnsInvoice, disabledInputsPayment, enabledInputsPayment, paintChange, setDataFormCharge } from "./ui";
+import { CASH_ID, infoAmounts, invoiceId, lstPays, paymentMethodSelect, setInvoiceId } from "./state";
+import { desactiveBtnsInvoice, disabledInputsPayment, enabledInputsPayment, renderSummary, setDataFormCharge } from "./ui";
+import { validatePayments } from "./validation";
 
 export function openMdlCharge() {
     setConfigDefault();
-    setDataFormCharge(amounts);
+    setDataFormCharge();
     $('#mdl_charge').modal('show');
 }
 
@@ -46,42 +47,77 @@ export function setConfigDefault() {
 
 export function actionInputPayment(e) {
     const paymentId = e.target.getAttribute('data-id');
-    const amount = parseFloat(e.target.value);
+    const raw = e.target.value;
 
-    if (e.target.value === '') {
-        const indexPay = lstPays.findIndex(i => i.paymentId == paymentId);
-        if (indexPay !== -1) {
-            lstPays.splice(indexPay, 1);
+    // Limitar a 2 decimales mientras escribe
+    if (raw.includes('.')) {
+        const parts = raw.split('.');
+        if (parts[1]?.length > 2) {
+            e.target.value = parseFloat(raw).toFixed(2);
         }
-        calculateChange();
     }
 
-    if (isNaN(amount)) {
+    const amount = parseFloat(parseFloat(raw).toFixed(2)); // siempre 2 decimales
+
+
+    if (raw === '' || isNaN(amount)) {
+        const idx = lstPays.findIndex(i => i.paymentId == paymentId);
+        if (idx !== -1) lstPays.splice(idx, 1);
+        calculateAmounts();
         return;
     }
 
-    let newPay = { paymentId, amount };
+    // ── BLOQUEO para métodos que NO son efectivo ──────────────
+    // Calcular cuánto han aportado los OTROS métodos (sin el actual)
+    const othersPaid = lstPays
+        .filter(i => i.paymentId != paymentId)
+        .reduce((sum, i) => sum + Number(i.amount || 0), 0);
 
-    const indexPay = lstPays.findIndex(i => i.paymentId == paymentId);
-    if (indexPay === -1) {
-        lstPays.push(newPay);
-    } else {
-        lstPays[indexPay].amount = amount;
+    const maxAllowed = infoAmounts.total - othersPaid; // lo que aún falta cubrir
+
+    if (paymentId != CASH_ID && amount > maxAllowed) {
+        // Corregir el input al máximo permitido y usar ese valor
+        e.target.value = maxAllowed > 0 ? maxAllowed.toFixed(2) : '';
+        if (maxAllowed <= 0) {
+            const idx = lstPays.findIndex(i => i.paymentId == paymentId);
+            if (idx !== -1) lstPays.splice(idx, 1);
+            calculateAmounts();
+            return;
+        }
+        // Continuar con el valor corregido
+        const idx = lstPays.findIndex(i => i.paymentId == paymentId);
+        if (idx === -1) lstPays.push({ paymentId, amount: maxAllowed });
+        else lstPays[idx].amount = maxAllowed;
+        calculateAmounts();
+        return;
     }
 
-    calculateChange();
-    paintChange(change);
+    // Insertar o actualizar normalmente
+    const idx = lstPays.findIndex(i => i.paymentId == paymentId);
+    if (idx === -1) lstPays.push({ paymentId, amount });
+    else lstPays[idx].amount = amount;
+
+    calculateAmounts();
+    console.log('lstPays', lstPays)
 }
 
-function calculateChange() {
-    const totalPay = lstPays.reduce((sum, item) => {
-        return sum + Number(item.amount || 0);
-    }, 0);
+// ─── CÁLCULO CENTRAL ─────────────────────────────────────────
+function calculateAmounts() {
+    const cashAmount = lstPays.find(i => i.paymentId == CASH_ID)?.amount || 0;
+    const otherAmount = lstPays
+        .filter(i => i.paymentId != CASH_ID)
+        .reduce((sum, i) => sum + Number(i.amount || 0), 0);
 
-    const totalOrder = amounts.totalPay;
-    let _change = totalPay - totalOrder;
-    if (_change < 0) _change = 0;
-    setChange(_change);
+    const totalPaid = cashAmount + otherAmount;
+    const total = infoAmounts.total;
+
+    infoAmounts.paid = totalPaid;
+    infoAmounts.pending = Math.max(total - totalPaid, 0);
+    infoAmounts.change = cashAmount > 0
+        ? Math.max(totalPaid - total, 0)  // vuelto solo si hay efectivo
+        : 0;
+
+    renderSummary(infoAmounts);
 }
 
 export function actionBtnInvoice(card) {
@@ -98,12 +134,8 @@ export async function actionFormCharge(e) {
     e.preventDefault();
 
     toastr.clear();
-    /*
-    const isValid = validationStoreQuote();
-    if (!isValid) {
-        return;
-    }
-    */
+    const isValid = validatePayments(lstPays, infoAmounts);
+    if (!isValid.ok) return;
 
     const result = await Swal.fire({
         title: '¿Desea generar el comprobante de venta?',
@@ -136,8 +168,9 @@ export async function actionFormCharge(e) {
                 }
             });
 
+            const lsyPaysPrepared = lstPays.filter(i => Number(i.amount) > 0);
             const formData = new FormData(e.target);
-            formData.append('lst_pays', JSON.stringify(lstPays));
+            formData.append('lst_pays', JSON.stringify(lsyPaysPrepared));
             formData.append('order_id', app.order.order_id);
             if (invoiceId) {
                 formData.append('invoice_id', invoiceId);
@@ -178,4 +211,9 @@ export async function actionFormCharge(e) {
         });
 
     }
+}
+
+export function setState() {
+    infoAmounts.total = parseFloat(amounts.totalPay);
+    infoAmounts.pending = parseFloat(amounts.totalPay);
 }

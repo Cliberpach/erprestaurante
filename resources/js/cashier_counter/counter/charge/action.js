@@ -24,6 +24,7 @@ function setAmounts(order) {
     amounts.subTotal = order.subtotal;
     amounts.tax = order.igv;
     amounts.totalPay = order.total;
+    console.log('amounts', amounts);
 }
 
 export function actionChangeStatus(status) {

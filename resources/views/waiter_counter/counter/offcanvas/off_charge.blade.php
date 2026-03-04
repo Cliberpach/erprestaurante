@@ -241,7 +241,8 @@
 
                 if (res.data.success) {
                     toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
-                    const oc = new bootstrap.Offcanvas(document.getElementById('mdlCharge'));
+                    const offcanvas = $('#mdlCharge');
+                    const oc = bootstrap.Offcanvas.getInstance(offcanvas[0]);
                     oc.hide();
                     Swal.close();
                 } else {

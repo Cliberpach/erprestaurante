@@ -6,6 +6,7 @@
                 <i class="fa fa-cogs text-primary me-2"></i>
                 <div>
                     <h5 class="modal-title mb-0" id="mdl_charge_label">Cobrar Pedido</h5>
+                    <span class="text-muted small">Solo se permite vuelto de efectivo</span>
                 </div>
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
