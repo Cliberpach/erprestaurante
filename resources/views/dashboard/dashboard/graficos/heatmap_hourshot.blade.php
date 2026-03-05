@@ -166,7 +166,7 @@
     let chart;
 
     function getPeakStats(data) {
-        const horaSum = Array(18).fill(0);
+        const horaSum = Array(21).fill(0);
 
         data.forEach(([x, y, v]) => {
             horaSum[x] += v; // x = hora, sumar todos los días
