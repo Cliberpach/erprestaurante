@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Tenant\CCounter\Counter;
 
+use App\Http\Services\Tenant\Alerts\AlertSale\AlertSaleService;
 use App\Http\Services\Tenant\Orders\OrderService;
 use App\Http\Services\Tenant\Sale\Sale\SaleService;
 use App\Models\Tenant\Sales\Sale\Sale;
@@ -30,7 +31,24 @@ class CounterService
     public function storeInvoice(array $data): Sale
     {
         $invoice    =   $this->s_sale->storeFromCOrder($data);
-        $this->s_order->setStatusInvoice($data['order_id'], 'FACTURADO',$invoice);
+        $this->s_order->setStatusInvoice($data['order_id'], 'FACTURADO', $invoice);
+
+        $this->alertSale($data, $invoice);
+
         return $invoice;
+    }
+
+    public function alertSale(array $data, $invoice)
+    {
+        $lstAlerts  =   json_decode($data['lstAlertsSelected']);
+        if (count($lstAlerts) === 0) return;
+
+        $data_alert =   [
+            'sale'          =>  $invoice,
+            'lst_alerts'    =>  $lstAlerts
+        ];
+
+        $s_alert    =   new AlertSaleService();
+        $s_alert->store($data_alert);
     }
 }

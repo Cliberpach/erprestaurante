@@ -153,13 +153,15 @@
                         data: 'id',
                         name: 'a.id',
                         searchable: false,
-                        orderable: false
+                        orderable: false,
+                        visible: false
                     },
                     {
+                        visible: false,
                         data: 'tenant_domain',
                         name: 'a.tenant_domain',
                         searchable: false,
-                        orderable: true,
+                        orderable: false,
                     },
                     {
                         data: 'content',
@@ -168,13 +170,48 @@
                         orderable: true
                     },
                     {
-                        data: 'sent_at',
-                        name: 'a.sent_at',
+                        data: 'type',
+                        name: 'a.type',
+                        searchable: true,
+                        orderable: true
+                    },
+                    {
+                        data: 'sale_serie',
+                        name: 'as.sale_serie',
+                        searchable: true,
+                        orderable: true
+                    },
+                    {
+                        data: 'status',
+                        name: 'a.status',
                         searchable: true,
                         orderable: false,
-                        render: data => data ?? '-'
+                        render: function(data) {
+
+                            if (data === 'PENDIENTE') {
+                                return `<span class="badge bg-danger">PENDIENTE</span>`;
+                            }
+
+                            if (data === 'USADO') {
+                                return `<span class="badge bg-primary">USADO</span>`;
+                            }
+
+                            if (data === 'ANULADO') {
+                                return `<span class="badge bg-dark">ANULADO</span>`;
+                            }
+
+                            return `<span class="badge bg-secondary">${data}</span>`;
+                        }
                     },
-                   
+                    {
+                        data: 'created_at',
+                        name: 'a.created_at',
+                        searchable: false,
+                        orderable: true,
+                        render: function(data) {
+                            return formatDateTime(data);
+                        }
+                    },
                     {
                         data: null,
                         name: 'options',
@@ -189,15 +226,15 @@
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${row.id}">
                                         <li>
                                             <a class="dropdown-item" href="javascript:void(0)" onclick="verDetalle(${row.id})">
-                                                <i class="fa-solid fa-eye me-2"></i> VER
+                                                <i class="fas fa-trash text-danger me-2"></i> Eliminar
                                             </a>
                                         </li>
                                         ${row.status === 'ACTIVO' ? `
-                                            <li>
-                                                <a class="dropdown-item" href="javascript:void(0)" onclick="finishAlert(${row.id})">
-                                                    <i class="fa-solid fa-check me-2"></i> FINALIZAR
-                                                </a>
-                                            </li>` : ''}
+                                                                <li>
+                                                                    <a class="dropdown-item" href="javascript:void(0)" onclick="finishAlert(${row.id})">
+                                                                        <i class="fa-solid fa-check me-2"></i> FINALIZAR
+                                                                    </a>
+                                                                </li>` : ''}
                                     </ul>
                                 </div>
                             `;
@@ -212,10 +249,10 @@
                         input.after(`
                         <small id="search-help" class="text-black d-block mt-1">
                             Buscar por:
-                            <strong>Nombre</strong>,
-                            <strong>Descripción</strong>,
+                            <strong>Contenido</strong>,
                             <strong>Tipo</strong>,
-                            <strong>Usuario</strong>
+                            <strong>Venta</strong>,
+                            <strong>Estado</strong>
                         </small>
                     `);
                     }

@@ -2,8 +2,6 @@
 
 namespace App\Http\Services\Tenant\Bookings\Booking;
 
-
-
 class BookingManager
 {
     protected BookingService $s_booking;

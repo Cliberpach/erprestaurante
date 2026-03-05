@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Tenant\Queries;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tenant\Alerts\Alert;
 use App\Models\Tenant\Api\AlertApp;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class QNotificationController extends Controller
@@ -32,14 +30,21 @@ class QNotificationController extends Controller
         $end_date       =   $request->get('end_date');
 
         $items =    AlertApp::from('alerts_app as a')
-            ->select([
+            ->leftJoin('alerts_sales as as','as.alert_id','a.id')
+            ->select(
                 'a.id',
                 'a.tenant_domain',
                 'a.content',
                 'a.sent_at',
-            ])
+                'a.status',
+                'a.type',
+                'a.created_at',
+                'a.consumer_user_name',
+                'a.consumer_date',
+                'as.sale_id',
+                'as.sale_serie'
+            )
             ->orderByDesc('a.id');
-
 
         if ($start_date) {
             $items->whereDate('a.created_at', '>=', $start_date);
