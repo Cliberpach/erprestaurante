@@ -20,6 +20,7 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DishController extends Controller
 {
@@ -308,6 +309,20 @@ array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:128
         $company        =   Company::findOrFail(1);
         $data           =   $this->queryAll($request)->get();
 
-        return Excel::download(new DishExport($data, $request, $company), 'platos' . Carbon::now() . '.xlsx');
+        return Excel::download(new DishExport($data, $request, $company), 'platos_' . Carbon::now() . '.xlsx');
+    }
+
+    public function pdf(Request $request)
+    {
+        $company        =   Company::find(1);
+        $data           =   $this->queryAll($request)->get();
+
+        $pdf = Pdf::loadview('supply.dishes.reports.pdf', [
+            'company'   => $company,
+            'data'      => $data,
+            'filters'   => $request,
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('platos_' . Carbon::now()->format('Y_m_d_H_i_s') . '.pdf');
     }
 }

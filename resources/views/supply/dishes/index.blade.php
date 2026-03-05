@@ -294,12 +294,9 @@
 
         function downloadPdf() {
 
-            const url = @json(route('tenant.reportes.ventas_platos.pdf'));
+            const url = @json(route('tenant.abastecimiento.platos.pdf'));
 
             const params = {
-                start_date: document.querySelector('#fecha_inicio').value,
-                end_date: document.querySelector('#fecha_fin').value,
-                dish_id: document.querySelector('#dish_id').value,
             };
 
             const queryString = new URLSearchParams(params).toString();

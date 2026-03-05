@@ -1,15 +1,6 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
-    .card {
-        background: #ffffff;
-        border: 1px solid #e5e9f2;
-        border-radius: 20px;
-        padding: 32px 36px;
-        width: 100%;
-        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.08);
-    }
-
     .card-header {
         display: flex;
         align-items: flex-start;
@@ -121,7 +112,6 @@
         <div class="title-block">
             <div class="label">Análisis de Tráfico</div>
             <h2>Horas Pico del Restaurante</h2>
-            <div class="subtitle">Pedidos por hora y día de la semana — últimas 4 semanas</div>
         </div>
         <div class="stats">
             <div class="stat">
