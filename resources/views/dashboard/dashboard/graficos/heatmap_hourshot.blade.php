@@ -165,27 +165,28 @@
     let chart;
 
     function getPeakStats(data) {
-        let max = -Infinity,
-            min = Infinity;
+        const horaSum = Array(18).fill(0);
+
+        data.forEach(([x, y, v]) => {
+            horaSum[x] += v; // x = hora, sumar todos los días
+        });
+
+        let maxVal = -Infinity,
+            minVal = Infinity;
         let maxHora = '',
             minHora = '';
-        const horaSum = Array(18).fill(0);
-        const horaCount = Array(18).fill(0);
-        data.forEach(([, h, v]) => {
-            horaSum[h] += v;
-            horaCount[h]++;
-        });
-        const horaAvg = horaSum.map((s, i) => s / (horaCount[i] || 1));
-        horaAvg.forEach((avg, i) => {
-            if (avg > max) {
-                max = avg;
+
+        horaSum.forEach((sum, i) => {
+            if (sum > maxVal) {
+                maxVal = sum;
                 maxHora = horas[i];
             }
-            if (avg < min) {
-                min = avg;
+            if (sum < minVal && sum > 0) {
+                minVal = sum;
                 minHora = horas[i];
-            }
+            } // > 0 para ignorar horas vacías
         });
+
         return {
             maxHora,
             minHora
