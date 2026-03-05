@@ -59,7 +59,8 @@ class CCounterController extends Controller
                 'o.total',
                 'o.customer_id',
                 'o.code',
-                'o.cashier_name'
+                'o.cashier_name',
+                'o.payref_img_url'
             );
 
         if ($filter_status) {

@@ -220,6 +220,31 @@
                         }
                     },
                     {
+                        data: 'payref_img_url',
+                        name: 'o.payref_img_url',
+                        searchable: false,
+                        orderable: false,
+                        className: "text-center",
+                        render: function(data, type, row) {
+
+                            if (data && data !== '') {
+                                let url = '/storage/' + data;
+
+                                return `
+                                        <a href="${url}" target="_blank">
+                                            <img src="${url}"
+                                                class="img-thumbnail"
+                                                style="width:50px;height:50px;object-fit:cover;">
+                                        </a>
+                                    `;
+                                                    }
+
+                                                    return `
+                                    <span class="text-muted small">Sin imagen</span>
+                                `;
+                        }
+                    },
+                    {
                         searchable: false,
                         orderable: false,
                         data: null,
