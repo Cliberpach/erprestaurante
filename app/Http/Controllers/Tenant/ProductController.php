@@ -22,7 +22,6 @@ use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
 
-
 class ProductController extends Controller
 {
     protected ProductManager $s_product;

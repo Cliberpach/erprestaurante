@@ -11,6 +11,7 @@ use App\Http\Controllers\Tenant\Maintenance\ConfigurationController;
 use App\Http\Controllers\Tenant\Maintenance\CostCenterController;
 use App\Http\Controllers\Tenant\Maintenance\UserController as MaintenanceUserController;
 use App\Http\Controllers\Tenant\ModuleController;
+use App\Http\Controllers\Tenant\Notifications\NotificationController;
 use App\Http\Controllers\Tenant\ProductController;
 use App\Http\Controllers\Tenant\Sales\QuerySaleController;
 use App\Http\Controllers\Tenant\SupplierController;
@@ -103,6 +104,7 @@ Route::group(["prefix" => "utils"], function () {
     Route::get('cash-available-search', [PettyCashController::class, 'searchCashAvailable'])->name('tenant.utils.searchCashAvailable');
 
     Route::get('cash-open-search', [PettyCashController::class, 'searchCashOpen'])->name('tenant.utils.searchCashOpen');
+    Route::get('get-alerts-cash', [NotificationController::class, 'getAlertsCash'])->name('tenant.utils.getAlertsCash');
 
     Route::get('dish-search', [DishController::class, 'searchDish'])->name('tenant.utils.searchDish');
     Route::get('service-search', [ServiceController::class, 'searchService'])->name('tenant.utils.searchService');

@@ -77,8 +77,9 @@
     "src": "resources/js/app.js"
   },
   "resources/js/cashier_counter/counter/charge/main.js": {
-    "file": "assets/main-24a53351.js",
+    "file": "assets/main-78cf198a.js",
     "imports": [
+      "_index-dd82ac63.js",
       "_main-a1fe3d59.js",
       "_main-d792cefb.js"
     ],

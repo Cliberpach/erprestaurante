@@ -85,18 +85,18 @@ class CCounterController extends Controller
     }
 
     /*
-array:4 [ // app\Http\Services\Tenant\CCounter\Counter\CounterService.php:29
+array:5 [ // app\Http\Controllers\Tenant\CashierCounter\CCounterController.php:99
   "customer_id" => "1"
-  "lst_pays" => "[{"paymentId":"2","amount":0},{"paymentId":"1","amount":8},{"paymentId":"3","amount":30},{"paymentId":"4","amount":10}]"
-  "order_id" => "1"
-  "invoice_id" => "65"
+  "lst_pays" => "[{"paymentId":"2","amount":24}]"
+  "order_id" => "7"
+  "lstAlertsSelected" => "[{"id":2,"content":"Yape! COMERCIAL ANDINA EIRL te envió un pago por S/ 35.00","created_at":"2026-03-04 15:18:36"},{"id":31,"content":"Yape! COMERCIAL AMAZONAS EIRL te envió un pago por S/ 77.00","created_at":"2026-03-04 15:18:36"}]"
+  "invoice_id" => "67"
 ]
 */
     public function storeInvoice(InvoiceStoreRequest $request)
     {
         DB::beginTransaction();
         try {
-
             $invoice    =   $this->s_manager->storeInvoice($request->toArray());
             //$pdf_url    =   route('tenant.ventas.comprobante_venta.pdf_voucher', ['id' => $invoice->id]);
 

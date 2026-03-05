@@ -1,3 +1,4 @@
+import { lstAlertsSelected } from "../../../utils/datatables/alerts/state";
 import { customerSelect } from "../../../utils/selects/customers/state";
 import { amounts } from "../charge/state";
 import { CASH_ID, infoAmounts, invoiceId, lstPays, paymentMethodSelect, setInvoiceId } from "./state";
@@ -34,6 +35,10 @@ export function setConfigDefault() {
 
     if (app.order.customer_type_document_abbreviation === 'RUC') {
         invoiceCard = document.querySelector('#invoice-type-66');
+    }
+
+    if (app.order.customer_type_document_abbreviation === 'DNI' && app.order.customer_document_number) {
+        invoiceCard = document.querySelector('#invoice-type-65');
     }
 
     if (invoiceCard) {
@@ -189,6 +194,7 @@ export async function actionFormCharge(e) {
             const formData = new FormData(e.target);
             formData.append('lst_pays', JSON.stringify(lsyPaysPrepared));
             formData.append('order_id', app.order.order_id);
+            formData.append('lstAlertsSelected',JSON.stringify(lstAlertsSelected));
             if (invoiceId) {
                 formData.append('invoice_id', invoiceId);
             }

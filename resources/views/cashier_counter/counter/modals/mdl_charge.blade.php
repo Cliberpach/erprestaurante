@@ -1,5 +1,5 @@
 <div class="modal fade" id="mdl_charge" tabindex="-1" aria-labelledby="mdl_charge_label" aria-hidden="true">
-    <div class="modal-lg modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
 
             <div class="modal-header">

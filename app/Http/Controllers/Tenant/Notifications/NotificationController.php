@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Tenant\Api\AlertApp;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Spatie\Multitenancy\Models\Tenant;
-use Throwable;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
+
 
 class NotificationController extends Controller
 {
@@ -46,6 +47,19 @@ class NotificationController extends Controller
             'total'         => $notifications->total(),
             'has_more'      => $notifications->hasMorePages(),
         ]);
+    }
+
+    public function getAlertsCash(Request $request)
+    {
+        $alerts   =   DB::table('alerts_app as a')->select(
+            'a.id',
+            'a.content',
+            'a.created_at'
+        )->where('a.status', 'PENDIENTE')
+            ->where('a.type', 'PAGO')
+            ->orderByDesc('a.created_at');
+
+        return DataTables::of($alerts)->make(true);
     }
 
     /**
