@@ -20,8 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger('sale_id');
             $table->foreign('sale_id')->references('id')->on('sales');
 
-            $table->string('sale_serie', 30);
-            $table->decimal('matched_amount', 12, 2);
+            $table->string('sale_serie', 50);
+            $table->decimal('matched_amount', 16, 6);
 
             $table->string('observation', 300)->nullable();
             $table->enum('status', ['USADO', 'ANULADO'])->default('USADO');
