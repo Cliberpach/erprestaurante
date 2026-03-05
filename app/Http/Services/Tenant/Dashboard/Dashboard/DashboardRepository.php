@@ -516,7 +516,10 @@ class DashboardRepository
 
         $heatmapData = DB::table('orders')
             ->selectRaw("
-                HOUR(created_at) - 6 AS x,
+                CASE
+                    WHEN HOUR(created_at) >= 6 THEN HOUR(created_at) - 6
+                    ELSE HOUR(created_at) + 18        -- 0am=18, 1am=19, 2am=20
+                END AS x,
                 CASE
                     WHEN DAYOFWEEK(created_at) = 1 THEN 6
                     ELSE DAYOFWEEK(created_at) - 2
@@ -524,7 +527,7 @@ class DashboardRepository
                 COUNT(*) AS value
             ")
             ->where('created_at', '>=', $desde)
-            ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23')
+            ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23 OR HOUR(created_at) BETWEEN 0 AND 2')
             ->groupByRaw('x, y')
             ->orderByRaw('y, x')
             ->get()
@@ -539,9 +542,13 @@ class DashboardRepository
         $meses = $data['meses'] ? (int)$data['meses'] : 3;
         $meses = in_array($meses, [1, 2, 3]) ? $meses : 3;
         $desde = now()->subMonths($meses);
+
         $heatmapData = DB::table('sales')
             ->selectRaw("
-            HOUR(created_at) - 6 AS x,
+            CASE
+                WHEN HOUR(created_at) >= 6 THEN HOUR(created_at) - 6
+                ELSE HOUR(created_at) + 18
+            END AS x,
             CASE
                 WHEN DAYOFWEEK(created_at) = 1 THEN 6
                 ELSE DAYOFWEEK(created_at) - 2
@@ -549,7 +556,7 @@ class DashboardRepository
             SUM(total) AS value
         ")
             ->where('created_at', '>=', $desde)
-            ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23')
+            ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23 OR HOUR(created_at) BETWEEN 0 AND 2')
             ->groupByRaw('x, y')
             ->orderByRaw('y, x')
             ->get()
@@ -567,7 +574,10 @@ class DashboardRepository
 
         $heatmapData = DB::table('orders')
             ->selectRaw("
-            HOUR(created_at) - 6 AS x,
+            CASE
+                WHEN HOUR(created_at) >= 6 THEN HOUR(created_at) - 6
+                ELSE HOUR(created_at) + 18
+            END AS x,
             CASE
                 WHEN DAYOFWEEK(created_at) = 1 THEN 6
                 ELSE DAYOFWEEK(created_at) - 2
@@ -576,7 +586,7 @@ class DashboardRepository
         ")
             ->where('created_at', '>=', $desde)
             ->whereNotNull('table_id')
-            ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23')
+            ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23 OR HOUR(created_at) BETWEEN 0 AND 2')
             ->groupByRaw('x, y')
             ->orderByRaw('y, x')
             ->get()
