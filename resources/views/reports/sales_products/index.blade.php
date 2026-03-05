@@ -188,6 +188,18 @@
                         orderable: true
                     },
                     {
+                        data: 'category_name',
+                        name: 'sp.category_name',
+                        searchable: true,
+                        orderable: true
+                    },
+                    {
+                        data: 'brand_name',
+                        name: 'sp.brand_name',
+                        searchable: true,
+                        orderable: true
+                    },
+                    {
                         data: 'sale_price',
                         name: 'sp.sale_price',
                         searchable: false,

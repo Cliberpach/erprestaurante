@@ -43,6 +43,7 @@ class RSaleDishController extends Controller
             ->select(
                 'sd.dish_id',
                 'sd.dish_name',
+                'sd.type_dish_name',
                 'sd.sale_price',
                 'd.purchase_price',
                 DB::raw('SUM(sd.quantity) as quantity'),
@@ -53,6 +54,7 @@ class RSaleDishController extends Controller
             ->orderBy('sd.dish_name')
             ->groupBy(
                 'sd.dish_id',
+                'sd.type_dish_name',
                 'sd.dish_name',
                 'd.purchase_price',
                 'sd.sale_price'

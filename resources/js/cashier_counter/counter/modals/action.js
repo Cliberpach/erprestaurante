@@ -37,7 +37,7 @@ export function setConfigDefault() {
         invoiceCard = document.querySelector('#invoice-type-66');
     }
 
-    if (app.order.customer_type_document_abbreviation === 'DNI' && app.order.customer_document_number) {
+    if (app.order.customer_type_document_abbreviation === 'DNI' && app.order.customer_id != 1) {
         invoiceCard = document.querySelector('#invoice-type-65');
     }
 

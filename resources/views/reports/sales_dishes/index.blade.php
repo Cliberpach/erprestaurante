@@ -64,7 +64,7 @@
 
         </div>
         <div class="card-body p-0 pb-2">
-            @include('reports.sales_products.tables.tbl_list')
+            @include('reports.sales_dishes.tables.tbl_list')
         </div>
     </div>
 @endsection
@@ -179,6 +179,12 @@
                         data: 'quantity',
                         name: 'sd.quantity',
                         searchable: false,
+                        orderable: true
+                    },
+                    {
+                        data: 'type_dish_name',
+                        name: 'sd.type_dish_name',
+                        searchable: true,
                         orderable: true
                     },
                     {

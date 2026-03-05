@@ -44,6 +44,8 @@ class RSaleProductController extends Controller
             ->select(
                 'sp.product_id',
                 'sp.product_name',
+                'sp.category_name',
+                'sp.brand_name',
                 'sp.sale_price',
                 'p.purchase_price',
                 DB::raw('SUM(sp.quantity) as quantity'),
@@ -55,6 +57,8 @@ class RSaleProductController extends Controller
             ->groupBy(
                 'sp.product_id',
                 'sp.product_name',
+                'sp.category_name',
+                'sp.brand_name',
                 'p.purchase_price',
                 'sp.sale_price'
             );

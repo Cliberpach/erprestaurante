@@ -89,6 +89,17 @@
 
                     <th width="30"
                         style="background:#1B587C;color:white;text-align: center;border:1px solid #4EA4D8;text-transform: uppercase">
+                        CATEGORÍA
+                    </th>
+
+                    <th width="30"
+                        style="background:#1B587C;color:white;text-align: center;border:1px solid #4EA4D8;text-transform: uppercase">
+                        MARCA
+                    </th>
+
+
+                    <th width="30"
+                        style="background:#1B587C;color:white;text-align: center;border:1px solid #4EA4D8;text-transform: uppercase">
                         PRODUCTO
                     </th>
 
@@ -122,6 +133,8 @@
                 @foreach ($data as $item)
                     <tr>
                         <td>{{ $item->quantity }}</td>
+                        <td>{{ $item->category_name }}</td>
+                        <td>{{ $item->brand_name }}</td>
                         <td>{{ $item->product_name }}</td>
                         <td>{{ $item->sale_price }}</td>
                         <td>{{ $item->purchase_price }}</td>

@@ -85,6 +85,11 @@
 
                     <th width="30"
                         style="background:#1B587C;color:white;text-align: center;border:1px solid #4EA4D8;text-transform: uppercase">
+                        TIPO PLATO
+                    </th>
+
+                    <th width="30"
+                        style="background:#1B587C;color:white;text-align: center;border:1px solid #4EA4D8;text-transform: uppercase">
                         PLATO
                     </th>
 
@@ -118,6 +123,7 @@
                 @foreach ($data as $item)
                     <tr>
                         <td>{{ $item->quantity }}</td>
+                        <td>{{ $item->type_dish_name }}</td>
                         <td>{{ $item->dish_name }}</td>
                         <td>{{ $item->sale_price }}</td>
                         <td>{{ $item->purchase_price }}</td>
