@@ -2,20 +2,24 @@
 
 namespace App\Http\Controllers\Tenant\Supply;
 
+use App\Exports\Tenant\Supply\Dish\DishExport;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\UtilController;
 use App\Http\Requests\Tenant\Supply\Dish\DishStoreRequest;
 use App\Http\Requests\Tenant\Supply\Dish\DishUpdateRequest;
 use App\Http\Services\Tenant\Supply\Dish\DishManagement;
 use App\Models\Landlord\ModelV;
+use App\Models\Tenant\Maintenance\Company\Company;
 use App\Models\Tenant\Orders\OrderDish;
 use App\Models\Tenant\Supply\Dish\Dish;
 use App\Models\Tenant\Supply\Programming\ProgrammingDetail;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Throwable;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DishController extends Controller
 {
@@ -32,6 +36,12 @@ class DishController extends Controller
     }
 
     public function getList(Request $request)
+    {
+        $items  =   $this->queryAll($request);
+        return DataTables::of($items)->toJson();
+    }
+
+    public function queryAll(Request $request)
     {
         $type_dish_id = $request->get('type_dish_id');
 
@@ -52,7 +62,7 @@ class DishController extends Controller
             $items->where('d.type_dish_id', $type_dish_id);
         }
 
-        return DataTables::of($items)->toJson();
+        return $items;
     }
 
     public function getListProgramming(Request $request)
@@ -291,5 +301,13 @@ array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:128
         $data   =   $this->s_manager->searchDish($request->toArray());
 
         return response()->json(['data' => $data]);
+    }
+
+    public function excel(Request $request)
+    {
+        $company        =   Company::findOrFail(1);
+        $data           =   $this->queryAll($request)->get();
+
+        return Excel::download(new DishExport($data, $request, $company), 'platos' . Carbon::now() . '.xlsx');
     }
 }

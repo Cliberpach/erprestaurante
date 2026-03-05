@@ -780,12 +780,12 @@ class DashboardMarketService
         return Excel::download(new ProductoStockMinExport($data, $filters, $company), 'stock_minimo_' . Carbon::now()->format('Y-m-d') . '.xlsx');
     }
 
-    public function peakHourAnalysis(): array
+    public function peakHourAnalysis(array $data): array
     {
         return [
-            'peak_hour_orders'  =>   $this->s_repository->peakHourOrders(),
-            'peak_hour_sales'   =>   $this->s_repository->peakHourSales(),
-            'peak_hour_tables'  =>   $this->s_repository->peakHourTables()
+            'peak_hour_orders'  =>   $this->s_repository->peakHourOrders($data),
+            'peak_hour_sales'   =>   $this->s_repository->peakHourSales($data),
+            'peak_hour_tables'  =>   $this->s_repository->peakHourTables($data)
         ];
     }
 }

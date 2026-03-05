@@ -8,25 +8,32 @@
     @include('workshop.brands.modals.mdl_create_marca')
     @include('workshop.brands.modals.mdl_edit_marca')
     <div class="card overflow-hidden">
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <h6 class="card-title mb-0">LISTA DE PLATOS</h6>
-            <div class="d-flex flex-wrap gap-2">
+        <div class="card-header d-flex flex-column">
+
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6 class="card-title mb-0">LISTA DE PLATOS</h6>
+
                 <a href="{{ route('tenant.abastecimiento.platos.create') }}" class="btn btn-primary text-white">
                     <i class="fas fa-plus-circle"></i> Nuevo
                 </a>
             </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-success" onclick="downloadExcel();">
+                    <i class="fas fa-file-excel"></i> EXCEL
+                </button>
+
+                <button class="btn btn-danger" onclick="downloadPdf()">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+            </div>
+
         </div>
         <div class="card-body p-0 pb-2">
             @include('supply.dishes.tables.tbl_list')
         </div>
     </div>
 @endsection
-
-<style>
-    .swal2-container {
-        z-index: 9999999;
-    }
-</style>
 
 @section('js')
     <script>
@@ -269,6 +276,37 @@
                     });
                 }
             });
+        }
+
+        function downloadExcel() {
+
+            const url = @json(route('tenant.abastecimiento.platos.excel'));
+
+            const params = {
+            };
+
+            const queryString = new URLSearchParams(params).toString();
+
+            const finalUrl = `${url}?${queryString}`;
+            window.location.href = finalUrl;
+
+        }
+
+        function downloadPdf() {
+
+            const url = @json(route('tenant.reportes.ventas_platos.pdf'));
+
+            const params = {
+                start_date: document.querySelector('#fecha_inicio').value,
+                end_date: document.querySelector('#fecha_fin').value,
+                dish_id: document.querySelector('#dish_id').value,
+            };
+
+            const queryString = new URLSearchParams(params).toString();
+
+            const finalUrl = `${url}?${queryString}`;
+            window.open(finalUrl, '_blank');
+
         }
     </script>
 @endsection

@@ -35,6 +35,7 @@ Route::group(["prefix" => "abastecimiento"], function () {
         Route::get('edit/{id}', [DishController::class, 'edit'])->name('tenant.abastecimiento.platos.edit');
         Route::put('update/{id}', [DishController::class, 'update'])->name('tenant.abastecimiento.platos.update');
         Route::delete('destroy/{id}', [DishController::class, 'destroy'])->name('tenant.abastecimiento.platos.destroy');
+        Route::get('excel', [DishController::class, 'excel'])->name('tenant.abastecimiento.platos.excel');
     });
 
     Route::group(["prefix" => "programacion"], function () {

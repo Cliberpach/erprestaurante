@@ -135,6 +135,16 @@
         </div>
     </div>
 
+    <div class="row mb-3">
+        <div class="col-12">
+            <select class="form-control" id="rango-heatmap" onchange="loadPeakHourAnalysis(this.value)">
+                <option value="1">Último mes</option>
+                <option value="2">Últimos 2 meses</option>
+                <option value="3" selected>Últimos 3 meses</option>
+            </select>
+        </div>
+    </div>
+
     <div class="filters">
         <button class="filter-btn active" onclick="setFilter(this, 'pedidos')">Pedidos</button>
         <button class="filter-btn" onclick="setFilter(this, 'ventas')">Ventas (S/)</button>
@@ -146,15 +156,12 @@
 
 <script src="https://code.highcharts.com/modules/heatmap.js"></script>
 <script>
-    let dataPedidos = [];
-    let dataVentas = [];
-    let dataMesas = [];
-
     const datasets = {
-        pedidos: null,
-        ventas: null,
-        mesas: null
+        pedidos: [],
+        ventas: [],
+        mesas: []
     };
+
 
     const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
     const horas = ['6am', '7am', '8am', '9am', '10am', '11am', '12pm',
@@ -394,9 +401,12 @@
         renderChart(filter);
     }
 
-    async function loadPeakHourAnalysis() {
+    async function loadPeakHourAnalysis(meses) {
         try {
-            const res = await axios.get(route('tenant.dashboard.dashboard.peakHourAnalysis'));
+            const res = await axios.get(route('tenant.dashboard.dashboard.peakHourAnalysis', {
+                meses
+            }));
+
             if (res.data.success) {
 
                 dataPedidos = res.data.data.peak_hour_orders;

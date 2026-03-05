@@ -508,8 +508,12 @@ class DashboardRepository
         return $kpiVentas;
     }
 
-    public function peakHourOrders()
+    public function peakHourOrders(array $data)
     {
+        $meses = $data['meses'] ? (int)$data['meses'] : 3;
+        $meses = in_array($meses, [1, 2, 3]) ? $meses : 3;
+        $desde = now()->subMonths($meses);
+
         $heatmapData = DB::table('orders')
             ->selectRaw("
                 HOUR(created_at) - 6 AS x,
@@ -519,7 +523,7 @@ class DashboardRepository
                 END AS y,
                 COUNT(*) AS value
             ")
-            ->where('created_at', '>=', now()->subWeeks(4))
+            ->where('created_at', '>=', $desde)
             ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23')
             ->groupByRaw('x, y')
             ->orderByRaw('y, x')
@@ -530,8 +534,12 @@ class DashboardRepository
         return $heatmapData;
     }
 
-    public function peakHourSales()
+    public function peakHourSales(array $data)
     {
+        $meses = $data['meses'] ? (int)$data['meses'] : 3;
+        $meses = in_array($meses, [1, 2, 3]) ? $meses : 3;
+        $desde = now()->subMonths($meses);
+
         $heatmapData = DB::table('sales')
             ->selectRaw("
             HOUR(created_at) - 6 AS x,
@@ -541,6 +549,7 @@ class DashboardRepository
             END AS y,
             SUM(total) AS value
         ")
+            ->where('created_at', '>=', $desde)
             ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23')
             ->groupByRaw('x, y')
             ->orderByRaw('y, x')
@@ -551,8 +560,12 @@ class DashboardRepository
         return $heatmapData;
     }
 
-    public function peakHourTables()
+    public function peakHourTables(array $data)
     {
+        $meses = $data['meses'] ? (int)$data['meses'] : 3;
+        $meses = in_array($meses, [1, 2, 3]) ? $meses : 3;
+        $desde = now()->subMonths($meses);
+
         $heatmapData = DB::table('orders')
             ->selectRaw("
             HOUR(created_at) - 6 AS x,
@@ -562,6 +575,7 @@ class DashboardRepository
             END AS y,
             COUNT(DISTINCT table_id) AS value
         ")
+            ->where('created_at', '>=', $desde)
             ->whereNotNull('table_id')
             ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23')
             ->groupByRaw('x, y')

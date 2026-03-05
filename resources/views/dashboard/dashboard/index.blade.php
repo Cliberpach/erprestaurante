@@ -209,7 +209,7 @@
         iniciarDataTableProductos();
         dtCuentasCobrar = loadDataTableSimple('tbl_cuentas_cobrar');
         dtCuentasPagar = loadDataTableSimple('tbl_cuentas_pagar');
-        loadPeakHourAnalysis();
+        loadPeakHourAnalysis(3);
         events();
     })
 
