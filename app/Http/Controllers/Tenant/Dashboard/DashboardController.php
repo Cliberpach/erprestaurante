@@ -81,4 +81,14 @@ array:3 [ // app\Http\Controllers\General\PanelControl\Dashboard\DashboardContro
     {
         return $this->s_dashboard->excelProductsStockMin($request->toArray());
     }
+
+    public function peakHourAnalysis()
+    {
+        try {
+            $info   = $this->s_dashboard->peakHourAnalysis();
+            return response()->json(['success' => true, 'message' => 'Horas pico obtenidas', 'data' => $info]);
+        } catch (Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
 }

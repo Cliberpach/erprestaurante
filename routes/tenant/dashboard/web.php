@@ -17,5 +17,7 @@ Route::group(["prefix" => "dashboard"], function () {
         Route::get('/excelMetodosPagoMes', [DashboardController::class, 'excelPaymentsMonth'])->name('tenant.dashboard.dashboard.excelMetodosPagoMes');
         Route::get('/excelCentroCostosMes', [DashboardController::class, 'excelCostCenterMonth'])->name('tenant.dashboard.dashboard.excelCentroCostosMes');
         Route::get('/excelMeserosMes', [DashboardController::class, 'excelRankingWaiterMonth'])->name('tenant.dashboard.dashboard.excelMeserosMes');
+
+        Route::get('peak-hour-analysis', [DashboardController::class, 'peakHourAnalysis'])->name('tenant.dashboard.dashboard.peakHourAnalysis');
     });
 });

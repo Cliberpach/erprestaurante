@@ -507,4 +507,69 @@ class DashboardRepository
 
         return $kpiVentas;
     }
+
+    public function peakHourOrders()
+    {
+        $heatmapData = DB::table('orders')
+            ->selectRaw("
+                HOUR(created_at) - 6 AS x,
+                CASE
+                    WHEN DAYOFWEEK(created_at) = 1 THEN 6
+                    ELSE DAYOFWEEK(created_at) - 2
+                END AS y,
+                COUNT(*) AS value
+            ")
+            ->where('created_at', '>=', now()->subWeeks(4))
+            ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23')
+            ->groupByRaw('x, y')
+            ->orderByRaw('y, x')
+            ->get()
+            ->map(fn($r) => [(int)$r->x, (int)$r->y, (int)$r->value])
+            ->toArray();
+
+        return $heatmapData;
+    }
+
+    public function peakHourSales()
+    {
+        $heatmapData = DB::table('sales')
+            ->selectRaw("
+            HOUR(created_at) - 6 AS x,
+            CASE
+                WHEN DAYOFWEEK(created_at) = 1 THEN 6
+                ELSE DAYOFWEEK(created_at) - 2
+            END AS y,
+            SUM(total) AS value
+        ")
+            ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23')
+            ->groupByRaw('x, y')
+            ->orderByRaw('y, x')
+            ->get()
+            ->map(fn($r) => [(int)$r->x, (int)$r->y, (float)$r->value])
+            ->toArray();
+
+        return $heatmapData;
+    }
+
+    public function peakHourTables()
+    {
+        $heatmapData = DB::table('orders')
+            ->selectRaw("
+            HOUR(created_at) - 6 AS x,
+            CASE
+                WHEN DAYOFWEEK(created_at) = 1 THEN 6
+                ELSE DAYOFWEEK(created_at) - 2
+            END AS y,
+            COUNT(DISTINCT table_id) AS value
+        ")
+            ->whereNotNull('table_id')
+            ->whereRaw('HOUR(created_at) BETWEEN 6 AND 23')
+            ->groupByRaw('x, y')
+            ->orderByRaw('y, x')
+            ->get()
+            ->map(fn($r) => [(int)$r->x, (int)$r->y, (int)$r->value])
+            ->toArray();
+
+        return $heatmapData;
+    }
 }

@@ -75,4 +75,9 @@ class DashboardManager
     {
         return $this->s_dashboard_market->excelProductsStockMin($data);
     }
+
+    public function peakHourAnalysis()
+    {
+        return $this->s_dashboard_market->peakHourAnalysis();
+    }
 }

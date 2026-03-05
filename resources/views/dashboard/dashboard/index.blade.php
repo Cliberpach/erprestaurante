@@ -137,6 +137,19 @@
         </div>
     </div>
 
+    <div class="card" style="height: auto;">
+        <div class="card-header">
+            <h5>Análisis de Horas Pico</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    @include('dashboard.dashboard.graficos.heatmap_hourshot')
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card mb-3" style="height: auto;">
         <div class="card-title" style="font-size: 0.9rem; font-weight: bold; color: #1e3a8a; margin-bottom: 15px;">
 
@@ -196,6 +209,7 @@
         iniciarDataTableProductos();
         dtCuentasCobrar = loadDataTableSimple('tbl_cuentas_cobrar');
         dtCuentasPagar = loadDataTableSimple('tbl_cuentas_pagar');
+        loadPeakHourAnalysis();
         events();
     })
 
@@ -491,7 +505,6 @@
     }
 
     function excelProductosStockMin() {
-
         const url = @json(route('tenant.dashboard.dashboard.excelProductosStockMin'));
 
         const params = {
@@ -502,6 +515,5 @@
 
         const finalUrl = `${url}?${queryString}`;
         window.location.href = finalUrl;
-
     }
 </script>
