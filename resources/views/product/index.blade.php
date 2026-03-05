@@ -15,34 +15,41 @@
     @include('utils.modals.categories.mdl_create')
     @include('utils.modals.brands.mdl_create')
 
-    <x-card>
-        <x-slot name="headerCard">
-            <h4 class="card-title">LISTA DE PRODUCTOS</h4>
+    <div class="card overflow-hidden">
+        <div class="card-header d-flex flex-column">
 
-            <div class="d-flex flex-wrap gap-2">
-                <button class="btn btn-warning" onclick="openMdlImportProducto()">
-                    <i class="fa-solid fa-upload"></i> IMPORTAR
-                </button>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6 class="card-title mb-0">LISTA DE PRODUCTOS</h6>
 
-                <button type="button" class="btn btn-primary" onclick="openMdlCreate()">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-plus pe-1"></i>
-                        <p class="mb-0 ms-2">NUEVO</p>
-                    </div>
-                </button>
-            </div>
-        </x-slot>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-warning" onclick="openMdlImportProducto()">
+                        <i class="fa-solid fa-upload"></i> IMPORTAR
+                    </button>
 
-        <x-slot name="contentCard">
-            <div class="row">
-                <div class="col">
-                    <div class="table-responsive">
-                        @include('product.tables.tbl_list_products')
-                    </div>
+                    <button type="button" class="btn btn-primary" onclick="openMdlCreate()">
+                        <i class="fas fa-plus-circle"></i> NUEVO
+                    </button>
                 </div>
             </div>
-        </x-slot>
-    </x-card>
+
+            <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-success" onclick="downloadExcel();">
+                    <i class="fas fa-file-excel"></i> EXCEL
+                </button>
+
+                <button class="btn btn-danger" onclick="downloadPdf()">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+            </div>
+
+        </div>
+
+        <div class="card-body p-0 pb-2">
+            <div class="table-responsive">
+                @include('product.tables.tbl_list_products')
+            </div>
+        </div>
+    </div>
 @endsection
 
 
@@ -416,6 +423,32 @@
                 `?categoriaId=${categoriaId}&marcaId=${marcaId}`;
 
             window.location.href = url;
+        }
+
+        function downloadExcel() {
+
+            const url = @json(route('tenant.inventario.productos.excel'));
+
+            const params = {};
+
+            const queryString = new URLSearchParams(params).toString();
+
+            const finalUrl = `${url}?${queryString}`;
+            window.location.href = finalUrl;
+
+        }
+
+        function downloadPdf() {
+
+            const url = @json(route('tenant.inventario.productos.pdf'));
+
+            const params = {};
+
+            const queryString = new URLSearchParams(params).toString();
+
+            const finalUrl = `${url}?${queryString}`;
+            window.open(finalUrl, '_blank');
+
         }
     </script>
 @endsection

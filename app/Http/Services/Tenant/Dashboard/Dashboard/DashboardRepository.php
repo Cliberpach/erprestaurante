@@ -539,7 +539,6 @@ class DashboardRepository
         $meses = $data['meses'] ? (int)$data['meses'] : 3;
         $meses = in_array($meses, [1, 2, 3]) ? $meses : 3;
         $desde = now()->subMonths($meses);
-
         $heatmapData = DB::table('sales')
             ->selectRaw("
             HOUR(created_at) - 6 AS x,

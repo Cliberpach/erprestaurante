@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tenant;
 
+use App\Exports\Tenant\Inventory\Producto\ProductListExport;
 use App\Exports\Tenant\Inventory\Producto\ProductoExport;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\UtilController;
@@ -14,13 +15,16 @@ use App\Http\Services\Tenant\Inventory\Product\ProductManager;
 use App\Imports\Inventory\Producto\ProductoImport;
 use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Product;
+use App\Models\Tenant\Maintenance\Company\Company;
 use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\WarehouseProduct;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductController extends Controller
 {
@@ -49,6 +53,12 @@ class ProductController extends Controller
 
     public function getAll(Request $request)
     {
+        $products   =   $this->queryAll($request);
+        return DataTables::of($products)->make(true);
+    }
+
+    public function queryAll(Request $request)
+    {
         $products   =   DB::table('products as p')
             ->join('categories as c', 'c.id', 'p.category_id')
             ->join('brands as b', 'b.id', 'p.brand_id')
@@ -74,8 +84,7 @@ class ProductController extends Controller
                 'p.unit_id',
                 'p.unit_symbol'
             )->where('p.status', 'ACTIVO');
-
-        return DataTables::of($products)->make(true);
+        return $products;
     }
 
 
@@ -476,5 +485,27 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
         }
 
         return DataTables::of($products)->make(true);
+    }
+
+    public function excel(Request $request)
+    {
+        $company        =   Company::findOrFail(1);
+        $data           =   $this->queryAll($request)->get();
+
+        return Excel::download(new ProductListExport($data, $request, $company), 'productos_' . Carbon::now() . '.xlsx');
+    }
+
+    public function pdf(Request $request)
+    {
+        $company        =   Company::find(1);
+        $data           =   $this->queryAll($request)->get();
+
+        $pdf = Pdf::loadview('product.reports.pdf', [
+            'company'   => $company,
+            'data'      => $data,
+            'filters'   => $request,
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('platos_' . Carbon::now()->format('Y_m_d_H_i_s') . '.pdf');
     }
 }

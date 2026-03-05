@@ -43,6 +43,8 @@ Route::group(["prefix" => "inventario"], function () {
         Route::get('/producto/get-format-excel', [ProductController::class, 'getFormatExcel'])->name('tenant.inventario.productos.get-format-excel');
         Route::post('/producto/import-producto-excel', [ProductController::class, 'importExcel'])->name('tenant.inventario.productos.import-excel');
         Route::post('/producto/export-producto-excel', [ProductController::class, 'exportExcel'])->name('tenant.inventario.productos.export-excel');
+        Route::get('excel', [ProductController::class, 'excel'])->name('tenant.inventario.productos.excel');
+        Route::get('pdf', [ProductController::class, 'pdf'])->name('tenant.inventario.productos.pdf');
     });
 
     Route::group(["prefix" => "inventario"], function () {

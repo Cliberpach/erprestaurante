@@ -127,6 +127,9 @@
 
     <div class="row mb-3">
         <div class="col-12">
+            <label for="rango-heatmap" class="font-weight-bold">
+                Seleccione el rango de meses para analizar las horas pico
+            </label>
             <select class="form-control" id="rango-heatmap" onchange="loadPeakHourAnalysis(this.value)">
                 <option value="1">Último mes</option>
                 <option value="2">Últimos 2 meses</option>
