@@ -55,7 +55,7 @@ class Kernel extends ConsoleKernel
             ->name('retry-failed-invoices') // Nombre único para identificarla
             ->withoutOverlapping(30);       // Si tarda más de 30min, no ejecutar encima
 
-        $schedule->command('optimize:clear')
+        $schedule->command('cache:clear')
             ->twiceDaily(4, 8)
             ->name('clear-framework-cache')
             ->withoutOverlapping();
