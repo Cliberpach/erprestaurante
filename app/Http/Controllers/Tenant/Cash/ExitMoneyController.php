@@ -61,6 +61,7 @@ class ExitMoneyController extends Controller
                 'em.number',
                 'em.total',
                 'em.discount_cash',
+                'em.payment_method_name',
                 DB::raw("CONCAT('CM-', LPAD(pcb.id, 8, '0')) as cash_book_code"),
             )
             ->where('em.status', 1);
@@ -75,13 +76,15 @@ class ExitMoneyController extends Controller
         $date = now()->format('Y-m-d');
         $payment_methods    =   PaymentMethod::where('estado', 'ACTIVO')->get();
         $cost_center        =   CostCenter::where('status', 'ACTIVO')->get();
+        $supplier_initial   =   FormatController::getFormatSupplier(1);
 
         return view('cash.exit-money.create', compact(
             'suppliers',
             'proof_payments',
             'date',
             'payment_methods',
-            'cost_center'
+            'cost_center',
+            'supplier_initial'
         ));
     }
 

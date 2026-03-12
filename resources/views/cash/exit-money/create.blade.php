@@ -300,9 +300,11 @@
                 });
             }
 
-
+            const supplierInitial = @json($supplier_initial);
             window.supplierSelect = new TomSelect('#supplier_id', {
                 valueField: 'id',
+                options: [supplierInitial],
+                items: [supplierInitial.id],
                 labelField: 'full_name',
                 searchField: ['full_name'],
                 plugins: ['clear_button'],

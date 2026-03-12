@@ -97,6 +97,13 @@
                         searchable: true
                     },
                     {
+                        data: 'payment_method_name',
+                        name: 'em.payment_method_name',
+                        className: "text-center",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
                         data: 'total',
                         name: 'em.total',
                         className: "text-center",

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Tenant\Reports;
 
-use App\Exports\Tenant\ReportContableExport;
 use App\Exports\Tenant\Reports\RContable\RContableExport;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\UtilController;
@@ -49,11 +48,11 @@ class ReportContableController extends Controller
         }
 
         if ($request->get('date_start')) {
-            $items = $items->whereRaw('DATE(sdd.created_at) >= ?', [$request->get('date_start')]);
+            $items = $items->whereRaw('DATE(s.created_at) >= ?', [$request->get('date_start')]);
         }
 
         if ($request->get('date_end')) {
-            $items = $items->whereRaw('DATE(sdd.created_at) <= ?', [$request->get('date_end')]);
+            $items = $items->whereRaw('DATE(s.created_at) <= ?', [$request->get('date_end')]);
         }
 
         return $items;
