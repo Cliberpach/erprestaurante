@@ -98,7 +98,7 @@
                 <i class="fas fa-percent text-primary me-1"></i> IGV
             </label>
             <input type="text" class="form-control input-fill inputDecimalPositivo" name="igv"
-                value="{{ number_format($company->igv, 2, '.', '') }}" min="0" max="99" step="0.01">
+                value="{{ number_format($company->igv, 2, '.', '') }}" maxlength="4" step="0.01">
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">

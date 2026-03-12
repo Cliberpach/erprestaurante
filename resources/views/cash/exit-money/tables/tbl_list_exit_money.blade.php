@@ -10,6 +10,7 @@
             <th>Método Pago</th>
             <th data-priority="3">Total</th>
             <th>Descontar Caja</th>
+            <th>Item</th>
             <th data-priority="2">Acción</th>
         </tr>
     </thead>

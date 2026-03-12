@@ -18,27 +18,41 @@
             </div>
         </div>
         <div class="card-body p-0 pb-2">
-            <form action="{{ route('tenant.cajas.egresos.index') }}" method="GET">
-                <div class="d-flex justify-content-center align-items-center mb-3">
-                    <div class="form-group me-3">
-                        <label for="from_date">Desde</label>
-                        <input type="date" name="from_date" id="from_date" class="form-control"
-                            value="{{ $from_today }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="to_date">Hasta</label>
-                        <div class="d-flex align-items-center">
-                            <input type="date" name="to_date" id="to_date" class="form-control me-2"
-                                value="{{ $to_today }}">
-
-                            <button type="submit" class="btn btn-rounded btn-primary">
-                                <i class='bx bx-search-alt-2'></i>
-                            </button>
-                        </div>
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <div class="form-group me-3">
+                    <label for="date_start">Desde</label>
+                    <input type="date" name="date_start" id="date_start" class="form-control"
+                        value="{{ now()->toDateString() }}">
+                </div>
+                <div class="form-group">
+                    <label for="date_end">Hasta</label>
+                    <div class="d-flex align-items-center">
+                        <input type="date" name="date_end" id="date_end" class="form-control me-2"
+                            value="{{ now()->toDateString() }}">
+                        <button type="button" class="btn btn-rounded btn-primary btnFilter">
+                            <i class='fas fa-filter'></i>
+                        </button>
                     </div>
                 </div>
-            </form>
-            @include('cash.exit-money.tables.tbl_list_exit_money')
+            </div>
+
+            <div class="row">
+                <div class="col-12 text-end">
+                    <button class="btn btn-success me-2" onclick="downloadExcel();">
+                        <i class="fas fa-file-excel me-1"></i> Excel
+                    </button>
+
+                    <button class="btn btn-danger" onclick="downloadPdf();">
+                        <i class="fas fa-file-pdf me-1"></i> PDF
+                    </button>
+                </div>
+                <div class="col-12">
+                    <div class="table-responsive">
+                        @include('cash.exit-money.tables.tbl_list_exit_money')
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection
@@ -49,12 +63,30 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             iniciarDtExitMoneys();
+            events();
         });
 
+        function events() {
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.btnFilter')) {
+                    filtrar();
+                }
+            });
+        }
+
         function iniciarDtExitMoneys() {
+            const url = '{{ route('tenant.cajas.egresos.getExitMoneys') }}';
+
             dtExitMoneys = new DataTable('#dt-exit-moneys', {
                 processing: true,
-                ajax: '{{ route('tenant.cajas.egresos.getExitMoneys') }}',
+                ajax: {
+                    url: url,
+                    type: 'GET',
+                    data: function(d) {
+                        d.date_start = document.querySelector('#date_start').value;
+                        d.date_end = document.querySelector('#date_end').value;
+                    }
+                },
                 columns: [{
                         data: 'id',
                         className: "text-center",
@@ -125,17 +157,27 @@
                                 return `
                                     <span class="badge rounded-pill bg-primary-subtle text-primary fw-semibold px-2 py-1">
                                         <i class="fas fa-cash-register me-1"></i>
-                                        Descontado
+                                        SI
                                     </span>
                                 `;
                             } else {
                                 return `
                                     <span class="badge rounded-pill bg-danger-subtle text-danger fw-semibold px-2 py-1">
                                         <i class="fas fa-ban me-1"></i>
-                                        No descontado
+                                        NO
                                     </span>
                                 `;
                             }
+                        }
+                    },
+                    {
+                        data: 'first_item',
+                        name: 'em.first_item',
+                        className: "text-center",
+                        orderable: false,
+                        searchable: false,
+                        render: function(data) {
+                            return data;
                         }
                     },
                     {
@@ -302,6 +344,48 @@
                     });
                 }
             });
+        }
+
+        function downloadExcel() {
+            const url = @json(route('tenant.cajas.egresos.excelAll'));
+
+            const params = {
+                date_start: document.querySelector('#date_start').value,
+                date_end: document.querySelector('#date_end').value,
+            };
+
+            const queryString = new URLSearchParams(params).toString();
+
+            const finalUrl = `${url}?${queryString}`;
+            window.location.href = finalUrl;
+        }
+
+        function downloadPdf() {
+            const url = @json(route('tenant.cajas.egresos.pdfAll'));
+
+            const params = {
+                date_start: document.querySelector('#date_start').value,
+                date_end: document.querySelector('#date_end').value,
+            };
+
+            const queryString = new URLSearchParams(params).toString();
+
+            const finalUrl = `${url}?${queryString}`;
+            window.open(finalUrl, '_blank');
+        }
+
+
+        function filtrar() {
+            toastr.clear();
+            const fecha_inicio = document.querySelector('#date_start').value;
+            const fecha_fin = document.querySelector('#date_end').value;
+
+            if (fecha_inicio > fecha_fin && fecha_fin && fecha_inicio) {
+                toastr.error('LA FECHA DE INICIO DEBE SER MENOR IGUAL A LA FECHA FINAL!!');
+                document.querySelector('#fecha_inicio').focus();
+                return;
+            }
+            dtExitMoneys.ajax.reload();
         }
     </script>
 @endsection

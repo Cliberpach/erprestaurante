@@ -272,7 +272,6 @@
 
         }
 
-
         function downloadExcel() {
 
             const url = @json(route('tenant.reportes.contable.excel'));

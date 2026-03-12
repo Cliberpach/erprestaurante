@@ -37,6 +37,8 @@ Route::group(["prefix" => "cajas"], function () {
         Route::put('update/{id}', [ExitMoneyController::class, 'updateExit'])->name('tenant.cajas.egresos.update');
         Route::get('edit/{id}', [ExitMoneyController::class, 'editExit'])->name('tenant.cajas.egresos.edit');
         Route::delete('destroy/{id}', [ExitMoneyController::class, 'destroy'])->name('tenant.cajas.egresos.destroy');
+        Route::get('pdf-all', [ExitMoneyController::class, 'pdfAll'])->name('tenant.cajas.egresos.pdfAll');
+        Route::get('excel-all', [ExitMoneyController::class, 'excelAll'])->name('tenant.cajas.egresos.excelAll');
 
         Route::post('proveedor/guardar', [PettyCashController::class, 'supplierStore'])->middleware('verificar.caja')->name('tenant.supplier.store');
         Route::post('comprobante-pago/guardar', [PettyCashController::class, 'proofPaymentStore'])->name('tenant.proof-payment.store');

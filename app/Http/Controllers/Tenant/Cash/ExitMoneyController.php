@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tenant\Cash;
 
+use App\Exports\Tenant\Cash\ExitMoney\ExitMoneyExport;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\FormatController;
 use App\Http\Requests\Tenant\Cash\ExitMoney\ExitMoneyStoreRequest;
@@ -15,11 +16,13 @@ use App\Models\Tenant\Cash\ExitMoney\ExitMoneyDetail;
 use App\Models\Tenant\Maintenance\CostCenter;
 use App\Models\Tenant\PaymentMethod;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExitMoneyController extends Controller
 {
@@ -32,25 +35,21 @@ class ExitMoneyController extends Controller
 
     public function index(Request $request)
     {
-        $exit_money = ExitMoney::where('status', true);
-        $from_today = now()->format('Y-m-d');
-        $to_today = now()->format('Y-m-d');
-
-        if ($request->from_date && $request->to_date) {
-            $exit_money = $exit_money->where('date', '>=', $request->from_date)->where('date', '<=', $request->to_date);
-            $from_today = $request->from_date;
-            $to_today = $request->to_date;
-        }
-
-        $exit_money = $exit_money->get();
-
-        return view('cash.exit-money.index', compact('exit_money', 'from_today', 'to_today'));
+        return view('cash.exit-money.index');
     }
 
     public function getExitMoneys(Request $request)
     {
-        $query = DB::connection('tenant')
-            ->table('exit_money as em')
+        $query  =   $this->queryExitMoneys($request);
+        return DataTables::of($query)->toJson();
+    }
+
+    public function queryExitMoneys(Request $request)
+    {
+        $date_start =   $request->get('date_start');
+        $date_end   =   $request->get('date_end');
+
+        $query = DB::table('exit_money as em')
             ->join('suppliers as s', 's.id', '=', 'em.supplier_id')
             ->join('petty_cash_books as pcb', 'pcb.id', 'em.petty_cash_book_id')
             ->select(
@@ -63,10 +62,22 @@ class ExitMoneyController extends Controller
                 'em.discount_cash',
                 'em.payment_method_name',
                 DB::raw("CONCAT('CM-', LPAD(pcb.id, 8, '0')) as cash_book_code"),
+                DB::raw("(SELECT description
+                  FROM exit_money_detail
+                  WHERE exit_money_id = em.id
+                  ORDER BY id ASC
+                  LIMIT 1) as first_item")
             )
             ->where('em.status', 1);
 
-        return DataTables::of($query)->toJson();
+        if ($date_start) {
+            $query->whereDate('em.created_at', '>=', $date_start);
+        }
+
+        if ($date_end) {
+            $query->whereDate('em.created_at', '<=', $date_end);
+        }
+        return $query;
     }
 
     public function create()
@@ -189,5 +200,32 @@ array:9 [ // app\Http\Controllers\Tenant\Cash\ExitMoneyController.php:145
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
+    }
+
+    public function excelAll(Request $request)
+    {
+        $company    =   Company::findOrFail(1);
+        $report     =   $this->queryExitMoneys($request)->get();
+
+        return Excel::download(
+            new ExitMoneyExport($report, $request, $company),
+            'egresos_' . Carbon::now()->format('Y_m_d_H_i_s') . '.xlsx'
+        );
+    }
+
+    public function pdfAll(Request $request)
+    {
+        $company            =   Company::find(1);
+        $report             =   $this->queryExitMoneys($request)->get();
+
+        $pdf = Pdf::loadview('cash.exit-money.reports.pdf-all', [
+            'company'               =>  $company,
+            'report'                =>  $report,
+            'filters'               =>  $request
+
+        ])->setPaper('a4', 'landscape');
+
+
+        return $pdf->stream('egresos_' . Carbon::now()->format('Y_m_d_H_i_s') . '.pdf');
     }
 }
