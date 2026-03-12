@@ -113,6 +113,10 @@ function eventsUtils() {
         }
 
 
+        if (e.target.classList.contains('inputEntero')) {
+            inputEntero(e);
+        }
+
 
     })
 
@@ -155,6 +159,10 @@ function getRowById(dtTabla, registro_id) {
     }
 
     return rowData;
+}
+
+function inputEntero(e) {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
 }
 
 //======== OBTENER FILA POR EL INDEX DEL DATATABLE ========

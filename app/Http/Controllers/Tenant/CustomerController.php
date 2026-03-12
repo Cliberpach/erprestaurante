@@ -264,7 +264,7 @@ array:10 [ // app\Http\Controllers\Tenant\CustomerController.php:173
 
     //========== CONSULTAR DOCUMENTO ==========
     public function consult_document(Request $request)
-    {
+    {   
         try {
             //========= VALIDANDO QUE EL TIPO DOCUMENTO Y N° DOCUMENTO NO SEAN NULL =======
             $type_identity_document =   $request->get('type_identity_document', null);

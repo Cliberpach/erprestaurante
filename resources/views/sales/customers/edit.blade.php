@@ -39,7 +39,6 @@
     </div>
 @endsection
 
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         loadSelectCustomers();

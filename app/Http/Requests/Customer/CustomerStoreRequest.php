@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Support\Facades\DB;
 
 class CustomerStoreRequest extends FormRequest
 {
