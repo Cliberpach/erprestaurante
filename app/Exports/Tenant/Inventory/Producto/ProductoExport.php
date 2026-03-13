@@ -7,7 +7,6 @@ use App\Exports\Tenant\Inventory\Producto\Hojas\InstruccionesSheet;
 use App\Exports\Tenant\Inventory\Producto\Hojas\ProductosSheet;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-
 class ProductoExport implements WithMultipleSheets
 {
     public function sheets(): array

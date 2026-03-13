@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Http\Requests\Tenant\Consumables\Consumable;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\Rule;
+
+class ConsumableStoreRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->replace(
+            collect($this->all())->mapWithKeys(function ($value, $key) {
+
+                if (str_ends_with($key, '_mdlconsumable')) {
+                    $newKey = str_replace('_mdlconsumable', '', $key);
+                    return [$newKey => $value];
+                }
+
+                return [$key => $value];
+            })->toArray()
+        );
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:160',
+                Rule::unique('consumables', 'name')->where('status', 'ACTIVO'),
+            ],
+            'description' => 'nullable|string|max:200',
+            'sale_price' => 'required|numeric|min:1|max:999999',
+            'purchase_price' => 'required|numeric|min:1|max:999999',
+            'stock' => 'required|integer|min:0|max:9999',
+            'stock_min' => 'required|integer|min:0|max:9999',
+            'code_factory' => 'nullable|alpha_num|max:20',
+            'code_bar' => 'nullable|alpha_num|max:20',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'category_id' => [
+                'required',
+                Rule::exists('consumable_categories', 'id')->where('status', 'ACTIVO')
+            ],
+            'brand_id' => [
+                'required',
+                Rule::exists('consumable_brands', 'id')->where('status', 'ACTIVO')
+            ],
+            'unit_id' => [
+                'required',
+                Rule::exists('landlord.general_table_details', 'id')->where('status', 'ACTIVO')
+            ]
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'El nombre es obligatorio.',
+            'name.min' => 'El nombre debe tener al menos 3 caracteres.',
+            'name.max' => 'El nombre no debe exceder los 160 caracteres.',
+            'name.unique' => 'Ya existe un producto con ese nombre en estado activo.',
+
+            'description.max' => 'La descripción no debe exceder los 200 caracteres.',
+
+            'sale_price.required' => 'El precio de venta es obligatorio.',
+            'sale_price.numeric' => 'El precio de venta debe ser un número entero.',
+            'sale_price.min' => 'El precio de venta debe ser mayor a 0.',
+            'sale_price.max' => 'El precio de venta no debe exceder 8 dígitos.',
+
+            'purchase_price.required' => 'El precio de compra es obligatorio.',
+            'purchase_price.numeric' => 'El precio de compra debe ser un número entero.',
+            'purchase_price.min' => 'El precio de compra debe ser mayor a 0.',
+            'purchase_price.max' => 'El precio de compra no debe exceder 8 dígitos.',
+
+            'stock.required' => 'El stock es obligatorio.',
+            'stock.integer' => 'El stock debe ser un número entero.',
+            'stock.min' => 'El stock no puede ser negativo.',
+            'stock.max' => 'El stock no debe exceder 8 dígitos.',
+
+            'stock_min.required' => 'El stock mínimo es obligatorio.',
+            'stock_min.integer' => 'El stock mínimo debe ser un número entero.',
+            'stock_min.min' => 'El stock mínimo no puede ser negativo.',
+            'stock_min.max' => 'El stock mínimo no debe exceder 8 dígitos.',
+
+            'code_factory.alpha_num' => 'El código de fábrica debe ser alfanumérico.',
+            'code_factory.max' => 'El código de fábrica no debe exceder los 20 caracteres.',
+
+            'code_bar.alpha_num' => 'El código de barras debe ser alfanumérico.',
+            'code_bar.max' => 'El código de barras no debe exceder los 20 caracteres.',
+
+            'image.image' => 'El archivo debe ser una imagen.',
+            'image.mimes' => 'La imagen debe ser de tipo: jpg, jpeg, png o webp.',
+            'image.max' => 'La imagen no debe pesar más de 2MB.',
+
+            'category_id.required' => 'La categoría es obligatoria.',
+            'category_id.exists' => 'La categoría seleccionada no es válida.',
+
+            'brand_id.required' => 'La marca es obligatoria.',
+            'brand_id.exists' => 'La marca seleccionada no es válida.',
+
+            'unit_id.required' => 'La unidad es obligatoria.',
+            'unit_id.exists' => 'La unidad seleccionada no es válida.',
+        ];
+    }
+
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new ValidationException($validator, response()->json([
+            'errors' => $validator->errors()
+        ], 422));
+    }
+}

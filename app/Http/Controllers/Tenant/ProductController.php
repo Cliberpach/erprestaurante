@@ -496,6 +496,6 @@ array:1 [ // app\Http\Controllers\Tenant\ProductController.php:190
             'filters'   => $request,
         ])->setPaper('a4', 'landscape');
 
-        return $pdf->stream('platos_' . Carbon::now()->format('Y_m_d_H_i_s') . '.pdf');
+        return $pdf->stream('productos_' . Carbon::now()->format('Y_m_d_H_i_s') . '.pdf');
     }
 }

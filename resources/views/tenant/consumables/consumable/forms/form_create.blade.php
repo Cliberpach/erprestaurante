@@ -1,19 +1,17 @@
-<form class="row" id="form-create-product" action="">
+<form class="row" id="formCreateConsumable" action="">
     @csrf
     <div class="col-lg-6 col-md-6">
         <div class="row">
             <div class="col-lg-12 col-md-12 mb-3">
                 <label for="name" class="form-label required_field">Nombre</label>
                 <input placeholder="Nombre máximo 500 caracteres" name="name" required maxlength="500" type="text"
-                    class="form-control name" id="name" aria-describedby="emailHelp"
-                    oninput="this.value = this.value.toUpperCase()">
+                    class="form-control name input-fill" id="name" aria-describedby="emailHelp">
                 <p class="msgError name_error"></p>
             </div>
             <div class="col-lg-12 col-md-12 mb-3">
                 <label for="description" class="form-label">Descripción</label>
                 <input placeholder="Máximo 200 caracteres" name="description" maxlength="200" type="text"
-                    class="form-control description" id="description" aria-describedby="emailHelp"
-                    oninput="this.value = this.value.toUpperCase()">
+                    class="form-control description input-fill" id="description" aria-describedby="emailHelp">
                 <p class="msgError description_error"></p>
             </div>
             <div class="col-lg-6 col-md-6 mb-3">
@@ -23,7 +21,7 @@
                         <i class="fas fa-coins"></i>
                     </span>
                     <input value="1" name="sale_price" type="number" step="0.01" min="0"
-                        class="form-control sale_price" id="sale_price">
+                        class="form-control sale_price input-fill" id="sale_price">
                 </div>
                 <p class="msgError sale_price_error"></p>
             </div>
@@ -35,19 +33,19 @@
                         <i class="fas fa-coins"></i>
                     </span>
                     <input value="1" name="purchase_price" type="number" step="0.01" min="0"
-                        class="form-control purchase_price" id="purchase_price">
+                        class="form-control purchase_price input-fill" id="purchase_price">
                 </div>
                 <p class="msgError purchase_price_error"></p>
             </div>
             <div class="col-lg-6 col-md-6 colStock mb-3">
                 <label for="stock" class="form-label required_field">Stock</label>
-                <input value="0" name="stock" type="number" class="form-control stock" min="0"
+                <input value="0" name="stock" type="number" class="form-control stock input-fill" min="0"
                     id="stock" aria-describedby="emailHelp" placeholder="STOCK">
                 <p class="msgError stock_error"></p>
             </div>
             <div class="col-lg-6 col-md-6 colStockMin mb-3">
                 <label for="stock_min" class="form-label required_field">Stock mínimo</label>
-                <input value="0" name="stock_min" type="number" class="form-control stock_min" min="0"
+                <input value="0" name="stock_min" type="number" class="form-control stock_min input-fill" min="0"
                     id="stock_min" placeholder="STOCK MÍNIMO" aria-label="Username" aria-describedby="basic-addon1">
                 <p class="msgError stock_min_error"></p>
             </div>
@@ -57,7 +55,7 @@
                     <span class="input-group-text text-secondary">
                         <i class="fas fa-industry"></i>
                     </span>
-                    <input name="code_factory" type="text" class="form-control code_factory" id="code_factory">
+                    <input name="code_factory" type="text" class="form-control code_factory input-fill" id="code_factory">
                 </div>
                 <p class="msgError code_factory_error"></p>
             </div>
@@ -68,7 +66,7 @@
                     <span class="input-group-text text-dark">
                         <i class="fas fa-barcode"></i>
                     </span>
-                    <input name="code_bar" type="text" class="form-control code_bar" id="code_bar">
+                    <input name="code_bar" type="text" class="form-control code_bar input-fill" id="code_bar">
                 </div>
                 <p class="msgError code_bar_error"></p>
             </div>
@@ -93,6 +91,23 @@
                     @endforeach
                 </select>
                 <p class="msgError category_id_error"></p>
+            </div>
+
+            <div class="col-lg-12 col-md-12 mb-3">
+                <label for="brand" class="form-label required_field">Marca</label>
+                <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlCreateBrand();"
+                    style="margin-left:4px;"></i>
+
+                <select name="brand_id" style="text-transform: uppercase;" id="brand_id"
+                    class="brand select2_form form-select" aria-label="Default select example">
+                    <option value=""></option>
+                    @foreach ($brands as $brand)
+                        <option @if ($brand->is_default) selected @endif style="text-transform: uppercase;"
+                            value="{{ $brand->id }}">{{ $brand->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="msgError brand_id_error"></p>
             </div>
 
             <div class="col-lg-12 col-md-12 mb-3">

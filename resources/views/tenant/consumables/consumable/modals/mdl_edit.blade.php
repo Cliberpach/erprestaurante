@@ -1,29 +1,32 @@
-<!-- Modal product -->
-<div class="modal fade" id="mdl-edit-product" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="mdlEditConsumable" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Editar producto</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Editar Insumo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
-                @include('product.forms.form_edit')
+                @include('tenant.consumables.consumable.forms.form_edit')
 
             </div>
-            <div class="modal-footer">
-                <div class="col-info">
-                    <i class="fas fa-info-circle"></i>
-                    <p style="margin:0">Los campos marcados con asterisco (*) son obligatorios.</p>
-                </div>
-                <div class="col-buttons">
-                    <button type="button" class="btn btn-secondary btn-cancel" data-bs-dismiss="modal">
-                        <i style="margin-right: 3px;" class="fas fa-window-close"></i>Cancelar
+            <div class="modal-footer flex-column align-items-stretch">
+
+                <div class="d-flex justify-content-end w-100 gap-2">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cerrar
                     </button>
-                    <button type="submit" form="form-edit-product" class="btn btn-primary btn-save">
+
+                    <button type="submit" form="formEditConsumable" class="btn btn-primary btn-save">
                         <i style="margin-right: 3px;" class="fas fa-save"></i>Guardar
                     </button>
                 </div>
+
+                <div class="d-flex align-items-center text-muted small mt-2">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <span>Los campos marcados con asterisco (*) son obligatorios.</span>
+                </div>
+
             </div>
         </div>
     </div>
@@ -38,13 +41,13 @@
         deleteImg: null
     };
 
-    function eventsMdlEditProduct() {
+    function eventsMdlEditConsumable() {
         loadTomSelectEdit();
         loadFilePoundEdit();
 
-        document.querySelector('#form-edit-product').addEventListener('submit', (e) => {
+        document.querySelector('#formEditConsumable').addEventListener('submit', (e) => {
             e.preventDefault();
-            updateProduct(e.target);
+            updateConsumable(e.target);
         })
 
         document.querySelector('#image_edit').addEventListener('change', function(event) {
@@ -174,7 +177,7 @@
             toastr.error('FALTA EL PARÁMETRO ID DEL PRODUCTO');
             return;
         }
-        const row = getRowById(dtProducts, id);
+        const row = getRowById(dtConsumables, id);
         if (!row) {
             toastr.error('PRODUCTO NO ENCONTRADO');
             return;
@@ -185,7 +188,7 @@
 
         setFormEdit(row);
 
-        $('#mdl-edit-product').modal('show');
+        $('#mdlEditConsumable').modal('show');
     }
 
     function loadFilePoundEdit() {
@@ -234,21 +237,21 @@
         }
     }
 
-    function updateProduct(formUpdateProduct) {
+    function updateConsumable(formEditConsumable) {
         Swal.fire({
-            title: "DESEA ACTUALIZAR EL PRODUCTO?",
-            text: "Se actualizaran los datos del producto!",
+            title: "DESEA ACTUALIZAR EL INSUMO?",
+            text: "Se actualizaran los datos del insumo!",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "SÍ, ACTUALIZAR!",
-            cancelButtonText: "NO, CANCELAR!",
+            confirmButtonText: "SÍ!",
+            cancelButtonText: "NO!",
             reverseButtons: true
         }).then(async (result) => {
             if (result.isConfirmed) {
 
                 Swal.fire({
                     title: 'Cargando...',
-                    html: 'Actualizando producto...',
+                    html: 'Actualizando insumo...',
                     allowOutsideClick: false,
                     didOpen: () => {
                         Swal.showLoading();
@@ -259,10 +262,10 @@
 
                     clearValidationErrors('msgError');
                     const token = document.querySelector('input[name="_token"]').value;
-                    const formData = new FormData(formUpdateProduct);
+                    const formData = new FormData(formEditConsumable);
                     formData.append('deleteImg', parameters.deleteImg);
 
-                    let url = `{{ route('tenant.inventario.productos.update', ['id' => ':id']) }}`;
+                    let url = `{{ route('tenant.insumos.insumos.update', ['id' => ':id']) }}`;
                     url = url.replace(':id', parameters.id);
 
                     const response = await fetch(url, {
@@ -278,22 +281,22 @@
 
                     if (response.status === 422) {
                         if ('errors' in res) {
-                            paintValidationErrors(res.errors, 'error');
+                            paintValidationErrors(res.errors, 'edit_error');
                         }
                         Swal.close();
                         return;
                     }
 
                     if (res.success) {
-                        dtProducts.ajax.reload();
+                        dtConsumables.ajax.reload();
                         toastr.success(res.message, 'OPERACIÓN COMPLETADA');
-                        $('#mdl-edit-product').modal('hide');
+                        $('#mdlEditConsumable').modal('hide');
                     } else {
                         toastr.error(res.message, 'ERROR EN EL SERVIDOR');
                     }
 
                 } catch (error) {
-                    toastr.error(error, 'ERROR EN LA PETICIÓN ACTUALIZAR PRODUCTO');
+                    toastr.error(error, 'ERROR EN LA PETICIÓN ACTUALIZAR INSUMO');
                 } finally {
                     Swal.close();
                 }

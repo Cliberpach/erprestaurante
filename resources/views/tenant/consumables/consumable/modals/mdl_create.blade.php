@@ -1,8 +1,8 @@
-<div class="modal fade" id="mdl-create-product" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="mdlCreateConsumable" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Registrar producto</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Registrar Insumo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -17,7 +17,7 @@
                         <i class="fas fa-times me-1"></i> Cerrar
                     </button>
 
-                    <button form="form-create-product" type="submit" class="btn btn-primary">
+                    <button form="formCreateConsumable" type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-1"></i> Guardar
                     </button>
                 </div>
@@ -38,15 +38,15 @@
         let pondImg = null;
 
         function openMdlCreate() {
-            $('#mdl-create-product').modal('show');
+            $('#mdlCreateConsumable').modal('show');
         }
 
-        function eventsMdlCreateProduct() {
+        function eventsMdlCreateConsumable() {
             loadFilePound();
 
-            document.querySelector('#form-create-product').addEventListener('submit', (e) => {
+            document.querySelector('#formCreateConsumable').addEventListener('submit', (e) => {
                 e.preventDefault();
-                registrarProducto(e.target);
+                storeConsumable(e.target);
             })
 
             document.querySelector('#image').addEventListener('change', function(event) {
@@ -75,8 +75,8 @@
                 }
             })
 
-            $('#mdl-create-product').on('hidden.bs.modal', function() {
-                clearMdlCreateProduct();
+            $('#mdlCreateConsumable').on('hidden.bs.modal', function() {
+                clearMdlCreateConsumable();
             });
         }
 
@@ -103,17 +103,10 @@
             });
         }
 
-        function registrarProducto(formRegistrarProducto) {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success",
-                    cancelButton: "btn btn-danger"
-                },
-                buttonsStyling: false
-            });
-            swalWithBootstrapButtons.fire({
-                title: "DESEA REGISTRAR EL PRODUCTO?",
-                text: "Se creará un nuevo producto!",
+        function storeConsumable(formstoreConsumable) {
+            Swal.fire({
+                title: "DESEA REGISTRAR EL INSUMO?",
+                text: "Se creará un nuevo insumo!",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "SÍ, REGISTRAR!",
@@ -124,12 +117,12 @@
 
                     clearValidationErrors('msgError');
                     const token = document.querySelector('input[name="_token"]').value;
-                    const formData = new FormData(formRegistrarProducto);
-                    const urlRegistrarProducto = @json(route('tenant.inventario.productos.store'));
+                    const formData = new FormData(formstoreConsumable);
+                    const urlstoreConsumable = @json(route('tenant.insumos.insumos.store'));
 
                     Swal.fire({
                         title: 'Cargando...',
-                        html: 'Registrando nuevo producto...',
+                        html: 'Registrando nuevo insumo...',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
@@ -137,7 +130,7 @@
                     });
 
                     try {
-                        const response = await fetch(urlRegistrarProducto, {
+                        const response = await fetch(urlstoreConsumable, {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': token
@@ -158,21 +151,21 @@
                         }
 
                         if (res.success) {
-                            dtProducts.ajax.reload();
+                            dtConsumables.ajax.reload();
                             toastr.success(res.message, 'OPERACIÓN COMPLETADA');
-                            $('#mdl-create-product').modal('hide');
+                            $('#mdlCreateConsumable').modal('hide');
                         } else {
                             toastr.error(res.message, 'ERROR EN EL SERVIDOR');
                         }
 
                     } catch (error) {
-                        toastr.error(error, 'ERROR EN LA PETICIÓN REGISTRAR PRODUCTO');
+                        toastr.error(error, 'ERROR EN LA PETICIÓN REGISTRAR INSUMO');
                     } finally {
                         Swal.close();
                     }
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire({
+                    Swal.fire({
                         title: "OPERACIÓN CANCELADA",
                         text: "NO SE REALIZARON ACCIONES",
                         icon: "error"
@@ -181,7 +174,7 @@
             });
         }
 
-        function clearMdlCreateProduct() {
+        function clearMdlCreateConsumable() {
             document.querySelector('#name').value = '';
             document.querySelector('#description').value = '';
             document.querySelector('#sale_price').value = '1';

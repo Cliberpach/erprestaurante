@@ -1,4 +1,4 @@
-<table id="table-products" style="width:100%" class="table-hover table">
+<table id="tbl-list-consumables" style="width:100%" class="table-hover table">
     <thead class="table-light">
         <tr>
             <th class="minw-100px" data-priority="1">#</th>

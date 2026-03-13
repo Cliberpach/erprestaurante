@@ -2,10 +2,7 @@
 
 namespace App\Http\Services\Tenant\Consumables\ConsumableCategory;
 
-use App\Models\Company;
-use App\Models\Product;
 use App\Models\Tenant\Consumables\ConsumableCategory\ConsumableCategory;
-use Illuminate\Support\Facades\DB;
 
 class ConsumableCategoryService
 {

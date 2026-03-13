@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Productos</title>
+    <title>Lista de Insumos</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -131,7 +131,7 @@
         </table>
 
         <div style="text-align: right; font-size: 14px; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">
-            LISTA PRODUCTOS
+            LISTA DE INSUMOS
         </div>
 
         <!-- Segunda tabla: Información adicional -->

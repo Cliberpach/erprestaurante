@@ -1,4 +1,4 @@
-<form class="row" id="form-edit-product" action="">
+<form class="row" id="formEditConsumable" action="">
     @csrf
     <div class="col-lg-6 col-md-6">
         <div class="row">
@@ -6,7 +6,7 @@
             <div class="col-lg-12 col-md-12 mb-3">
                 <label for="name_edit" class="form-label required_field">Nombre</label>
                 <input placeholder="Nombre máximo 500 caracteres" name="name_edit" required maxlength="500" type="text"
-                    class="form-control name_edit" id="name_edit" oninput="this.value = this.value.toUpperCase()">
+                    class="form-control name_edit input-fill" id="name_edit">
                 <p class="msgError name_edit_error"></p>
             </div>
 
@@ -14,8 +14,7 @@
             <div class="col-lg-12 col-md-12 mb-3">
                 <label for="description_edit" class="form-label">Descripción</label>
                 <input placeholder="Máximo 200 caracteres" name="description_edit" maxlength="200" type="text"
-                    class="form-control description" id="description_edit"
-                    oninput="this.value = this.value.toUpperCase()">
+                    class="form-control description input-fill" id="description_edit">
                 <p class="msgError description_edit_error"></p>
             </div>
 
@@ -27,7 +26,7 @@
                         <i class="fas fa-coins"></i>
                     </span>
                     <input value="1" name="sale_price_edit" type="number" step="0.01" min="0"
-                        class="form-control sale_price_edit" id="sale_price_edit">
+                        class="form-control sale_price_edit input-fill" id="sale_price_edit">
                 </div>
                 <p class="msgError sale_price_edit_error"></p>
             </div>
@@ -40,7 +39,7 @@
                         <i class="fas fa-coins"></i>
                     </span>
                     <input value="1" name="purchase_price_edit" type="number" step="0.01" min="0"
-                        class="form-control purchase_price_edit" id="purchase_price_edit">
+                        class="form-control purchase_price_edit input-fill" id="purchase_price_edit">
                 </div>
                 <p class="msgError purchase_price_edit_error"></p>
             </div>
@@ -49,7 +48,7 @@
             <div class="col-lg-6 col-md-6 colStock_editMin mb-3">
                 <label for="stock_min_edit" class="form-label required_field">Stock
                     Mínimo</label>
-                <input value="0" name="stock_min_edit" type="number" class="form-control stock_min_edit"
+                <input value="0" name="stock_min_edit" type="number" class="form-control stock_min_edit input-fill"
                     min="0" id="stock_min_edit" placeholder="STOCK MÍNIMO">
                 <p class="msgError stock_min_edit_error"></p>
             </div>
@@ -62,7 +61,7 @@
                     <span class="input-group-text text-secondary">
                         <i class="fas fa-industry"></i>
                     </span>
-                    <input name="code_factory_edit" type="text" class="form-control code_factory_edit"
+                    <input name="code_factory_edit" type="text" class="form-control code_factory_edit input-fill"
                         id="code_factory_edit">
                 </div>
                 <p class="msgError code_factory_edit_error"></p>
@@ -75,7 +74,7 @@
                     <span class="input-group-text text-dark">
                         <i class="fas fa-barcode"></i>
                     </span>
-                    <input name="code_bar_edit" type="text" class="form-control code_bar_edit" id="code_bar_edit">
+                    <input name="code_bar_edit" type="text" class="form-control code_bar_edit input-fill" id="code_bar_edit">
                 </div>
                 <p class="msgError code_bar_edit_error"></p>
             </div>
@@ -86,7 +85,7 @@
             <div class="col-lg-12 col-md-12 mb-3">
                 <label for="category_id_edit" class="form-label required_field">Categoría</label>
 
-                <select name="category_id_edit" style="text-transform: uppercase;" id="category_id_edit"
+                <select required name="category_id_edit" style="text-transform: uppercase;" id="category_id_edit"
                     class="select2_form_product_edit form-select" aria-label="Default select example">
                     <option value=""></option>
                     @foreach ($categories as $category)
@@ -100,7 +99,23 @@
                     </a> --}}
                 <p class="msgError category_id_edit_error"></p>
             </div>
-         
+
+            <div class="col-lg-12 col-md-12 mb-3">
+                <label for="brand_id_edit" class="form-label required_field">Marca</label>
+                <select required name="brand_id_edit" style="text-transform: uppercase;" id="brand_id_edit"
+                    class="select2_form_product_edit form-select" aria-label="Default select example">
+                    <option value=""></option>
+                    @foreach ($brands as $brand)
+                        <option style="text-transform: uppercase;" value="{{ $brand->id }}">{{ $brand->name }}
+                        </option>
+                    @endforeach
+                </select>
+                {{-- <a onclick="openCreateBrandModal()" class="btn btn-success">
+                    <i class="fas fa-plus-circle"></i>
+                </a> --}}
+                <p class="msgError brand_id_edit_error"></p>
+            </div>
+
             <div class="col-lg-12 col-md-12 mb-3">
                 <label for="unit_id_edit" class="form-label required_field">Unidad</label>
 

@@ -10,10 +10,10 @@
 
 @section('content')
     @include('tenant.consumables.consumable.modals.mdl_create')
-    {{-- @include('product.modals.mdl_edit')
-    @include('product.modals.mdl_import')
-    @include('utils.modals.categories.mdl_create')
-    @include('utils.modals.brands.mdl_create') --}}
+    @include('tenant.consumables.consumable.modals.mdl_edit')
+    {{--
+   @include('utils.modals.categories.mdl_create')
+    @include('utils.modals.brands.mdl_create')  --}}
 
     <div class="card overflow-hidden">
         <div class="card-header d-flex flex-column">
@@ -22,10 +22,6 @@
                 <h6 class="card-title mb-0">LISTA DE INSUMOS</h6>
 
                 <div class="d-flex gap-2">
-                    <button class="btn btn-warning" onclick="openMdlImportProducto()">
-                        <i class="fa-solid fa-upload"></i> IMPORTAR
-                    </button>
-
                     <button type="button" class="btn btn-primary" onclick="openMdlCreate()">
                         <i class="fas fa-plus-circle"></i> NUEVO
                     </button>
@@ -46,7 +42,7 @@
 
         <div class="card-body p-0 pb-2">
             <div class="table-responsive">
-                @include('product.tables.tbl_list_products')
+                @include('tenant.consumables.consumable.tables.tbl_list')
             </div>
         </div>
     </div>
@@ -55,31 +51,30 @@
 
 @section('js')
     <script>
-        let dtProducts = null;
+        let dtConsumables = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadDtProducts();
+            loadDtData();
             loadTomSelect();
             events();
         })
 
         function events() {
-            eventsMdlCreateProduct();
-            eventsMdlEditProduct();
-            eventsMdlImportarProductos();
-            eventsMdlCategory();
-            eventsMdlBrand();
+            eventsMdlCreateConsumable();
+            eventsMdlEditConsumable();
+            // eventsMdlCategory();
+            // eventsMdlBrand();
         }
 
-        function loadDtProducts() {
-            const urlGetProducts = '{{ route('tenant.inventario.productos.get-all') }}';
+        function loadDtData() {
+            const url = '{{ route('tenant.insumos.insumos.getAll') }}';
 
-            dtProducts = new DataTable('#table-products', {
+            dtConsumables = new DataTable('#tbl-list-consumables', {
                 serverSide: true,
                 processing: true,
                 responsive: true,
                 ajax: {
-                    url: urlGetProducts,
+                    url: url,
                     type: 'GET',
                     data: function(d) {
                         d.categoria_id = $('#categoria').val();
@@ -181,7 +176,7 @@
                             urlEdit = baseUrlEdit.replace(':id', data.id);
 
                             return `
-                            <div class="btn-group dropup">
+                            <div class="btn-group">
                                 <button type="button" class="dropdown-toggle btn btn-primary btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-grip text-white"></i>
                                 </button>
@@ -198,7 +193,7 @@
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <a class="dropdown-item" href="javascript:void(0);" onclick="eliminarProducto(${data.id})">
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="destroyConsumable(${data.id})">
                                             <i class="fa-solid fa-trash text-danger me-2"></i> Eliminar
                                         </a>
                                     </li>
@@ -213,8 +208,6 @@
                 ],
                 pageLength: 25,
                 lengthChange: false,
-                dom: '<"row mb-3"<"col-md-6 d-flex align-items-center"f>>t<"row"<"col-6"i><"col-6"p>>',
-
                 language: {
                     "lengthMenu": "Mostrar _MENU_ productos por página",
                     "zeroRecords": "No se encontraron resultados",
@@ -239,19 +232,6 @@
 
 
             });
-
-            const inputSearchDataTable = document.querySelector('#dt-search-0');
-            if (inputSearchDataTable) {
-                inputSearchDataTable.style.width = '500px';
-                inputSearchDataTable.style.height = '50px';
-                inputSearchDataTable.style.textAlign = 'left';
-                inputSearchDataTable.placeholder = 'Buscar producto...';
-
-                const previousSibling = inputSearchDataTable.previousElementSibling;
-                if (previousSibling) {
-                    previousSibling.style.display = 'none';
-                }
-            }
         }
 
         function loadTomSelect() {
@@ -347,13 +327,13 @@
 
         }
 
-        function eliminarProducto(id) {
+        function destroyConsumable(id) {
             toastr.clear();
-            let row = getRowById(dtProducts, id);
+            let row = getRowById(dtConsumables, id);
             let message = '';
             let tipo_documento = '';
 
-            message = `Desea eliminar el producto: ${row.name}`;
+            message = `Desea eliminar el insumo: ${row.name}`;
 
             Swal.fire({
                 title: message,
@@ -368,7 +348,7 @@
 
                     Swal.fire({
                         title: 'Cargando...',
-                        html: 'Eliminando producto...',
+                        html: 'Eliminando insumo...',
                         allowOutsideClick: false,
                         didOpen: () => {
                             Swal.showLoading();
@@ -376,7 +356,7 @@
                     });
 
                     try {
-                        let url = `{{ route('tenant.inventario.productos.destroy', ['id' => ':id']) }}`;
+                        let url = `{{ route('tenant.insumos.insumos.destroy', ['id' => ':id']) }}`;
                         url = url.replace(':id', id);
                         const token = document.querySelector('input[name="_token"]').value;
 
@@ -390,14 +370,14 @@
                         const res = await response.json();
 
                         if (res.success) {
-                            dtProducts.ajax.reload();
+                            dtConsumables.ajax.reload();
                             toastr.success(res.message, 'OPERACIÓN COMPLETADA');
                         } else {
-                            toastr.error(res.message, 'ERROR EN EL SERVIDOR AL ELIMINAR PRODUCTO');
+                            toastr.error(res.message, 'ERROR EN EL SERVIDOR AL ELIMINAR INSUMO');
                         }
 
                     } catch (error) {
-                        toastr.error(error, 'ERROR EN LA PETICIÓN ELIMINAR PRODUCTO');
+                        toastr.error(error, 'ERROR EN LA PETICIÓN ELIMINAR INSUMO');
                     } finally {
                         Swal.close();
                     }
@@ -415,19 +395,9 @@
             });
         }
 
-        function exportarExcelProductos() {
-            const categoriaId = document.getElementById('categoria').value;
-            const marcaId = document.getElementById('marca').value;
-
-            const url = '{{ route('tenant.inventario.productos.export-excel') }}' +
-                `?categoriaId=${categoriaId}&marcaId=${marcaId}`;
-
-            window.location.href = url;
-        }
-
         function downloadExcel() {
 
-            const url = @json(route('tenant.inventario.productos.excel'));
+            const url = @json(route('tenant.insumos.insumos.excel'));
 
             const params = {};
 
@@ -440,7 +410,7 @@
 
         function downloadPdf() {
 
-            const url = @json(route('tenant.inventario.productos.pdf'));
+            const url = @json(route('tenant.insumos.insumos.pdf'));
 
             const params = {};
 

@@ -11,6 +11,7 @@ use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Landlord\TypeIdentityDocument;
 use App\Models\Landlord\Year;
 use App\Models\Province;
+use App\Models\Tenant\Consumables\ConsumableBrand\ConsumableBrand;
 use App\Models\Tenant\Consumables\ConsumableCategory\ConsumableCategory;
 use App\Models\Tenant\DocumentSerialization;
 use App\Models\Tenant\Maintenance\Company\Company as CompanyTenant;
@@ -368,5 +369,10 @@ class UtilController extends Controller
     public static function getConsumableCategories()
     {
         return ConsumableCategory::where('status', 'ACTIVO')->get();
+    }
+
+    public static function getConsumableBrands()
+    {
+        return ConsumableBrand::where('status', 'ACTIVO')->get();
     }
 }
