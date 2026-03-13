@@ -20,7 +20,6 @@ use App\Models\Tenant\Orders\OrderProduct;
 use App\Models\Tenant\WarehouseProduct;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Facades\File;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
@@ -87,7 +86,6 @@ class ProductController extends Controller
         return $products;
     }
 
-
     /*
 array:12 [ // app\Http\Controllers\Tenant\ProductController.php:74
   "_token" => "toQgu5tmflxhBWA5u0kr4ZpszFEo4UdPaFmcqoRO"
@@ -122,14 +120,6 @@ array:12 [ // app\Http\Controllers\Tenant\ProductController.php:74
                 'line' => $th->getLine(),
                 'file' => $th->getFile()
             ]);
-        }
-    }
-
-    public function deleteImagePublic($name)
-    {
-        $rutaImagenAnterior = public_path('assets/img/products/' . $name);
-        if (File::exists($rutaImagenAnterior) && $name != "img_default.png") {
-            File::delete($rutaImagenAnterior);
         }
     }
 

@@ -74,6 +74,7 @@ Route::middleware([
     require __DIR__ . '/tenant/reports/web.php';
     require __DIR__ . '/tenant/queries/web.php';
     require __DIR__ . '/tenant/dashboard/web.php';
+    require __DIR__ . '/tenant/consumables/web.php';
 
 
     Route::get("landlord/ruc/{ruc}", [ApiController::class, 'apiRuc']);

@@ -11,6 +11,7 @@ use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Landlord\TypeIdentityDocument;
 use App\Models\Landlord\Year;
 use App\Models\Province;
+use App\Models\Tenant\Consumables\ConsumableCategory\ConsumableCategory;
 use App\Models\Tenant\DocumentSerialization;
 use App\Models\Tenant\Maintenance\Company\Company as CompanyTenant;
 use App\Models\Tenant\Maintenance\Company\CompanyInvoice;
@@ -362,5 +363,10 @@ class UtilController extends Controller
     {
         $have   =   ModuleChild::where('route_name', 'cuentas.cliente.index')->exists();
         return $have;
+    }
+
+    public static function getConsumableCategories()
+    {
+        return ConsumableCategory::where('status', 'ACTIVO')->get();
     }
 }
