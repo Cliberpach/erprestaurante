@@ -251,7 +251,7 @@ success: true
 
             'idrecibo' => $recibo->id,
             'fecha' => $recibo->created_at->format('d/m/Y h:i:s a'),
-            'tipo' => $recibo->type_sale_name,
+            'tipo' => trim(str_replace('ELECTRÓNICA', '', $recibo->type_sale_name)),
             'serie' => $recibo->serie,
             'correlativo' => $recibo->correlative,
             'nrodoc' => $recibo->customer_document_number,
