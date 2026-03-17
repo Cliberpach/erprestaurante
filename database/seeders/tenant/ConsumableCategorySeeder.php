@@ -19,6 +19,7 @@ class ConsumableCategorySeeder extends Seeder
 
         $c           =   new ConsumableCategory();
         $c->name     =   'GENERICO';
+        $c->is_default  =   true;
         $c->status   =   'ACTIVO';
         $c->save();
     }

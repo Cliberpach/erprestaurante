@@ -2,19 +2,14 @@
 
 namespace App\Http\Services\Tenant\Consumables\Purchase;
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Product;
 use App\Models\Supplier;
 use App\Models\Tenant\Consumables\Consumable\Consumable;
 use App\Models\Tenant\Consumables\ConsumableBrand\ConsumableBrand;
 use App\Models\Tenant\Consumables\ConsumableCategory\ConsumableCategory;
 use App\Models\Tenant\Consumables\ConsumablePurchase\ConsumablePurchase;
 use App\Models\Tenant\Maintenance\CostCenter;
-use App\Models\Tenant\PurchaseDocument;
 use App\Models\Tenant\Sales\PaymentCondition\PaymentCondition;
 use App\Models\Tenant\Warehouse;
-use Carbon\Carbon;
 
 class PurchaseDto
 {

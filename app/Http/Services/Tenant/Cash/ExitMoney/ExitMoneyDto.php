@@ -81,7 +81,6 @@ class ExitMoneyDto
         $dto    =   [];
 
         $payment_method =   PaymentMethod::findOrFail(1);
-        $cost_center    =   CostCenter::where('is_default_consumables', '1')->first();
         $cash_book      =   $data['petty_cash_book'];
         $purchase       =   $data['purchase'];
 
@@ -90,8 +89,8 @@ class ExitMoneyDto
         $dto['payment_method_name'] =   $payment_method->description;
         $dto['number']              =   $purchase->serie . '-' . $purchase->correlative;
         $dto['date']                =   $purchase->created_at;
-        $dto['cost_center_id']      =   $cost_center->id;
-        $dto['cost_center_name']    =   $cost_center->name;
+        $dto['cost_center_id']      =   $purchase->cost_center_id;
+        $dto['cost_center_name']    =   $purchase->cost_center_name;
         $dto['supplier_id']         =   1;
         $dto['user_id']             =   $purchase->creator_user_id;
         $dto['petty_cash_book_id']  =   $cash_book->id;

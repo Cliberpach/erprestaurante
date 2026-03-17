@@ -19,7 +19,7 @@
             </div>
 
             <!-- Precio Venta -->
-            <div class="col-lg-6 col-md-6 mb-3">
+            <div class="col-lg-6 col-md-6 mb-3 d-none">
                 <label for="sale_price_edit" class="form-label required_field">Precio Venta</label>
                 <div class="input-group">
                     <span class="input-group-text text-success">

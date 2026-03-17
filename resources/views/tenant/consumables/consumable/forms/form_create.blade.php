@@ -14,7 +14,7 @@
                     class="form-control description input-fill" id="description" aria-describedby="emailHelp">
                 <p class="msgError description_error"></p>
             </div>
-            <div class="col-lg-6 col-md-6 mb-3">
+            <div class="col-lg-6 col-md-6 mb-3 d-none">
                 <label for="sale_price" class="form-label required_field">Precio venta</label>
                 <div class="input-group">
                     <span class="input-group-text text-success">
