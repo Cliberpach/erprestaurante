@@ -97,7 +97,7 @@ class ExitMoneyDto
         $dto['petty_cash_book_id']  =   $cash_book->id;
         $dto['total']               =   $purchase->total;
         $dto['discount_cash']       =   true;
-        $dto['purchase_id']         =   $purchase->id;
+        $dto['consumable_purchase_id']         =   $purchase->id;
 
         return $dto;
     }
