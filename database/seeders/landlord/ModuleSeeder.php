@@ -20,6 +20,7 @@ class ModuleSeeder extends Seeder
         $this->seedMostradorMesero();
         $this->seedMostradorCajero();
         $this->seedCompras();
+        $this->seedInsumos();
         $this->seedReportes();
         $this->seedMantenimiento();
         $this->seedConsultas();
@@ -207,9 +208,39 @@ class ModuleSeeder extends Seeder
         ]);
     }
 
+    private function seedInsumos(): void
+    {
+        $module = $this->createModule('Insumos', 9, 'insumos.svg');
+
+        $this->createChild($module, [
+            'description' => 'Insumos',
+            'route_name' => 'insumos.insumos.index',
+        ]);
+
+        $this->createChild($module, [
+            'description' => 'Categorias',
+            'route_name' => 'insumos.categorias.index',
+        ]);
+
+        $this->createChild($module, [
+            'description' => 'Marcas',
+            'route_name' => 'insumos.marcas.index',
+        ]);
+
+        $this->createChild($module, [
+            'description' => 'Compras',
+            'route_name' => 'insumos.compras.index',
+        ]);
+
+        $this->createChild($module, [
+            'description' => 'Kardex',
+            'route_name' => 'insumos.kardex.index',
+        ]);
+    }
+
     private function seedReportes(): void
     {
-        $module = $this->createModule('Reportes', 9, 'analytics-financial-svgrepo-com.svg');
+        $module = $this->createModule('Reportes', 10, 'analytics-financial-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Ventas Productos',
@@ -234,7 +265,7 @@ class ModuleSeeder extends Seeder
 
     private function seedMantenimiento(): void
     {
-        $module = $this->createModule('Mantenimiento', 10, 'configuration-svgrepo-com.svg', 1, 'landlord');
+        $module = $this->createModule('Mantenimiento', 11, 'configuration-svgrepo-com.svg', 1, 'landlord');
 
         $this->createChild($module, [
             'description' => 'Empresa',
@@ -266,7 +297,7 @@ class ModuleSeeder extends Seeder
 
     private function seedConsultas(): void
     {
-        $module = $this->createModule('Consultas', 11, 'analytics-report-svgrepo-com.svg');
+        $module = $this->createModule('Consultas', 12, 'analytics-report-svgrepo-com.svg');
 
         $this->createChild($module, [
             'description' => 'Créditos',
