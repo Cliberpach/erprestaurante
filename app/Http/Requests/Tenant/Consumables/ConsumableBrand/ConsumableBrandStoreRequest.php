@@ -22,13 +22,17 @@ class ConsumableBrandStoreRequest extends FormRequest
         $data = $this->all();
 
         foreach ($data as $key => $value) {
-            if (str_ends_with($key, '_mdl_ccategory')) {
-                $newKey = str_replace('_mdl_ccategory', '', $key);
+            if (str_ends_with($key, '_mdlcbrand')) {
+                $newKey = str_replace('_mdlcbrand', '', $key);
                 $data[$newKey] = $value;
                 unset($data[$key]);
             }
         }
 
+        if (isset($data['name']) && $data['name'] !== null) {
+            $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
+        }
+        
         $this->replace($data);
     }
 
@@ -43,7 +47,7 @@ class ConsumableBrandStoreRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                Rule::unique('consumable_categories')->where(function ($query) {
+                Rule::unique('consumable_brands')->where(function ($query) {
                     $query->where('status', '=', 'activo');
                 }),
             ],

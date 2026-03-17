@@ -50,4 +50,5 @@ Route::group(["prefix" => "utils"], function () {
     Route::post('validation-password', [ConfigurationController::class, 'validationPassword'])->name('tenant.utils.validationPassword');
     Route::post('cost-center/store', [CostCenterController::class, 'storeCostCenter'])->name('tenant.utils.storeCostCenter');
     Route::get('consumables/get-list', [ConsumableController::class, 'getList'])->name('tenant.utils.getConsumables');
+    Route::get('consumable-search', [ConsumableController::class, 'searchConsumable'])->name('tenant.utils.searchConsumable');
 });

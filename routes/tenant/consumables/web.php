@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Tenant\Consumable\CKardexController;
 use App\Http\Controllers\Tenant\Consumable\ConsumableBrandController;
 use App\Http\Controllers\Tenant\Consumable\ConsumableCategoryController;
 use App\Http\Controllers\Tenant\Consumable\ConsumableController;
@@ -41,5 +42,14 @@ Route::group(["prefix" => "insumos"], function () {
         Route::post('store', [ConsumablePurchaseController::class, 'store'])->name('tenant.insumos.compras.store');
         Route::put('update/{id}', [ConsumableBrandController::class, 'update'])->name('tenant.insumos.compras.update');
         Route::delete('destroy/{id}', [ConsumableBrandController::class, 'destroy'])->name('tenant.insumos.compras.destroy');
+        Route::get('show/{id}', [ConsumablePurchaseController::class, 'show'])->name('tenant.insumos.compras.show');
+    });
+
+    Route::group(["prefix" => "kardex"], function () {
+        //============ KARDEX ============
+        Route::get('index', [CKardexController::class, 'index'])->name('tenant.insumos.kardex.index');
+        Route::get('getKardex', [CKardexController::class, 'getKardex'])->name('tenant.insumos.kardex.getKardex');
+        Route::get('kardex/excel', [CKardexController::class, 'excel'])->name('tenant.insumos.kardex.excel');
+        Route::get('kardex/pdf', [CKardexController::class, 'pdf'])->name('tenant.insumos.kardex.pdf');
     });
 });

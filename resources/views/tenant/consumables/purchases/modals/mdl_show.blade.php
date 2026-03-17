@@ -95,7 +95,7 @@
     <script>
         let dtPurchaseDocumentShow = null;
 
-        function eventsMdlPurchaseDocumentShow() {
+        function eventsMdlPurchaseShow() {
             document.getElementById('mdlShowPurchaseDocument').addEventListener('hidden.bs.modal', () => {
 
                 const dataFields = [
@@ -115,7 +115,7 @@
             });
         }
 
-        function openMdlShowPurchaseDocument(purchase_document_id) {
+        function openMdlShowPurchase(purchase_document_id) {
             getPurchaseDocument(purchase_document_id);
         }
 
@@ -124,7 +124,7 @@
                 toastr.clear();
                 mostrarAnimacion1();
                 const token = document.querySelector('input[name="_token"]').value;
-                const urlGetPurchaseDocument = @json(route('tenant.compras.documento_compra.show', ['id' => 'ID']));
+                const urlGetPurchaseDocument = @json(route('tenant.insumos.compras.show', ['id' => 'ID']));
                 const url = urlGetPurchaseDocument.replace('ID', purchase_document_id);
 
                 const response = await fetch(url, {
@@ -138,11 +138,11 @@
 
                 if (res.success) {
 
-                    paintPurchaseDocument(res.purchase_document);
+                    paintPurchaseDocument(res.data.purchase);
 
                     dtPurchaseDocumentShow = destroyDataTable(dtPurchaseDocumentShow);
                     clearTable('tbl_purchase_document_show');
-                    paintPurchaseDocumentDetail(res.detail);
+                    paintPurchaseDocumentDetail(res.data.detail);
                     dtPurchaseDocumentShow = loadDataTableSimple('tbl_purchase_document_show');
 
                     $('#mdlShowPurchaseDocument').modal('show');
@@ -152,7 +152,7 @@
                 }
 
             } catch (error) {
-                toastr.error(error, 'ERROR EN LA PETICIÓN VER DOCUMENTO DE COMPRA');
+                toastr.error(error, 'ERROR EN LA PETICIÓN VER COMPRA');
             } finally {
                 ocultarAnimacion1();
             }

@@ -162,7 +162,7 @@
 
                                 <div class="input-group mb-3">
                                     <input id="producto" readonly type="text"
-                                        class="form-control" placeholder="Producto" aria-label="Recipient's username"
+                                        class="form-control" placeholder="Insumo" aria-label="Recipient's username"
                                         aria-describedby="button-addon2">
                                     <button class="btn btn-primary" type="button" id="button-addon2"
                                         onclick="openMdlProducts()">

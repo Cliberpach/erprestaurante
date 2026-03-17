@@ -194,6 +194,11 @@
                 }
             });
 
+            document.getElementById("formEditCompanyTenant").addEventListener("submit", function(e) {
+                e.preventDefault();
+                updateCompanyTenant(e.target);
+            });
+
         }
 
         function loadFpTenant() {
@@ -499,7 +504,13 @@
                     return province.department_id == department_id;
                 })
 
+                window.provinceSelect.clear();
                 window.provinceSelect.clearOptions();
+                window.provinceSelect.refreshOptions(false);
+
+                window.districtSelect.clear();
+                window.districtSelect.clearOptions();
+                window.districtSelect.refreshOptions(false);
 
                 lstProvincesFiltered.forEach(province => {
                     window.provinceSelect.addOption({
@@ -537,9 +548,80 @@
                 });
 
                 window.districtSelect.setValue(null);
+            }
+        }
+
+        async function updateCompanyTenant(formCreateQuote) {
+
+            toastr.clear();
+
+            const result = await Swal.fire({
+                title: '¿Desea actualizar la empresa?',
+                text: "Confirmar",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'SI',
+                cancelButtonText: 'NO',
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-secondary'
+                },
+                buttonsStyling: false
+            });
+
+            if (result.isConfirmed) {
+
+                try {
+
+                    clearValidationErrors('msgError');
+
+                    Swal.fire({
+                        title: 'Actualizando empresa...',
+                        text: 'Por favor espere',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    const formData = new FormData(formCreateQuote);
+                    formData.append('_method', 'PUT');
+                    const res = await axios.post(route('tenant.mantenimiento.empresas.update',
+                        @json($company->id)), formData);
+
+                    if (res.data.success) {
+                        toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
+                        redirect('tenant.mantenimiento.empresas.index');
+                    } else {
+                        toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
+                        Swal.close();
+                    }
+
+                } catch (error) {
+                    Swal.close();
+                    if (error.response && error.response.status === 422) {
+                        const errors = error.response.data.errors;
+                        paintValidationErrors(errors, 'error');
+                        return;
+                    }
+                }
+
+            } else {
+
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Operación cancelada',
+                    text: 'No se realizaron acciones.',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-secondary'
+                    },
+                    buttonsStyling: false
+                });
 
             }
-
         }
     </script>
 @endsection

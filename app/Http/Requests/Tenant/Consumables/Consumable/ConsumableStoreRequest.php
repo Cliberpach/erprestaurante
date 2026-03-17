@@ -30,6 +30,10 @@ class ConsumableStoreRequest extends FormRequest
                 return [$key => $value];
             })->toArray()
         );
+
+        if (isset($data['name']) && $data['name'] !== null) {
+            $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
+        }
     }
 
     /**

@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Tenant;
-
+namespace App\Http\Controllers\Tenant\Maintenance;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\UtilController;
 use App\Http\Requests\Company\CompanyNumerationRequest;
 use App\Http\Requests\CompanyStoreRequest;
 use App\Http\Requests\Tenant\Maintenance\Company\CompanyInvoiceRequest;
+use App\Http\Requests\Tenant\Maintenance\Company\CompanyUpdateRequest;
+use App\Http\Services\Tenant\Maintenance\Company\CompanyManager;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Department;
@@ -35,9 +36,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CompanyController extends Controller
 {
+    private CompanyManager $s_manager;
+
     public function __construct()
     {
         $this->middleware('auth');
+        $this->s_manager    =   new CompanyManager();
     }
 
     private $modules;
@@ -220,106 +224,48 @@ class CompanyController extends Controller
     }
 
     /*
-array:16 [▼ // app\Http\Controllers\Tenant\CompanyController.php:223
-  "_token"                      => "t1wIO5GKzEziM9RdaOMIWJLeOl8rAFQzis778ha6"
-  "_method"                     => "PUT"
-  "ruc"                         => "20370146994"
-  "business_name"               => "CORPORACION ACEROS AREQUIPA S.A."
-  "abbreviated_business_name"   => "CORPORACION ACEROS AREQUIPA S.A."
-  "fiscal_address"              => null
-  "phone"                       => null
-  "cellphone"                   => null
-  "zip_code"                    => "13001"
-  "email"                       => "admin@gmail.com"
-  "facebook"                    => null
-  "instagram"                   => null
-  "web"                         => null
-  "invoicing_status"            => "0"
-  "lat"                         => "-8.105881685888642"
-  "lng"                         => "-79.0307748666481"
-  "department"                  => "22"
-  "province"                    => "2208"
-  "district"                    => "220807"
+array:21 [▼ // app\Http\Services\Tenant\Maintenance\Company\CompanyService.php:28
+  "_token" => "aBCL0lJaGnT1OCppddrjcrpwmlHq08fQQqMthF4q"
+  "_method" => "PUT"
+  "ruc" => "22211133344"
+  "business_name" => "LDRESTAURANTS"
+  "abbreviated_business_name" => "LDRESTAURANTS"
+  "fiscal_address" => "test"
+  "phone" => null
+  "cellphone" => null
+  "zip_code" => null
+  "email" => "admin@gmail.com"
+  "facebook" => null
+  "instagram" => null
+  "web" => null
+  "igv" => "10.50"
+  "invoicing_status" => "0"
+  "department" => "13"
+  "province" => "1301"
+  "district" => "130101"
+  "lat" => null
+  "lng" => null
+  "logo" =>Illuminate\Http\UploadedFile {#2348 ▶}
 ]
 */
-    public function update(Request $request, $id)
+    public function update(CompanyUpdateRequest $request, $id)
     {
+        DB::beginTransaction();
+        try {
+            $instance   =   $this->s_manager->update($request->toArray(), $id);
 
-        //========= GUARDANDO UBIGEO =====
-        $company_invoice                    =   CompanyInvoice::find(1);
-        $company_invoice->department_id     =   $request->get('department');
-        $company_invoice->province_id       =   $request->get('province');
-        $company_invoice->district_id       =   $request->get('district');
-
-        $department     =   Department::findOrFail($request->get('department'));
-        $province       =   Province::findOrFail($request->get('province'));
-        $district       =   District::findOrFail($request->get('district'));
-
-        $company_invoice->department_name   =   $department->name;
-        $company_invoice->province_name     =   $province->name;
-        $company_invoice->district_name     =   $district->name;
-        $company_invoice->update();
-
-
-        $company = Company::findOrFail($id);
-
-        // Validar el formulario, incluyendo la validación de archivo
-        $request->validate([
-            'business_name' => 'required|string|max:255',
-            'abbreviated_business_name' => 'nullable|string|max:255',
-            'fiscal_address'    => 'nullable|string|max:255',
-            'phone'             => 'nullable|string|max:20',
-            'cellphone'         => 'nullable|string|max:20',
-            'email'             => 'nullable|email|max:255',
-            'zip_code'          => 'nullable|string|max:10',
-            'facebook'          => 'nullable|string|max:255',
-            'instagram'         => 'nullable|string|max:255',
-            'web'               => 'nullable|string|max:255',
-            'invoicing_status'  => 'required|in:0,1',
-            'logo'              => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048', // Validación del logo
-            'base64_logo'       => 'nullable|string',
-        ]);
-
-        if ($request->hasFile('logo')) {
-
-            $route_logo_tenant   =   public_path('storage/' . $company->files_route . '/logo/');
-
-            if (!File::exists($route_logo_tenant)) {
-                File::makeDirectory($route_logo_tenant, 0755, true);
-            }
-
-            //======= ELIMINAR LOGO ANTERIOR SI EXISTE =======
-            if (File::exists($company->logo_url)) {
-                File::delete($company->logo_url);
-            }
-
-            $file                   =   $request->file('logo');
-            $fileName               =   $company->ruc . '.' . $file->getClientOriginalExtension();
-
-            $base64_logo            =   'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
-            $company->base64_logo   =   $base64_logo;
-            $company->logo          =   $fileName;
-            $company->logo_url      =   'storage/' . $company->files_route . '/logo/' . $fileName;
-
-            $file->move($route_logo_tenant, $fileName);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Empresa Actualizada con éxito']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ]);
         }
 
-        // Guardar los demás campos
-        $company->business_name             =   $request->business_name;
-        $company->abbreviated_business_name =   $request->abbreviated_business_name;
-        $company->fiscal_address            =   $request->fiscal_address;
-        $company->phone                     =   $request->phone;
-        $company->cellphone                 =   $request->cellphone;
-        $company->email                     =   $request->email;
-        $company->zip_code                  =   $request->zip_code;
-        $company->facebook                  =   $request->facebook;
-        $company->instagram                 =   $request->instagram;
-        $company->web                       =   $request->web;
-        $company->invoicing_status          =   $request->invoicing_status;
-        $company->lat                       =   $request->get('lat');
-        $company->lng                       =   $request->get('lng');
-        $company->igv                       =   $request->get('igv');
-        $company->save();
 
         return redirect()->route('tenant.mantenimiento.empresas.index')->with('success', 'Empresa actualizada correctamente');
     }

@@ -113,6 +113,10 @@ class ConsumableUpdateRequest extends FormRequest
                 return [$key => $value];
             })->toArray()
         );
+
+        if (isset($data['name']) && $data['name'] !== null) {
+            $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
+        }
     }
 
     protected function failedValidation(Validator $validator)

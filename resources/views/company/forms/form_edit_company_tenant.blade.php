@@ -1,9 +1,7 @@
-<form id="formEditCompanyTenant" action="{{ route('tenant.mantenimiento.empresas.update', $company->id) }}" method="POST"
-    enctype="multipart/form-data">
+<form id="formEditCompanyTenant" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
-    <!-- DATOS GENERALES -->
     <div class="row mb-3">
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -15,6 +13,7 @@
                 <input type="text" class="form-control" id="ruc" name="ruc" value="{{ $company->ruc }}"
                     readonly>
             </div>
+            <span class="ruc_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -26,6 +25,7 @@
                 <input type="text" class="form-control input-fill" id="business_name" name="business_name"
                     value="{{ $company->business_name }}">
             </div>
+            <span class="business_name_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -34,6 +34,7 @@
             </label>
             <input type="text" class="form-control input-fill" name="abbreviated_business_name"
                 value="{{ $company->abbreviated_business_name }}">
+            <span class="abbreviated_business_name_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -42,6 +43,7 @@
             </label>
             <input type="text" class="form-control input-fill" name="fiscal_address"
                 value="{{ $company->fiscal_address }}">
+            <span class="fiscal_address_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -49,6 +51,7 @@
                 <i class="fas fa-phone text-primary me-1"></i> Teléfono
             </label>
             <input type="text" class="form-control input-fill" name="phone" value="{{ $company->phone }}">
+            <span class="phone_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -56,6 +59,7 @@
                 <i class="fas fa-mobile-alt text-primary me-1"></i> Celular
             </label>
             <input type="text" class="form-control input-fill" name="cellphone" value="{{ $company->cellphone }}">
+            <span class="cellphone_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -63,6 +67,7 @@
                 <i class="fas fa-mailbox text-primary me-1"></i> Código Postal
             </label>
             <input type="text" class="form-control input-fill" name="zip_code" value="{{ $company->zip_code }}">
+            <span class="zip_code_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -70,6 +75,7 @@
                 <i class="fas fa-envelope text-primary me-1"></i> Correo Electrónico
             </label>
             <input type="email" class="form-control input-fill" name="email" value="{{ $company->email }}">
+            <span class="email_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -77,6 +83,7 @@
                 <i class="fab fa-facebook text-primary me-1"></i> Facebook
             </label>
             <input type="text" class="form-control input-fill" name="facebook" value="{{ $company->facebook }}">
+            <span class="facebook_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -84,6 +91,7 @@
                 <i class="fab fa-instagram text-primary me-1"></i> Instagram
             </label>
             <input type="text" class="form-control input-fill" name="instagram" value="{{ $company->instagram }}">
+            <span class="instagram_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -91,6 +99,7 @@
                 <i class="fas fa-globe text-primary me-1"></i> Página Web
             </label>
             <input type="text" class="form-control input-fill" name="web" value="{{ $company->web }}">
+            <span class="web_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -99,16 +108,7 @@
             </label>
             <input type="text" class="form-control input-fill inputDecimalPositivo" name="igv"
                 value="{{ number_format($company->igv, 2, '.', '') }}" maxlength="4" step="0.01">
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
-            <label class="form-label fw-bold">
-                <i class="fas fa-file-invoice-dollar text-primary me-1"></i> Estado de Facturación
-            </label>
-            <select class="form-select" name="invoicing_status">
-                <option value="0" {{ $company->invoicing_status == '0' ? 'selected' : '' }}>Inactivo</option>
-                <option value="1" {{ $company->invoicing_status == '1' ? 'selected' : '' }}>Activo</option>
-            </select>
+            <span class="igv_error msgError" style="color:red;"></span>
         </div>
 
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
@@ -121,7 +121,7 @@
                         {{ $department->name }}</option>
                 @endforeach
             </select>
-            <span class="department_error_customer msgErrorCustomer" style="color:red;"></span>
+            <span class="department_error msgError" style="color:red;"></span>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
             <label class="required_field" for="province" style="font-weight: bold;">PROVINCIA</label>
@@ -129,14 +129,14 @@
                 onchange="changeProvince(this.value)">
                 <option></option>
             </select>
-            <span class="province_error_customer msgErrorCustomer" style="color:red;"></span>
+            <span class="province_error msgError" style="color:red;"></span>
         </div>
         <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
             <label class="required_field" for="district" style="font-weight: bold;">DISTRITO</label>
             <select required name="district" required class="" id="district" data-placeholder="Seleccionar">
                 <option></option>
             </select>
-            <span class="district_customer msgErrorCustomer" style="color:red;"></span>
+            <span class="district_error msgError" style="color:red;"></span>
         </div>
     </div>
 
@@ -162,8 +162,8 @@
             </label>
             <input class="form-control" type="file" name="logo" id="input-logo"
                 accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+            <span class="logo_error msgError" style="color:red;"></span>
         </div>
-
     </div>
 
     <!-- BOTONES -->

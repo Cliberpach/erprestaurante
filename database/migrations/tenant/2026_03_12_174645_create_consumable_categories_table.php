@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
             $table->boolean('is_default')->default(false);
 
-            $table->unsignedBigInteger('creator_user_id');
+            $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->foreign('creator_user_id')->references('id')->on('users');
             $table->string('creator_user_name');
 
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('deletor_user_id')->nullable();
             $table->foreign('deletor_user_id')->references('id')->on('users');
             $table->string('deletor_user_name')->nullable();
-            
+
             $table->timestamps();
         });
     }

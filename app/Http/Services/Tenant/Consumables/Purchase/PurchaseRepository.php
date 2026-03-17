@@ -17,4 +17,14 @@ class PurchaseRepository
     {
         ConsumablePurchaseDetail::insert($dto);
     }
+
+    public function find(int $id): ConsumablePurchase
+    {
+        return ConsumablePurchase::findOrFail($id);
+    }
+
+    public function getDetails(int $id)
+    {
+        return ConsumablePurchaseDetail::where('purchase_id', $id)->get();
+    }
 }

@@ -35,6 +35,8 @@ use Database\Seeders\tenant\SupplierSeeder;
 use Database\Seeders\tenant\TypeFieldSeeder;
 use Database\Seeders\tenant\WarehouseSeeder;
 use Database\Seeders\landlord\UnitMeasurementSeeder;
+use Database\Seeders\tenant\ConsumableBrandSeeder;
+use Database\Seeders\tenant\ConsumableCategorySeeder;
 use Database\Seeders\tenant\CostCenterSeeder;
 use Database\Seeders\tenant\PaymentConditionSeeder;
 use Database\Seeders\tenant\TestSeeder;
@@ -53,6 +55,8 @@ class DatabaseSeeder extends Seeder
     {
         // example: $this->call(TipoDocumentoSeeder::class);
         // note: no olvida llamar al seeder en use part
+        $this->call(ConsumableBrandSeeder::class);
+        $this->call(ConsumableCategorySeeder::class);
         $this->call(PositionSeeder::class);
         $this->call(ConfigurationSeeder::class);
         $this->call(PaymentMethodSeeder::class);

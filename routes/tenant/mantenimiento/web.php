@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Tenant\CompanyController;
 use App\Http\Controllers\Tenant\Maintenance\BankAccountController;
 use App\Http\Controllers\Tenant\Maintenance\CollaboratorController;
+use App\Http\Controllers\Tenant\Maintenance\CompanyController;
 use App\Http\Controllers\Tenant\Maintenance\ConfigurationController;
 use App\Http\Controllers\Tenant\Maintenance\PositionController;
 use App\Http\Controllers\Tenant\Maintenance\RoleController;

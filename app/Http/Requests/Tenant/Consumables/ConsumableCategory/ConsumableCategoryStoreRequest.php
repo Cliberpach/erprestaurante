@@ -22,11 +22,15 @@ class ConsumableCategoryStoreRequest extends FormRequest
         $data = $this->all();
 
         foreach ($data as $key => $value) {
-            if (str_ends_with($key, '_mdl_ccategory')) {
-                $newKey = str_replace('_mdl_ccategory', '', $key);
+            if (str_ends_with($key, '_mdlccategory')) {
+                $newKey = str_replace('_mdlccategory', '', $key);
                 $data[$newKey] = $value;
                 unset($data[$key]);
             }
+        }
+
+        if (isset($data['name']) && $data['name'] !== null) {
+            $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
         }
 
         $this->replace($data);

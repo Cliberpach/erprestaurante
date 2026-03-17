@@ -9,12 +9,18 @@ class PurchaseManager
 {
     private PurchaseService $s_service;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->s_service    =   new PurchaseService();
     }
 
-    public function store(array $data):ConsumablePurchase
+    public function store(array $data): ConsumablePurchase
     {
         return $this->s_service->store($data);
+    }
+
+    public function show(int $id):array
+    {
+        return $this->s_service->show($id);
     }
 }

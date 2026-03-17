@@ -37,7 +37,7 @@ class ConsumableIncomeNoteDto
         $item['consumable_name']             =   $consumable->name;
         $item['consumable_brand_name']       =   $brand->name;
         $item['consumable_category_name']    =   $category->name;
-        $item['quantity']                    =   1;
+        $item['quantity']                    =   $consumable->stock;
         $item['created_at']                  =   now();
         $item['updated_at']                  =   now();
 

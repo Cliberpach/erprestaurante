@@ -11,9 +11,8 @@
 @section('content')
     @include('tenant.consumables.consumable.modals.mdl_create')
     @include('tenant.consumables.consumable.modals.mdl_edit')
-    {{--
-   @include('utils.modals.categories.mdl_create')
-    @include('utils.modals.brands.mdl_create')  --}}
+    @include('utils.modals.consumables_categories.mdl_create')
+    @include('utils.modals.consumables_brands.mdl_create')
 
     <div class="card overflow-hidden">
         <div class="card-header d-flex flex-column">
@@ -60,10 +59,14 @@
         })
 
         function events() {
+            loadMdlConsumableCategory({
+                categorySelect: window.categorySelect
+            });
+            loadMdlCBrand({
+                brandSelect: window.brandSelect
+            })
             eventsMdlCreateConsumable();
             eventsMdlEditConsumable();
-            // eventsMdlCategory();
-            // eventsMdlBrand();
         }
 
         function loadDtData() {

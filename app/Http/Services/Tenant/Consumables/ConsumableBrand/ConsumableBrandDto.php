@@ -8,6 +8,6 @@ class ConsumableBrandDto
     {
         $dto    =   [];
         $dto['name'] = mb_strtoupper($data['name'], 'UTF-8');
-        return $data;
+        return $dto;
     }
 }

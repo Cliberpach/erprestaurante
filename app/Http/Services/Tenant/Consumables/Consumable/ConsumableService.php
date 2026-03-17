@@ -42,7 +42,7 @@ class ConsumableService
     }
 
     public function store(array $data): Consumable
-    {
+    {   
         $dto    =   $this->s_dto->getDtoStore($data);
 
         //======== REGISTRAR PRODUCTO =======

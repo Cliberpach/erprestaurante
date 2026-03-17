@@ -47,4 +47,12 @@ class PurchaseService
 
         return $instance;
     }
+
+    public function show(int $id): array
+    {
+        $purchase   =  $this->s_repository->find($id);
+        $detail     =   $this->s_repository->getDetails($id);
+
+        return ['purchase' => $purchase, 'detail' => $detail];
+    }
 }

@@ -78,7 +78,7 @@
             <div class="col-lg-12 col-md-12 mb-3">
                 <label for="category_id" class="form-label required_field">Categoría</label>
 
-                <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlCreateCategory();"
+                <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlCCategory();"
                     style="margin-left:4px;"></i>
 
                 <select name="category_id" style="text-transform: uppercase;" id="category_id"
@@ -95,7 +95,7 @@
 
             <div class="col-lg-12 col-md-12 mb-3">
                 <label for="brand" class="form-label required_field">Marca</label>
-                <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlCreateBrand();"
+                <i class="fas fa-plus btn btn-warning btn-sm" onclick="openMdlCBrand();"
                     style="margin-left:4px;"></i>
 
                 <select name="brand_id" style="text-transform: uppercase;" id="brand_id"

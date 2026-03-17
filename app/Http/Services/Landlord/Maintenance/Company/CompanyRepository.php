@@ -38,7 +38,6 @@ class CompanyRepository
         return $company;
     }
 
-
     public function storeCompanyInvoiceLandlord(array $dto): CompanyInvoice
     {
         return CompanyInvoice::create($dto);
@@ -131,7 +130,6 @@ class CompanyRepository
         $company->logo      =   $logo_name;
         $company->saveQuietly();
     }
-
 
     public function saveCertLandlord(CompanyInvoice $company_invoice, string $url, string $name)
     {

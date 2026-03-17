@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    @include('purchases.purchase_document.modals.mdl_show')
+    @include('tenant.consumables.purchases.modals.mdl_show')
 
     <div class="card">
         @csrf
@@ -97,7 +97,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadDtPurchases();
             loadTomSelect();
-            eventsMdlPurchaseDocumentShow();
+            eventsMdlPurchaseShow();
         })
 
         function loadDtPurchases() {
@@ -202,12 +202,12 @@
 
                             return `
                                 <div class="btn-group dropdown">
-                                <button type="button" class="dropdown-toggle btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button type="button" class="dropdown-toggle btn btn-primary btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-grip"></i>
                                 </button>
                                 <ul class="dropdown-menu" style="max-height: 150px; overflow-y: auto;">
                                     <li>
-                                        <a class="dropdown-item" href="javascript:void(0);" onclick="openMdlShowPurchaseDocument(${data.id})">
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="openMdlShowPurchase(${data.id})">
                                             <i class="fas fa-eye"></i> Ver
                                         </a>
                                     </li>

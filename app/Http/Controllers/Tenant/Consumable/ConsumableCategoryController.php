@@ -52,10 +52,10 @@ array:2 [ // app\Http\Controllers\Tenant\Consumable\ConsumableCategoryController
         try {
 
             $data       =   $request->validated();
-            $category   =   $this->s_manager->store($data);
+            $item   =   $this->s_manager->store($data);
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Categoría registrada con éxito', 'category' => $category]);
+            return response()->json(['success' => true, 'message' => 'Categoría registrada con éxito', 'item' => $item]);
         } catch (Throwable $th) {
             DB::rollBack();
             return response()->json([

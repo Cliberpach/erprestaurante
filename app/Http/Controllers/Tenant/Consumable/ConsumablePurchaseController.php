@@ -144,4 +144,25 @@ array:16 [ // app\Http\Controllers\Tenant\Consumable\ConsumablePurchaseControlle
             ]);
         }
     }
+
+    public function show($id)
+    {
+        try {
+
+            $data   =   $this->s_manager->show($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'DOCUMENTO COMPRA OBTENIDO',
+                'data'  =>  $data
+            ]);
+        } catch (Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line' => $th->getLine(),
+                'file' => $th->getFile()
+            ]);
+        }
+    }
 }

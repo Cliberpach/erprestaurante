@@ -47,7 +47,7 @@ array:2 [ // app\Http\Controllers\Tenant\Consumable\ConsumableCategoryController
 ]
 */
     public function store(ConsumableBrandStoreRequest $request)
-    {
+    {  
         DB::beginTransaction();
         try {
 

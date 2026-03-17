@@ -8,6 +8,7 @@ use App\Http\Controllers\UtilController;
 use App\Http\Requests\Tenant\Consumables\Consumable\ConsumableStoreRequest;
 use App\Http\Requests\Tenant\Consumables\Consumable\ConsumableUpdateRequest;
 use App\Http\Services\Tenant\Consumables\Consumable\ConsumableManager;
+use App\Models\Tenant\Consumables\Consumable\Consumable;
 use App\Models\Tenant\Maintenance\Company\Company;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -176,5 +177,56 @@ array:12 [ // app\Http\Controllers\Tenant\Consumable\ConsumableController.php:12
         ])->setPaper('a4', 'landscape');
 
         return $pdf->stream('insumos_' . Carbon::now()->format('Y_m_d_H_i_s') . '.pdf');
+    }
+
+    public function searchConsumable(Request $request)
+    {
+        $query          =   trim($request->get('q', ''));
+        $warehouse_id   =   $request->get('warehouse_id');
+
+        if (empty($query)) {
+            return response()->json(['data' => []]);
+        }
+
+        $products = Consumable::from('consumables as p')
+            ->leftjoin('warehouse_consumables as wp', 'wp.consumable_id', 'p.id')
+            ->join('consumable_categories as c', 'c.id', 'p.category_id')
+            ->join('consumable_brands as b', 'b.id', 'p.brand_id')
+            ->where('p.status', 'ACTIVO')
+            ->where(function ($q) use ($query) {
+                $q->where('p.name', 'LIKE', "%{$query}%")
+                    ->orWhere('c.name', 'LIKE', "%{$query}%")
+                    ->orWhere('b.name', 'LIKE', "%{$query}%");
+            })
+            ->where(function ($q) use ($warehouse_id) {
+                $q->where('wp.warehouse_id', $warehouse_id)
+                    ->orWhereNull('wp.warehouse_id');
+            })
+            ->limit(20)
+            ->select(
+                'wp.warehouse_id',
+                'p.id',
+                'b.name as brand_name',
+                'p.name',
+                'c.name as category_name',
+                'p.sale_price',
+                DB::raw('COALESCE(wp.stock, 0) as stock')
+            )->get();
+
+        $data = $products->map(fn($p) => [
+            'id' => $p->id,
+            'text' => "{$p->name} - ($p->stock)",
+            'subtext' => "{$p->category_name}-{$p->brand_name}",
+            'sale_price' =>  $p->sale_price,
+            'name'  =>  $p->name,
+            'category_name' =>  $p->category_name,
+            'brand_name'    =>  $p->brand_name,
+            'stock'         =>  $p->stock,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }
 }
