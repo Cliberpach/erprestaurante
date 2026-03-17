@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('consumables', function (Blueprint $table) {
             $table->id();
-            
+
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('consumable_categories');
 
@@ -38,7 +38,7 @@ return new class extends Migration
 
             $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
 
-            $table->unsignedBigInteger('creator_user_id');
+            $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->foreign('creator_user_id')->references('id')->on('users');
 
             $table->unsignedBigInteger('editor_user_id')->nullable();

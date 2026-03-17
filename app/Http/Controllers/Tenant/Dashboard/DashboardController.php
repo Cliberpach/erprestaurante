@@ -62,6 +62,16 @@ array:3 [ // app\Http\Controllers\General\PanelControl\Dashboard\DashboardContro
         return $this->s_dashboard->excelProductsMonth($request->toArray());
     }
 
+    public function excelConsumablesMonthAmount(Request $request)
+    {
+        return $this->s_dashboard->excelConsumablesMonthAmount($request->toArray());
+    }
+
+    public function excelConsumablesMonthQuantity(Request $request)
+    {
+        return $this->s_dashboard->excelConsumablesMonthQuantity($request->toArray());
+    }
+
     public function excelPaymentsMonth(Request $request)
     {
         return $this->s_dashboard->excelPaymentsMonth($request->toArray());

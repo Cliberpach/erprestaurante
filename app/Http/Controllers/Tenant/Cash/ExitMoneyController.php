@@ -82,9 +82,9 @@ class ExitMoneyController extends Controller
 
     public function create()
     {
-        $suppliers = Supplier::all();
-        $proof_payments = ProofPayment::all();
-        $date = now()->format('Y-m-d');
+        $suppliers          =   Supplier::all();
+        $proof_payments     =   ProofPayment::all();
+        $date               =   now()->format('Y-m-d');
         $payment_methods    =   PaymentMethod::where('estado', 'ACTIVO')->get();
         $cost_center        =   CostCenter::where('status', 'ACTIVO')->get();
         $supplier_initial   =   FormatController::getFormatSupplier(1);

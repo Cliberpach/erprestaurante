@@ -3,9 +3,9 @@
 namespace App\Http\Services\Tenant\Consumables\Purchase;
 
 use App\Http\Services\Tenant\Accounts\SupplierAccount\SupplierAccountService;
+use App\Http\Services\Tenant\Cash\ExitMoney\ExitMoneyService;
 use App\Http\Services\Tenant\Consumables\ConsumableKardex\ConsumableKardexService;
 use App\Http\Services\Tenant\Consumables\WarehouseConsumable\WarehouseConsumableService;
-use App\Http\Services\Tenant\Inventory\Kardex\KardexService;
 use App\Models\Tenant\Consumables\ConsumablePurchase\ConsumablePurchase;
 
 class PurchaseService
@@ -40,6 +40,11 @@ class PurchaseService
         $this->s_warehouse->increaseLstStock($lst_detail);
 
         $this->s_kardex->storeFromPurchaseConsumable($instance, $dto_detail);
+
+        if ($instance->discount_cash) {
+            $s_exit_money   =   new ExitMoneyService();
+            $exit_money     =   $s_exit_money->storeFromCPurchase($instance, $lst_detail);
+        }
 
         /*if ($item->payment_condition_id && $item->payment_condition_name !== 'CONTADO') {
             $this->s_account->store(['purchase_id' => $item->id]);

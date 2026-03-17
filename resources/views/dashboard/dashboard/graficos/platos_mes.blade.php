@@ -24,15 +24,15 @@
         margin: 1em auto;
     }
 
-    #sliders {
+    #sliders-dishes-month {
         margin: 0.3rem 10px;
     }
 
-    #sliders td input[type="range"] {
+    #sliders-dishes-month td input[type="range"] {
         display: inline;
     }
 
-    #sliders td {
+    #sliders-dishes-month td {
         padding-right: 1em;
         white-space: nowrap;
     }
@@ -48,26 +48,26 @@
 </div>
 
 <figure class="highcharts-figure">
-    <div id="container_platos_mes"></div>
+    <div id="container-dishes-month"></div>
     <p class="highcharts-description">
 
     </p>
-    <div id="sliders">
+    <div id="sliders-dishes-month">
         <table>
             <tr>
                 <td><label for="alpha">Alpha Angle</label></td>
                 <td><input id="alpha" type="range" min="0" max="45" value="15" /> <span
-                        id="alpha-value" class="value"></span></td>
+                        id="alpha-value-dishes-month" class="value"></span></td>
             </tr>
             <tr>
                 <td><label for="beta">Beta Angle</label></td>
                 <td><input id="beta" type="range" min="-45" max="45" value="15" /> <span
-                        id="beta-value" class="value"></span></td>
+                        id="beta-value-dishes-month" class="value"></span></td>
             </tr>
             <tr>
                 <td><label for="depth">Depth</label></td>
                 <td><input id="depth" type="range" min="20" max="100" value="50" /> <span
-                        id="depth-value" class="value"></span></td>
+                        id="depth-value-dishes-month" class="value"></span></td>
             </tr>
         </table>
     </div>
@@ -92,7 +92,7 @@
     function setPlatosMes(titulo, subtitulo, datos) {
         const chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'container_platos_mes',
+                renderTo: 'container-dishes-month',
                 type: 'column',
                 options3d: {
                     enabled: true,
@@ -144,29 +144,27 @@
         });
 
         document.querySelectorAll(
-            '#sliders input'
+            '#sliders-dishes-month input'
         ).forEach(input => input.addEventListener('input', e => {
             chart.options.chart.options3d[e.target.id] = parseFloat(e.target.value);
-            showValues();
+            showValuesDishesMonth();
             chart.redraw(false);
         }));
 
-        showValues();
-
-        function showValues() {
-            document.getElementById(
-                'alpha-value'
-            ).innerHTML = chart.options.chart.options3d.alpha;
-            document.getElementById(
-                'beta-value'
-            ).innerHTML = chart.options.chart.options3d.beta;
-            document.getElementById(
-                'depth-value'
-            ).innerHTML = chart.options.chart.options3d.depth;
-        }
-
         removeCreditos();
 
+    }
+
+    function showValuesDishesMonth() {
+        document.getElementById(
+            'alpha-value-dishes-month'
+        ).innerHTML = chart.options.chart.options3d.alpha;
+        document.getElementById(
+            'beta-value-dishes-month'
+        ).innerHTML = chart.options.chart.options3d.beta;
+        document.getElementById(
+            'depth-value-dishes-month'
+        ).innerHTML = chart.options.chart.options3d.depth;
     }
 
     function eventsDishesMonth() {

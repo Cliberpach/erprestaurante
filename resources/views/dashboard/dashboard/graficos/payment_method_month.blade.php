@@ -15,7 +15,7 @@
         color: var(--highcharts-neutral-color-100);
     }
 
-    #container_payment_method_month {
+    #container-payment-methods-month {
         height: 400px;
     }
 
@@ -69,26 +69,26 @@
 </div>
 
 <figure class="highcharts-figure">
-    <div id="container_payment_method_month"></div>
+    <div id="container-payment-methods-month"></div>
     <p class="highcharts-description">
 
     </p>
-    <div id="sliders">
+    <div id="sliders-payment-methods-month">
         <table>
             <tr>
                 <td><label for="alpha">Alpha Angle</label></td>
                 <td><input id="alpha" type="range" min="0" max="45" value="15" /> <span
-                        id="alpha-value" class="value"></span></td>
+                        id="alpha-value-payment-methods-month" class="value"></span></td>
             </tr>
             <tr>
                 <td><label for="beta">Beta Angle</label></td>
                 <td><input id="beta" type="range" min="-45" max="45" value="15" /> <span
-                        id="beta-value" class="value"></span></td>
+                        id="beta-value-payment-methods-month" class="value"></span></td>
             </tr>
             <tr>
                 <td><label for="depth">Depth</label></td>
                 <td><input id="depth" type="range" min="20" max="100" value="50" /> <span
-                        id="depth-value" class="value"></span></td>
+                        id="depth-value-payment-methods-month" class="value"></span></td>
             </tr>
         </table>
     </div>
@@ -113,7 +113,7 @@
     function setPaymentMethodMonth(titulo, subtitulo, datos) {
         const chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'container_payment_method_month',
+                renderTo: 'container-payment-methods-month',
                 type: 'column',
                 options3d: {
                     enabled: true,
@@ -161,29 +161,26 @@
         });
 
         document.querySelectorAll(
-            '#sliders input'
+            '#sliders-payment-methods-month input'
         ).forEach(input => input.addEventListener('input', e => {
             chart.options.chart.options3d[e.target.id] = parseFloat(e.target.value);
-            showValues();
+            showValuesPaymentMethodsMonth();
             chart.redraw(false);
         }));
 
-        showValues();
-
-        function showValues() {
-            document.getElementById(
-                'alpha-value'
-            ).innerHTML = chart.options.chart.options3d.alpha;
-            document.getElementById(
-                'beta-value'
-            ).innerHTML = chart.options.chart.options3d.beta;
-            document.getElementById(
-                'depth-value'
-            ).innerHTML = chart.options.chart.options3d.depth;
-        }
-
         removeCreditos();
+    }
 
+    function showValuesPaymentMethodsMonth() {
+        document.getElementById(
+            'alpha-value-payment-methods-month'
+        ).innerHTML = chart.options.chart.options3d.alpha;
+        document.getElementById(
+            'beta-value-payment-methods-month'
+        ).innerHTML = chart.options.chart.options3d.beta;
+        document.getElementById(
+            'depth-value-payment-methods-month'
+        ).innerHTML = chart.options.chart.options3d.depth;
     }
 
     function eventsPaymentMonth() {

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 class DashboardManager
 {
     public DashboardMarketService $s_dashboard_market;
-    public DashboardGrifoService  $s_dashboard_grifo;
 
     public object $data;
 
@@ -17,7 +16,6 @@ class DashboardManager
     public function __construct()
     {
         $this->s_dashboard_market   =   new DashboardMarketService();
-        $this->s_dashboard_grifo    =   new DashboardGrifoService();
     }
 
     public function getData(string $establecimiento, string $anio, string $mes): object
@@ -25,10 +23,6 @@ class DashboardManager
 
         if ($establecimiento === 'MARKET') {
             $this->data     =   $this->s_dashboard_market->getData($anio, $mes);
-        }
-
-        if ($establecimiento === 'GRIFO') {
-            $this->data     =   $this->s_dashboard_grifo->getData($anio, $mes);
         }
 
         return $this->data;
@@ -54,6 +48,16 @@ class DashboardManager
     public function excelProductsMonth(array $data)
     {
         return $this->s_dashboard_market->excelProductsMonth($data);
+    }
+
+    public function excelConsumablesMonthAmount(array $data)
+    {
+        return $this->s_dashboard_market->excelConsumablesMonthAmount($data);
+    }
+
+    public function excelConsumablesMonthQuantity(array $data)
+    {
+        return $this->s_dashboard_market->excelConsumablesMonthQuantity($data);
     }
 
     public function excelPaymentsMonth(array $data)

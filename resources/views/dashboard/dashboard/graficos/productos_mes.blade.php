@@ -13,7 +13,7 @@
             sans-serif;
     }
 
-    #container {
+    #container-products-month {
         height: 400px;
     }
 
@@ -24,15 +24,15 @@
         margin: 1em auto;
     }
 
-    #sliders {
+    #sliders-products-month {
         margin: 0.3rem 10px;
     }
 
-    #sliders td input[type="range"] {
+    #sliders-products-month td input[type="range"] {
         display: inline;
     }
 
-    #sliders td {
+    #sliders-products-month td {
         padding-right: 1em;
         white-space: nowrap;
     }
@@ -47,26 +47,26 @@
 </div>
 
 <figure class="highcharts-figure">
-    <div id="container"></div>
+    <div id="container-products-month"></div>
     <p class="highcharts-description">
 
     </p>
-    <div id="sliders">
+    <div id="sliders-products-month">
         <table>
             <tr>
                 <td><label for="alpha">Alpha Angle</label></td>
                 <td><input id="alpha" type="range" min="0" max="45" value="15" /> <span
-                        id="alpha-value" class="value"></span></td>
+                        id="alpha-value-products-month" class="value"></span></td>
             </tr>
             <tr>
                 <td><label for="beta">Beta Angle</label></td>
                 <td><input id="beta" type="range" min="-45" max="45" value="15" /> <span
-                        id="beta-value" class="value"></span></td>
+                        id="beta-value-products-month" class="value"></span></td>
             </tr>
             <tr>
                 <td><label for="depth">Depth</label></td>
                 <td><input id="depth" type="range" min="20" max="100" value="50" /> <span
-                        id="depth-value" class="value"></span></td>
+                        id="depth-value-products-month" class="value"></span></td>
             </tr>
         </table>
     </div>
@@ -91,7 +91,7 @@
     function setProductosMes(titulo, subtitulo, datos) {
         const chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'container',
+                renderTo: 'container-products-month',
                 type: 'column',
                 options3d: {
                     enabled: true,
@@ -143,28 +143,26 @@
         });
 
         document.querySelectorAll(
-            '#sliders input'
+            '#sliders-products-month input'
         ).forEach(input => input.addEventListener('input', e => {
             chart.options.chart.options3d[e.target.id] = parseFloat(e.target.value);
-            showValues();
+            showValuesProductsMonth(chart);
             chart.redraw(false);
         }));
 
-        showValues();
-
-        function showValues() {
-            document.getElementById(
-                'alpha-value'
-            ).innerHTML = chart.options.chart.options3d.alpha;
-            document.getElementById(
-                'beta-value'
-            ).innerHTML = chart.options.chart.options3d.beta;
-            document.getElementById(
-                'depth-value'
-            ).innerHTML = chart.options.chart.options3d.depth;
-        }
-
         removeCreditos();
+    }
+
+    function showValuesProductsMonth(chart) {
+        document.getElementById(
+            'alpha-value-products-month'
+        ).innerHTML = chart.options.chart.options3d.alpha;
+        document.getElementById(
+            'beta-value-products-month'
+        ).innerHTML = chart.options.chart.options3d.beta;
+        document.getElementById(
+            'depth-value-products-month'
+        ).innerHTML = chart.options.chart.options3d.depth;
     }
 
     function eventsProductsMonth() {

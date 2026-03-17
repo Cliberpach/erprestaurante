@@ -17,7 +17,6 @@
                     <label for="select_establecimiento" style="font-weight:bold;">ESTABLECIMIENTO</label>
                     <select name="select_establecimiento" id="select_establecimiento">
                         <option selected value="MARKET">MARKET</option>
-                        {{-- <option value="GRIFO">GRIFO</option> --}}
                     </select>
                 </div>
                 <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
@@ -115,6 +114,23 @@
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     @include('dashboard.dashboard.graficos.waiter_ranking_month')
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3" style="height: auto;">
+        <div class="card-header">
+            <h5>Estadísticas Insumos por mes</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    @include('dashboard.dashboard.graficos.consumables_month_amount')
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    @include('dashboard.dashboard.graficos.consumables_month_quantity')
                 </div>
             </div>
         </div>
@@ -219,6 +235,8 @@
         eventsPaymentMonth();
         eventsCostCenterMonth();
         eventsWaiterRankingMonth();
+        eventConsumablesMonthAmount();
+        eventsConsumablesMonthQuantity();
     }
 
     function removeCreditos() {
@@ -287,6 +305,7 @@
     function pintarData(data) {
         pintarCarousel(data.data_carousel);
         pintarGraficos(data.data_graficos);
+
         // pintarAnalisis(data.data_analisis);
     }
 
@@ -347,6 +366,17 @@
             'En ventas no anuladas',
             data.platos
         );
+
+        setConsumablesMonth(
+            'INSUMOS MÁS COMPRADOS DEL MES',
+            'En dinero',
+            data.consumables_month_amount
+        )
+        setConsumablesMonthQuantity(
+            'INSUMOS MÁS COMPRADOS DEL MES',
+            'En cantidad',
+            data.consumables_month_quantity
+        )
 
         setPaymentMethodMonth(
             'MÉTODOS PAGO DEL MES',

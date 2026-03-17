@@ -18,6 +18,7 @@ use App\Models\Landlord\Color;
 use App\Models\Landlord\Customer;
 use App\Models\Landlord\ModelV;
 use App\Models\Province;
+use App\Models\Tenant\Maintenance\Company\CompanyInvoice as CompanyCompanyInvoice;
 use App\Models\Tenant\WorkShop\Vehicle;
 use Illuminate\Support\Facades\Session;
 use Throwable;
@@ -74,7 +75,7 @@ class VehicleController extends Controller
         $departments                =   Department::all();
         $districts                  =   District::all();
         $provinces                  =   Province::all();
-        $company_invoice            =   CompanyInvoice::find(1);
+        $company_invoice            =   CompanyCompanyInvoice::find(1);
         $years                      =   UtilController::getYears();
         $colors                     =   Color::where('status', 'ACTIVE')->get();
 

@@ -112,7 +112,9 @@
                 series: {
                     dataLabels: {
                         enabled: true,
-                        format: '<b>{point.name}</b> ({point.y:,.0f})',
+                        formatter: function() {
+                            return `<b>${this.point.name}</b> (${formatSoles(this.point.y)})`;
+                        },
                         allowOverlap: true,
                         x: 10,
                         y: -5

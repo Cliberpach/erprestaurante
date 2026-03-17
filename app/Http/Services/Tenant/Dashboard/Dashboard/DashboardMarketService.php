@@ -2,6 +2,8 @@
 
 namespace App\Http\Services\Tenant\Dashboard\Dashboard;
 
+use App\Exports\Tenant\Dashboard\ConsumableMonthAmountExport;
+use App\Exports\Tenant\Dashboard\ConsumableMonthQuantityExport;
 use App\Exports\Tenant\Dashboard\CostCenterMonthExport;
 use App\Exports\Tenant\Dashboard\DishesMonthExport;
 use App\Exports\Tenant\Dashboard\PaymentMethodMonthExport;
@@ -55,6 +57,8 @@ class DashboardMarketService
         $data_graficos  =   (object)[
             'productos'         =>  $this->s_repository->getProductosMes($desde, $hasta),
             'platos'            =>  $this->s_repository->getPlatosMes($desde, $hasta),
+            'consumables_month_amount'       =>  $this->s_repository->getConsumablesMonthAmount($desde, $hasta),
+            'consumables_month_quantity'       =>  $this->s_repository->getConsumablesMonthQuantity($desde, $hasta),
             'payment_methods'   =>  $this->s_repository->getPaymentMethodMonth($desde, $hasta),
             'cost_center'       =>  $this->s_repository->getCostCenterMonth($desde, $hasta),
             'waiter_ranking'    =>  $this->s_repository->getWaiterRankingMonth($desde, $hasta),
@@ -787,5 +791,41 @@ class DashboardMarketService
             'peak_hour_sales'   =>   $this->s_repository->peakHourSales($data),
             'peak_hour_tables'  =>   $this->s_repository->peakHourTables($data)
         ];
+    }
+
+    public function excelConsumablesMonthAmount(array $data)
+    {
+        $company        =   Company::findOrFail(1);
+        $anio           =   $data['year'];
+        $month          =   $data['month'];
+        $desde          =   Carbon::create($anio, $month, 1)->startOfMonth();
+        $hasta          =   Carbon::create($anio, $month, 1)->endOfMonth();
+
+        $report         =   $this->s_repository->queryConsumablesMonthAmount($desde, $hasta);
+        Carbon::setLocale('es');
+        $monthName = strtoupper(Carbon::create()->month($month)->translatedFormat('F'));
+        $data['month']  =   $monthName;
+        return Excel::download(
+            new ConsumableMonthAmountExport($report, (object)$data, $company),
+            'insumos_mes_monto_' . Carbon::now()->format('Y_m_d_H_i_s') . '.xlsx'
+        );
+    }
+
+    public function excelConsumablesMonthQuantity(array $data)
+    {
+        $company        =   Company::findOrFail(1);
+        $anio           =   $data['year'];
+        $month          =   $data['month'];
+        $desde          =   Carbon::create($anio, $month, 1)->startOfMonth();
+        $hasta          =   Carbon::create($anio, $month, 1)->endOfMonth();
+
+        $report         =   $this->s_repository->queryConsumablesMonthQuantity($desde, $hasta);
+        Carbon::setLocale('es');
+        $monthName = strtoupper(Carbon::create()->month($month)->translatedFormat('F'));
+        $data['month']  =   $monthName;
+        return Excel::download(
+            new ConsumableMonthQuantityExport($report, (object)$data, $company),
+            'insumos_mes_cantidad_' . Carbon::now()->format('Y_m_d_H_i_s') . '.xlsx'
+        );
     }
 }

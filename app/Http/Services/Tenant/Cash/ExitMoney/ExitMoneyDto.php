@@ -3,6 +3,7 @@
 namespace App\Http\Services\Tenant\Cash\ExitMoney;
 
 use App\Models\Tenant\Cash\ExitMoney\ExitMoney;
+use App\Models\Tenant\Consumables\ConsumablePurchase\ConsumablePurchase;
 use App\Models\Tenant\Maintenance\CostCenter;
 use App\Models\Tenant\PaymentMethod;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,7 @@ class ExitMoneyDto
         $dto['user_id']             =   Auth::user()->id;
         $dto['petty_cash_book_id']  =   $cash_book->id;
         $dto['total']               =   $data['total'];
-        $dto['discount_cash']       =   isset($data['discount_cash'])?true:false;
+        $dto['discount_cash']       =   isset($data['discount_cash']) ? true : false;
 
         return $dto;
     }
@@ -70,7 +71,54 @@ class ExitMoneyDto
         $dto['supplier_id']         =   $data['supplier_id'];
         $dto['user_id']             =   Auth::user()->id;
         $dto['total']               =   $data['total'];
-        $dto['discount_cash']       =   isset($data['discount_cash'])?true:false;
+        $dto['discount_cash']       =   isset($data['discount_cash']) ? true : false;
+
+        return $dto;
+    }
+
+    public function getDtoStoreFromCPurchase(array $data): array
+    {
+        $dto    =   [];
+
+        $payment_method =   PaymentMethod::findOrFail(1);
+        $cost_center    =   CostCenter::where('is_default_consumables', '1')->first();
+        $cash_book      =   $data['petty_cash_book'];
+        $purchase       =   $data['purchase'];
+
+        $dto['proof_payment_id']    =   5;
+        $dto['payment_method_id']   =   $payment_method->id;
+        $dto['payment_method_name'] =   $payment_method->description;
+        $dto['number']              =   $purchase->serie . '-' . $purchase->correlative;
+        $dto['date']                =   $purchase->created_at;
+        $dto['cost_center_id']      =   $cost_center->id;
+        $dto['cost_center_name']    =   $cost_center->name;
+        $dto['supplier_id']         =   1;
+        $dto['user_id']             =   $purchase->creator_user_id;
+        $dto['petty_cash_book_id']  =   $cash_book->id;
+        $dto['total']               =   $purchase->total;
+        $dto['discount_cash']       =   true;
+        $dto['purchase_id']         =   $purchase->id;
+
+        return $dto;
+    }
+
+
+    public function getDtoDetailCPurchase(array $lst_details, ExitMoney $exit_money): array
+    {
+        $now = now();
+
+        $dto = [];
+
+        foreach ($lst_details as $item) {
+
+            $dto[] = [
+                'exit_money_id' => $exit_money->id,
+                'description'   => strtoupper(trim($item->consumable_name)),
+                'total'         => (float) $item->subtotal,
+                'created_at'    => $now,
+                'updated_at'    => $now,
+            ];
+        }
 
         return $dto;
     }

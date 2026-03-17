@@ -26,6 +26,7 @@ class ExitMoney extends Model
         'cost_center_id',
         'cost_center_name',
         'discount_cash',
+        'purchase_id',
 
         'creator_user_id',
         'editor_user_id',

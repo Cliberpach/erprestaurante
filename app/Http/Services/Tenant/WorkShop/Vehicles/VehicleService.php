@@ -43,7 +43,7 @@ class VehicleService
 
         $res    =   UtilController::apiPlaca($placa);
         $_res   =   json_decode($res->getContent());
-
+       
         if ($_res->success) {
             $data   =   $_res->data;
             if ($data->mensaje === 'SUCCESS') {

@@ -595,4 +595,96 @@ class DashboardRepository
 
         return $heatmapData;
     }
+
+    public function getConsumablesMonthAmount(string $desde, string $hasta)
+    {
+        $items  =   DB::table('consumable_purchase_details as cpd')
+            ->join('consumable_purchases as cp', 'cp.id', '=', 'cpd.purchase_id')
+            ->join('consumables as c', 'c.id', '=', 'cpd.consumable_id')
+            ->select(
+                'c.id',
+                'c.name',
+                DB::raw('SUM(cpd.subtotal) as amount'),
+            )
+            ->where('cp.status', '<>', 'ANULADO')
+            ->whereBetween('cp.created_at', [$desde, $hasta])
+            ->groupBy('c.id', 'c.name')
+            ->orderByDesc('amount')
+            ->limit(10)
+            ->get();
+
+        $formateado = $items->map(function ($item) {
+            return [$item->name, (float) $item->amount];
+        });
+
+        return  $formateado;
+    }
+
+    public function getConsumablesMonthQuantity(string $desde, string $hasta)
+    {
+        $items  =   DB::table('consumable_purchase_details as cpd')
+            ->join('consumable_purchases as cp', 'cp.id', '=', 'cpd.purchase_id')
+            ->join('consumables as c', 'c.id', '=', 'cpd.consumable_id')
+            ->select(
+                'c.id',
+                'c.name',
+                DB::raw('SUM(cpd.quantity) as quantity'),
+            )
+            ->where('cp.status', '<>', 'ANULADO')
+            ->whereBetween('cp.created_at', [$desde, $hasta])
+            ->groupBy('c.id', 'c.name')
+            ->orderByDesc('quantity')
+            ->limit(10)
+            ->get();
+
+        $formateado = $items->map(function ($item) {
+            return [$item->name, (float) $item->quantity];
+        });
+
+        return  $formateado;
+    }
+
+    public function queryConsumablesMonthAmount(string $desde, string $hasta)
+    {
+        $items  =   DB::table('consumable_purchase_details as cpd')
+            ->join('consumable_purchases as cp', 'cp.id', '=', 'cpd.purchase_id')
+            ->join('consumables as c', 'c.id', '=', 'cpd.consumable_id')
+            ->join('consumable_brands as cb', 'cb.id', 'c.brand_id')
+            ->join('consumable_categories as cc', 'cc.id', 'c.category_id')
+            ->select(
+                'c.id',
+                'c.name',
+                'cb.name as brand_name',
+                'cc.name as category_name',
+                DB::raw('SUM(cpd.subtotal) as amount'),
+            )
+            ->where('cp.status', '<>', 'ANULADO')
+            ->whereBetween('cp.created_at', [$desde, $hasta])
+            ->groupBy('c.id', 'c.name', 'cb.name', 'cc.name')
+            ->orderByDesc('amount')
+            ->get();
+        return $items;
+    }
+
+    public function queryConsumablesMonthQuantity(string $desde, string $hasta)
+    {
+        $items  =   DB::table('consumable_purchase_details as cpd')
+            ->join('consumable_purchases as cp', 'cp.id', '=', 'cpd.purchase_id')
+            ->join('consumables as c', 'c.id', '=', 'cpd.consumable_id')
+            ->join('consumable_brands as cb', 'cb.id', 'c.brand_id')
+            ->join('consumable_categories as cc', 'cc.id', 'c.category_id')
+            ->select(
+                'c.id',
+                'c.name',
+                'cb.name as brand_name',
+                'cc.name as category_name',
+                DB::raw('SUM(cpd.quantity) as quantity'),
+            )
+            ->where('cp.status', '<>', 'ANULADO')
+            ->whereBetween('cp.created_at', [$desde, $hasta])
+            ->groupBy('c.id', 'c.name', 'cb.name', 'cc.name')
+            ->orderByDesc('quantity')
+            ->get();
+        return $items;
+    }
 }
