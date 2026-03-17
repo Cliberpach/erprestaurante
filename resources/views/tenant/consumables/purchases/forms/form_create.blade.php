@@ -70,7 +70,7 @@
                     <i class="fa-solid fa-plus btn btn-primary btn-sm rounded-circle mb-1"
                         onclick="openMdlCostCenter();"></i>
                 </div>
-                <select name="cost_center" id="cost_center" class="form-control" data-placeholder="Seleccionar">
+                <select required name="cost_center" id="cost_center" class="form-control" data-placeholder="Seleccionar">
                     <option value=""></option>
                     @foreach ($cost_center as $item)
                         <option value="{{ $item->id }}">{{ $item->name }}</option>

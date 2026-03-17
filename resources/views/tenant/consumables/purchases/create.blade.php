@@ -385,8 +385,9 @@
                         const res = await response.json();
 
                         if (response.status === 422) {
+                            toastr.error('Errores en el formulario');
                             if ('errors' in res) {
-                                paintValidationErrors(res.errors);
+                                paintValidationErrors(res.errors, 'error');
                             }
                             Swal.close();
                             return;
