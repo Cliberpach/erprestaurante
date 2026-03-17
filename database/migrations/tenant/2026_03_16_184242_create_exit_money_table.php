@@ -37,8 +37,8 @@ return new class extends Migration
 
             $table->boolean('discount_cash')->default(false);
 
-            $table->unsignedBigInteger('consumable_purchse_id')->nullable();
-            $table->foreign('consumable_purchse_id')->references('id')->on('consumable_purchases');
+            $table->unsignedBigInteger('consumable_purchase_id')->nullable();
+            $table->foreign('consumable_purchase_id')->references('id')->on('consumable_purchases');
 
             $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->unsignedBigInteger('editor_user_id')->nullable();

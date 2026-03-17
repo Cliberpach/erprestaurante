@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('creator_user_name');
 
             $table->unsignedBigInteger('editor_user_id')->nullable();
-            $table->foreign('editor_user_name')->references('id')->on('users');
+            $table->foreign('editor_user_id')->references('id')->on('users');
             $table->string('editor_user_name')->nullable();
 
             $table->unsignedBigInteger('deletor_user_id')->nullable();
