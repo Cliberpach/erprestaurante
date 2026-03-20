@@ -3,6 +3,7 @@
 namespace App\Http\Services\Tenant\Supply\Dish;
 
 use App\Models\Company;
+use App\Models\Tenant\Consumables\Consumable\Consumable;
 use App\Models\Tenant\Supply\Dish\Dish;
 use Illuminate\Http\UploadedFile;
 
@@ -10,7 +11,6 @@ class DishDto
 {
     public function getDtoStore(array $datos)
     {
-
         $dto    =   [
             'name'              =>  mb_strtoupper($datos['name'], 'UTF-8'),
             'type_dish_id'      =>  $datos['type_dish_id'],
@@ -33,7 +33,25 @@ class DishDto
         return $dto;
     }
 
-    public function getDtoUpdate(array $datos,int $id)
+    public function getDtoDishConsumable(array $lst_sheet, Dish $dish): array
+    {
+        $dto = [];
+
+        foreach ($lst_sheet as $item) {
+            $_item  =   [
+                'consumable_id' =>  $item->id,
+                'dish_id'       =>  $dish->id,
+                'quantity'      =>  (float)$item->quantity,
+                'created_at'    =>  now(),
+                'updated_at'    =>  now()
+            ];
+            $dto[]  =   $_item;
+        }
+
+        return $dto;
+    }
+
+    public function getDtoUpdate(array $datos, int $id)
     {
 
         $dto    =   [
@@ -53,11 +71,27 @@ class DishDto
 
             $dto['img_route']   =   "storage/{$carpet_company}/dishes/images/{$filename}";
             $dto['img_name']    =   $filename;
-        }else{
+        } else {
             $dto['img_route']   =   null;
             $dto['img_name']    =   null;
         }
 
         return $dto;
+    }
+
+    public function formatDishConsumer($lst_items): array
+    {
+        $lst    =   [];
+        foreach ($lst_items as $item) {
+            $consumable =   Consumable::findOrFail($item->consumable_id);
+            $_item  =   (object)[
+                'id'        =>  $item->consumable_id,
+                'name'      =>  $consumable->name,
+                'unit_name' =>  $consumable->unit_name,
+                'quantity'  =>  $item->quantity
+            ];
+            $lst[]  =   $_item;
+        }
+        return $lst;
     }
 }

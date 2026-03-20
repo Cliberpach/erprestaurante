@@ -2,10 +2,9 @@
 
 namespace App\Http\Services\Tenant\Consumables\Consumable;
 
-use App\Models\Product;
 use App\Models\Tenant\Consumables\Consumable\Consumable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
+use Predis\Monitor\Consumer;
 
 class ConsumableRepository
 {
@@ -64,7 +63,8 @@ class ConsumableRepository
                 'p.stock_min',
                 'b.name as brand_name',
                 'c.name as category_name',
-                'wp.warehouse_id'
+                'wp.warehouse_id',
+                'p.unit_name'
             )->where('p.status', 'ACTIVO');
 
         if ($categoria_id) {
@@ -76,7 +76,38 @@ class ConsumableRepository
         }
 
         return $items;
+    }
 
-        //return DataTables::of($products)->make(true);
+    public function find(int $id): Consumable
+    {
+        return Consumable::findOrFail($id);
+    }
+
+    public function getOne(int $id)
+    {
+        return DB::table('consumables as c')
+            ->join('consumable_brands as cb', 'cb.id', 'c.brand_id')
+            ->join('consumable_categories as cc', 'cc.id', 'c.category_id')
+            ->leftJoin('warehouse_consumables as wc', 'wc.consumable_id', 'c.id')
+            ->select(
+                'c.name',
+                'c.description',
+                'c.sale_price',
+                'c.purchase_price',
+                'c.stock_min',
+                'c.code_factory',
+                'c.code_bar',
+                'c.img_route',
+                'c.unit_symbol',
+                'c.unit_name',
+                'c.creator_user_name',
+                'c.editor_user_name',
+                'c.deletor_user_name',
+                'cb.name as brand_name',
+                'cc.name as category_name',
+                'wc.stock'
+            )
+            ->where('c.id', $id)
+            ->first();
     }
 }

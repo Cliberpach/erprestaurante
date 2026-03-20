@@ -9,6 +9,10 @@
 @endpush
 
 @section('content')
+    @include('utils.modals.mdl_select_consumable.main', [
+        'brands' => $brands ?? [],
+        'categories' => $categories ?? [],
+    ])
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
             <h4 class="card-title mb-md-0 mb-2">EDITAR PLATO</h4>
@@ -54,11 +58,17 @@
 
 @section('js')
     <script>
+        const paramsCreate = {
+            lstSheet: []
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadTomSelect();
             loadFilePound();
             loadPreviewData();
+            loadMdlSelectConsumable({
+                onSelect: onSelectConsumable
+            });
             events();
         })
 
@@ -67,6 +77,98 @@
                 e.preventDefault();
                 update(e.target);
             })
+
+            document.querySelector('#tbl-technical-sheet').addEventListener('input', (e) => {
+                if (e.target.classList.contains('sheet-item')) {
+                    actionInputSheet(e);
+                }
+            })
+
+            document.querySelector('#tbl-technical-sheet').addEventListener('click', (e) => {
+                const btnDelete = e.target.closest('.btn-delete-sheet');
+                if (btnDelete) {
+                    actionBtnDeleteSheet(btnDelete);
+                }
+            })
+
+        }
+
+        function actionBtnDeleteSheet(btnDelete) {
+            const id = btnDelete.getAttribute('data-item');
+            const index = paramsCreate.lstSheet.findIndex(s => s.id == id);
+            if (index === -1) {
+                toastr.error('El insumo no existe en la ficha');
+                return;
+            }
+            paramsCreate.lstSheet.splice(index, 1);
+            paintTblSheet();
+        }
+
+        function onSelectConsumable(itemSelected) {
+            toastr.clear();
+            const validation = validationSheet(itemSelected);
+            if (!validation) return false;
+            addSheet(itemSelected);
+            paintTblSheet();
+            return validation;
+        }
+
+        function validationSheet(item) {
+            const exists = paramsCreate.lstSheet.findIndex(s => s.id == item.item_id);
+            if (exists != -1) {
+                toastr.error('El insumo ya existe en la ficha');
+                return false;
+            }
+            return true;
+        }
+
+        function addSheet(item) {
+            const _item = {
+                id: item.item_id,
+                quantity: 1,
+                name: item.item_name,
+                unit_name: item.unit_name
+            };
+            paramsCreate.lstSheet.push(_item);
+        }
+
+        function paintTblSheet() {
+            const tbody = document.querySelector('#tbl-technical-sheet tbody');
+            let rows = ``;
+            paramsCreate.lstSheet.forEach((s) => {
+                rows += `<tr>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-delete-sheet" data-item="${s.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                            <td>${s.unit_name}</td>
+                            <td>
+                                <input maxlength="6" class="form-control input-fill sheet-item inputDecimalPositivo" data-item="${s.id}" value="${s.quantity}" placeholder="Cant">
+                                </input>
+                            </td>
+                            <td>${s.name}</td>
+                        </tr>`
+            })
+            tbody.innerHTML = rows;
+        }
+
+        function actionInputSheet(e) {
+            toastr.clear();
+            const value = parseFloat(e.target.value);
+            const id = e.target.getAttribute('data-item');
+
+            console.log('value', value);
+            updateSheet(id, value);
+        }
+
+        function updateSheet(id, value) {
+            const index = paramsCreate.lstSheet.findIndex(s => s.id == id);
+            if (index === -1) {
+                toastr.error('El item no existe en la ficha');
+                return;
+            }
+            paramsCreate.lstSheet[index].quantity = value;
         }
 
         function loadFilePound() {
@@ -113,12 +215,6 @@
             }
         }
 
-        function addColorSelect(item) {
-            window.colorSelect.addOption(item);
-            window.colorSelect.setValue(item.id);
-            window.colorSelect.refreshOptions(false);
-        }
-
         async function update(formEdit) {
 
             const result = await Swal.fire({
@@ -153,9 +249,12 @@
 
                     const formData = new FormData(formEdit);
                     formData.append('_method', 'PUT');
-                    const id    =   @json($dish->id);
+                    formData.append('lstSheet', JSON.stringify(paramsCreate.lstSheet));
+                    const id = @json($dish->id);
 
-                    const res = await axios.post(route('tenant.abastecimiento.platos.update',{id}), formData);
+                    const res = await axios.post(route('tenant.abastecimiento.platos.update', {
+                        id
+                    }), formData);
                     if (res.data.success) {
                         toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
                         redirect('tenant.abastecimiento.platos.index');
@@ -198,6 +297,10 @@
             if (img) {
                 pond.addFile(img);
             }
+
+            //====== SHEET ========
+            paramsCreate.lstSheet = @json($lst_sheet);
+            paintTblSheet();
         }
     </script>
 @endsection

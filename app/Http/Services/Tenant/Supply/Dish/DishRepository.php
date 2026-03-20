@@ -3,10 +3,11 @@
 namespace App\Http\Services\Tenant\Supply\Dish;
 
 use App\Models\Tenant\Supply\Dish\Dish;
+use App\Models\Tenant\Supply\Dish\DishConsumable;
 
 class DishRepository
 {
-    public function insert(array $dto): Dish
+    public function store(array $dto): Dish
     {
         return Dish::create($dto);
     }
@@ -36,5 +37,20 @@ class DishRepository
         $item           =   Dish::findOrFail($id);
         $item->status   =   $status;
         $item->save();
+    }
+
+    public function storeDishConsumable(array $dto)
+    {
+        DishConsumable::insert($dto);
+    }
+
+    public function getDishConsumable(int $dish_id)
+    {
+        return DishConsumable::where('dish_id', $dish_id)->get();
+    }
+
+    public function destroyDishConsumable(int $dish_id)
+    {
+        DishConsumable::where('dish_id', $dish_id)->delete();
     }
 }

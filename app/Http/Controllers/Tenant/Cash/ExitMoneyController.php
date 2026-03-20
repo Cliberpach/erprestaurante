@@ -115,9 +115,8 @@ array:8 [ // app\Http\Controllers\Tenant\Cash\ExitMoneyController.php:108
     {
         DB::beginTransaction();
         try {
-
             $exit   =   $this->s_manager->store($request->toArray());
-
+           
             Session::flash('message_success', 'Egreso registrado con éxito');
 
             DB::commit();

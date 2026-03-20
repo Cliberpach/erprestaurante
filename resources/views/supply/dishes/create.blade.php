@@ -10,6 +10,10 @@
 
 @section('content')
     @include('utils.modals.types_dish.mdl_create');
+    @include('utils.modals.mdl_select_consumable.main', [
+        'brands' => $brands ?? [],
+        'categories' => $categories ?? [],
+    ])
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
             <h4 class="card-title mb-md-0 mb-2">REGISTRAR PLATO</h4>
@@ -47,29 +51,119 @@
     </div>
 @endsection
 
-<style>
-    .swal2-container {
-        z-index: 9999999;
-    }
-</style>
-
 @section('js')
     <script>
-        let dtYears = null;
+        const paramsCreate = {
+            lstSheet: []
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadTomSelect();
             loadFilePound();
             events();
             eventsMdlTypeDish();
+            loadMdlSelectConsumable({
+                onSelect: onSelectConsumable
+            });
         })
 
         function events() {
-
             document.querySelector('#form_create').addEventListener('submit', (e) => {
                 e.preventDefault();
                 store(e.target);
             })
+
+            document.querySelector('#tbl-technical-sheet').addEventListener('input', (e) => {
+                if (e.target.classList.contains('sheet-item')) {
+                    actionInputSheet(e);
+                }
+            })
+
+            document.querySelector('#tbl-technical-sheet').addEventListener('click', (e) => {
+                const btnDelete = e.target.closest('.btn-delete-sheet');
+                if (btnDelete) {
+                    actionBtnDeleteSheet(btnDelete);
+                }
+            })
+
+        }
+
+        function actionBtnDeleteSheet(btnDelete) {
+            const id = btnDelete.getAttribute('data-item');
+            const index = paramsCreate.lstSheet.findIndex(s => s.id == id);
+            if (index === -1) {
+                toastr.error('El insumo no existe en la ficha');
+                return;
+            }
+            paramsCreate.lstSheet.splice(index, 1);
+            paintTblSheet();
+        }
+
+        function onSelectConsumable(itemSelected) {
+            toastr.clear();
+            const validation = validationSheet(itemSelected);
+            if (!validation) return false;
+            addSheet(itemSelected);
+            paintTblSheet();
+            return validation;
+        }
+
+        function validationSheet(item) {
+            const exists = paramsCreate.lstSheet.findIndex(s => s.id == item.item_id);
+            if (exists != -1) {
+                toastr.error('El insumo ya existe en la ficha');
+                return false;
+            }
+            return true;
+        }
+
+        function addSheet(item) {
+            const _item = {
+                id: item.item_id,
+                quantity: 1,
+                name: item.item_name,
+                unit_name: item.unit_name
+            };
+            paramsCreate.lstSheet.push(_item);
+        }
+
+        function paintTblSheet() {
+            const tbody = document.querySelector('#tbl-technical-sheet tbody');
+            let rows = ``;
+            paramsCreate.lstSheet.forEach((s) => {
+                rows += `<tr>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-delete-sheet" data-item="${s.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                            <td>${s.name}</td>
+                            <td>
+                                <input maxlength="6" class="form-control input-fill sheet-item inputDecimalPositivo" data-item="${s.id}" value="${s.quantity}" placeholder="Cant">
+                                </input>
+                            </td>
+                            <td>${s.unit_name}</td>
+                        </tr>`
+            })
+            tbody.innerHTML = rows;
+        }
+
+        function actionInputSheet(e) {
+            toastr.clear();
+            const value = parseFloat(e.target.value);
+            const id = e.target.getAttribute('data-item');
+
+            console.log('value', value);
+            updateSheet(id, value);
+        }
+
+        function updateSheet(id, value) {
+            const index = paramsCreate.lstSheet.findIndex(s => s.id == id);
+            if (index === -1) {
+                toastr.error('El item no existe en la ficha');
+                return;
+            }
+            paramsCreate.lstSheet[index].quantity = value;
         }
 
         function loadFilePound() {
@@ -116,89 +210,6 @@
             }
         }
 
-        async function accionBuscarPlaca() {
-            const placa = document.querySelector('#plate').value.trim();
-
-            if (placa.length < 6 || placa.length > 8) {
-                toastr.error('LA PLACA DEBE TENER ENTRE 6 Y 8 CARACTERES');
-                return;
-            }
-
-            searchPlate(placa);
-
-        }
-
-        async function searchPlate(placa) {
-            mostrarAnimacion1();
-            try {
-                toastr.clear();
-                const res = await axios.get(route('tenant.utils.searchPlate', placa));
-                if (res.data.success) {
-
-                    if (res.data.origin == 'BD') {
-                        toastr.error('VEHICULO YA EXISTE EN BD');
-                        return;
-                    }
-
-                    const dataApi = res.data.data;
-                    if (dataApi.mensaje == 'SUCCESS') {
-                        toastr.info(dataApi.mensaje);
-                        setDataApi(res);
-                    }
-                } else {
-                    toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
-                }
-            } catch (error) {
-                toastr.error(error, 'ERROR EN LA PETICIÓN CONSULTAR PLACA');
-            } finally {
-                ocultarAnimacion1();
-            }
-        }
-
-        function setDataApi(res) {
-
-            const dataApi = res.data.data.data;
-            const model = res.data.model;
-            const color = res.data.color;
-
-            const mensaje = dataApi.mensaje;
-            if (mensaje == 'No encontrado') {
-                toastr.error(mensaje);
-                return;
-            }
-
-            const modelItem = {
-                id: model.id,
-                text: `${dataApi.marca}-${dataApi.modelo}`
-            };
-            addModelSelect(modelItem);
-
-            if (dataApi.color) {
-                const colorItem = {
-                    id: color.id,
-                    description: `${dataApi.color}`
-                };
-                addColorSelect(colorItem);
-            }
-
-            document.querySelector('#vin').value = dataApi.vin;
-            document.querySelector('#serie').value = dataApi.serie;
-
-        }
-
-        function addModelSelect(item) {
-            window.modelSelect.clear();
-            window.modelSelect.clearOptions();
-            window.modelSelect.addOption(item);
-            window.modelSelect.setValue(item.id);
-        }
-
-        function addColorSelect(item) {
-            window.colorSelect.addOption(item);
-            window.colorSelect.setValue(item.id);
-            window.colorSelect.refreshOptions(false);
-        }
-
         async function store(formCreate) {
 
             const result = await Swal.fire({
@@ -232,7 +243,9 @@
                         }
                     });
 
-                    const res = await axios.post(route('tenant.abastecimiento.platos.store'), formCreate);
+                    const formData = new FormData(formCreate);
+                    formData.append('lstSheet', JSON.stringify(paramsCreate.lstSheet));
+                    const res = await axios.post(route('tenant.abastecimiento.platos.store'), formData);
                     if (res.data.success) {
                         toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
                         redirect('tenant.abastecimiento.platos.index');

@@ -100,7 +100,7 @@
                     Centro de costos
                 </label>
                 <div class="input-group">
-                    <select name="cost_center" id="cost_center" class="form-select" data-placeholder="Seleccionar">
+                    <select required name="cost_center" id="cost_center" class="form-select" data-placeholder="Seleccionar">
                         <option value=""></option>
                         @foreach ($cost_center as $item)
                             <option value="{{ $item->id }}">

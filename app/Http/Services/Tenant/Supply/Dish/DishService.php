@@ -10,18 +10,26 @@ class DishService
 {
     private DishRepository $s_repository;
     private DishDto $s_dto;
+    private DishValidation $s_validation;
 
     public function __construct()
     {
         $this->s_repository =   new DishRepository();
         $this->s_dto        =   new DishDto();
+        $this->s_validation =   new DishValidation();
     }
 
     public function store(array $data): Dish
     {
+        $data   =   $this->s_validation->validationStore($data);
         $dto    =   $this->s_dto->getDtoStore($data);
-        $item   =   $this->s_repository->insert($dto);
+        $item   =   $this->s_repository->store($dto);
         $this->saveImg($dto, $data['img'] ?? null);
+
+        if (count($data['lst_sheet']) > 0) {
+            $dto_sheet  =   $this->s_dto->getDtoDishConsumable($data['lst_sheet'], $item);
+            $this->s_repository->storeDishConsumable($dto_sheet);
+        }
         return $item;
     }
 
@@ -52,10 +60,17 @@ class DishService
 
     public function update(array $data, int $id): Dish
     {
+        $data           =   $this->s_validation->validationStore($data);
         $dto            =   $this->s_dto->getDtoUpdate($data, $id);
 
         $dish_preview   =   $this->s_repository->find($id);
         $item           =   $this->s_repository->update($dto, $id);
+
+        $this->s_repository->destroyDishConsumable($id);
+        if (count($data['lst_sheet']) > 0) {
+            $dto_sheet  =   $this->s_dto->getDtoDishConsumable($data['lst_sheet'], $item);
+            $this->s_repository->storeDishConsumable($dto_sheet);
+        }
 
         $this->deleteImg($dish_preview);
         $this->saveImg($dto, $data['img'] ?? null);
@@ -109,4 +124,12 @@ class DishService
 
         return $data;
     }
+
+    public function formatLstSheet(int $dish_id): array
+    {
+        $dish_consumer  =   $this->s_repository->getDishConsumable($dish_id);
+        $formatted      =   $this->s_dto->formatDishConsumer($dish_consumer);
+        return $formatted;
+    }
+
 }

@@ -32,4 +32,9 @@ class ConsumableManager
     {
         return $this->s_service->getList($filters);
     }
+
+    public function getOne($id)
+    {
+        return $this->s_service->getOne($id);
+    }
 }

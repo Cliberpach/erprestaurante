@@ -42,7 +42,7 @@ class ConsumableService
     }
 
     public function store(array $data): Consumable
-    {   
+    {
         $dto    =   $this->s_dto->getDtoStore($data);
 
         //======== REGISTRAR PRODUCTO =======
@@ -109,5 +109,11 @@ class ConsumableService
     public function getList(array $filter)
     {
         return $this->s_repository->getList($filter);
+    }
+
+    public function getOne($id)
+    {
+        $consumable  =   $this->s_repository->getOne($id);
+        return $consumable;
     }
 }

@@ -13,6 +13,7 @@
     @include('tenant.consumables.consumable.modals.mdl_edit')
     @include('utils.modals.consumables_categories.mdl_create')
     @include('utils.modals.consumables_brands.mdl_create')
+    @include('tenant.consumables.consumable.modals.mdl_show')
 
     <div class="card overflow-hidden">
         <div class="card-header d-flex flex-column">
@@ -113,6 +114,12 @@
                         orderable: true
                     },
                     {
+                        data: 'unit_name',
+                        name: 'p.unit_name',
+                        searchable: false,
+                        orderable: false
+                    },
+                    {
                         data: 'sale_price',
                         name: 'p.sale_price',
                         className: 'text-end',
@@ -185,7 +192,7 @@
                                 </button>
                                 <ul class="dropdown-menu" style="max-height: 150px; overflow-y: auto;">
                                     <li>
-                                        <a class="dropdown-item" href="javascript:void(0);" onclick="openMdlShowProducto(${data.id})">
+                                        <a class="dropdown-item" href="javascript:void(0);" onclick="openMdlConsumableShow(${data.id})">
                                             <i class="fa-solid fa-eye text-primary me-2"></i> Ver
                                         </a>
                                     </li>

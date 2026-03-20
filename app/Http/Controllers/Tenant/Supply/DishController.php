@@ -12,6 +12,7 @@ use App\Models\Landlord\ModelV;
 use App\Models\Tenant\Maintenance\Company\Company;
 use App\Models\Tenant\Orders\OrderDish;
 use App\Models\Tenant\Supply\Dish\Dish;
+use App\Models\Tenant\Supply\Dish\DishConsumable;
 use App\Models\Tenant\Supply\Programming\ProgrammingDetail;
 use Carbon\Carbon;
 use Exception;
@@ -98,7 +99,14 @@ class DishController extends Controller
     public function create()
     {
         $types_dish =   UtilController::getTypesDish();
-        return view('supply.dishes.create', compact('types_dish'));
+        $categories =   UtilController::getConsumableCategories();
+        $brands     =   UtilController::getConsumableBrands();
+
+        return view('supply.dishes.create', compact(
+            'types_dish',
+            'categories',
+            'brands'
+        ));
     }
 
     public function getOne(int $id)
@@ -114,14 +122,15 @@ class DishController extends Controller
     }
 
     /*
-array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:79
-  "_token" => "DqXWf0GYW1K8Yug3TWzKqCQcnyVz6quC1fgxcYi9"
+array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:129
+  "_token" => "8PJhxgGikBz66zjhwwUOi0UlFZ1ntoicDw3YoNiM"
   "_method" => "POST"
-  "type_dish_id" => "1"
-  "name" => "ARROZ CON PATO"
-  "purchase_price" => "1"
+  "type_dish_id" => "2"
+  "name" => "Arroz con chancho"
+  "purchase_price" => "0"
   "sale_price" => "12"
-  "img" =>Illuminate\Http\UploadedFile {#2384
+   "img" =>Illuminate\Http\UploadedFile {#2389}
+  "lstSheet" => "[{"id":22,"quantity":0,"name":"PAPA AMARILLA","unit_name":"KILOGRAMO"},{"id":23,"quantity":3,"name":"CARAMELOS A1","unit_name":"UNIDAD"}]"
 ]
 */
     public function store(DishStoreRequest $request)
@@ -144,11 +153,17 @@ array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:79
         $types_dish =   UtilController::getTypesDish();
         $dish       =   $this->s_manager->getOne($id);
         $img_route  =   $dish->img_route ? asset($dish->img_route) : null;
+        $categories =   UtilController::getConsumableCategories();
+        $brands     =   UtilController::getConsumableBrands();
+        $lst_sheet  =   $this->s_manager->formatLstSheet($id);
 
         return view('supply.dishes.edit', compact(
             'types_dish',
             'dish',
-            'img_route'
+            'img_route',
+            'categories',
+            'brands',
+            'lst_sheet'
         ));
     }
 
@@ -160,6 +175,7 @@ array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:128
   "name" => "ARROZ CON PATO"
   "purchase_price" => "1.00"
   "sale_price" => "14"
+  "lstSheet" => "[{"id":22,"name":"PAPA AMARILLA","unit_name":"KILOGRAMO","quantity":"0.40"},{"id":21,"name":"VERDURA CHINA","unit_name":"GRAMO","quantity":"100.00"}]
   "img" =>Illuminate\Http\UploadedFile {#2389
 ]
 */
@@ -170,7 +186,6 @@ array:7 [ // app\Http\Controllers\Tenant\Supply\DishController.php:128
             $item  =   $this->s_manager->update($request->toArray(), $id);
 
             DB::commit();
-
             return response()->json(['success' => true, 'message' => 'PLATO ACTUALIZADO CON ÉXITO']);
         } catch (Throwable $th) {
             DB::rollBack();

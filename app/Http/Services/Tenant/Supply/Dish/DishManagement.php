@@ -3,39 +3,43 @@
 namespace App\Http\Services\Tenant\Supply\Dish;
 
 use App\Models\Tenant\Supply\Dish\Dish;
-use App\Models\Tenant\Supply\TypeDish\TypeDish;
 
 class DishManagement
 {
-    private DishService  $s_manager;
+    private DishService  $s_service;
 
     public function __construct()
     {
-        $this->s_manager    =   new DishService();
+        $this->s_service    =   new DishService();
     }
 
     public function store(array $data): Dish
     {
-        return $this->s_manager->store($data);
+        return $this->s_service->store($data);
     }
 
     public function update(array $data, int $id): Dish
     {
-        return $this->s_manager->update($data, $id);
+        return $this->s_service->update($data, $id);
     }
 
     public function getOne(int $id): Dish
     {
-        return $this->s_manager->getOne($id);
+        return $this->s_service->getOne($id);
     }
 
     public function destroy(int $id): Dish
     {
-        return $this->s_manager->destroy($id);
+        return $this->s_service->destroy($id);
     }
 
     public function searchDish(array $data)
     {
-        return $this->s_manager->searchDish($data);
+        return $this->s_service->searchDish($data);
+    }
+
+    public function formatLstSheet(int $dish_id): array
+    {
+        return $this->s_service->formatLstSheet($dish_id);
     }
 }

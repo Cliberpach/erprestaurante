@@ -29,8 +29,8 @@
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <label for="name" class="form-label fw-bold required_field">Nombre:</label>
             <div class="input-group">
-                <input value="{{ $dish->name }}" type="text" class="form-control text-uppercase" id="name"
-                    name="name" maxlength="160" placeholder="Ingrese un nombre" required>
+                <input value="{{ $dish->name }}" type="text" class="form-control text-uppercase input-fill"
+                    id="name" name="name" maxlength="160" placeholder="Ingrese un nombre" required>
             </div>
             <p class="name_error msgError mb-0"></p>
         </div>
@@ -38,9 +38,9 @@
         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
             <label for="purchase_price" class="form-label fw-bold required_field">Precio Compra:</label>
             <div class="input-group">
-                <input value="{{ number_format((float) $dish->purchase_price, 2, '.', '') }}" type="text" value="0"
-                    class="form-control text-uppercase inputDecimalPositivo" id="purchase_price" name="purchase_price"
-                    placeholder="Ingrese un precio compra" required>
+                <input value="{{ number_format((float) $dish->purchase_price, 2, '.', '') }}" type="text"
+                    value="0" class="form-control text-uppercase inputDecimalPositivo input-fill"
+                    id="purchase_price" name="purchase_price" placeholder="Ingrese un precio compra" required>
             </div>
             <p class="purchase_price_error msgError mb-0"></p>
         </div>
@@ -49,8 +49,8 @@
             <label for="sale_price" class="form-label fw-bold required_field">Precio Venta:</label>
             <div class="input-group">
                 <input value="{{ number_format((float) $dish->sale_price, 2, '.', '') }}" type="text"
-                    class="form-control text-uppercase inputDecimalPositivo" id="sale_price" name="sale_price"
-                    placeholder="Ingrese un precio venta" required>
+                    class="form-control text-uppercase inputDecimalPositivo input-fill" id="sale_price"
+                    name="sale_price" placeholder="Ingrese un precio venta" required>
             </div>
             <p class="sale_price_error msgError mb-0"></p>
         </div>
@@ -63,5 +63,18 @@
             <p class="img_error msgError mb-0"></p>
         </div>
 
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12">
+            <button class="btn btn-secondary" onclick="openMdlConsumables()" type="button">
+                <i class="fas fa-add"></i> AGREGAR
+            </button>
+        </div>
+        <div class="col-12">
+            <div class="table-responsive">
+                @include('supply.dishes.tables.tbl_technical_sheet')
+            </div>
+        </div>
     </div>
 </form>

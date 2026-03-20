@@ -17,6 +17,7 @@ Route::group(["prefix" => "insumos"], function () {
         Route::delete('destroy/{id}', [ConsumableController::class, 'destroy'])->name('tenant.insumos.insumos.destroy');
         Route::get('excel', [ConsumableController::class, 'excel'])->name('tenant.insumos.insumos.excel');
         Route::get('pdf', [ConsumableController::class, 'pdf'])->name('tenant.insumos.insumos.pdf');
+        Route::get('get-one/{id}', [ConsumableController::class, 'getOne'])->name('tenant.insumos.insumos.getOne');
     });
 
     Route::group(["prefix" => "categorias"], function () {

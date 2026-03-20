@@ -12,7 +12,7 @@ class CustomAuthenticateUser
 {
     public function __invoke(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->where('status', 'ACTIVO')->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
@@ -20,9 +20,9 @@ class CustomAuthenticateUser
             ]);
         }
 
-        if ($user->status === 'ANULADO') {
+        if (!$user) {
             throw ValidationException::withMessages([
-                Fortify::username() => ['Tu cuenta ha sido anulada. Contacta al administrador.'],
+                Fortify::username() => ['Usuario no existe.'],
             ]);
         }
 

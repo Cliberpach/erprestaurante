@@ -1,4 +1,4 @@
-<table class="display table"   id="dt-dishes">
+<table class="display table" id="dt-dishes">
     <thead class="table-light">
         <tr>
             <th class="minw-100px">#</th>

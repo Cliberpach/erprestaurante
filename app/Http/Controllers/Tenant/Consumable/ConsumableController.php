@@ -74,7 +74,8 @@ class ConsumableController extends Controller
                 'p.code_bar',
                 'p.img_route',
                 'p.unit_id',
-                'p.unit_symbol'
+                'p.unit_symbol',
+                'p.unit_name'
             )->where('p.status', 'ACTIVO');
         return $items;
     }
@@ -228,5 +229,19 @@ array:12 [ // app\Http\Controllers\Tenant\Consumable\ConsumableController.php:12
             'success' => true,
             'data' => $data
         ]);
+    }
+
+    public function getOne($id)
+    {
+        DB::beginTransaction();
+        try {
+            $instance   =   $this->s_manager->getOne($id);
+
+            DB::commit();
+            return response()->json(['success' => true, 'data' => $instance, 'message' => 'INSUMO OBTENIDO CON ÉXITO']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
     }
 }
