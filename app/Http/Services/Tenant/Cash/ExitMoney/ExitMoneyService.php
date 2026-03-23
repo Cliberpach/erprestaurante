@@ -20,7 +20,6 @@ class ExitMoneyService
 
     public function store(array $data): ExitMoney
     {
-        dd($data);
         $data       =   $this->s_validation->validationStore($data);
         $dto        =   $this->s_dto->getDtoStore($data);
         $instance   =   $this->s_repository->store($dto);
