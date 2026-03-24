@@ -114,7 +114,6 @@ class SummaryService
             'cdr_response_notes'        =>  null,
             'cdr_response_reference'    =>  null,
             'route_cdr'                 =>  null,
-            'route_xml'                 =>  null,
             'message'                   =>  null,
             'send_sunat'                =>  null
         ];

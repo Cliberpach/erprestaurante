@@ -49,7 +49,7 @@ class SummaryRepository
         $instance->cdr_response_reference = $data['cdr_response_reference'];
 
         $instance->route_cdr = $data['route_cdr'];
-        $instance->route_xml = $data['route_xml'];
+        $instance->route_xml = $data['route_xml']??$instance->route_xml;
 
         $instance->send_sunat = $data['send_sunat'] ?? $instance->send_sunat;
         $instance->summary_result = $data['summary_result'] ?? $instance->summary_result;
