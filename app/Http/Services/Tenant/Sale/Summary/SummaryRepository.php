@@ -31,7 +31,7 @@ class SummaryRepository
     {
         $instance->summary_result_success = $data['summary_result_success'];
         $instance->summary_result_error = $data['summary_result_error'];
-        $instance->summary_result_ticket = $data['summary_result_ticket']??$instance->summary_result_ticket;
+        $instance->summary_result_ticket = $data['summary_result_ticket'] ?? $instance->summary_result_ticket;
         $instance->summary_name = $data['summary_name'] ?? $instance->summary_name;
         $instance->response_error = $data['response_error'];
 
@@ -51,7 +51,7 @@ class SummaryRepository
         $instance->route_cdr = $data['route_cdr'];
         $instance->route_xml = $data['route_xml'];
 
-        $instance->send_sunat = $data['send_sunat'];
+        $instance->send_sunat = $data['send_sunat'] ?? $instance->send_sunat;
         $instance->summary_result = $data['summary_result'] ?? $instance->summary_result;
         $instance->last_message =   $data['message'];
 
