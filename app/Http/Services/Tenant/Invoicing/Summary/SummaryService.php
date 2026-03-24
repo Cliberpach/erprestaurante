@@ -55,7 +55,7 @@ class SummaryService
             'status_result_success'             =>  null,
             'status_result_error_code'          =>  null,
             'status_result_error_message'       =>  null,
-            'sunat_status'              =>  null,
+            'sunat_status'              =>  'PENDIENTE',
             'cdr_response_id'           =>  null,
             'cdr_response_code'         =>  null,
             'cdr_response_description'  =>  null,
