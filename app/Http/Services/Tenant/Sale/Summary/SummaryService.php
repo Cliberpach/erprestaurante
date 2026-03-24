@@ -28,7 +28,7 @@ class SummaryService
     {
         $this->isActive();
         $data['data_correlative']  =   $this->getCorrelative();
-        dd($data);
+ 
 
         $lst_invoices       =   json_decode($data['comprobantes']);
         $fecha_comprobantes =   $data['fecha_comprobantes'];
