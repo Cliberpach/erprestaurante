@@ -28,7 +28,7 @@ class SendInvoiceJob implements ShouldQueue
 
     public function handle(): void
     {
-        $tenant = Tenant::find($this->tenantId); // necesitas pasar tenantId al job
+        $tenant = Tenant::find($this->tenantId); 
         if (!$tenant) {
             Log::warning("Tenant {$this->tenantId} no encontrado para log {$this->dispatchLogId}.");
             return;

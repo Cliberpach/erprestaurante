@@ -9,7 +9,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
 use Spatie\Multitenancy\Models\Tenant;
 
 class ProcessTenantInvoicesJob implements ShouldQueue
@@ -32,7 +31,6 @@ class ProcessTenantInvoicesJob implements ShouldQueue
             return;
         }
 
-        // Spatie v3: activar tenant manualmente
         $tenant->makeCurrent();
 
         try {

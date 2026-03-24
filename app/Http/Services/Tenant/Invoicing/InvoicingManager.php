@@ -5,6 +5,7 @@ namespace App\Http\Services\Tenant\Invoicing;
 use App\Http\Services\Tenant\Invoicing\CreditNote\CreditNoteService;
 use App\Http\Services\Tenant\Invoicing\GuiaFacturacion\GuiaFacturacionService;
 use App\Http\Services\Tenant\Invoicing\Invoice\InvoiceService;
+use App\Http\Services\Tenant\Invoicing\Summary\SummaryService;
 use App\Models\Tenant\Maintenance\Company\CompanyInvoice;
 use Exception;
 use Greenter\Api;
@@ -18,6 +19,7 @@ class InvoicingManager
     protected GuiaFacturacionService $s_guia_fac;
     private InvoiceService $s_invoice;
     private CreditNoteService $s_credit_note;
+    private SummaryService $s_summary;
 
     /**
      * Create a new class instance.
@@ -27,6 +29,7 @@ class InvoicingManager
         //$this->s_guia_fac       =   new GuiaFacturacionService();
         $this->s_invoice        =   new InvoiceService();
         $this->s_credit_note    =   new CreditNoteService();
+        $this->s_summary        =   new SummaryService();
     }
 
     public function consultarGuiaSunat() {}
@@ -51,6 +54,20 @@ class InvoicingManager
         $util   =   $this->getUtil();
         $see    =   $this->config($util);
         return $this->s_credit_note->send($dto, $util, $see);
+    }
+
+    public function sendSummary(array $dto)
+    {
+        $util   =   $this->getUtil();
+        $see    =   $this->config($util);
+        return $this->s_summary->sendSummary($dto, $util, $see);
+    }
+
+    public function consultSummary(string $ticket, string $files_route, string $summary_name)
+    {
+        $util   =   $this->getUtil();
+        $see    =   $this->config($util);
+        return $this->s_summary->consult($ticket, $files_route, $summary_name, $util, $see);
     }
 
 
@@ -88,7 +105,7 @@ class InvoicingManager
                 'c.files_route'
             )->where('c.id', 1)->first();
 
-     
+
         if (!$config) {
             throw new Exception("NO EXISTE LA CONFIGURACIÓN EN LA TABLA EMPRESAS");
         }

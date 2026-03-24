@@ -55,4 +55,18 @@ class PettyCashBookDto
 
         return $dto;
     }
+
+    public function formatConsolidateConsumables($data):array
+    {
+        $lst    =   [];
+        foreach ($data as  $item) {
+            $_item  =   (object)[
+                'warehouse_id'  =>  1,
+                'consumable_id' =>  $item->id,
+                'quantity'      =>  $item->total
+            ];
+            $lst[]  =   $_item;
+        }
+        return $lst;
+    }
 }

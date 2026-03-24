@@ -27,7 +27,7 @@
         <div class="row mt-2">
 
             <!-- VENTAS -->
-            <div class="col-lg-4 col-md-6 col-sm-12 col-12 mt-3 card-sales">
+            <div class="col-lg-4 col-md-6 col-sm-12 col-12 card-sales mt-3">
                 <div class="rounded border p-0 shadow-sm" style="background:#f8fafc;">
                     <div class="rounded-top d-flex align-items-center px-3 py-2" style="background:#22c55e;">
                         <i class="fa-solid fa-cash-register me-2 text-white"></i>
@@ -41,7 +41,7 @@
             </div>
 
             <!-- EGRESOS -->
-            <div class="col-lg-4 col-md-6 col-sm-12 col-12 mt-3 card-expenses">
+            <div class="col-lg-4 col-md-6 col-sm-12 col-12 card-expenses mt-3">
                 <div class="rounded border p-0 shadow-sm" style="background:#f8fafc;">
                     <div class="rounded-top d-flex align-items-center px-3 py-2" style="background:#ef4444;">
                         <i class="fa-solid fa-file-invoice-dollar me-2 text-white"></i>
@@ -55,7 +55,7 @@
             </div>
 
             <!-- CUENTAS CLIENTE -->
-            <div class="col-lg-4 col-md-6 col-sm-12 col-12 mt-3 card-customer-accounts">
+            <div class="col-lg-4 col-md-6 col-sm-12 col-12 card-customer-accounts mt-3">
                 <div class="rounded border p-0 shadow-sm" style="background:#f8fafc;">
                     <div class="rounded-top d-flex align-items-center px-3 py-2" style="background:#3b82f6;">
                         <i class="fa-solid fa-users me-2 text-white"></i>
@@ -101,5 +101,36 @@
             <span id="monto_cierre_consolidated" class="fw-bold text-dark fs-5">0.00</span>
         </div>
 
+    </div>
+</div>
+
+<!-- IMPACTO EN INVENTARIO -->
+<div class="card mt-3 border-0 shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center"
+        style="background:#f1f5f9; cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#collapseStock">
+
+        <div class="d-flex align-items-center">
+            <i class="fa-solid fa-boxes-stacked text-primary me-2"></i>
+            <span class="fw-semibold text-dark">Impacto en insumos</span>
+        </div>
+
+        <span class="badge bg-primary" id="stock_summary_badge">0 insumos</span>
+    </div>
+
+    <div id="collapseStock" class="collapse">
+
+        <div class="card-body p-2">
+
+            <!-- MENSAJE -->
+            <div class="alert alert-info small mb-2 px-3 py-2">
+                El stock se descontará automáticamente al confirmar el cierre.
+            </div>
+
+            <!-- TABLA -->
+            <div class="table-responsive">
+                @include('cash.petty-cash-book.tables.tbl_consolidated_consumables')
+            </div>
+
+        </div>
     </div>
 </div>

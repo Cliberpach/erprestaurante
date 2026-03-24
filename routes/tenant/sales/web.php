@@ -5,6 +5,7 @@ use App\Http\Controllers\Tenant\SaleController;
 use App\Http\Controllers\Tenant\Sales\CreditNoteController;
 use App\Http\Controllers\Tenant\Sales\PaymentConditionController;
 use App\Http\Controllers\Tenant\Sales\PaymentMethodController;
+use App\Http\Controllers\Tenant\Sales\SummaryController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "ventas"], function () {
@@ -66,5 +67,17 @@ Route::group(["prefix" => "ventas"], function () {
         Route::put('update/{id}', [PaymentConditionController::class, 'update'])->name('tenant.ventas.condiciones_pago.update');
         Route::get('getCondicionPago', [PaymentConditionController::class, 'getCondicionPago'])->name('tenant.ventas.condiciones_pago.getCondicionPago');
         Route::delete('destroy/{id}', [PaymentConditionController::class, 'destroy'])->name('tenant.ventas.condiciones_pago.destroy');
+    });
+
+    Route::group(['prefix' => 'resumenes'], function () {
+        Route::get('/index', [SummaryController::class, 'index'])->name('tenant.ventas.resumenes.index');
+        Route::get('getAll', [SummaryController::class, 'getAll'])->name('tenant.ventas.resumenes.getAll');
+        Route::get('getInvoices/{fecha}', [SummaryController::class, 'getInvoices'])->name('tenant.ventas.resumenes.getInvoices');
+        Route::post('store', [SummaryController::class, 'store'])->name('tenant.ventas.resumenes.store');
+        Route::post('consultar', [SummaryController::class, 'consultar'])->name('tenant.ventas.resumenes.consultar');
+        Route::post('enviarSunat', [SummaryController::class, 'sendSunat'])->name('tenant.ventas.resumenes.enviarSunat');
+        Route::get('getXml/{resumen_id}', [SummaryController::class, 'getXml'])->name('tenant.ventas.resumenes.getXml');
+        Route::get('getCdr/{resumen_id}', [SummaryController::class, 'getCdr'])->name('tenant.ventas.resumenes.getCdr');
+        Route::get('show/{resumen_id}', [SummaryController::class, 'show'])->name('tenant.ventas.resumenes.show');
     });
 });

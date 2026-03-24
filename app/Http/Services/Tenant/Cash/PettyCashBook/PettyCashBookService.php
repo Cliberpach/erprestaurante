@@ -2,15 +2,13 @@
 
 namespace App\Http\Services\Tenant\Cash\PettyCashBook;
 
-use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Cash\PettyCash\CashService;
+use App\Http\Services\Tenant\Consumables\WarehouseConsumable\WarehouseConsumableService;
 use App\Http\Services\Tenant\Supply\Programming\ProgrammingService;
 use App\Models\Company;
 use App\Models\Tenant\Accounts\CustomerAccountDetail;
-use App\Models\Tenant\Cash\ExitMoney\ExitMoney;
 use App\Models\Tenant\Cash\PettyCashBook;
 use App\Models\Tenant\PaymentMethod;
-use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\Supply\Programming\Programming;
 use App\Models\Tenant\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -157,7 +155,19 @@ class PettyCashBookService
             $this->s_programming->setStatus($programming->id, 'CERRADO');
         }
 
+        $this->substractConsumables($consolidated['consolidated_consumables']);
         return $petty_cash_book;
+    }
+
+    public function substractConsumables($data)
+    {
+        $data = $data->filter(function ($item) {
+            return (float) $item->stock >= (float) $item->total;
+        });
+
+        $lst    =   $this->s_dto->formatConsolidateConsumables($data);
+        $s_wc   =   new WarehouseConsumableService();
+        $s_wc->decreaseLstStock($lst);
     }
 
     public function pettyCashIsOpen(int $petty_cash_id)

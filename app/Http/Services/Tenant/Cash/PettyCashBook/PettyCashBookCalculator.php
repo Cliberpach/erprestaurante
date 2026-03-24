@@ -7,6 +7,8 @@ use App\Models\Tenant\Accounts\CustomerAccountDetail;
 use App\Models\Tenant\Cash\ExitMoney\ExitMoney;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Sales\Sale\Sale;
+use App\Models\Tenant\Supply\Dish\DishConsumable;
+use Illuminate\Support\Facades\DB;
 
 class PettyCashBookCalculator
 {
@@ -31,13 +33,15 @@ class PettyCashBookCalculator
         $petty_cash_book            =   $this->s_repository->getPettyCashBookInfo($id);
         $amount_close               =   $report_customer_accounts['total'] + $report_sales['total'] - $report_expenses['total'] + $petty_cash_book->initial_amount;
 
+        $consolidated_consumables   =   $this->consolidatedConsumables($id);
         return [
             'report_sales'                  =>  $report_sales,
             'report_expenses'               =>  $report_expenses,
             'report_customer_accounts'      =>  $report_customer_accounts,
             'petty_cash_book'               =>  $petty_cash_book,
             'amount_close'                  =>  $amount_close,
-            'have_module_customer_accounts' =>  $haveModuleCustomerAccounts
+            'have_module_customer_accounts' =>  $haveModuleCustomerAccounts,
+            'consolidated_consumables'      =>  $consolidated_consumables
         ];
     }
 
@@ -144,5 +148,25 @@ class PettyCashBookCalculator
         $total  =   $customer_pays->sum('total');
 
         return ['total' => $total, 'report' => $report_customer_accounts];
+    }
+
+    public function consolidatedConsumables($id)
+    {
+        $report = DB::table('consumables as c')
+            ->join('dish_consumables as dc', 'dc.consumable_id', '=', 'c.id')
+            ->join('sales_dishes as sd', 'sd.dish_id', '=', 'dc.dish_id')
+            ->join('sales as s', 's.id', '=', 'sd.sale_id')
+            ->join('warehouse_consumables as wc', 'wc.consumable_id', 'c.id')
+            ->select(
+                'c.id',
+                'c.name as consumable_name',
+                'wc.stock',
+                DB::raw('SUM(sd.quantity * dc.quantity) as total')
+            )
+            ->where('s.petty_cash_book_id', $id)
+            ->groupBy('c.id', 'c.name', 'wc.stock')
+            ->get();
+
+        return $report;
     }
 }

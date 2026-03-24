@@ -46,6 +46,7 @@
         if (!data) return;
 
         paintConsolidatedCash(data);
+        paintConsolidatedConsumables(data.consolidated_consumables);
         $('#mdl_close_cash').modal('show');
     }
 
@@ -91,6 +92,80 @@
         //====== CUENTAS CLIENTE ======
         paintReportCustomerAccounts(data);
 
+    }
+
+    function paintConsolidatedConsumables(data) {
+
+        const container = document.getElementById("stock_impact_container");
+        const badge = document.getElementById("stock_summary_badge");
+
+        container.innerHTML = "";
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center text-muted">
+                    No hay impacto en inventario
+                </td>
+            </tr>
+        `;
+            badge.innerText = "0 insumos";
+            return;
+        }
+
+        let countLowStock = 0;
+
+        data.forEach(item => {
+
+            const stock = parseFloat(item.stock);
+            const total = parseFloat(item.total);
+
+            const restante = stock - total;
+            const isLow = restante < 0;
+
+            if (isLow) countLowStock++;
+
+            const tr = document.createElement("tr");
+
+            tr.innerHTML = `
+            <td class="fw-semibold">${item.consumable_name}</td>
+
+            <td class="text-center text-danger fw-semibold">
+                -${total.toFixed(2)}
+            </td>
+
+            <td class="text-center">
+                ${stock.toFixed(2)}
+            </td>
+
+            <td class="text-center">
+                ${
+                    isLow
+                    ? `<span class="text-danger fw-semibold">
+                            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                            Insuficiente
+                       </span>`
+                    : `<span class="text-success fw-semibold">
+                            <i class="fa-solid fa-check me-1"></i>
+                            OK
+                       </span>`
+                }
+            </td>
+        `;
+
+            container.appendChild(tr);
+        });
+
+        // Badge resumen
+        if (countLowStock > 0) {
+            badge.classList.remove("bg-primary");
+            badge.classList.add("bg-danger");
+            badge.innerText = `${countLowStock} con problema`;
+        } else {
+            badge.classList.remove("bg-danger");
+            badge.classList.add("bg-primary");
+            badge.innerText = `${data.length} insumos`;
+        }
     }
 
     function paintReportSales(data) {

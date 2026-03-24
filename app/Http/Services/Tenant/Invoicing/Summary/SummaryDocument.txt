@@ -1,0 +1,11 @@
+Greenter\Model\Response\SummaryResult {#3919 // app\Http\Services\Tenant\Invoicing\Summary\SummaryService.php:51
+  #success: false
+  #error:
+Greenter\Model\Response
+\
+Error {#3914
+    #code: "2992"
+    #message: "El XML no contiene el tag de la tasa del tributo de la línea - Detalle: xxx.xxx.xxx value='ticket: 1774387214771 error: Error en la linea: 1. Tasa del tributo faltante para código 1000.: 2992 (nodo: "/" valor: "")'"
+  }
+  #ticket: null
+}

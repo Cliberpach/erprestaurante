@@ -8,7 +8,6 @@ use App\Models\Tenant\Maintenance\Company\Company;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
-use App\Models\Tenant;
 
 class CompanyService
 {
@@ -27,6 +26,19 @@ class CompanyService
         DB::table('document_serializations')
             ->where('company_id', $company_id)
             ->where('document_type_id', $type_sale_id)
+            ->where('initiated', 'NO')
+            ->update([
+                'initiated'     => 'SI',
+                'updated_at'    => Carbon::now()
+            ]);
+    }
+
+    public function startInvoicingSymbol(int $company_id, string $symbol)
+    {
+        //====== ACTUALIZAR FACTURACIÓN A INICIADA PARA EL TYPE SALE RESPECTIVO ======
+        DB::table('document_serializations')
+            ->where('company_id', $company_id)
+            ->where('symbol', $symbol)
             ->where('initiated', 'NO')
             ->update([
                 'initiated'     => 'SI',

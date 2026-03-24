@@ -37,7 +37,7 @@ class InvoiceDispatchLog extends Model
     const STATUS_PROCESSING = 'PROCESANDO';
     const STATUS_SENT       = 'ENVIADO';
     const STATUS_ACCEPTED   = 'ACEPTADO';
-    const STATUS_FAILED     = 'FALLIDO';
+    const STATUS_FAILED     = 'RECHAZADO';
     const STATUS_EXPIRED    = 'EXPIRADO';
 
     // Relación polimórfica (boleta o factura)
