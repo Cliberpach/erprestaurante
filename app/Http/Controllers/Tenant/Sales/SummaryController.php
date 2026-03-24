@@ -204,25 +204,25 @@ Greenter\Model\Response\StatusResult {#1659
     public function getXml($resumen_id)
     {
         $resumen        =   Summary::find($resumen_id);
-        $nombreArchivo  =   basename($resumen->ruta_xml);
+        $nombreArchivo  =   basename($resumen->route_xml);
 
 
         $headers = [
             'Content-Type' => 'text/xml',
         ];
 
-        return Response::download($resumen->ruta_xml, $nombreArchivo, $headers);
+        return Response::download($resumen->route_xml, $nombreArchivo, $headers);
     }
 
     public function getCdr($resumen_id)
     {
         $resumen        =   Summary::find($resumen_id);
-        $nombreArchivo  =   basename($resumen->ruta_cdr);
+        $nombreArchivo  =   basename($resumen->route_cdr);
 
         $headers = [
             'Content-Type' => 'text/xml',
         ];
 
-        return Response::download($resumen->ruta_cdr, $nombreArchivo, $headers);
+        return Response::download($resumen->route_cdr, $nombreArchivo, $headers);
     }
 }
