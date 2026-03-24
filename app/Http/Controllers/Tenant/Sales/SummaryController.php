@@ -96,8 +96,6 @@ array:2 [ // app\Http\Controllers\Market\Ventas\ResumenController.php:64
     {
         try {
 
-            //===== INICIAR TRANSACCIÓN =====
-            DB::beginTransaction();
 
             $instance   =   $this->s_manager->store($request->toArray());
 
