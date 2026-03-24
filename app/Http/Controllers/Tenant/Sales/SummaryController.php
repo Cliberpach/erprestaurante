@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Services\Tenant\Sale\Summary\SummaryManager;
+use App\Models\Tenant\Sales\Summary\Summary;
 use Illuminate\Support\Facades\Response;
 use Throwable;
 
@@ -202,7 +203,7 @@ Greenter\Model\Response\StatusResult {#1659
 
     public function getXml($resumen_id)
     {
-        $resumen        =   Resumen::find($resumen_id);
+        $resumen        =   Summary::find($resumen_id);
         $nombreArchivo  =   basename($resumen->ruta_xml);
 
 
@@ -215,7 +216,7 @@ Greenter\Model\Response\StatusResult {#1659
 
     public function getCdr($resumen_id)
     {
-        $resumen        =   Resumen::find($resumen_id);
+        $resumen        =   Summary::find($resumen_id);
         $nombreArchivo  =   basename($resumen->ruta_cdr);
 
         $headers = [
