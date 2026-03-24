@@ -324,7 +324,7 @@
                             var html =
                                 `<td style="white-space: nowrap;"><div style="display: flex; justify-content: center;">`;
 
-                            if (data.ruta_xml) {
+                            if (data.route_xml) {
                                 let urlGetXml =
                                     "{{ route('tenant.ventas.resumenes.getXml', ['resumen_id' => ':resumen_id']) }}";
                                 urlGetXml = urlGetXml.replace(':resumen_id', data.id);
@@ -335,7 +335,7 @@
                                 html += `</form>`;
                             }
 
-                            if (data.ruta_cdr) {
+                            if (data.route_cdr) {
                                 let urlGetCdr =
                                     "{{ route('tenant.ventas.resumenes.getCdr', ['resumen_id' => ':resumen_id']) }}";
                                 let url_getCdr = urlGetCdr.replace(':resumen_id', data.id);
