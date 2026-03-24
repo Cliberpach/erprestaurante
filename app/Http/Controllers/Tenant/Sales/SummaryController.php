@@ -101,10 +101,8 @@ array:2 [ // app\Http\Controllers\Market\Ventas\ResumenController.php:64
 
             $instance   =   $this->s_manager->store($request->toArray());
 
-            DB::commit();
             return response()->json(['success' => true, 'message' => 'Resúmen de boletas registrado con éxito']);
         } catch (Throwable $th) {
-            DB::rollback();
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
