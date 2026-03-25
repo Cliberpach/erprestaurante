@@ -31,8 +31,15 @@ Route::get('/test-tenant', function () {
 
 Route::post('/send-message', [AlertAppController::class, 'store']);
 
-Route::get('/test-alert', function () {
-    $alert =   AlertApp::first();
+Route::get('/test-alert/{id}', function ($id) {
+
+    $alert = AlertApp::find($id);
+
+    if (! $alert) {
+        return response()->json([
+            'error' => 'Alert no encontrada'
+        ], 404);
+    }
 
     event(new AlertAppEvent($alert));
 
