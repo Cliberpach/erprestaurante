@@ -1,7 +1,9 @@
 <?php
 
+use App\Events\AlertAppEvent;
 use App\Http\Controllers\LandLord\Api\AlertAppController;
 use App\Http\Controllers\LandLord\ApiController;
+use App\Models\Tenant\Api\AlertApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Multitenancy\Models\Tenant;
@@ -28,6 +30,17 @@ Route::get('/test-tenant', function () {
 });
 
 Route::post('/send-message', [AlertAppController::class, 'store']);
+
+Route::get('/test-alert', function () {
+    $alert =   AlertApp::first();
+
+    event(new AlertAppEvent($alert));
+
+    return response()->json([
+        'message' => 'Evento enviado',
+        'alert' => $alert
+    ]);
+});
 
 
 Route::get('ListarPedidosPendientesImprimir', [ApiController::class, 'ListarPedidosPendientesImprimir']);
