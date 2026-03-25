@@ -3,7 +3,7 @@
 use App\Events\AlertAppEvent;
 use App\Http\Controllers\LandLord\Api\AlertAppController;
 use App\Http\Controllers\LandLord\ApiController;
-use App\Models\Tenant\Api\AlertApp;
+use App\Models\Landlord\Api\AlertApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Multitenancy\Models\Tenant;
