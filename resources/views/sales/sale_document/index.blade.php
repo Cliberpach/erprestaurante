@@ -60,6 +60,7 @@
                         <option value="ACEPTADO">ACEPTADO</option>
                         <option value="RECHAZADO">RECHAZADO</option>
                         <option value="OBSERVADO">OBSERVADO</option>
+                        <option value="EN PROCESO">EN PROCESO</option>
                     </select>
                 </div>
 

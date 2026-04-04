@@ -367,7 +367,7 @@ array:3 [ // app\Http\Controllers\Tenant\SaleController.php:408
 ]
 */
     public function annular(SaleCreditNoteRequest $request)
-    {
+    {dd('test');
         DB::beginTransaction();
         try {
             $credit_note    =   $this->s_sale->annular($request->toArray());
