@@ -110,7 +110,7 @@ class SummaryService
             'status_result_success'             =>  null,
             'status_result_error_code'          =>  null,
             'status_result_error_message'       =>  null,
-            'sunat_status'              =>  null,
+            'sunat_status'              =>  'EN PROCESO',
             'cdr_response_id'           =>  null,
             'cdr_response_code'         =>  null,
             'cdr_response_description'  =>  null,
@@ -144,7 +144,7 @@ class SummaryService
                 $data['cdr_response_notes']        =   implode(" | ", $res_ticket->getCdrResponse()->getNotes());
             }
 
-            $data['message']    =   "ENVÍO CORRECTO Y CDR RECIBIDO";
+            $data['message']        =   "ENVÍO CORRECTO Y CDR RECIBIDO";
             $data['sunat_status']   =   'ACEPTADO';
         }
 
@@ -167,14 +167,14 @@ class SummaryService
 
         //===== ENVÍO CON ERRORES Y SIN CDR =====
         if ($code_estado == 99 && !$cdr) {
-            $data['message']    =   "ENVÍO CON ERRORES,SIN CDR";
+            $data['message']        =   "ENVÍO CON ERRORES,SIN CDR";
             $data['sunat_status']   =   'RECHAZADO';
         }
 
         //======= EN PROCESO =======
         if ($code_estado == 98) {
             //====== GUARDANDO ESTADO DEL TICKET ====
-            $data['message']    =   "ENVÍO EN PROCESO";
+            $data['message']        =   "ENVÍO EN PROCESO";
             $data['sunat_status']   =   'EN PROCESO';
         }
 

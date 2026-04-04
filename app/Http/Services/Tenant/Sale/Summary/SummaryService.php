@@ -111,6 +111,8 @@ class SummaryService
         $s_invoice      =   new InvoicingManager();
         $res_sunat      =   $s_invoice->consultSummary($instance->summary_result_ticket, $company->files_route, $instance->summary_name);
         $instance       =   $this->s_repository->saveSunatData($res_sunat, $instance);
+        $this->s_repository->updateStatusSales($id, $res_sunat['sunat_status']);
+
         return $instance;
     }
 }
