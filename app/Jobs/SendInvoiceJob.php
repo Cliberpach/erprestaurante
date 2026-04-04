@@ -13,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\Models\Tenant;
+use Throwable;
 
 class SendInvoiceJob implements ShouldQueue
 {
@@ -28,19 +29,16 @@ class SendInvoiceJob implements ShouldQueue
 
     public function handle(): void
     {
-        $tenant = Tenant::find($this->tenantId); 
+        $tenant = Tenant::find($this->tenantId);
         if (!$tenant) {
             Log::warning("Tenant {$this->tenantId} no encontrado para log {$this->dispatchLogId}.");
             return;
         }
         $tenant->makeCurrent();
 
-
         $log = InvoiceDispatchLog::find($this->dispatchLogId);
 
         if (!$log) return;
-
-
 
         if ($log->isExpired()) {
             $log->update(['status' => InvoiceDispatchLog::STATUS_EXPIRED]);
@@ -48,12 +46,6 @@ class SendInvoiceJob implements ShouldQueue
         }
 
         if (!$log->canRetry()) return;
-        if ($log->status === InvoiceDispatchLog::STATUS_PROCESSING) return;
-
-        $log->update(['status' => InvoiceDispatchLog::STATUS_PROCESSING]);
-
-        $tenant = Tenant::find($log->tenant_id);
-        $tenant->makeCurrent();
 
         try {
             // ✅ Llama directo a tu servicio existente
@@ -71,12 +63,15 @@ class SendInvoiceJob implements ShouldQueue
                         'cdr_description' => $sale->cdr_response_description,
                     ],
                 ]);
-            } elseif ($sale->sunat_status === 'ENVIADO') {
-                // Enviado pero sin CDR aún
+            } elseif ($sale->sunat_status === 'OBSERVADO') {
                 $log->update([
-                    'status'  => InvoiceDispatchLog::STATUS_SENT,
+                    'status'  => InvoiceDispatchLog::STATUS_OBSERVED,
                     'sent_at' => now(),
-                    'metadata' => ['sunat_status' => $sale->sunat_status],
+                    'metadata' => [
+                        'sunat_status'    => $sale->sunat_status,
+                        'cdr_code'        => $sale->cdr_response_code,
+                        'cdr_description' => $sale->cdr_response_description,
+                    ],
                 ]);
             } elseif ($sale->sunat_status === 'RECHAZADO') {
                 // RECHAZADO = error permanente, no reintentar
@@ -86,7 +81,7 @@ class SendInvoiceJob implements ShouldQueue
             } else {
                 // PENDIENTE = error temporal, reintentar
                 throw new SunatTemporaryException(
-                    $sale->last_send_message ?? 'Sin respuesta de SUNAT'
+                    $sale->last_send_message ?? 'Sin respuesta CDR de SUNAT'
                 );
             }
         } catch (SunatPermanentException $e) {
@@ -122,7 +117,7 @@ class SendInvoiceJob implements ShouldQueue
                     'next_retry'  => $log->next_retry_at,
                 ]);
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $log->markAsFailed($e->getMessage());
 
             Log::error("💥 Error inesperado", [
@@ -133,6 +128,11 @@ class SendInvoiceJob implements ShouldQueue
                 'file'    => $e->getFile(),
             ]);
         } finally {
+            if ($log) {
+                $log->update([
+                    'processing_at' => null
+                ]);
+            }
             Tenant::forgetCurrent();
         }
     }

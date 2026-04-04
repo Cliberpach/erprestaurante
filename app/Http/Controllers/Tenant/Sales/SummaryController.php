@@ -95,13 +95,14 @@ array:2 [ // app\Http\Controllers\Market\Ventas\ResumenController.php:64
 */
     public function store(Request $request)
     {
+        DB::beginTransaction();
         try {
-
 
             $instance   =   $this->s_manager->store($request->toArray());
 
-            return response()->json(['success' => true, 'message' => 'Resúmen de boletas registrado con éxito']);
+            DB::commit();
         } catch (Throwable $th) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
@@ -109,6 +110,12 @@ array:2 [ // app\Http\Controllers\Market\Ventas\ResumenController.php:64
                 'file' => $th->getFile()
             ]);
         }
+
+        $res_sunat  =   $this->s_manager->sendSunat($instance->id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Resúmen de boletas registrado con éxito || ' . $res_sunat
+        ]);
     }
 
 
@@ -149,6 +156,15 @@ array:2 [ // app\Http\Controllers\Market\Ventas\ResumenController.php:64
         }
     }
 
+    public function sendSunat(int $id)
+    {
+        try {
+            $res_sunat  =   $this->s_manager->sendSunat($id);
+            return response()->json(['success' => true, 'message' => $res_sunat]);
+        } catch (Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
 
 
     /*

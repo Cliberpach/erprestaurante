@@ -28,7 +28,7 @@ class SummaryService
     {
         $this->isActive();
         $data['data_correlative']  =   $this->getCorrelative();
- 
+
 
         $lst_invoices       =   json_decode($data['comprobantes']);
         $fecha_comprobantes =   $data['fecha_comprobantes'];
@@ -40,8 +40,7 @@ class SummaryService
         $this->s_repository->storeDetail($dto_detail);
 
         $this->s_company->startInvoicingSymbol(1, 'R');
-
-        $res_sunat  =   $this->sendSunat($instance->id);
+        $this->s_repository->setSalesSummary($instance);
 
         return $instance;
     }
@@ -84,7 +83,7 @@ class SummaryService
         ];
     }
 
-    public function sendSunat(int $id): Summary
+    public function sendSunat(int $id)
     {
         $instance    =   $this->s_repository->find($id);
         $this->s_validation->validationSend($instance);
@@ -99,7 +98,9 @@ class SummaryService
         $res_sunat      =   $s_invoice->sendSummary($dto);
         $instance       =   $this->s_repository->saveSunatData($res_sunat, $instance);
 
-        return $instance;
+        $this->s_repository->updateStatusSales($id, $res_sunat['sunat_status']);
+
+        return $res_sunat['message'];
     }
 
     public function consult($id)

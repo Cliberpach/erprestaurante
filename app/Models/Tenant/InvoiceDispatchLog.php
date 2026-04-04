@@ -22,6 +22,7 @@ class InvoiceDispatchLog extends Model
         'sent_at',
         'last_error',
         'metadata',
+        'processing_at'
     ];
 
     protected $casts = [
@@ -34,10 +35,9 @@ class InvoiceDispatchLog extends Model
 
     // Estados
     const STATUS_PENDING    = 'PENDIENTE';
-    const STATUS_PROCESSING = 'PROCESANDO';
-    const STATUS_SENT       = 'ENVIADO';
     const STATUS_ACCEPTED   = 'ACEPTADO';
     const STATUS_FAILED     = 'RECHAZADO';
+    const STATUS_OBSERVED   = 'OBSERVADO';
     const STATUS_EXPIRED    = 'EXPIRADO';
 
     // Relación polimórfica (boleta o factura)
@@ -54,10 +54,9 @@ class InvoiceDispatchLog extends Model
     public function canRetry(): bool
     {
         return !$this->isExpired()
-            && $this->attempts < $this->max_attempts
             && !in_array($this->status, [
-                self::STATUS_SENT,
                 self::STATUS_ACCEPTED,
+                self::STATUS_OBSERVED
             ]);
     }
 
@@ -87,7 +86,7 @@ class InvoiceDispatchLog extends Model
 
         $this->update([
             'last_error'    => ['message' => $error, 'context' => $context, 'at' => now()],
-            'status'        => $this->canRetry() ? self::STATUS_PENDING : self::STATUS_FAILED,
+            'status'        => self::STATUS_PENDING,
             'next_retry_at' => $this->canRetry() ? $this->calculateNextRetry() : null,
         ]);
     }

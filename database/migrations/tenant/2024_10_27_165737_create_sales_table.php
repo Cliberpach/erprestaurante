@@ -63,7 +63,7 @@ return new class extends Migration
             $table->unsignedInteger('correlative');
             $table->string('serie', 100);
 
-            $table->enum('sunat_status', ['ACEPTADO', 'PENDIENTE', 'ENVIADO', 'RECHAZADO', 'ANULADO', 'ANULADO PARCIAL'])->default('PENDIENTE');
+            $table->enum('sunat_status', ['ACEPTADO', 'PENDIENTE', 'RECHAZADO', 'EN PROCESO', 'OBSERVADO'])->default('PENDIENTE');
             $table->enum('status', ['ACTIVO', 'ANULADO'])->default('ACTIVO');
             $table->enum('pay_status', ['PAGADO', 'PENDIENTE'])->default('PENDIENTE');
             $table->enum('pending_print', ['SI', 'NO'])->default('NO');
@@ -115,6 +115,9 @@ return new class extends Migration
 
             $table->date('registration_date');
             $table->date('expiration_date');
+
+            $table->unsignedBigInteger('summary_id')->nullable();
+            $table->string('summary_serie', 100)->nullable();
 
             $table->timestamps();
         });

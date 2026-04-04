@@ -85,7 +85,7 @@ class InvoiceService
 
 
         $res = $see->send($invoice);
-    
+
         $data    =   [
             'response_success'          =>  null,
             'response_error'            =>  null,
@@ -93,7 +93,7 @@ class InvoiceService
             'response_error_message'    =>  null,
             'cdr'                       =>  null,
             'response_cdrZip'           =>  null,
-            'sunat_status'              =>  null,
+            'sunat_status'              =>  'PENDIENTE',
             'cdr_response_id'           =>  null,
             'cdr_response_code'         =>  null,
             'cdr_response_description'  =>  null,
@@ -122,16 +122,16 @@ class InvoiceService
             $data['response_error']     =   $res->getError();
             $data['cdr']                =   $res->getCdrResponse();
             $data['response_cdrZip']    =   $data['cdr'] ? true : false;
-            $data['sunat_status']       =   'ENVIADO';
 
             //====== EN CASO HAYA CDR ========
             if ($data['cdr']) {
+                $code                                =  $data['cdr']->getCode();
                 $data['cdr_response_id']             =   $data['cdr']->getId();
                 $data['cdr_response_code']           =   $data['cdr']->getCode();
                 $data['cdr_response_description']    =   $data['cdr']->getDescription();
                 $data['cdr_response_notes']          =   '|' . implode('|', $data['cdr']->getNotes()) . '|';
                 $data['cdr_response_reference']      =   $data['cdr']->getReference();
-                $data['message']            =   $data['cdr_response_description'];
+                $data['message']                     =   $data['cdr_response_description'];
 
                 $util->writeCdr($invoice, $res->getCdrZip(), $dto['tipoDoc'], $dto['company']->files_route, null);
 
@@ -142,27 +142,30 @@ class InvoiceService
                 if ($dto['tipoDoc']   ==  3) {
                     $data['route_cdr']      =   'storage/' . $dto['company']->files_route . '/greenter/boletas/cdr/' . $invoice->getName() . '.zip';
                 }
-
-                if ($data['cdr']->getCode() == 0) {
-                    $data['sunat_status']  =   'ACEPTADO';
+                if ($code == 0) {
+                    $data['sunat_status'] = 'ACEPTADO';
+                } elseif ($code > 0 && $code < 2000) {
+                    $data['sunat_status'] = 'OBSERVADO';
+                } else {
+                    $data['sunat_status'] = 'RECHAZADO';
                 }
             } else {
                 $data['message']            =   $dto['serie'] . '-' . $dto['correlativo'] . ' enviado a Sunat, sin CDR recibido';
+                $data['sunat_status']       =   'PENDIENTE';
             }
 
             return $data;
         } else {
 
             //====== GUARDANDO RESPONSE ======
+            $data['sunat_status']       =   'PENDIENTE';
             $data['response_success']   =   $res->isSuccess();
             $data['response_error']     =   $res->getError();
-            $data['sunat_status']       =   'PENDIENTE';
 
             if ($data['response_error']) {
 
                 $data['response_error_code']        =   $data['response_error']->getCode();
                 $data['response_error_message']     =   $data['response_error']->getMessage();
-                $data['sunat_status']               =   'RECHAZADO';
                 $message_error                      =   "CÓDIGO: " . $data['response_error']->getCode() . " | DESCRIPCIÓN: " . $data['response_error']->getMessage();
                 $data['message']                    =   $message_error;
 
@@ -176,9 +179,9 @@ class InvoiceService
                         ERROR 2223
                         El documento ya fue informado
                     ================================================================
-                    */
+                */
                 if ($data['response_error']->getCode() == 1033 || $data['response_error']->getCode() == 2223) {
-                    $data['sunat_status']             =   'RECHAZADO';
+                    //$data['sunat_status']             =   'RECHAZADO';
                 }
             } else {
                 $data['message']            =   $dto['serie'] . '-' . $dto['correlativo'] . ' falló el envío a Sunat';

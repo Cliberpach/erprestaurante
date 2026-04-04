@@ -37,7 +37,7 @@ class SaleController extends Controller
         $invoice_types              =   UtilController::getInvoiceTypes()->whereIn('id', ['65', '66']);
         $customer_formatted         =   FormatController::getFormatInitialCustomer(1);
         $vars_mdl_customer          =   UtilController::getVarsMdlCustomer();
-        $filter_invoices            =   UtilController::getInvoiceTypes()->whereIn('id',['65','66','67']);
+        $filter_invoices            =   UtilController::getInvoiceTypes()->whereIn('id', ['65', '66', '67']);
 
         $vars                       =   array_merge(
             compact(
@@ -55,10 +55,14 @@ class SaleController extends Controller
         $filter_customer    =   $request->get('customer_id');
         $filter_start_date  =   $request->get('start_date');
         $filter_end_date    =   $request->get('end_date');
-        $filter_sunat       =   $request->get('status');
+        $filter_sunat       =   $request->get('sunat_status');
         $filter_type_sale   =   $request->get('type_sale');
 
         $sales    =   DB::table('sales as s')
+            ->leftJoin('sales_pays as sp', function ($join) {
+                $join->on('sp.sale_id', '=', 's.id')
+                    ->where('sp.status', 'ACTIVO');
+            })
             ->select(
                 's.id',
                 's.created_at as fecha_registro',
@@ -87,9 +91,26 @@ class SaleController extends Controller
                 's.petty_cash_book_id',
                 's.petty_cash_name',
                 's.converted_to_serie',
-                's.converted_from_serie'
-            )
-            ->where('s.status', '!=', 'ANULADO');
+                's.converted_from_serie',
+                's.summary_id',
+                's.summary_serie',
+                DB::raw("(
+                    SELECT CONCAT(
+                        '[',
+                        GROUP_CONCAT(
+                            CONCAT(
+                                '{\"name\":\"', sp.payment_method_name, '\",',
+                                '\"amount\":', sp.amount,
+                                '}'
+                            )
+                        ),
+                        ']'
+                    )
+                    FROM sales_pays sp
+                    WHERE sp.sale_id = s.id
+                    AND sp.status = 'ACTIVO'
+                ) as payments")
+            );
 
         if ($filter_customer) {
             $sales->where('customer_id', $filter_customer);

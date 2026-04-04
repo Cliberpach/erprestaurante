@@ -55,16 +55,16 @@ class SummaryService
             'status_result_success'             =>  null,
             'status_result_error_code'          =>  null,
             'status_result_error_message'       =>  null,
-            'sunat_status'              =>  'PENDIENTE',
-            'cdr_response_id'           =>  null,
-            'cdr_response_code'         =>  null,
-            'cdr_response_description'  =>  null,
-            'cdr_response_notes'        =>  null,
-            'cdr_response_reference'    =>  null,
-            'route_cdr'                 =>  null,
-            'route_xml'                 =>  null,
-            'message'                   =>  null,
-            'send_sunat'                =>  null
+            'sunat_status'                      =>  'PENDIENTE',
+            'cdr_response_id'                   =>  null,
+            'cdr_response_code'                 =>  null,
+            'cdr_response_description'          =>  null,
+            'cdr_response_notes'                =>  null,
+            'cdr_response_reference'            =>  null,
+            'route_cdr'                         =>  null,
+            'route_xml'                         =>  null,
+            'message'                           =>  null,
+            'send_sunat'                        =>  null
         ];
 
         //==== GUARDANDO XML ====
@@ -80,14 +80,17 @@ class SummaryService
         $data['summary_result_ticket']     =   $res->getTicket();
 
         if ($envioSunat) {
-            $data['send_sunat']     =   true;
+            $data['send_sunat']         =   true;
+            $data['sunat_status']       =   'EN PROCESO';
+            $data['message']            =   'RESUMEN ENVIADO A SUNAT, DEBE CONSULTAR EL ESTADO';
         } else {
-            $data['send_sunat']     =   true;
+            $data['send_sunat']         =   false;
             $data['summary_result']     =   false;
             if ($res->getError()) {
                 $error                  =   'CODE: ' . $res->getError()->getCode() . ' - ' . 'MESSAGE: ' . $res->getError()->getMessage();
                 $data['response_error'] =   $error;
             }
+            $data['message']            =   $error ? $error : 'ERROR EN EL ENVÍO A SUNAT';
         }
 
         return $data;

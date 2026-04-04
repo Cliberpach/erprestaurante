@@ -21,4 +21,9 @@ class SummaryManager
     {
         return $this->s_service->consult($id);
     }
+
+    public function sendSunat($id)
+    {
+        return $this->s_service->sendSunat($id);
+    }
 }

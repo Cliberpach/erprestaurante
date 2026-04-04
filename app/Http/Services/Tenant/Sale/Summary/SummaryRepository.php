@@ -2,8 +2,10 @@
 
 namespace App\Http\Services\Tenant\Sale\Summary;
 
+use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\Sales\Summary\Summary;
 use App\Models\Tenant\Sales\Summary\SummaryDetail;
+use Illuminate\Support\Facades\DB;
 
 class SummaryRepository
 {
@@ -49,7 +51,7 @@ class SummaryRepository
         $instance->cdr_response_reference = $data['cdr_response_reference'];
 
         $instance->route_cdr = $data['route_cdr'];
-        $instance->route_xml = $data['route_xml']??$instance->route_xml;
+        $instance->route_xml = $data['route_xml'] ?? $instance->route_xml;
 
         $instance->send_sunat = $data['send_sunat'] ?? $instance->send_sunat;
         $instance->summary_result = $data['summary_result'] ?? $instance->summary_result;
@@ -58,5 +60,35 @@ class SummaryRepository
         $instance->save();
 
         return $instance;
+    }
+
+    public function updateStatusSales(int $id, string $status)
+    {
+        DB::table('sales')
+            ->whereIn('id', function ($query) use ($id) {
+                $query->select('sale_id')
+                    ->from('summaries_details')
+                    ->where('summary_id', $id);
+            })
+            ->update([
+                'sunat_status' => $status,
+                'updated_at'   => now()
+            ]);
+    }
+
+    public function setSalesSummary(Summary $summary)
+    {
+        $id =   $summary->id;
+        DB::table('sales')
+            ->whereIn('id', function ($query) use ($id) {
+                $query->select('sale_id')
+                    ->from('summaries_details')
+                    ->where('summary_id', $id);
+            })
+            ->update([
+                'summary_id' => $id,
+                'summary_serie' =>  $summary->serie . '-' . $summary->correlative,
+                'updated_at'   => now()
+            ]);
     }
 }

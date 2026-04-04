@@ -90,7 +90,9 @@ class Sale extends Model
         'deletor_user_name',
         'editor_user_name',
         'creator_user_name',
-        'date_pending_print'
+        'date_pending_print',
+        'summary_id',
+        'summary_serie'
     ];
 
 
@@ -152,7 +154,7 @@ class Sale extends Model
                 'invoiceable_id'   => $sale->id,
                 'invoiceable_type' => Sale::class,
                 'status'           => InvoiceDispatchLog::STATUS_PENDING,
-                'expires_at'       => now()->addDays(3), // SUNAT: 3 días
+                'expires_at'        => now()->addDays(3)->endOfDay(), // SUNAT: 3 días
             ]);
         });
     }

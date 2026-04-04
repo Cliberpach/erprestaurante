@@ -55,13 +55,11 @@
                     <label class="form-label fw-bold">
                         <i class="fas fa-circle-check text-primary mr-1"></i> Sunat:
                     </label>
-                    <select class="form-control" id="status" name="status">
+                    <select class="form-control" id="sunat_status" name="sunat_status">
                         <option value="PENDIENTE">PENDIENTE</option>
-                        <option value="ENVIADO">ENVIADO</option>
                         <option value="ACEPTADO">ACEPTADO</option>
                         <option value="RECHAZADO">RECHAZADO</option>
-                        <option value="ANULADO">ANULADO</option>
-                        <option value="ANULADO PARCIAL">ANULADO PARCIAL</option>
+                        <option value="OBSERVADO">OBSERVADO</option>
                     </select>
                 </div>
 
@@ -149,7 +147,7 @@
                         d.customer_id = $('#customer_id').val();
                         d.start_date = $('#start_date').val();
                         d.end_date = $('#end_date').val();
-                        d.status = $('#status').val();
+                        d.sunat_status = $('#sunat_status').val();
                         d.type_sale = $('#type_sale').val();
                     }
                 },
@@ -214,6 +212,40 @@
                         orderable: false
                     },
                     {
+                        data: 'payments',
+                        name: 'payments',
+                        searchable: false,
+                        orderable: false,
+                        render: function(data) {
+                            if (!data) {
+                                return '<span class="badge bg-danger">SIN PAGO</span>';
+                            }
+
+                            try {
+                                let decoded = new DOMParser()
+                                    .parseFromString(data, 'text/html')
+                                    .documentElement.textContent;
+
+                                let payments = JSON.parse(decoded);
+
+                                if (!payments || payments.length === 0) {
+                                    return '<span class="badge bg-danger">SIN PAGO</span>';
+                                }
+
+                                return payments.map(p => {
+                                    return `
+                                        <span class="badge bg-dark me-1">
+                                            ${p.name}: ${parseFloat(p.amount).toFixed(2)}
+                                        </span>
+                                    `;
+                                }).join('');
+
+                            } catch (e) {
+                                return '<span class="badge bg-danger">ERROR</span>';
+                            }
+                        }
+                    },
+                    {
                         data: 'total',
                         name: 'total',
                         searchable: false,
@@ -257,16 +289,11 @@
                             const urlDownloadCdr =
                                 "{{ route('tenant.ventas.comprobante_venta.downloadCdr', ':id') }}".replace(
                                     ':id', data.id);
-                            const urlPdf =
-                                "{{ route('tenant.ventas.comprobante_venta.pdf_voucher', ':id') }}".replace(
-                                    ':id', data.id);
+
 
                             let descargas =
                                 `<div style="display: flex; justify-content: flex-start; gap: 10px; flex-wrap: nowrap;">`;
 
-                            descargas += `<a target="_blank" class="btn btn-danger" style="color:white; max-width: 150px; flex-shrink: 0;" href="${urlPdf}">
-                                            <i class="fa-solid fa-file-pdf"></i> PDF
-                                        </a>`;
 
                             if (data.ruta_xml) {
                                 const asset_route = @json(asset(''));
@@ -280,6 +307,10 @@
                                 descargas += `<a class="btn btn-primary" style="color:white; max-width: 150px; flex-shrink: 0;" href="${urlDownloadCdr}">
                                                 <i class="fa-solid fa-book"></i> CDR
                                             </a>`;
+                            }
+
+                            if (data.summary_serie) {
+                                descargas += `<span class="badge bg-primary">${data.summary_serie}</span>`;
                             }
 
                             descargas += `</div>`;
@@ -298,6 +329,10 @@
                                 sale: data.id
                             });
 
+                            const urlPdf =
+                                "{{ route('tenant.ventas.comprobante_venta.pdf_voucher', ':id') }}".replace(
+                                    ':id', data.id);
+
                             let acciones = `<div class="btn-group float-end">
                                                 <button
                                                     class="btn btn-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle"
@@ -307,8 +342,11 @@
                                                 <ul class="dropdown-menu dropdown-menu-end">`;
 
                             if (data.type_sale_code === '03' || data.type_sale_code === '01') {
-                                if (data.sunat_status === 'PENDIENTE' || data.sunat_status ===
-                                    'RECHAZADO') {
+                                if (
+                                    (data.sunat_status === 'PENDIENTE' || data.sunat_status ===
+                                        'RECHAZADO') &&
+                                    !data.summary_id
+                                ) {
                                     acciones += `<li>
                                                     <a class="dropdown-item text-primary" href="javascript:void(0);" onclick="sendSunat(${data.id})">
                                                         <i class="fa-solid fa-paper-plane"></i> Sunat
@@ -341,6 +379,12 @@
                                                     </a>
                                                 </li>`;
                             }
+
+                            acciones += `<li>
+                                                <a class="dropdown-item text-danger" href="${urlPdf}" target="_blank">
+                                                    <i class="fa-solid fa-file-pdf"></i> PDF
+                                                </a>
+                                            </li>`;
 
                             acciones += `</ul></div>`;
 

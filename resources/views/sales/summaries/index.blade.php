@@ -109,7 +109,6 @@
                 }
                 if (e.target.classList.contains('btn-reenviar-resumen')) {
                     const resumen_id = e.target.getAttribute('data-resumen-id');
-
                     enviarResumen(resumen_id);
                 }
                 if (e.target.classList.contains('btn-detalle-resumen')) {
@@ -186,13 +185,13 @@
 
                 const url = '{{ route('tenant.ventas.resumenes.enviarSunat') }}';
                 const res = await axios.post(url, {
-                    'resumen_id': resumen_id
+                    'id': resumen_id
                 });
 
                 console.log(res);
                 if (res.data.success) {
                     tableResumenes.ajax.reload();
-                    toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
+                    toastr.info(res.data.message, 'OPERACIÓN COMPLETADA');
                 } else {
                     toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
                 }
@@ -373,19 +372,19 @@
                                 }
                             }
 
-                                                // 📤 ENVIAR
-                                                if (data.send_sunat == 0 && !data.summary_result_ticket) {
-                                                    html += `
+                            // 📤 ENVIAR
+                            if (data.send_sunat == 0 && !data.summary_result_ticket) {
+                                html += `
                                     <button type="button"
                                         data-resumen-id="${data.id}"
                                         class="btn btn-success btn-sm btn-reenviar-resumen">
                                         <i class="fas fa-paper-plane me-1"></i> Enviar
                                     </button>
                                 `;
-                                                }
+                            }
 
-                                                // 👁 VER DETALLE
-                                                html += `
+                            // 👁 VER DETALLE
+                            html += `
                                 <button type="button"
                                     data-resumen-id="${data.id}"
                                     class="btn btn-info btn-sm btn-detalle-resumen">

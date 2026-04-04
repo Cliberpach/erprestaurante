@@ -35,7 +35,6 @@ class ProcessTenantInvoicesJob implements ShouldQueue
 
         try {
             $this->dispatchPendingInvoices();
-            $this->markExpiredInvoices();
         } finally {
             Tenant::forgetCurrent();
         }
@@ -44,14 +43,31 @@ class ProcessTenantInvoicesJob implements ShouldQueue
     private function dispatchPendingInvoices(): void
     {
         InvoiceDispatchLog::query()
-            ->where('status', InvoiceDispatchLog::STATUS_PENDING)
-            ->where(function ($q) {
-                $q->whereNull('next_retry_at')
-                    ->orWhere('next_retry_at', '<=', now());
-            })
+            ->whereNotIn('status', [
+                InvoiceDispatchLog::STATUS_ACCEPTED,
+                InvoiceDispatchLog::STATUS_OBSERVED,
+            ])
             ->where('expires_at', '>', now())
+            ->where(function ($q) {
+                $q->whereNull('processing_at')
+                    ->orWhere('processing_at', '<', now()->subMinutes(10));
+            })
             ->chunkById(50, function ($logs) {
                 foreach ($logs as $log) {
+
+                    $updated = InvoiceDispatchLog::where('id', $log->id)
+                        ->where(function ($q) {
+                            $q->whereNull('processing_at')
+                                ->orWhere('processing_at', '<', now()->subMinutes(10));
+                        })
+                        ->update([
+                            'processing_at' => now(),
+                        ]);
+
+                    if (!$updated) {
+                        continue;
+                    }
+
                     SendInvoiceJob::dispatch($log->id, $this->tenantId)
                         ->onQueue('invoices')
                         ->delay(now()->addSeconds(rand(1, 5)));
@@ -63,7 +79,6 @@ class ProcessTenantInvoicesJob implements ShouldQueue
     {
         InvoiceDispatchLog::query()
             ->whereNotIn('status', [
-                InvoiceDispatchLog::STATUS_SENT,
                 InvoiceDispatchLog::STATUS_ACCEPTED,
                 InvoiceDispatchLog::STATUS_EXPIRED,
             ])
@@ -73,7 +88,7 @@ class ProcessTenantInvoicesJob implements ShouldQueue
 
 
 
-/*
+    /*
 ## Resumen visual del flujo:
 ```
 01:00 AM todos los días
