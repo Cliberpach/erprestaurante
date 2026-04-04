@@ -61,10 +61,10 @@
 
                 pintarResumenMaster(res.data.resumen);
 
-                destruirDataTable(dtShowResumenes);
-                limpiarTabla('tbl_show_resumenes');
+                destroyDataTable(dtShowResumenes);
+                clearTable('tbl_show_resumenes');
                 pintarResumenDetalle(res.data.resumen, res.data.detalle);
-                dtShowResumenes = iniciarDataTable('tbl_show_resumenes');
+                dtShowResumenes = loadDataTableSimple('tbl_show_resumenes');
 
                 toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
                 $('#modal_show_resumen').modal('show');
@@ -111,7 +111,7 @@
                             <td>${d.documento_total}</td>
                             <td>${d.documento_subtotal}</td>
                             <td>${d.documento_igv}</td>
-                            <td>${resumen.fecha_comprobantes}</td>
+                            <td>${resumen.date_invoices}</td>
                         </tr>
                     `;
 

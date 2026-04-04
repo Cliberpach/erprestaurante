@@ -102,20 +102,31 @@
             eventsMdlCreateResumen();
 
             //====== CONSULTAR RESUMEN =======
+            //====== CONSULTAR RESUMEN =======
             document.addEventListener('click', (e) => {
-                if (e.target.classList.contains('btn-consultar-resumen')) {
-                    const resumen_id = e.target.getAttribute('data-resumen-id');
+
+                const btnConsultar = e.target.closest('.btn-consultar-resumen');
+                if (btnConsultar) {
+                    const resumen_id = btnConsultar.getAttribute('data-resumen-id');
                     consultarResumen(resumen_id);
+                    return;
                 }
-                if (e.target.classList.contains('btn-reenviar-resumen')) {
-                    const resumen_id = e.target.getAttribute('data-resumen-id');
+
+                const btnReenviar = e.target.closest('.btn-reenviar-resumen');
+                if (btnReenviar) {
+                    const resumen_id = btnReenviar.getAttribute('data-resumen-id');
                     enviarResumen(resumen_id);
+                    return;
                 }
-                if (e.target.classList.contains('btn-detalle-resumen')) {
-                    const resumen_id = e.target.getAttribute('data-resumen-id');
+
+                const btnDetalle = e.target.closest('.btn-detalle-resumen');
+                if (btnDetalle) {
+                    const resumen_id = btnDetalle.getAttribute('data-resumen-id');
                     openMdlShowResumen(resumen_id);
+                    return;
                 }
-            })
+
+            });
 
             //======= GUARDAR RESUMEN ======
             document.addEventListener('click', (e) => {

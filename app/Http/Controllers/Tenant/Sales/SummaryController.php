@@ -123,23 +123,23 @@ array:2 [ // app\Http\Controllers\Market\Ventas\ResumenController.php:64
     {
         try {
 
-            $resumen    =   DB::select('select
+            $resumen    =   DB::select('SELECT
                             r.*
-                            from resumenes as r
-                            where r.id = ?', [$id]);
+                            FROM summaries AS r
+                            WHERE r.id = ?', [$id]);
 
-            $detalle    =   DB::select('select
-                            rd.documento_id,
-                            rd.documento_serie,
-                            rd.documento_correlativo,
-                            rd.documento_nombre_cliente,
-                            rd.documento_doc_cliente,
-                            rd.documento_total,
-                            rd.documento_subtotal,
-                            rd.documento_igv,
-                            rd.documento_porcentaje_igv
-                            from resumenes_detalle as rd
-                            where rd.resumen_id = ?', [$id]);
+            $detalle    =   DB::select('SELECT
+                            rd.sale_id  AS documento_id,
+                            rd.serie AS documento_serie,
+                            rd.correlative AS documento_correlativo,
+                            rd.customer_name AS documento_nombre_cliente,
+                            rd.customer_document_number AS documento_doc_cliente,
+                            rd.total AS documento_total,
+                            rd.subtotal AS documento_subtotal,
+                            rd.igv AS documento_igv,
+                            rd.percentage_igv AS documento_porcentaje_igv
+                            FROM summaries_details AS rd
+                            WHERE rd.summary_id = ?', [$id]);
 
             if (count($resumen) === 0) {
                 throw new Exception("NO EXISTE EL RESUMEN EN LA BD!!!");
