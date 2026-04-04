@@ -59,10 +59,6 @@ class SaleController extends Controller
         $filter_type_sale   =   $request->get('type_sale');
 
         $sales    =   DB::table('sales as s')
-            ->leftJoin('sales_pays as sp', function ($join) {
-                $join->on('sp.sale_id', '=', 's.id')
-                    ->where('sp.status', 'ACTIVO');
-            })
             ->select(
                 's.id',
                 's.created_at as fecha_registro',
