@@ -179,24 +179,34 @@
             },
             columns: [{
                     data: 'id',
-                    name: 'id'
+                    name: 'p.id',
+                    searchable:true,
+                    orderable:true
                 },
                 {
                     data: 'name',
-                    name: 'name'
+                    name: 'p.name',
+                    searchable:true,
+                    orderable:true
                 },
                 {
                     data: 'category_name',
-                    name: 'category_name'
+                    name: 'c.name',
+                    searchable:true,
+                    orderable:true
                 },
                 {
                     data: 'brand_name',
-                    name: 'brand_name'
+                    name: 'b.name',
+                    searchable:true,
+                    orderable:true
                 },
 
                 {
                     data: 'stock',
-                    name: 'Stock'
+                    name: 'Stock',
+                    searchable:false,
+                    orderable:true
                 }
             ],
             createdRow: function(row, data, dataIndex) {
