@@ -146,7 +146,7 @@ class Sale extends Model
             }
         });
 
-        static::created(function (Sale $sale) {
+        /*static::created(function (Sale $sale) {
             if (!in_array($sale->type_sale_code, ['01', '03'])) return;
 
             InvoiceDispatchLog::create([
@@ -156,6 +156,7 @@ class Sale extends Model
                 'status'           => InvoiceDispatchLog::STATUS_PENDING,
                 'expires_at'        => now()->addDays(3)->endOfDay(), // SUNAT: 3 días
             ]);
-        });
+        });*/
+        
     }
 }
