@@ -51,8 +51,6 @@ class ReportSaleController extends Controller
                 'sp.sale_price',
                 'sp.total',
                 's.created_at',
-                'sp.category_name',
-                'sp.brand_name'
             )
             ->orderByDesc('s.created_at');
 
