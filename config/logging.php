@@ -52,6 +52,19 @@ return [
     */
 
     'channels' => [
+
+        'send_boletas' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/send_boletas.log'),
+            'level' => 'debug',
+        ],
+
+        'send_facturas' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/send_facturas.log'),
+            'level' => 'debug',
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

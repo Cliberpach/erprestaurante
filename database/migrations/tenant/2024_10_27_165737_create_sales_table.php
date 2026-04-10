@@ -119,6 +119,12 @@ return new class extends Migration
             $table->unsignedBigInteger('summary_id')->nullable();
             $table->string('summary_serie', 100)->nullable();
 
+            $table->date('expires_at')->nullable();
+            $table->dateTime('processing_at')->nullable();
+            $table->dateTime('sent_at')->nullable();
+            $table->integer('attempts')->default(0);
+            $table->dateTime('next_retry_at')->nullable();
+
             $table->timestamps();
         });
     }

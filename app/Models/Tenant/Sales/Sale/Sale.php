@@ -3,12 +3,11 @@
 namespace App\Models\Tenant\Sales\Sale;
 
 use App\Http\Services\Tenant\Sale\Sale\SaleService;
-use App\Models\Tenant\InvoiceDispatchLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Spatie\Multitenancy\Models\Tenant;
+use Carbon\Carbon;
 
 class Sale extends Model
 {
@@ -92,9 +91,19 @@ class Sale extends Model
         'creator_user_name',
         'date_pending_print',
         'summary_id',
-        'summary_serie'
+        'summary_serie',
+        'send_at',
+        'expires_at',
+        'processing_at',
+        'attempts',
+        'next_retry_at'
     ];
 
+    const STATUS_PENDING    = 'PENDIENTE';
+    const STATUS_ACCEPTED   = 'ACEPTADO';
+    const STATUS_FAILED     = 'RECHAZADO';
+    const STATUS_OBSERVED   = 'OBSERVADO';
+    const STATUS_EXPIRED    = 'EXPIRADO';
 
     public function pays()
     {
@@ -121,6 +130,40 @@ class Sale extends Model
         return $service->getDetails($this->id);
     }
 
+    public function calculateNextRetry(): Carbon
+    {
+        $minutes = match ($this->attempts) {
+            1       => 15,
+            2       => 60,
+            3       => 180,
+            4       => 480,
+            default => 1440,
+        };
+
+        $nextRetry = now()->addMinutes($minutes);
+
+        return $nextRetry->gt($this->expires_at)
+            ? $this->expires_at->subMinutes(30)
+            : $nextRetry;
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->expires_at->isPast();
+    }
+
+    public function markAsFailed(string $error, array $context = []): void
+    {
+        $this->increment('attempts');
+        $this->refresh();
+
+        $this->update([
+            'last_error'    => ['message' => $error, 'context' => $context, 'at' => now()],
+            'status'        => self::STATUS_PENDING,
+            'next_retry_at' => $this->canRetry() ? $this->calculateNextRetry() : null,
+        ]);
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -130,6 +173,7 @@ class Sale extends Model
                 $model->creator_user_id = auth()->id();
                 $model->creator_user_name = auth()->user()->name;
                 $model->public_hash  = (string) Str::uuid();
+                $model->expires_at = Carbon::now()->addDays(3);
             }
         });
 
@@ -157,6 +201,5 @@ class Sale extends Model
                 'expires_at'        => now()->addDays(3)->endOfDay(), // SUNAT: 3 días
             ]);
         });*/
-        
     }
 }

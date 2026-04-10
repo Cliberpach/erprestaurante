@@ -120,6 +120,8 @@ class SaleRepository
         $sale->ruta_xml                 =   $data['route_xml'];
         $sale->last_send_message        =   $data['message'];
         $sale->sunat_status             =   $data['sunat_status'];
+        $sale->send_at                  =   now();
+        $sale->attempts                 +=  1;
         $sale->save();
 
         return $sale;

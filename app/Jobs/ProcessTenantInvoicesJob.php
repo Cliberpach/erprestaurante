@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Tenant\InvoiceDispatchLog;
+use App\Models\Tenant\Sales\Sale\Sale;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -42,20 +42,22 @@ class ProcessTenantInvoicesJob implements ShouldQueue
 
     private function dispatchPendingInvoices(): void
     {
-        InvoiceDispatchLog::query()
+        Sale::query()
             ->whereNotIn('status', [
-                InvoiceDispatchLog::STATUS_ACCEPTED,
-                InvoiceDispatchLog::STATUS_OBSERVED,
+                Sale::STATUS_ACCEPTED,
+                Sale::STATUS_OBSERVED,
             ])
-            ->where('expires_at', '>', now())
+            ->where('expires_at', '>=', now())
+            ->whereNull('summary_id')
+            ->whereIn('type_sale_code', ['03', '01'])
             ->where(function ($q) {
                 $q->whereNull('processing_at')
                     ->orWhere('processing_at', '<', now()->subMinutes(10));
             })
-            ->chunkById(50, function ($logs) {
-                foreach ($logs as $log) {
+            ->chunkById(50, function ($sales) {
+                foreach ($sales as $sale) {
 
-                    $updated = InvoiceDispatchLog::where('id', $log->id)
+                    $updated = Sale::where('id', $sale->id)
                         ->where(function ($q) {
                             $q->whereNull('processing_at')
                                 ->orWhere('processing_at', '<', now()->subMinutes(10));
@@ -68,24 +70,12 @@ class ProcessTenantInvoicesJob implements ShouldQueue
                         continue;
                     }
 
-                    SendInvoiceJob::dispatch($log->id, $this->tenantId)
+                    SendInvoiceJob::dispatch($sale->id, $this->tenantId)
                         ->onQueue('invoices')
                         ->delay(now()->addSeconds(rand(1, 5)));
                 }
             });
     }
-
-    private function markExpiredInvoices(): void
-    {
-        InvoiceDispatchLog::query()
-            ->whereNotIn('status', [
-                InvoiceDispatchLog::STATUS_ACCEPTED,
-                InvoiceDispatchLog::STATUS_EXPIRED,
-            ])
-            ->where('expires_at', '<=', now())
-            ->update(['status' => InvoiceDispatchLog::STATUS_EXPIRED]);
-    }
-
 
 
     /*

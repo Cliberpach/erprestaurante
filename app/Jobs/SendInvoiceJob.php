@@ -2,10 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\SunatPermanentException;
-use App\Exceptions\SunatTemporaryException;
 use App\Http\Services\Tenant\Sale\Sale\SaleService;
-use App\Models\Tenant\InvoiceDispatchLog;
+use App\Models\Tenant\Sales\Sale\Sale;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,13 +18,18 @@ class SendInvoiceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $tries   = 1;
+    public int $tries   = 10;
     public int $timeout = 60;
 
     public function __construct(
         private readonly int $dispatchLogId,
         private readonly int $tenantId
     ) {}
+
+    public function backoff(): int
+    {
+        return 1800; // 30 minutos
+    }
 
     public function handle(): void
     {
@@ -36,101 +40,61 @@ class SendInvoiceJob implements ShouldQueue
         }
         $tenant->makeCurrent();
 
-        $log = InvoiceDispatchLog::find($this->dispatchLogId);
-
-        if (!$log) return;
-
-        if ($log->isExpired()) {
-            $log->update(['status' => InvoiceDispatchLog::STATUS_EXPIRED]);
-            return;
-        }
-
-        if (!$log->canRetry()) return;
-
         try {
-            // ✅ Llama directo a tu servicio existente
-            $saleService = app(SaleService::class);
-            $sale = $saleService->sendSunat($log->invoiceable_id);
+            $sale = Sale::find($this->dispatchLogId);
 
-            // Evaluar resultado según sunat_status que ya guardas
-            if ($sale->sunat_status === 'ACEPTADO') {
-                $log->update([
-                    'status'  => InvoiceDispatchLog::STATUS_ACCEPTED,
-                    'sent_at' => now(),
-                    'metadata' => [
-                        'sunat_status'    => $sale->sunat_status,
-                        'cdr_code'        => $sale->cdr_response_code,
-                        'cdr_description' => $sale->cdr_response_description,
-                    ],
-                ]);
-            } elseif ($sale->sunat_status === 'OBSERVADO') {
-                $log->update([
-                    'status'  => InvoiceDispatchLog::STATUS_OBSERVED,
-                    'sent_at' => now(),
-                    'metadata' => [
-                        'sunat_status'    => $sale->sunat_status,
-                        'cdr_code'        => $sale->cdr_response_code,
-                        'cdr_description' => $sale->cdr_response_description,
-                    ],
-                ]);
-            } elseif ($sale->sunat_status === 'RECHAZADO') {
-                // RECHAZADO = error permanente, no reintentar
-                throw new SunatPermanentException(
-                    "RECHAZADO: [{$sale->response_error_code}] {$sale->response_error_message}"
-                );
-            } else {
-                // PENDIENTE = error temporal, reintentar
-                throw new SunatTemporaryException(
-                    $sale->last_send_message ?? 'Sin respuesta CDR de SUNAT'
-                );
+            if (!$sale) return;
+
+            if ($sale->isExpired()) {
+                return;
             }
-        } catch (SunatPermanentException $e) {
-            // No reintentar: doc inválido, duplicado, RUC inactivo
-            $log->update([
-                'status'     => InvoiceDispatchLog::STATUS_FAILED,
-                'last_error' => [
-                    'message' => $e->getMessage(),
-                    'type'    => 'permanent',
-                    'at'      => now(),
-                ],
+
+            $log_name   =   null;
+
+            if ($sale->type_sale_code == '01') {
+                $log_name   =   'send_facturas';
+            }
+            if ($sale->type_sale_code == '03') {
+                $log_name   =   'send_boletas';
+            }
+
+            $saleService = app(SaleService::class);
+            $sale_send = $saleService->sendSunat($sale->id);
+
+            Log::channel($log_name)->info("Envío completado", [
+                'sale_id' => $sale_send->id ?? $sale->id ?? null,
+
+                'response_cdrZip'              => $sale_send->response_cdrZip ?? null,
+                'response_success'             => $sale_send->response_success ?? null,
+                'response_error_code'          => $sale_send->response_error_code ?? null,
+                'response_error_message'       => $sale_send->response_error_message ?? null,
+
+                'cdr_response_id'              => $sale_send->cdr_response_id ?? null,
+                'cdr_response_code'            => $sale_send->cdr_response_code ?? null,
+                'cdr_response_description'     => $sale_send->cdr_response_description ?? null,
+                'cdr_response_notes'           => $sale_send->cdr_response_notes ?? null,
+                'cdr_response_reference'       => $sale_send->cdr_response_reference ?? null,
             ]);
 
-            Log::error("❌ Error permanente SUNAT", [
-                'log_id'  => $log->id,
-                'sale_id' => $log->invoiceable_id,
-                'error'   => $e->getMessage(),
-            ]);
-        } catch (SunatTemporaryException $e) {
-            // Reintentar con backoff exponencial
-            $log->markAsFailed($e->getMessage(), ['type' => 'temporary']);
-            $log->refresh();
-
-            if ($log->canRetry()) {
-                self::dispatch($this->dispatchLogId)
-                    ->onQueue('invoice-retries')
-                    ->delay($log->calculateNextRetry());
-
-                Log::warning("⚠️ Reintentando comprobante", [
-                    'log_id'      => $log->id,
-                    'sale_id'     => $log->invoiceable_id,
-                    'attempts'    => $log->attempts,
-                    'next_retry'  => $log->next_retry_at,
-                ]);
+            if (!in_array($sale_send->sunat_status, [
+                Sale::STATUS_ACCEPTED,
+                Sale::STATUS_OBSERVED,
+            ])) {
+                throw new Exception("Error en el envío, reintentando...");
             }
         } catch (Throwable $e) {
-            $log->markAsFailed($e->getMessage());
-
-            Log::error("💥 Error inesperado", [
-                'log_id'  => $log->id,
-                'sale_id' => $log->invoiceable_id,
+            Log::channel($log_name)->error("💥 Error inesperado", [
+                'sale_id' => $sale->id ?? null,
                 'error'   => $e->getMessage(),
                 'line'    => $e->getLine(),
                 'file'    => $e->getFile(),
             ]);
+            throw $e;
         } finally {
-            if ($log) {
-                $log->update([
+            if ($sale) {
+                $sale->update([
                     'processing_at' => null
+
                 ]);
             }
             Tenant::forgetCurrent();
