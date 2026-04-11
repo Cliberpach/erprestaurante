@@ -40,16 +40,18 @@ class SendInvoiceJob implements ShouldQueue
         }
         $tenant->makeCurrent();
 
+        $log_name   =   'send_invoice';
+
         try {
             $sale = Sale::find($this->dispatchLogId);
+            Log::warning('Sale encontrada', [
+                'sale' => $sale?->toArray()
+            ]);
 
             if (!$sale) return;
 
-            if ($sale->isExpired()) {
-                return;
-            }
 
-            $log_name   =   null;
+            Log::warning('PROCESO');
 
             if ($sale->type_sale_code == '01') {
                 $log_name   =   'send_facturas';
@@ -57,6 +59,10 @@ class SendInvoiceJob implements ShouldQueue
             if ($sale->type_sale_code == '03') {
                 $log_name   =   'send_boletas';
             }
+
+            Log::warning('LOG NAME', [
+                'log_name' => $log_name
+            ]);
 
             $saleService = app(SaleService::class);
             $sale_send = $saleService->sendSunat($sale->id);
@@ -94,7 +100,6 @@ class SendInvoiceJob implements ShouldQueue
             if ($sale) {
                 $sale->update([
                     'processing_at' => null
-
                 ]);
             }
             Tenant::forgetCurrent();

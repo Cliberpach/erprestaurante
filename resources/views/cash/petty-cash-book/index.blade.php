@@ -249,8 +249,8 @@
                 html: message,
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonText: "Sí, eliminar!",
-                cancelButtonText: "No, cancelar!",
+                confirmButtonText: "Sí!",
+                cancelButtonText: "No!",
                 reverseButtons: true
             }).then(async (result) => {
                 if (result.isConfirmed) {

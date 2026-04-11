@@ -65,6 +65,12 @@ return [
             'level' => 'debug',
         ],
 
+        'send_invoice' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/send_invoice.log'),
+            'level' => 'debug',
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

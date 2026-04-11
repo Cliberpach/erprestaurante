@@ -24,6 +24,9 @@ class ProcessTenantInvoicesJob implements ShouldQueue
 
     public function handle(): void
     {
+        Log::info("🟡 [JOB START] Iniciando ProcessTenantInvoicesJob", [
+            'tenant_id' => $this->tenantId
+        ]);
         $tenant = Tenant::find($this->tenantId);
 
         if (!$tenant) {

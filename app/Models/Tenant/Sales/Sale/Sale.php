@@ -105,6 +105,10 @@ class Sale extends Model
     const STATUS_OBSERVED   = 'OBSERVADO';
     const STATUS_EXPIRED    = 'EXPIRADO';
 
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
+
     public function pays()
     {
         return $this->hasMany(SalePay::class)

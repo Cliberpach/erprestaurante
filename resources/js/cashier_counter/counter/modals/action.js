@@ -181,7 +181,7 @@ export async function actionFormCharge(e) {
             clearValidationErrors('msgError');
 
             Swal.fire({
-                title: 'Generando comproabante...',
+                title: 'Generando comprobante...',
                 text: 'Por favor espere',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
@@ -194,7 +194,7 @@ export async function actionFormCharge(e) {
             const formData = new FormData(e.target);
             formData.append('lst_pays', JSON.stringify(lsyPaysPrepared));
             formData.append('order_id', app.order.order_id);
-            formData.append('lstAlertsSelected',JSON.stringify(lstAlertsSelected));
+            formData.append('lstAlertsSelected', JSON.stringify(lstAlertsSelected));
             if (invoiceId) {
                 formData.append('invoice_id', invoiceId);
             }

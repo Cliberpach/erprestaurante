@@ -121,7 +121,7 @@ return new class extends Migration
 
             $table->date('expires_at')->nullable();
             $table->dateTime('processing_at')->nullable();
-            $table->dateTime('sent_at')->nullable();
+            $table->dateTime('send_at')->nullable();
             $table->integer('attempts')->default(0);
             $table->dateTime('next_retry_at')->nullable();
 
