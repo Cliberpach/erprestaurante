@@ -23,6 +23,7 @@ class CounterRepository
                         'r.status',
                         'o.status as order_status',
                         'o.status_invoice',
+
                         'o.total',
                         'o.subtotal',
                         'o.igv',

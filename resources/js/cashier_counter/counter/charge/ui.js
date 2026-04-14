@@ -29,7 +29,23 @@ export function paintTblDetail(lstItems, lstItemsCanceled) {
 export function paintAmounts(amounts) {
     document.querySelector('#subtotal_amount').innerText = formatSoles(amounts.subTotal);
     document.querySelector('#igv_amount').innerText = formatSoles(amounts.tax);
-    document.querySelector('#total_amount').innerText = formatSoles(amounts.totalPay);
+    document.querySelector('#total_amount').innerText = formatSoles(amounts.total);
+    document.querySelector('#total_pay_amount').innerText = formatSoles(amounts.totalPay);
+}
+
+export function disabledInputDiscount() {
+    const btn = document.querySelector('.btn-discount');
+    const container = btn.closest('div');
+    const input = container.querySelector('input');
+
+    if (input.hasAttribute('readonly')) {
+        input.removeAttribute('readonly');
+        input.focus();
+        btn.innerHTML = '<i class="fas fa-lock-open"></i>';
+    } else {
+        input.setAttribute('readonly', true);
+        btn.innerHTML = '<i class="fas fa-key"></i>';
+    }
 }
 
 window.paintTblDetail = paintTblDetail;

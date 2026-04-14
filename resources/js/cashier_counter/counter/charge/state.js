@@ -1,9 +1,12 @@
 export let lstDetail = [];
 export let lstDetailCanceled = [];
 export let dtDetail = null;
+
 export const amounts = {
     subTotal: 0,
     tax: 0,
+    total: 0,
+    discount: 0,
     totalPay: 0
 }
 
@@ -23,3 +26,6 @@ export function setFilterStatusSelect(instance) {
     filterStatusSelect = instance;
 }
 
+export function getAmounts() {
+    return amounts;
+}

@@ -28,7 +28,7 @@ export function desactiveBtnsInvoice() {
 
 
 export function renderSummary(infoAmounts) {
-
+    console.log(infoAmounts,'infoAmounts');
     document.getElementById('summary-total').textContent = formatSoles(infoAmounts.total);
     document.getElementById('summary-paid').textContent = formatSoles(infoAmounts.paid);
     document.getElementById('summary-pending').textContent = formatSoles(infoAmounts.pending);

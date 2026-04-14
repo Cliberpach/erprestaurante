@@ -92,10 +92,11 @@ array:5 [ // app\Http\Controllers\Tenant\CashierCounter\CCounterController.php:9
   "order_id" => "7"
   "lstAlertsSelected" => "[{"id":2,"content":"Yape! COMERCIAL ANDINA EIRL te envió un pago por S/ 35.00","created_at":"2026-03-04 15:18:36"},{"id":31,"content":"Yape! COMERCIAL AMAZONAS EIRL te envió un pago por S/ 77.00","created_at":"2026-03-04 15:18:36"}]"
   "invoice_id" => "67"
+   "lst_amounts" => "{"subTotal":"151.131222","tax":"15.868778","total":"167.000000","discount":67,"totalPay":100}"
 ]
 */
     public function storeInvoice(InvoiceStoreRequest $request)
-    {
+    {   
         DB::beginTransaction();
         try {
             $invoice    =   $this->s_manager->storeInvoice($request->toArray());

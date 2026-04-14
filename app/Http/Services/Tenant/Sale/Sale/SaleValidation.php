@@ -192,12 +192,16 @@ class SaleValidation
 
     public function vStoreFromCOrder(array $data): array
     {
-        $customer       =   Customer::findOrFail($data['customer_id']);
-        $invoice        =   GeneralTableDetail::findOrFail($data['invoice_id']);
-        $order          =   Order::findOrFail($data['order_id']);
-        $user           =   Auth::user();
-        $cash_book      =   $this->s_cash->getCashBookUser($user->id);
-        $lst_pays       =   json_decode($data['lst_pays']);
+        $customer           =   Customer::findOrFail($data['customer_id']);
+        $invoice            =   GeneralTableDetail::findOrFail($data['invoice_id']);
+        $order              =   Order::findOrFail($data['order_id']);
+        $user               =   Auth::user();
+        $cash_book          =   $this->s_cash->getCashBookUser($user->id);
+        $lst_pays           =   json_decode($data['lst_pays']);
+        $amounts            =   json_decode($data['lst_amounts']);
+        $data['amounts']    =   $amounts;
+        $data['order']      =   $order;
+        $data['lst_pays']   =   $lst_pays;
 
         $roles  =   Auth::user()->getRoleNames();
         if (!$roles->contains('CAJERO')) {
@@ -235,17 +239,42 @@ class SaleValidation
         }
 
         //======== PAGO =========
+        $data_amounts           =   $this->validationCLstPays($data);
+
+        $order_dishes           =   $this->s_order->getOrderDishes($data['order_id']);
+        $order_products         =   $this->s_order->getOrderProducts($data['order_id']);
+
+        $data['customer']       =   $customer;
+        $data['invoice']        =   $invoice;
+        $data['cash_book']      =   $cash_book;
+        $data['user']           =   $user;
+        $data['order_dishes']   =   $order_dishes;
+        $data['order_products'] =   $order_products;
+        $data['total_pay']      =   $data_amounts->total_pay;
+        $data['change']         =   $data_amounts->change;
+        $data['igv_percentage'] =   $order->igv_percentage;
+        return $data;
+    }
+
+    public function validationCLstPays($data)
+    {
+        $lst_pays       =   $data['lst_pays'];
+        $amounts        =   $data['amounts'];
+        $order          =   $data['order'];
+
         $c_pays         =   collect($lst_pays)->where('amount', '>', 0);
         $payTotal       =   $c_pays->sum('amount');
         $has_negative   =   $c_pays->where('amount', '<', 0)->first();
         $has_repeats    =   $c_pays->groupBy('paymentId')->filter(fn($items) => $items->count() > 1)->isNotEmpty();
+        $new_total      =   $amounts->discount && (float)$amounts->discount > 0 ? (float)$order->total - (float)$amounts->discount : $order->total;
+
         if ($payTotal == 0) {
             throw new Exception('NO INGRESASTE NINGÚN PAGO');
         }
         if ($payTotal < 0) {
             throw new Exception("NO SE ACEPTAN PAGOS NEGATIVOS");
         }
-        if ((float)$payTotal < (float)$order->total) {
+        if ((float)$payTotal < (float)$new_total) {
             throw new Exception("EL PAGO ES MENOR AL TOTAL DEL PEDIDO");
         }
         if ($has_negative) {
@@ -256,25 +285,14 @@ class SaleValidation
         }
 
         //========= VUELTO ========
-        $change =   (float)$payTotal - (float)$order->total;
+        $change =   (float)$payTotal - (float)$new_total;
         if ($change < 0) {
             throw new Exception("EL VUELTO NO PUEDE SER NEGATIVO");
         }
-
-        $order_dishes           =   $this->s_order->getOrderDishes($data['order_id']);
-        $order_products         =   $this->s_order->getOrderProducts($data['order_id']);
-
-        $data['order']          =   $order;
-        $data['customer']       =   $customer;
-        $data['invoice']        =   $invoice;
-        $data['cash_book']      =   $cash_book;
-        $data['user']           =   $user;
-        $data['order_dishes']   =   $order_dishes;
-        $data['order_products'] =   $order_products;
-        $data['lst_pays']       =   $lst_pays;
-        $data['totalPay']       =   $payTotal;
-        $data['change']         =   $change;
-        return $data;
+        return (object)[
+            'change'    =>  $change,
+            'total_pay' =>  $new_total
+        ];
     }
 
     public function validationConvert(array $data): array

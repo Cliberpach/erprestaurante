@@ -9,6 +9,7 @@ export function validatePayments(lstPays, infoAmounts) {
     }
 
     // 2. Que el total de los activos cubra el pedido
+    console.log('infoAmounts',infoAmounts);
     const totalPaid = activePays.reduce((sum, i) => sum + Number(i.amount), 0);
     if (totalPaid < infoAmounts.total) {
         toastr.error(`Falta cubrir S/ ${(infoAmounts.total - totalPaid).toFixed(2)} del total.`);

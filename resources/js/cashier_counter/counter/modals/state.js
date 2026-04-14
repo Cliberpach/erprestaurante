@@ -1,8 +1,15 @@
+import { getAmounts } from "../charge/state";
+
 export const CASH_ID = 1;
 export let paymentMethodSelect = null;
 export let lstPays = [];
 export let change = 0;
 export let invoiceId = null;
+
+export let configMdlCharge = {
+    getAmounts: null
+};
+
 export let infoAmounts = {
     total: 0,        // total del pedido
     paid: 0,         // lo aplicado a la venta
@@ -24,3 +31,6 @@ export function setInvoiceId(instance) {
     invoiceId = instance
 }
 
+export function setConfigMdlCharge(instance) {
+    configMdlCharge = instance;
+}

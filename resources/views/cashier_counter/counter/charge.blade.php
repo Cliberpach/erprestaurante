@@ -7,6 +7,7 @@
 @section('content')
     @include('cashier_counter.counter.modals.mdl_charge')
     @include('utils.modals.customer.mdl_create_customer')
+    @include('cashier_counter.counter.modals.mdl_password')
     <div class="card">
 
         <div class="card-header">

@@ -131,10 +131,13 @@ class SaleDto
         $dto['subtotal']                    =   $data['order']->subtotal;
         $dto['igv_amount']                  =   $data['order']->igv;
         $dto['total']                       =   $data['order']->total;
+        $dto['discount']                    =   $data['amounts']->discount;
+        $dto['discount_base']               =   $data['amounts']->discount_base;
+        $dto['discount_igv']                =   $data['amounts']->discount_igv;
+        $dto['total_pay']                   =   $data['amounts']->total_pay;
 
         $legend                 =   NumberToLettersController::numberToLetters($dto['total']);
         $dto['legend']          =   $legend;
-
 
         $data_correlative       =   $data['correlative'];
         $dto['correlative']     =   $data_correlative->correlative;

@@ -129,9 +129,9 @@ class SaleService
 
         $correlative            =   $this->s_correlative->getCorrelative($data['invoice_id']);
         $data['correlative']    =   $correlative;
+        $data['amounts']        =   $this->s_calculations->calculateCAmounts($data);
 
-        $dto                    =   $this->s_dto->getDtoStoreFromOrder($data);
-
+        $dto                    =   $this->s_dto->getDtoStoreFromOrder($data);dd($dto);
         $sale                   =   $this->s_repository->store($dto);
 
         $dto_sdishes            =   $this->s_dto->getDtoSaleDish($data['order_dishes'], $sale);

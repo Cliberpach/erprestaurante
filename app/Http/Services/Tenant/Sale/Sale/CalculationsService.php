@@ -2,11 +2,6 @@
 
 namespace App\Http\Services\Tenant\Sale\Sale;
 
-use App\Models\Company;
-use App\Models\Product;
-use Exception;
-use Illuminate\Support\Facades\DB;
-
 class CalculationsService
 {
 
@@ -22,7 +17,6 @@ class CalculationsService
     */
     public static function calculateAmounts(array $lstItems, float $igv_percentage): object
     {
-
         $subtotal   =   0;
         $igv_amount =   0;
         $total      =   0;
@@ -35,5 +29,22 @@ class CalculationsService
 
 
         return (object)['subtotal' => $subtotal, 'igv_amount' => $igv_amount, 'total' => $total];
+    }
+
+    public function calculateCAmounts(array $data): object
+    {
+        $discount       =   $data['amounts']->discount;
+        $igv_percentage =   $data['igv_percentage'];
+        $factor         =   (100 + $igv_percentage) / 100;
+      
+        $discount_base  =   $discount / $factor;
+        $discount_igv   =   $discount - $discount_base;
+
+        return (object)[
+            'discount'      =>  $discount,
+            'discount_base' =>  $discount_base,
+            'discount_igv'  =>  $discount_igv,
+            'total_pay'     =>  $data['total_pay']
+        ];
     }
 }

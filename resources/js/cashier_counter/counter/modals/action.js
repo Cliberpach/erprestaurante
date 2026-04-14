@@ -1,11 +1,12 @@
 import { lstAlertsSelected } from "../../../utils/datatables/alerts/state";
 import { customerSelect } from "../../../utils/selects/customers/state";
 import { amounts } from "../charge/state";
-import { CASH_ID, infoAmounts, invoiceId, lstPays, paymentMethodSelect, setInvoiceId } from "./state";
+import { CASH_ID, configMdlCharge, infoAmounts, invoiceId, lstPays, paymentMethodSelect, setInvoiceId } from "./state";
 import { desactiveBtnsInvoice, disabledInputsPayment, enabledInputsPayment, renderSummary, setDataFormCharge } from "./ui";
 import { validatePayments } from "./validation";
 
 export function openMdlCharge() {
+    setState();
     setConfigDefault();
     setDataFormCharge();
     $('#mdl_charge').modal('show');
@@ -65,7 +66,6 @@ export function onKeyDownPayment(e) {
     // Bloquear todo lo demás: +, -, *, letras, etc.
     e.preventDefault();
 }
-
 
 export function actionInputPayment(e) {
     const paymentId = e.target.getAttribute('data-id');
@@ -195,6 +195,7 @@ export async function actionFormCharge(e) {
             formData.append('lst_pays', JSON.stringify(lsyPaysPrepared));
             formData.append('order_id', app.order.order_id);
             formData.append('lstAlertsSelected', JSON.stringify(lstAlertsSelected));
+            formData.append('lst_amounts', JSON.stringify(configMdlCharge.getAmounts()));
             if (invoiceId) {
                 formData.append('invoice_id', invoiceId);
             }
