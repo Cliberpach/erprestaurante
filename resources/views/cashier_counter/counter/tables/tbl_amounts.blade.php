@@ -17,7 +17,7 @@
                 S/ 0.00
             </td>
         </tr>
-        <tr class="text-white">
+        <tr class="text-white tr-total">
             <th class="fw-bold" style="widht:50%;">
                 <i class="fas fa-coins me-2"></i> TOTAL
             </th>
@@ -25,7 +25,7 @@
                 S/ 0.00
             </td>
         </tr>
-        <tr>
+        <tr class="tr-discount">
             <th>
                 <i class="fas fa-tags text-danger me-2"></i>
                 DCTO (incluye IGV)

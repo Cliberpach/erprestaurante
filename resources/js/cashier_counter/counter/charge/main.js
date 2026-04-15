@@ -4,12 +4,12 @@ import { loadDataPreview } from "./action";
 import { eventsCCounter } from "./events"
 import { getAmounts } from "./state";
 import { loadSelectsCharge } from "./tomselect";
-import { disabledInputDiscount } from "./ui";
+import { disabledInputDiscount, enableDiscount } from "./ui";
 
 document.addEventListener('DOMContentLoaded', () => {
     loadDataPreview();
     mainMdlCharge({
-        getAmounts:getAmounts
+        getAmounts: getAmounts
     });
     loadMdlPassword({
         title: 'Ingresar password',
@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         onSuccess: disabledInputDiscount,
     });
     loadSelectsCharge();
+    enableDiscount(app.configDiscount);
     eventsCCounter();
     app.eventsAdd();
 })

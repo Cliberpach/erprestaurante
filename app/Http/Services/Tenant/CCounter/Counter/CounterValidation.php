@@ -5,6 +5,7 @@ namespace App\Http\Services\Tenant\CCounter\Counter;
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\UtilController;
 use App\Http\Services\Tenant\Orders\OrderService;
+use App\Models\Tenant\Configuration;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,7 +46,8 @@ class CounterValidation
         $payment_methods    =   UtilController::getPaymentMethods();
         $invoice_types      =   UtilController::getInvoiceTypes()->whereIn('id', [65, 66, 67]);
         $customer_formatted =   FormatController::getFormatInitialCustomer($order->customer_id);
-      
+        $config_discount    =   Configuration::findOrFail(3)->property;
+
         $vars_mdl_customer  =   UtilController::getVarsMdlCustomer();
 
         $vars   =   [
@@ -54,7 +56,8 @@ class CounterValidation
             'lst_canceled'      =>  $lst_detail_canceled,
             'payment_methods'   =>  $payment_methods,
             'customer_formatted' => $customer_formatted,
-            'invoice_types'     =>  $invoice_types
+            'invoice_types'     =>  $invoice_types,
+            'config_discount'   =>  $config_discount
         ];
 
         $vars = array_merge($vars, $vars_mdl_customer);

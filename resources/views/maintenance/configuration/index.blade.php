@@ -36,14 +36,8 @@
     }
 
     function saveConfiguration(formConfiguration) {
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: "btn btn-success",
-                cancelButton: "btn btn-danger"
-            },
-            buttonsStyling: false
-        });
-        swalWithBootstrapButtons.fire({
+
+        Swal.fire({
             title: "DESEA GUARDAR LA CONFIGURACIÓN?",
             text: "Se guardarán los cambios!",
             icon: "warning",
@@ -64,6 +58,7 @@
                 });
 
                 try {
+                    clearValidationErrors('msgError');
                     const token = document.querySelector('input[name="_token"]').value;
                     const formData = new FormData(formConfiguration);
                     const urlSaveConfiguration = @json(route('tenant.mantenimiento.configuracion.store'));
@@ -104,7 +99,7 @@
 
 
             } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire({
+                Swal.fire({
                     title: "OPERACIÓN CANCELADA",
                     text: "NO SE REALIZARON ACCIONES",
                     icon: "error"

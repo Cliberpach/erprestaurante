@@ -33,18 +33,34 @@ class CalculationsService
 
     public function calculateCAmounts(array $data): object
     {
+        $order          =   $data['order'];
         $discount       =   $data['amounts']->discount;
         $igv_percentage =   $data['igv_percentage'];
         $factor         =   (100 + $igv_percentage) / 100;
-      
+
         $discount_base  =   $discount / $factor;
         $discount_igv   =   $discount - $discount_base;
+
+        $mto_imp_venta      =   $order->total - $discount;
+        $sub_total          =   $mto_imp_venta;
+        $valor_venta        =   $mto_imp_venta / $factor;
+        $total_impuestos    =   $mto_imp_venta - $valor_venta;
+        $mto_igv            =   $total_impuestos;
+        $mto_oper_gravadas  =   $valor_venta;
 
         return (object)[
             'discount'      =>  $discount,
             'discount_base' =>  $discount_base,
             'discount_igv'  =>  $discount_igv,
-            'total_pay'     =>  $data['total_pay']
+            'total_pay'     =>  $data['total_pay'],
+
+            'mto_oper_gravadas' =>  $mto_oper_gravadas,
+            'mto_igv'           =>  $mto_igv,
+            'total_impuestos'   =>  $total_impuestos,
+            'valor_venta'       =>  $valor_venta,
+            'sub_total'         =>  $sub_total,
+            'mto_imp_venta'     =>  $mto_imp_venta,
+
         ];
     }
 }

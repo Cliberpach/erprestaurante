@@ -39,7 +39,7 @@
 @push('js-script')
     <script>
         document.getElementById('toggle-password').addEventListener('click', function() {
-            const input = document.getElementById('password_mdlpass');
+            const input = document.getElementById('password');
             const icon = this.querySelector('i');
 
             if (input.type === 'password') {

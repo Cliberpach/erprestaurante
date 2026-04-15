@@ -6,6 +6,7 @@ use App\Models\Tenant\Sales\Sale\Sale;
 use DateTime;
 use Greenter\Model\Client\Client;
 use Greenter\Model\Company\Address;
+use Greenter\Model\Sale\Charge;
 use Greenter\Model\Sale\FormaPagos\FormaPagoContado;
 use Greenter\Model\Sale\Invoice;
 use Greenter\Model\Sale\Legend;
@@ -55,6 +56,15 @@ class InvoiceService
             ->setSubTotal((float)$dto['subTotal'])
             ->setMtoImpVenta((float)$dto['mtoImpVenta']);
 
+        if ($dto['discount'] > 0) {
+            $invoice->setDescuentos([
+                (new Charge())
+                    ->setCodTipo('02') // Catalog. 53
+                    ->setMontoBase($dto['discount_base'])
+                    ->setFactor(1)
+                    ->setMonto($dto['discount_base'])
+            ]);
+        }
 
         //======== CONSTRUIR DETALLE BOLETA/FACTURA ========
         $items      =   [];
@@ -82,7 +92,6 @@ class InvoiceService
                     ->setCode('1000')
                     ->setValue($dto['legends'])
             ]);
-
 
         $res = $see->send($invoice);
 

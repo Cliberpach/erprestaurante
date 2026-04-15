@@ -48,4 +48,11 @@ export function disabledInputDiscount() {
     }
 }
 
+export function enableDiscount(configDiscount) {
+    if (configDiscount == 0) {
+        document.querySelector('.tr-discount').remove();
+        document.querySelector('.tr-total').remove();
+    }
+}
+
 window.paintTblDetail = paintTblDetail;

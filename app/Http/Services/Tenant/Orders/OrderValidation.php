@@ -494,7 +494,7 @@ class OrderValidation
             throw new Exception('NO SE PUEDE ELIMINAR, PEDIDO YA FACTURADO');
         }
 
-        $password_bd    =   Configuration::findOrFail(2)->property;
+        $password_bd    =   Configuration::findOrFail(4)->property;
         $password       =   trim($data['password_delete_order']);
 
         if ($password_bd !== $password) {

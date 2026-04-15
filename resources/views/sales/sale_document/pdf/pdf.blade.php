@@ -241,20 +241,24 @@
                 @if ($sale->type_sale_code != 80)
                     <tr>
                         <th colspan="4" style="text-align:right">Sub Total: S/.</th>
-                        <th style="text-align:right">{{ number_format($sale->subtotal, 2) }}</th>
+                        <th style="text-align:right">{{ number_format($sale->mto_oper_gravadas, 2) }}</th>
                     </tr>
                     <tr>
                         <th colspan="4" style="text-align:right">IGV: S/.</th>
-                        <th style="text-align:right">{{ number_format($sale->igv_amount, 2) }}</th>
+                        <th style="text-align:right">{{ number_format($sale->mto_igv, 2) }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4" style="text-align:right">Dscto: S/.</th>
+                        <th style="text-align:right">{{ number_format($sale->discount, 2) }}</th>
                     </tr>
                     <tr>
                         <th colspan="4" style="text-align:right">Total a pagar: S/.</th>
-                        <th style="text-align:right">{{ number_format($sale->total, 2) }}</th>
+                        <th style="text-align:right">{{ number_format($sale->mto_imp_venta, 2) }}</th>
                     </tr>
                 @else
                     <tr>
                         <th colspan="4" style="text-align:right">Total a pagar: S/.</th>
-                        <th style="text-align:right">{{ number_format($sale->total, 2) }}</th>
+                        <th style="text-align:right">{{ number_format($sale->mto_imp_venta, 2) }}</th>
                     </tr>
                 @endif
             </tfoot>

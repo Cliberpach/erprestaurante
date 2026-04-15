@@ -135,8 +135,14 @@ class SaleDto
         $dto['discount_base']               =   $data['amounts']->discount_base;
         $dto['discount_igv']                =   $data['amounts']->discount_igv;
         $dto['total_pay']                   =   $data['amounts']->total_pay;
+        $dto['mto_oper_gravadas']           =   $data['amounts']->mto_oper_gravadas;
+        $dto['mto_igv']                     =   $data['amounts']->mto_igv;
+        $dto['total_impuestos']             =   $data['amounts']->total_impuestos;
+        $dto['valor_venta']                 =   $data['amounts']->valor_venta;
+        $dto['sub_total']                   =   $data['amounts']->sub_total;
+        $dto['mto_imp_venta']               =   $data['amounts']->mto_imp_venta;
 
-        $legend                 =   NumberToLettersController::numberToLetters($dto['total']);
+        $legend                 =   NumberToLettersController::numberToLetters($dto['total_pay']);
         $dto['legend']          =   $legend;
 
         $data_correlative       =   $data['correlative'];
@@ -378,12 +384,14 @@ class SaleDto
         $dto['tipoMoneda']      =   'PEN';
         $dto['company']         =   1;
         $dto['client']          =   $customer_dto;
-        $dto['mtoOperGravadas'] =   $sale->subtotal;
-        $dto['mtoIGV']          =   $sale->igv_amount;
-        $dto['totalImpuestos']  =   $sale->igv_amount;
-        $dto['valorVenta']      =   $sale->subtotal;
-        $dto['subTotal']        =   $sale->total;
-        $dto['mtoImpVenta']     =   $sale->total;
+        $dto['discount']        =   $sale->discount;
+        $dto['discount_base']   =   $sale->discount_base;
+        $dto['mtoOperGravadas'] =   $sale->mto_oper_gravadas;
+        $dto['mtoIGV']          =   $sale->mto_igv;
+        $dto['totalImpuestos']  =   $sale->total_impuestos;
+        $dto['valorVenta']      =   $sale->valor_venta;
+        $dto['subTotal']        =   $sale->sub_total;
+        $dto['mtoImpVenta']     =   $sale->mto_imp_venta;
 
         //======= DETAIL ===========
         $details =   [];

@@ -44,6 +44,13 @@ class Sale extends Model
         'discount',
         'change_pay',
 
+        'mto_oper_gravadas',
+        'mto_igv',
+        'total_impuestos',
+        'valor_venta',
+        'sub_total',
+        'mto_imp_venta',
+
         'legend',
 
         'correlative',

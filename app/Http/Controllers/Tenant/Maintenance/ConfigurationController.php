@@ -18,11 +18,12 @@ class ConfigurationController extends Controller
         return view('maintenance.configuration.index', compact('configuration'));
     }
 
-    /*
+/*
 array:1 [ // app\Http\Controllers\Tenant\Maintenance\ConfigurationController.php:26
-  "configuration_1" => "on"
-  "configuration_2" => "on"
-  "configuration_password_2" => "asdasdasd"
+    "configuration_1" => "on"
+    "configuration_2" => "on"
+    "configuration_3" => "on"
+    "configuration_4" => "123456789"
 ]
 */
     public function store(ConfigurationRequest $request)
@@ -30,19 +31,27 @@ array:1 [ // app\Http\Controllers\Tenant\Maintenance\ConfigurationController.php
         DB::beginTransaction();
         try {
 
-            $config_1   =   $request->get('configuration_1') === 'on' ? 'PRODUCTION' : 'BETA';
-            $config_2   =   $request->get('configuration_2') === 'on' ? true : false;
+            $c1   =   $request->get('configuration_1') === 'on' ? 'PRODUCTION' : 'BETA';
+            $c2   =   $request->get('configuration_2') === 'on' ? true : false;
+            $c3   =   $request->get('configuration_3') === 'on' ? true : false;
+            $c4   =   $request->get('configuration_4');
 
             $config             =   Configuration::findOrFail(1);
-            $config->property   =   $config_1;
+            $config->property   =   $c1;
             $config->save();
 
-            if ($config_2) {
-                $config             =   Configuration::findOrFail(2);
-                $config->property   =   trim($request->get('configuration_password_2'));
-                $config->status     =   $config_2;
-                $config->save();
-            }
+
+            $config2             =   Configuration::findOrFail(2);
+            $config2->property   =   $c2;
+            $config2->save();
+
+            $config3             =   Configuration::findOrFail(3);
+            $config3->property   =   $c3;
+            $config3->save();
+
+            $config4             =   Configuration::findOrFail(4);
+            $config4->property   =   $c4;
+            $config4->save();
 
             DB::commit();
 
@@ -56,8 +65,9 @@ array:1 [ // app\Http\Controllers\Tenant\Maintenance\ConfigurationController.php
     public function validationPassword(Request $request)
     {
         try {
+            
             $password   =   trim($request->get('password'));
-            $config     =   Configuration::findOrFail(2);
+            $config     =   Configuration::findOrFail(4);
 
             if ($config->status === 1 && $config->property !== $password) {
                 throw new Exception("Contraseña incorrecta");

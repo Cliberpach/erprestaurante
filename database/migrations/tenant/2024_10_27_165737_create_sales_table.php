@@ -46,18 +46,21 @@ return new class extends Migration
             $table->decimal('subtotal', 16, 6)->unsigned();
             $table->decimal('igv_amount', 16, 6)->unsigned();
             $table->decimal('total', 16, 6)->unsigned();
+            $table->decimal('total_pay', 16, 6)->unsigned();
+
             $table->decimal('discount', 16, 6)->unsigned()->default(0);
+            $table->decimal('discount_base', 16, 6)->unsigned()->default(0);
+            $table->decimal('discount_igv', 16, 6)->unsigned()->default(0);
+
+            $table->decimal('mto_oper_gravadas', 16, 6)->unsigned();
+            $table->decimal('mto_igv', 16, 6)->unsigned();
+            $table->decimal('total_impuestos', 16, 6)->unsigned();
+            $table->decimal('valor_venta', 16, 6)->unsigned();
+            $table->decimal('sub_total', 16, 6)->unsigned();
+            $table->decimal('mto_imp_venta', 16, 6)->unsigned();
+
             $table->decimal('change_pay', 16, 6)->default(0)->unsigned();
             $table->string('legend', 260);
-
-            //======== PAGOS ======
-            // $table->unsignedBigInteger('method_pay_id_1');
-            // $table->foreign('method_pay_id_1')->references('id')->on('payment_methods');
-            // $table->decimal('amount_pay_1', 14, 6);
-
-            // $table->unsignedBigInteger('method_pay_id_2')->nullable();
-            // $table->foreign('method_pay_id_2')->references('id')->on('payment_methods');
-            // $table->decimal('amount_pay_2', 14, 6)->nullable();
 
             //========= SERIE Y CORRELATIVO =======
             $table->unsignedInteger('correlative');

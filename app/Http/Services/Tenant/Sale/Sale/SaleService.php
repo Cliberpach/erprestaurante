@@ -131,7 +131,7 @@ class SaleService
         $data['correlative']    =   $correlative;
         $data['amounts']        =   $this->s_calculations->calculateCAmounts($data);
 
-        $dto                    =   $this->s_dto->getDtoStoreFromOrder($data);dd($dto);
+        $dto                    =   $this->s_dto->getDtoStoreFromOrder($data);
         $sale                   =   $this->s_repository->store($dto);
 
         $dto_sdishes            =   $this->s_dto->getDtoSaleDish($data['order_dishes'], $sale);
@@ -144,7 +144,7 @@ class SaleService
         $this->s_repository->storeSalePay($dto_pays);
 
         $this->s_company->startInvoicing(1, $sale->type_sale_id);
-
+        
         return $sale;
     }
 

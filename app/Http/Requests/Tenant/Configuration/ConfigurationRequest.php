@@ -25,15 +25,17 @@ class ConfigurationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'configuration_password_2' => [
-                'required_if:configuration_2,on',
+            'configuration_2' => ['nullable'],
+            'configuration_3' => ['nullable'],
+
+            'configuration_4' => [
+                'required',
                 'string',
                 'min:8',
-                'max:30',
-            ],
+                'max:30'
+            ]
         ];
     }
-
 
     /**
      * Get custom messages for validator errors.
@@ -43,12 +45,11 @@ class ConfigurationRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'configuration_password_2.required_if' => 'La contraseña es obligatoria cuando la opción está activada.',
-            'configuration_password_2.min'         => 'La contraseña debe tener al menos 8 caracteres.',
-            'configuration_password_2.max'         => 'La contraseña no puede tener más de 30 caracteres.',
+            'configuration_4.required' => 'La contraseña es obligatoria.',
+            'configuration_4.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'configuration_4.max' => 'La contraseña debe tener como máximo 30 caracteres.',
         ];
     }
-
 
     protected function failedValidation(Validator $validator)
     {

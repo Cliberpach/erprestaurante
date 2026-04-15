@@ -178,6 +178,7 @@
             lstDetailCanceled: @json($lst_canceled),
             customerFormatted: @json($customer_formatted),
             payrefImgUrl: @json(asset('storage')) + '/' + @json($order->payref_img_url),
+            configDiscount:@json($config_discount),
             eventsAdd: function() {
                 eventsMdlCreateCustomer();
             }

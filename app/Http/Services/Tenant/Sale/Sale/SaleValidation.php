@@ -253,6 +253,7 @@ class SaleValidation
         $data['total_pay']      =   $data_amounts->total_pay;
         $data['change']         =   $data_amounts->change;
         $data['igv_percentage'] =   $order->igv_percentage;
+        $data['order']          =   $order;
         return $data;
     }
 
