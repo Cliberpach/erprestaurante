@@ -248,7 +248,7 @@ array:9 [ // app\Http\Services\Tenant\Sale\Sale\SaleService.php:38
 */
     public function store(SaleStoreRequest $request)
     {
-
+        dd('blocked');
         DB::beginTransaction();
         try {
 
