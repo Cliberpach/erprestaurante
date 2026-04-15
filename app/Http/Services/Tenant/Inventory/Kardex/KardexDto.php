@@ -134,7 +134,7 @@ class KardexDto
     public function getDtoFromSale(Sale $sale)
     {
         $dto            =   [];
-        $lst_detail     =   SaleProduct::where('sale_id', $sale->id)->get();
+        $lst_detail     =   SaleProduct::where('sale_id', $sale->id)->where('status', 'ACTIVO')->get();
 
         foreach ($lst_detail as $item) {
 

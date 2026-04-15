@@ -144,7 +144,7 @@ class SaleService
         $this->s_repository->storeSalePay($dto_pays);
 
         $this->s_company->startInvoicing(1, $sale->type_sale_id);
-        
+
         return $sale;
     }
 
