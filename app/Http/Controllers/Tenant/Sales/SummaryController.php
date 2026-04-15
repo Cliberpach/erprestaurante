@@ -94,7 +94,7 @@ array:2 [ // app\Http\Controllers\Market\Ventas\ResumenController.php:64
 ]
 */
     public function store(Request $request)
-    {
+    {dd('blocked');
         DB::beginTransaction();
         try {
 
