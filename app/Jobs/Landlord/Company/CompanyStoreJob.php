@@ -18,6 +18,7 @@ class CompanyStoreJob implements ShouldQueue
 
     public $timeout = 900;
     public array $data;
+    public int $tries = 1;
 
     /**
      * Create a new job instance.
