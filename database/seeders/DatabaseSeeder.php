@@ -66,8 +66,8 @@ class DatabaseSeeder extends Seeder
         $this->call(DocumentTypeSeeder::class);
         $this->call(PettyCashSeeder::class);
         $this->call(ShiftSeeder::class);
-        // $this->call(PermissionSeeder::class);
-        // $this->call(RoleSeeder::class);
+        $this->call(PermissionSeeder::class);
+        $this->call(RoleSeeder::class);
         // $this->call(DepartmentSeeder::class);
         // $this->call(ProvinceSeeder::class);
         // $this->call(DistrictSeeder::class);
