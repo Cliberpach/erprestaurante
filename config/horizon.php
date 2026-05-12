@@ -218,7 +218,7 @@ return [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
                 'connection'   => 'redis',
-                'queue'        => ['invoices', 'invoice-retries', 'default'],
+                'queue'        => ['invoices', 'default'],
                 'balance'      => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,
