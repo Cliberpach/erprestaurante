@@ -45,11 +45,16 @@ class CompanyRepository
 
     public function getModulesLandlord(array $modules)
     {
-        return Module::whereIn('id', $modules)->get();
+        return Module::on('landlord')
+            ->whereIn('id', $modules)
+            ->get();
     }
+
     public function getModulesChildrenLandlord(array $childrens)
     {
-        return ModuleChild::whereIn('id', $childrens)->get();
+        return ModuleChild::on('landlord')
+            ->whereIn('id', $childrens)
+            ->get();
     }
 
     public function findPlanLandlord(int $id): Plan
