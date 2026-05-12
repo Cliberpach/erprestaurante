@@ -10,6 +10,7 @@ class Department extends Model
     use HasFactory;
 
     protected $guarded = [''];
+    protected $connection = 'landlord';
 
     public $timestamps = false;
 

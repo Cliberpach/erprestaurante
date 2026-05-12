@@ -10,13 +10,14 @@ class Province extends Model
     use HasFactory;
 
     protected $guarded = [''];
+    protected $connection = 'landlord';
 
     public $timestamps = false;
 
     protected $casts = [
         'id' => 'string',
     ];
-    
+
     public function departaments()
     {
         return $this->belongsTo('App\Departament');

@@ -10,6 +10,7 @@ class District extends Model
     use HasFactory;
 
     protected $guarded = [''];
+    protected $connection = 'landlord';
 
     protected $casts = [
         'id' => 'string',
