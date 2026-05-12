@@ -19,7 +19,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('creator_user_id')->nullable();
             $table->foreign('creator_user_id')->references('id')->on('users');
-            $table->string('creator_user_name');
+            $table->string('creator_user_name')->nullable();
 
             $table->unsignedBigInteger('editor_user_id')->nullable();
             $table->foreign('editor_user_id')->references('id')->on('users');

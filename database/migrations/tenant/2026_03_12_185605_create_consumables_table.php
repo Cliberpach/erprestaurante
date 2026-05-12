@@ -49,7 +49,7 @@ return new class extends Migration
 
             $table->string('deletor_user_name')->nullable();
             $table->string('editor_user_name')->nullable();
-            $table->string('creator_user_name');
+            $table->string('creator_user_name')->nullable();
             $table->timestamps();
         });
     }
