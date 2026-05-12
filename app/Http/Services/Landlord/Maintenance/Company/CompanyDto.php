@@ -250,8 +250,7 @@ class CompanyDto
 
     public function getDtoPlanTenant(int $plan_id): array
     {
-        $plan = Plan::findOrFail($plan_id);
-
+        $plan = Plan::on('landlord')->findOrFail($plan_id);
         return
             [
                 'id'            => $plan->id,
