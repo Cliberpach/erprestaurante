@@ -68,9 +68,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ShiftSeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);
-        $this->call(DepartmentSeeder::class);
-        $this->call(ProvinceSeeder::class);
-        $this->call(DistrictSeeder::class);
+        // $this->call(DepartmentSeeder::class);
+        // $this->call(ProvinceSeeder::class);
+        // $this->call(DistrictSeeder::class);
         $this->call(SupplierSeeder::class);
         $this->call(ProofPaymentSeeder::class);
         $this->call(TypeFieldSeeder::class);
