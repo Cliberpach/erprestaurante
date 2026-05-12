@@ -60,7 +60,7 @@ return new class extends Migration
             //======== CAJERO ==========
             $table->unsignedBigInteger('cashier_id')->nullable()->comment('Cajero que cobra el pedido');
             $table->foreign('cashier_id')->references('id')->on('users');
-            $table->string('cashier_id',255)->nullable()->comment('Nombre cajero que cobra el pedido');
+            $table->string('cashier_name',255)->nullable()->comment('Nombre cajero que cobra el pedido');
             $table->dateTime('cashier_date')->nullable()->comment('Fecha cobro de pedido');
 
             /* 🔹 PRINT CONFIGURATION */
