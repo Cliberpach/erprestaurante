@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyStoreRequest;
 use App\Http\Requests\Landlord\Maintenance\Company\CompanyUpdateRequest;
 use App\Http\Services\Landlord\Maintenance\Company\CompanyManager;
+use App\Jobs\Landlord\Company\CompanyStoreJob;
 use App\Models\Department;
 use App\Models\District;
 use App\Models\Landlord\Company as LandlordCompany;
@@ -138,7 +139,7 @@ array:19 [ // app\Http\Controllers\LandLord\CompanyController.php:251
   "logo" =>Illuminate\Http\UploadedFile {#2265}
 ]
 */
-    public function store(CompanyStoreRequest $request)
+    /*public function store(CompanyStoreRequest $request)
     {
         try {
             DB::beginTransaction();
@@ -162,6 +163,29 @@ array:19 [ // app\Http\Controllers\LandLord\CompanyController.php:251
                 'message' => $th->getMessage(),
                 'file' => $th->getFile(),
                 'line' => $th->getLine()
+            ]);
+        }
+    }*/
+
+    public function store(CompanyStoreRequest $request)
+    {
+        try {
+
+            CompanyStoreJob::dispatch($request->toArray());
+
+            Session::flash('message_success', 'EMPRESA EN PROCESO DE CREACIÓN');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'EMPRESA EN PROCESO DE CREACIÓN'
+            ]);
+        } catch (Throwable $th) {
+
+            Session::flash('message_error', $th->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
             ]);
         }
     }
