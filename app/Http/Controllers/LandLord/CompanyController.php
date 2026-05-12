@@ -139,7 +139,7 @@ array:19 [ // app\Http\Controllers\LandLord\CompanyController.php:251
   "logo" =>Illuminate\Http\UploadedFile {#2265}
 ]
 */
-    public function store(CompanyStoreRequest $request)
+    /*public function store(CompanyStoreRequest $request)
     {
         try {
             DB::beginTransaction();
@@ -165,9 +165,9 @@ array:19 [ // app\Http\Controllers\LandLord\CompanyController.php:251
                 'line' => $th->getLine()
             ]);
         }
-    }
+    }*/
 
-    /*public function store(CompanyStoreRequest $request)
+    public function store(CompanyStoreRequest $request)
     {
         try {
 
@@ -188,7 +188,7 @@ array:19 [ // app\Http\Controllers\LandLord\CompanyController.php:251
                 'message' => $th->getMessage(),
             ]);
         }
-    }*/
+    }
 
     /*
 array:21 [ // app\Http\Controllers\LandLord\CompanyController.php:250
