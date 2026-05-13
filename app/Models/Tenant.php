@@ -36,7 +36,7 @@ class Tenant extends BaseTenant
         }
     }
 
-    public function runMigrationsSeeders($tenant)
+    /*public function runMigrationsSeeders($tenant)
     {
         $tenant->refresh();
         $t = microtime(true);
@@ -49,6 +49,35 @@ class Tenant extends BaseTenant
 
         Log::channel('tenant_store')->info('MIGRACIONES COMPLETADAS', [
             'seconds' => round(microtime(true) - $t, 2)
+        ]);
+    }*/
+
+    public function runMigrationsSeeders($tenant)
+    {
+        $tenant->refresh();
+
+        $t = microtime(true);
+        Log::channel('tenant_store')->info('MIGRATE INICIANDO');
+
+        Artisan::call('tenants:artisan', [
+            'artisanCommand' => 'migrate --path=database/migrations/tenant --database=tenant --force',
+            '--tenant' => "{$tenant->id}"
+        ]);
+
+        Log::channel('tenant_store')->info('MIGRATE DONE', [
+            'seconds' => round(microtime(true) - $t, 2)
+        ]);
+
+        $t2 = microtime(true);
+        Log::channel('tenant_store')->info('SEED INICIANDO');
+
+        Artisan::call('tenants:artisan', [
+            'artisanCommand' => 'db:seed --force',
+            '--tenant' => "{$tenant->id}"
+        ]);
+
+        Log::channel('tenant_store')->info('SEED DONE', [
+            'seconds' => round(microtime(true) - $t2, 2)
         ]);
     }
 }
