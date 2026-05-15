@@ -93,8 +93,6 @@ class InvoiceService
                     ->setValue($dto['legends'])
             ])*/;
 
-            dd($invoice);
-
         $res = $see->send($invoice);
         dd($res);
         $data    =   [
