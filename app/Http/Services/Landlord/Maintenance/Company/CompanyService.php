@@ -33,6 +33,47 @@ class CompanyService
         $this->s_validation =   new CompanyValidation();
     }
 
+    /*public function store(array $data): Tenant
+    {
+        $this->s_validation->validationStore($data);
+
+        $dto_tenant =   $this->s_dto->getDtoTenant($data);
+        $tenant     =   $this->s_repository->storeTenant($dto_tenant);
+
+        $dto_company        =   $this->s_dto->getDtoCompanyLandlord($data, $tenant);
+        $company_landlord   =   $this->s_repository->storeCompanyLandlord($dto_company);
+
+        $dto_company_invoice_landlord   =   $this->s_dto->getDtoCompanyInvoiceLandlord($data, $company_landlord);
+        $company_invoice_landlord       =   $this->s_repository->storeCompanyInvoiceLandlord($dto_company_invoice_landlord);
+
+        $data['files_route']        =   $company_landlord->files_route;
+        $data['tenant_id']          =   $tenant->id;
+        $data['zip_code']           =   $company_landlord->district_id;
+        $data['modules']            =   $this->s_repository->getModulesLandlord($data['module_id']);
+        $data['modules_childrens']  =   $this->s_repository->getModulesChildrenLandlord($data['child_id']);
+        $data['plan_id']            =   $data['plan_id'];
+        DB::connection('landlord')->commit();
+
+        $data_tenant                =   $this->insertDataTenant($tenant, $data);
+
+        $this->makeTenantFilesSpace($company_landlord);
+        Tenant::forgetCurrent();
+
+        if (
+            isset($data['logo'])
+        ) {
+            $this->saveLogo($data['logo'], $tenant, $company_landlord, $data_tenant->company_tenant);
+        }
+
+        if (
+            isset($data['certificate'])
+        ) {
+            $this->saveCertificate($data, $tenant, $company_invoice_landlord, $data_tenant->company_invoice_tenant);
+        }
+
+        return $tenant;
+    }*/
+
     public function store(array $data): Tenant
     {
         $this->s_validation->validationStore($data);
@@ -79,6 +120,47 @@ class CompanyService
         $tenant->makeCurrent();
 
         $dto_tenant_company =   $this->s_dto->getDtoTenantCompany($data);
+        $tenant_company     =   $this->s_repository->updateCompanyTenant($dto_tenant_company,1);
+
+        $dto_tenant_company_invoice =   $this->s_dto->getDtoTenantCompanyInvoice($data, $tenant_company);
+        $tenant_company_invoice     =   $this->s_repository->updateCompanyInvoiceTenant($dto_tenant_company_invoice);
+
+        // app(TenantPermissionCloner::class)->clone();
+
+        // $dto_collaborator_tenant    =   $this->s_dto->getDtoCollaboratorTenant();
+        $collaborator_tenant        =   $this->s_repository->getCollaboratorAdminTenant();
+
+        $dto_user_tenant            =   $this->s_dto->getDtoUserTenant($data, $collaborator_tenant->id);
+        $user_tenant                =   $this->s_repository->updateUserAdminTenant($dto_user_tenant);
+
+        // $this->s_repository->assignRoleAdmin($user_tenant);
+
+        // $dto_document_serialization =   $this->s_dto->getDtoDocumentSerializationTenant($tenant_company->id);
+        // $this->s_repository->storeMasiveDocumentSerialiation($dto_document_serialization);
+
+        // $dto_modules_tenant         =   $this->s_dto->getDtoModulesTenant($data['modules']);
+        // $this->s_repository->insertMasiveModulesTenant($dto_modules_tenant);
+
+        // $dto_childrens_tenant       =   $this->s_dto->getDtoModulesChildrenTenant($data['modules_childrens']);
+        // $this->s_repository->insertMasiveModulesChildrenTenant($dto_childrens_tenant);
+
+        // $dto_plan                   =   $this->s_dto->getDtoPlanTenant($data['plan_id']);
+        // $plan_tenant                =   $this->s_repository->storePlanTenant($dto_plan);
+
+        // $this->dataTestTenant();
+
+        return (object)[
+            'company_tenant'            =>  $tenant_company,
+            'company_invoice_tenant'    =>  $tenant_company_invoice
+        ];
+    }
+
+
+    /*public function insertDataTenantOld(Tenant $tenant, array $data)
+    {
+        $tenant->makeCurrent();
+
+        $dto_tenant_company =   $this->s_dto->getDtoTenantCompany($data);
         $tenant_company     =   $this->s_repository->storeCompanyTenant($dto_tenant_company);
 
         $dto_tenant_company_invoice =   $this->s_dto->getDtoTenantCompanyInvoice($data, $tenant_company);
@@ -112,7 +194,7 @@ class CompanyService
             'company_tenant'            =>  $tenant_company,
             'company_invoice_tenant'    =>  $tenant_company_invoice
         ];
-    }
+    }*/
 
     public function makeTenantFilesSpace(Company $company)
     {

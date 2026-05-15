@@ -94,7 +94,7 @@ class InvoiceService
             ]);
 
         $res = $see->send($invoice);
-
+        dd($res);
         $data    =   [
             'response_success'          =>  null,
             'response_error'            =>  null,

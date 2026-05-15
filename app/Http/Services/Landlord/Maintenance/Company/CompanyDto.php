@@ -136,7 +136,7 @@ class CompanyDto
     public function getDtoCollaboratorTenant(): array
     {
         $dto =   [
-            'full_name'             =>  'LUIS DANIEL ALVA LUJÁN',
+            'full_name'             =>  'ADMIN',
             'document_type_id'      =>  1,
             'document_number'       =>  '77412431',
             'address'               =>  'AV HUSARES 123',

@@ -36,23 +36,112 @@ class Tenant extends BaseTenant
         }
     }
 
-    /*public function runMigrationsSeeders($tenant)
+    public function runMigrationsSeeders($tenant)
     {
         $tenant->refresh();
-        $t = microtime(true);
-        Log::channel('tenant_store')->info('MIGRACIONES INICIANDO');
 
-        Artisan::call('tenants:artisan', [
-            'artisanCommand' => 'migrate --path=database/migrations/tenant --database=tenant --seed --force',
-            '--tenant' => "{$tenant->id}"
+        $t        = microtime(true);
+        $template = 'tenancy_template_comandapro_online';
+        $newDb    = $tenant->database;
+        $user     = config('database.connections.landlord.username');
+        $pass     = config('database.connections.landlord.password');
+        $host     = config('database.connections.landlord.host', '127.0.0.1');
+
+        Log::channel('tenant_store')->info('CLONE INICIANDO', [
+            'tenant_id' => $tenant->id,
+            'newDb'     => $newDb,
+            'os'        => PHP_OS,
         ]);
 
-        Log::channel('tenant_store')->info('MIGRACIONES COMPLETADAS', [
-            'seconds' => round(microtime(true) - $t, 2)
-        ]);
-    }*/
+        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 
-    public function runMigrationsSeeders($tenant)
+        if ($isWindows) {
+            $this->cloneViaPDO($template, $newDb, $user, $pass, $host);
+        } else {
+            $dump    = "mysqldump -u{$user} -p'{$pass}' -h{$host} --routines --no-create-db {$template}";
+            $restore = "mysql -u{$user} -p'{$pass}' -h{$host} {$newDb}";
+            $output  = shell_exec("{$dump} | {$restore} 2>&1");
+
+            if ($output) {
+                Log::channel('tenant_store')->error('CLONE ERROR', ['output' => $output]);
+                throw new \Exception("Error clonando template: {$output}");
+            }
+        }
+
+        Log::channel('tenant_store')->info('CLONE DONE', [
+            'seconds' => round(microtime(true) - $t, 2),
+        ]);
+    }
+
+    private function cloneViaPDO(string $template, string $newDb, string $user, string $pass, string $host): void
+    {
+        $port = config('database.connections.landlord.port', '3306');
+
+        $pdo = new \PDO(
+            "mysql:host={$host};port={$port};charset=utf8mb4",
+            $user,
+            $pass,
+            [
+                \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+                \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
+            ]
+        );
+
+        $tables = $pdo->query("SHOW FULL TABLES FROM `{$template}`")
+            ->fetchAll(\PDO::FETCH_NUM);
+
+        $pdo->exec("SET FOREIGN_KEY_CHECKS=0;");
+
+        foreach ($tables as $row) {
+            $tableName = $row[0];
+            $tableType = $row[1];
+
+            if ($tableType === 'VIEW') {
+                $createRow = $pdo->query("SHOW CREATE VIEW `{$template}`.`{$tableName}`")
+                    ->fetch(\PDO::FETCH_ASSOC);
+                $createSql = $createRow['Create View'];
+            } else {
+                $createRow = $pdo->query("SHOW CREATE TABLE `{$template}`.`{$tableName}`")
+                    ->fetch(\PDO::FETCH_ASSOC);
+                $createSql = $createRow['Create Table'];
+            }
+
+            $pdo->exec("USE `{$newDb}`");
+            $pdo->exec($createSql);
+
+            if ($tableType === 'BASE TABLE') {
+                $pdo->exec("INSERT INTO `{$newDb}`.`{$tableName}` SELECT * FROM `{$template}`.`{$tableName}`");
+            }
+        }
+
+        $pdo->exec("SET FOREIGN_KEY_CHECKS=1;");
+
+        // Copiar rutinas
+        $routines = $pdo->query("
+        SELECT ROUTINE_NAME, ROUTINE_TYPE
+        FROM information_schema.ROUTINES
+        WHERE ROUTINE_SCHEMA = '{$template}'
+    ")->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($routines as $routine) {
+            try {
+                $type      = $routine['ROUTINE_TYPE'];
+                $name      = $routine['ROUTINE_NAME'];
+                $createRow = $pdo->query("SHOW CREATE {$type} `{$template}`.`{$name}`")
+                    ->fetch(\PDO::FETCH_ASSOC);
+                $key       = "Create {$type}";
+
+                if (isset($createRow[$key])) {
+                    $pdo->exec("USE `{$newDb}`");
+                    $pdo->exec($createRow[$key]);
+                }
+            } catch (\Exception $e) {
+                Log::channel('tenant_store')->warning("Error copiando rutina {$routine['ROUTINE_NAME']}: " . $e->getMessage());
+            }
+        }
+    }
+
+    /*public function runMigrationsSeeders($tenant)
     {
         $tenant->refresh();
 
@@ -79,5 +168,5 @@ class Tenant extends BaseTenant
         Log::channel('tenant_store')->info('SEED DONE', [
             'seconds' => round(microtime(true) - $t2, 2)
         ]);
-    }
+    }*/
 }

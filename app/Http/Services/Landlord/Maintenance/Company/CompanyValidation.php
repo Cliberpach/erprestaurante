@@ -2,12 +2,27 @@
 
 namespace App\Http\Services\Landlord\Maintenance\Company;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CompanyValidation
 {
     public function validationStore(array $data)
     {
+        $database = 'tenancy_' . str_replace('.', '_', strtolower($data['domain']));
+        $exists = DB::select(
+            "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
+            [$database]
+        );
+
+        if (!empty($exists)) {
+            throw ValidationException::withMessages([
+                'domain' => [
+                    'Este dominio ya está en uso.'
+                ]
+            ]);
+        }
+
         if (isset($data['certificate'])) {
             $certificateFile        =   $data['certificate'];
             $certificate_password   =   isset($data['certificate_password']) ?? null;

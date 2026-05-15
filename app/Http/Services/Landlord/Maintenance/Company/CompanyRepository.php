@@ -91,6 +91,11 @@ class CompanyRepository
         return Collaborator::create($dto);
     }
 
+    public function getCollaboratorAdminTenant(): Collaborator
+    {
+        return Collaborator::findOrFail(1);
+    }
+
     public function storeUserAdminTenant(array $dto): User
     {
         return User::create($dto);
