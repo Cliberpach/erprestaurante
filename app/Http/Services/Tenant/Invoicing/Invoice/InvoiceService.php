@@ -39,7 +39,7 @@ class InvoiceService
         //======= CONSTRUIR FACTURA ENCABEZADO ======
         $invoice
             ->setUblVersion('2.1')
-            //->setFecVencimiento(new DateTime($dto['fecVencimiento']))
+            ->setFecVencimiento(new DateTime($dto['fecVencimiento']))
             ->setTipoOperacion($dto['tipoOperacion'])
             ->setTipoDoc(str_pad($dto['tipoDoc'], 2, '0', STR_PAD_LEFT))
             ->setSerie($dto['serie'])
@@ -87,14 +87,14 @@ class InvoiceService
         }
 
         $invoice->setDetails($items)
-            /*->setLegends([
+            ->setLegends([
                 (new Legend())
                     ->setCode('1000')
                     ->setValue($dto['legends'])
-            ])*/;
+            ]);
 
         $res = $see->send($invoice);
-        dd($res);
+
         $data    =   [
             'response_success'          =>  null,
             'response_error'            =>  null,
