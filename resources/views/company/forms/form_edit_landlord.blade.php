@@ -28,9 +28,12 @@
                             <div class="col-12 mb-3">
                                 <label class="form-label required_field" for="domain">Hostname:</label>
                                 <div class="input-group">
+                                    <input hidden value="{{ $tenant_data->domain }}" minlength="3" maxlength="63"
+                                        required type="text" class="form-control" placeholder="Nombre del dominio"
+                                        name="domain">
                                     <input disabled value="{{ $tenant_data->domain }}" minlength="3" maxlength="63"
                                         required type="text" class="form-control" placeholder="Nombre del dominio"
-                                        id="domain" name="domain">
+                                        id="domain">
                                     <span class="input-group-text">.comandapro.online</span>
                                 </div>
                                 <p class="domain_error msgError mb-0"></p>
