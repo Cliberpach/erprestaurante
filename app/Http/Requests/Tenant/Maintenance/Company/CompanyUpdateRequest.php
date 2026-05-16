@@ -47,9 +47,9 @@ class CompanyUpdateRequest extends FormRequest
 
             'invoicing_status' => 'nullable',
 
-            'department' => 'required|exists:departments,id',
-            'province'   => 'required|exists:provinces,id',
-            'district'   => 'required|exists:districts,id',
+            'department' => 'required|exists:landlord.departments,id',
+            'province'   => 'required|exists:landlord.provinces,id',
+            'district'   => 'required|exists:landlord.districts,id',
 
             'lat' => 'nullable|numeric',
             'lng' => 'nullable|numeric',

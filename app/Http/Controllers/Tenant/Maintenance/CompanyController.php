@@ -67,9 +67,9 @@ class CompanyController extends Controller
     {
         $company            =   Company::findOrFail($id);
 
-        $departments        =   DB::select('select * from departments');
-        $districts          =   DB::select('select * from districts');
-        $provinces          =   DB::select('select * from provinces');
+        $departments        =   Department::all();
+        $districts          =   District::all();
+        $provinces          =   Province::all();
 
         $company_invoice    =   CompanyInvoice::where('company_id', $company->id)->get()[0];
 
