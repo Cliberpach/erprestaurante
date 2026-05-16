@@ -58,13 +58,22 @@ class Tenant extends BaseTenant
         if ($isWindows) {
             $this->cloneViaPDO($template, $newDb, $user, $pass, $host);
         } else {
-            $dump    = "mysqldump -u{$user} -p'{$pass}' -h{$host} --routines --no-create-db {$template}";
+            $dump = "mysqldump -u{$user} -p'{$pass}' -h{$host} --routines --no-create-db {$template}";
             $restore = "mysql -u{$user} -p'{$pass}' -h{$host} {$newDb}";
-            $output  = shell_exec("{$dump} | {$restore} 2>&1");
 
-            if ($output) {
-                Log::channel('tenant_store')->error('CLONE ERROR', ['output' => $output]);
-                throw new \Exception("Error clonando template: {$output}");
+            $command = "{$dump} | {$restore} 2>&1";
+
+            exec($command, $output, $resultCode);
+
+            $outputText = implode("\n", $output);
+
+            if ($resultCode !== 0) {
+                Log::channel('tenant_store')->error('CLONE ERROR', [
+                    'output' => $outputText,
+                    'code'   => $resultCode,
+                ]);
+
+                throw new \Exception("Error clonando template: {$outputText}");
             }
         }
 
