@@ -32,6 +32,31 @@ class CompanyValidation
         }
     }
 
+    public function validationUpdate(array $data)
+    {
+        $database = 'tenancy_' . str_replace('.', '_', strtolower($data['domain']));
+        $exists = DB::select(
+            "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
+            [$database]
+        );
+
+        if (empty($exists)) {
+            throw ValidationException::withMessages([
+                'domain' => [
+                    'Este dominio no existe.'
+                ]
+            ]);
+        }
+
+        if (isset($data['certificate'])) {
+            $certificateFile        =   $data['certificate'];
+            $certificate_password   =   isset($data['certificate_password']) ?? null;
+            $extension              =   strtolower($certificateFile->getClientOriginalExtension());
+
+            $this->validationCertificate($extension, $certificate_password);
+        }
+    }
+
     public function validationCertificate(string $extension, $certificate_password)
     {
         if (!in_array($extension, ['pem', 'p12'])) {

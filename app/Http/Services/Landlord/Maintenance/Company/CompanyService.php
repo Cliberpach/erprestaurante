@@ -376,7 +376,7 @@ class CompanyService
 
     public function update(array $data, int $id)
     {
-        $this->s_validation->validationStore($data);
+        $this->s_validation->validationUpdate($data);
 
         //========= OBTENER DATA =======
         $tenant_data                =   $this->s_repository->getTenantCompanyData($id);
