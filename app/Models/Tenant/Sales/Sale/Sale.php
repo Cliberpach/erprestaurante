@@ -18,9 +18,15 @@ class Sale extends Model
 
     protected $fillable = [
 
+        // =========================
+        // WAREHOUSE
+        // =========================
         'warehouse_id',
         'warehouse_name',
 
+        // =========================
+        // CUSTOMER
+        // =========================
         'customer_id',
         'customer_name',
         'customer_type_document',
@@ -29,21 +35,34 @@ class Sale extends Model
         'customer_phone',
         'customer_address',
 
+        // =========================
+        // PETTY CASH
+        // =========================
         'petty_cash_id',
         'petty_cash_name',
         'petty_cash_book_id',
 
+        // =========================
+        // TYPE SALE
+        // =========================
         'type_sale_id',
         'type_sale_code',
         'type_sale_name',
 
+        // =========================
+        // AMOUNTS
+        // =========================
         'igv_percentage',
         'subtotal',
         'igv_amount',
         'total',
+        'total_pay',
         'discount',
+        'discount_base',
+        'discount_igv',
         'change_pay',
 
+        // SUNAT BASE CALC
         'mto_oper_gravadas',
         'mto_igv',
         'total_impuestos',
@@ -51,16 +70,24 @@ class Sale extends Model
         'sub_total',
         'mto_imp_venta',
 
+        // =========================
+        // DOCUMENT
+        // =========================
         'legend',
-
         'correlative',
         'serie',
 
+        // =========================
+        // STATUS
+        // =========================
         'status',
         'sunat_status',
         'pay_status',
         'pending_print',
 
+        // =========================
+        // SUNAT RESPONSE
+        // =========================
         'response_cdrZip',
         'response_success',
         'response_error_code',
@@ -72,38 +99,65 @@ class Sale extends Model
         'cdr_response_notes',
         'cdr_response_reference',
 
-        'last_send_message',
-
+        // =========================
+        // FILES
+        // =========================
         'ruta_cdr',
         'ruta_xml',
         'ruta_qr',
 
+        // =========================
+        // PROCESS LOG
+        // =========================
+        'last_send_message',
+
+        // =========================
+        // TYPE / RELATIONS
+        // =========================
         'type',
         'order_id',
         'public_hash',
 
-        'expiration_date',
-        'registration_date',
+        // =========================
+        // PAYMENT CONDITION
+        // =========================
         'payment_condition_id',
         'payment_condition_name',
         'payment_condition_days',
         'payment_status',
 
+        // =========================
+        // DATES
+        // =========================
+        'registration_date',
+        'expiration_date',
+        'date_pending_print',
+        'send_at',
+        'expires_at',
+        'processing_at',
+        'next_retry_at',
+
+        // =========================
+        // SUMMARY
+        // =========================
+        'summary_id',
+        'summary_serie',
+
+        // =========================
+        // USERS (AUDIT)
+        // =========================
         'creator_user_id',
         'editor_user_id',
         'deletor_user_id',
 
-        'deletor_user_name',
-        'editor_user_name',
         'creator_user_name',
-        'date_pending_print',
-        'summary_id',
-        'summary_serie',
-        'send_at',
-        'expires_at',
-        'processing_at',
+        'editor_user_name',
+        'deletor_user_name',
+
+        // =========================
+        // RETRY / CONTROL
+        // =========================
         'attempts',
-        'next_retry_at'
     ];
 
     const STATUS_PENDING    = 'PENDIENTE';
