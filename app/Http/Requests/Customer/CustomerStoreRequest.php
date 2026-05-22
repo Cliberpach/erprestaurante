@@ -65,21 +65,21 @@ class CustomerStoreRequest extends FormRequest
                 'sometimes',
                 'string',
                 'size:2',
-                Rule::exists('departments', 'id'),
+                Rule::exists('landlord.departments', 'id'),
             ],
             'province' => [
                 'nullable',
                 'sometimes',
                 'string',
                 'size:4',
-                Rule::exists('provinces', 'id'),
+                Rule::exists('landlord.provinces', 'id'),
             ],
             'district' => [
                 'nullable',
                 'sometimes',
                 'string',
                 'size:6',
-                Rule::exists('districts', 'id'),
+                Rule::exists('landlord.districts', 'id'),
             ],
             // 'limite_credito' => ['nullable', 'numeric', 'min:0', 'max:9999999999999.99']
         ];
