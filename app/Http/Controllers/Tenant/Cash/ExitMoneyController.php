@@ -35,7 +35,8 @@ class ExitMoneyController extends Controller
 
     public function index(Request $request)
     {
-        return view('cash.exit-money.index');
+        $cost_centers = CostCenter::orderBy('name')->get(['id', 'name']);
+        return view('cash.exit-money.index', compact('cost_centers'));
     }
 
     public function getExitMoneys(Request $request)
@@ -69,6 +70,13 @@ class ExitMoneyController extends Controller
                   LIMIT 1) as first_item")
             )
             ->where('em.status', 1);
+
+        if ($request->filled('cost_center_id')) {
+            $query->where('em.cost_center_id', $request->get('cost_center_id'));
+        }
+        if ($request->filled('supplier_id')) {
+            $query->where('em.supplier_id', $request->get('supplier_id'));
+        }
 
         if ($date_start) {
             $query->whereDate('em.created_at', '>=', $date_start);

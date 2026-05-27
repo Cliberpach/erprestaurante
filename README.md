@@ -662,3 +662,6 @@ su - deploy -c "pm2 list" && \
 redis-cli ping && \
 sudo systemctl status apache2 --no-pager
 ```
+
+### 3.6 commands 
+php artisan tenant:rebuild-template

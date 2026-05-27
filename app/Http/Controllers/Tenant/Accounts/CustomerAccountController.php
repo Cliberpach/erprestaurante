@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers\Tenant\Accounts;
 
+use App\Exports\Tenant\Accounts\CustomerAccount\CustomerAccountExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounts\CustomerAccount\PayStoreRequest;
 use App\Http\Services\Tenant\Accounts\CustomerAccount\CustomerAccountManager;
+use App\Models\Company;
+use App\Models\Landlord\Customer;
 use App\Models\Tenant\Accounts\CustomerAccountDetail;
 use App\Models\Tenant\PaymentMethod;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 use Yajra\DataTables\DataTables;
 
@@ -29,34 +35,90 @@ class CustomerAccountController extends Controller
         return view('accounts.customer_accounts.index', compact('payment_methods'));
     }
 
-    public function getCustomerAccounts(Request $request)
+    private function queryAll(Request $request)
     {
-
-        $customer_id =   $request->get('customer');
-        $status     =   $request->get('status');
-
-        $customer_accounts    =   DB::table('customer_accounts as ca')
-            ->leftJoin('work_orders as sd', 'sd.id', 'ca.work_order_id')
+        $query = DB::table('customer_accounts as ca')
+            ->leftJoin('sales as s', 's.id', 'ca.sale_id')
+            ->leftJoin('erprestaurante.customers as c', 'c.id', 's.customer_id')
             ->select(
                 'ca.id',
-                'ca.document_number',
-                'sd.customer_name',
+                'ca.document_serie',
+                DB::raw("CONCAT(c.type_document_abbreviation, ':', c.document_number, '-', c.name) as customer_info"),
                 'ca.document_date',
                 'ca.amount',
-                'ca.agreement',
+                'ca.paid',
                 'ca.balance',
                 'ca.status'
             )
-            ->where('ca.status', '<>', 'ANULADO');
+        ;
 
-        if ($customer_id) {
-            $customer_accounts->where('sd.customer_id', $customer_id);
+        if ($request->get('customer')) {
+            $query->where('s.customer_id', $request->get('customer'));
         }
-        if ($status) {
-            $customer_accounts->where('ca.status', $status);
+        if ($request->get('status')) {
+            $query->where('ca.status', $request->get('status'));
+        } else {
+            $query->where('ca.status', '<>', 'ANULADO');
+        }
+        if ($request->get('start_date')) {
+            $query->where('ca.document_date', '>=', $request->get('start_date'));
+        }
+        if ($request->get('end_date')) {
+            $query->where('ca.document_date', '<=', $request->get('end_date'));
         }
 
-        return DataTables::of($customer_accounts)->make(true);
+        return $query;
+    }
+
+    public function getCustomerAccounts(Request $request)
+    {
+        $query = $this->queryAll($request);
+
+        return DataTables::of($query)
+            ->filterColumn('customer_info', function ($q, $keyword) {
+                $q->whereRaw(
+                    "CONCAT(c.type_document_abbreviation, ':', c.document_number, '-', c.name) LIKE ?",
+                    ["%{$keyword}%"]
+                );
+            })
+            ->make(true);
+    }
+
+    public function pdfAll(Request $request)
+    {
+        $company  = Company::findOrFail(1);
+        $data     = $this->queryAll($request)->get();
+
+        $customer = null;
+        if ($request->get('customer')) {
+            $customer = Customer::find($request->get('customer'));
+        }
+        $request->merge(['customer' => $customer]);
+
+        $pdf = Pdf::loadView('accounts.customer_accounts.reports.pdf-all', [
+            'company' => $company,
+            'data'    => $data,
+            'filters' => $request,
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('cuentas_cliente_' . Carbon::now()->format('Y_m_d_H_i_s') . '.pdf');
+    }
+
+    public function excelAll(Request $request)
+    {
+        $company  = Company::findOrFail(1);
+        $data     = $this->queryAll($request)->get();
+
+        $customer = null;
+        if ($request->get('customer')) {
+            $customer = Customer::find($request->get('customer'));
+        }
+        $request->merge(['customer' => $customer]);
+
+        return Excel::download(
+            new CustomerAccountExport($data, $request, $company),
+            'cuentas_cliente_' . Carbon::now()->format('Y-m-d') . '.xlsx'
+        );
     }
 
     public function store(Request $request)
@@ -74,16 +136,23 @@ class CustomerAccountController extends Controller
     {
         try {
 
-            $cuenta =   DB::table('customer_accounts as ca')
-                ->leftJoin('work_orders as wo', 'wo.id', 'ca.work_order_id')
+            $cuenta = DB::table('customer_accounts as ca')
+                ->leftJoin('sales as s', 's.id', 'ca.sale_id')
+                ->leftJoin('erprestaurante.customers as c', 'c.id', 's.customer_id')
                 ->select(
                     'ca.id',
-                    'ca.document_number',
-                    'wo.customer_name',
+                    'ca.document_serie',
+                    'ca.document_date',
+                    'ca.paid',
+                    DB::raw("CONCAT(c.type_document_abbreviation, ':', c.document_number, '-', c.name) as customer_info"),
                     'ca.amount',
+                    'ca.paid',
                     'ca.balance',
                     'ca.status',
-                    'ca.work_order_id'
+                    'ca.work_order_id',
+                    'ca.instance_serie',
+                    'ca.type_instance',
+                    's.id as sale_id'
                 )
                 ->where('ca.id', $id)
                 ->first();
@@ -93,8 +162,8 @@ class CustomerAccountController extends Controller
             }
 
             $detalle    =   CustomerAccountDetail::where('customer_account_id', $id)
-                            ->orderByDesc('id')
-                            ->get();
+                ->orderByDesc('id')
+                ->get();
 
             return response()->json([
                 'success' => true,
@@ -128,16 +197,17 @@ array:11 [ // app\Http\Controllers\Tenant\Accounts\CustomerAccountController.php
     {
         DB::beginTransaction();
         try {
-            $pay    =   $this->s_account->storePago($request->toArray());
+            $this->s_account->storePago($request->toArray());
             DB::commit();
             return response()->json(['success' => true, 'message' => 'PAGO REGISTRADO CON ÉXITO']);
         } catch (Throwable $th) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $th->getMessage(),'line'=>$th->getLine(),'file'=>$th->getFile()]);
+            return response()->json(['success' => false, 'message' => $th->getMessage(), 'line' => $th->getLine(), 'file' => $th->getFile()]);
         }
     }
 
-    public function pdfOne(int $id){
+    public function pdfOne(int $id)
+    {
         try {
             $pdf    =   $this->s_account->pdfOne($id);
             return $pdf;

@@ -1,7 +1,21 @@
 <form action="" method="post" id="form-charge">
     <div class="row g-3">
 
-        <div class="col-8">
+        <div class="col-8" id="col-main-charge">
+            <!-- INFO SIEMPRE VISIBLE -->
+            <div class="d-flex align-items-center gap-3 mb-3 px-3 py-2 rounded border bg-light">
+                <span class="small">
+                    <i class="fas fa-money-check-alt text-primary me-1"></i>
+                    <span class="text-muted">Condición:</span>
+                    <strong id="info-condition-text" class="ms-1">-</strong>
+                </span>
+                <span class="vr"></span>
+                <span class="small">
+                    <i class="fas fa-receipt text-success me-1"></i>
+                    <span class="text-muted">Total:</span>
+                    <strong id="info-total-text" class="text-success ms-1">S/ 0.00</strong>
+                </span>
+            </div>
             <!-- RESUMEN DE COBRO -->
             <div class="row g-2 mb-3" id="charge-summary">
                 <!-- Total -->
@@ -75,7 +89,7 @@
                     </div>
                 </div>
                 <!-- CENTRO — Comprobante + Cliente + Cobrar + QR -->
-                <div class="col-lg-8 col-md-6 col-12">
+                <div class="col-lg-8 col-md-6 col-12" id="col-invoice-customer">
                     <div class="row g-3">
                         <!-- COMPROBANTE -->
                         <div class="col-12">
@@ -235,5 +249,37 @@
         font-size: .7rem;
         line-height: 1.4;
         border-radius: .3rem;
+    }
+
+    /* ── Dark Mode — Card Notificaciones ───────────────── */
+    [data-theme="dark"] .notif-card {
+        background: #12162a;
+        border-color: #2e3455;
+    }
+
+    [data-theme="dark"] .notif-card-header {
+        background: linear-gradient(90deg, #162035, #0e1c30);
+        border-bottom-color: #2e3455;
+        color: #22d3ee;
+    }
+
+    [data-theme="dark"] .notif-card .border-bottom {
+        border-color: #2e3455 !important;
+        background: #161b2e;
+    }
+
+    [data-theme="dark"] .notif-card .text-muted {
+        color: #7a82aa !important;
+    }
+
+    [data-theme="dark"] .btn-notif-xs {
+        border-color: #3a3f5a;
+        color: #9ba3c8;
+    }
+
+    [data-theme="dark"] .btn-notif-xs:hover {
+        background: #2a2f4a;
+        color: #cdd2e8;
+        border-color: #4a5070;
     }
 </style>

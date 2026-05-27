@@ -2,7 +2,7 @@ import { openMdlPassword } from "../../../components/mdl_password/action";
 import { getStatePassword } from "../../../components/mdl_password/state";
 import { openMdlCharge } from "../modals/action";
 import { amounts, dtDetail, lstDetail, lstDetailCanceled, setDtDetail, setLstDetail, setLstDetailCanceled } from "./state";
-import { paintAmounts, paintTblDetail } from "./ui";
+import { paintAmounts, paintTblDetail, renderDueDate } from "./ui";
 
 export function loadDataPreview() {
     setLstDetail(app.lstDetail);
@@ -10,6 +10,8 @@ export function loadDataPreview() {
     setAmounts(app.order);
     paintTblDetail(lstDetail, lstDetailCanceled);
     paintAmounts(amounts);
+    const initialOption = document.querySelector('#payment_condition option[selected]');
+    renderDueDate(initialOption ? parseInt(initialOption.dataset.nroDays || 0) : 0);
     const instanceDt = loadDataTableSimple('dt-detail', {
         columnDefs: [
             { targets: [0], visible: false }
@@ -28,7 +30,6 @@ function setAmounts(order) {
     amounts.total = order.total;
     amounts.discount = 0;
     amounts.totalPay = order.total;
-    console.log('amounts', amounts);
 }
 
 export function actionChangeStatus(status) {
@@ -83,4 +84,10 @@ export function actionInputDiscount(e) {
     amounts.totalPay = amounts.total - discount;
 
     paintAmounts(amounts);
+}
+
+
+export function actionChangePaymentCondition(value) {
+    const option = document.querySelector(`#payment_condition option[value="${value}"]`);
+    renderDueDate(option ? parseInt(option.dataset.nroDays || 0) : 0);
 }

@@ -13,5 +13,6 @@ Route::group(["prefix" => "mostrador_cajero"], function () {
         Route::get('get-order-table/{table}', [CCounterController::class, 'getOrderTable'])->name('tenant.mostrador_cajero.mostrador.getOrderTable');
         Route::put('update/{id}', [CCounterController::class, 'update'])->name('tenant.mostrador_cajero.mostrador.update');
         Route::get('edit/{id}', [CCounterController::class, 'edit'])->name('tenant.mostrador_cajero.mostrador.edit');
+        Route::get('pdf-voucher/{sale}', [CCounterController::class, 'pdfVoucher'])->name('tenant.mostrador_cajero.mostrador.pdfVoucher');
     });
 });

@@ -4,6 +4,7 @@ namespace App\Http\Services\Tenant\Sale\Sale;
 
 use App\Http\Controllers\Tenant\NumberToLettersController;
 use App\Http\Controllers\Tenant\QRController;
+use App\Http\Services\Tenant\Accounts\CustomerAccount\CustomerAccountService;
 use App\Http\Services\Tenant\CreditNote\CreditNoteService;
 use App\Http\Services\Tenant\Inventory\Kardex\KardexService;
 use App\Http\Services\Tenant\Inventory\WarehouseProduct\WarehouseProductService;
@@ -140,11 +141,18 @@ class SaleService
         $this->s_repository->storeSaleDish($dto_sdishes);
         $this->s_repository->storeSaleProduct($dto_s_products);
 
-        $dto_pays       =   $this->s_dto->getDtoPays($data['lst_pays'], $sale);
-        $this->s_repository->storeSalePay($dto_pays);
+        if ($sale->payment_condition == 1) {
+            $dto_pays       =   $this->s_dto->getDtoPays($data['lst_pays'], $sale);
+            $this->s_repository->storeSalePay($dto_pays);
+        }
 
         $this->s_company->startInvoicing(1, $sale->type_sale_id);
-
+        if ($sale->payment_condition_id != 1) {
+            $dto_account    =   ['sale' =>  $sale, 'from' => 'SALE'];
+            $s_account      =   new CustomerAccountService();
+            $s_account->store($dto_account);
+        }
+       
         return $sale;
     }
 

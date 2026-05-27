@@ -6,11 +6,13 @@
 
 @push('js-head')
     @vite(['resources/js/libs/filepond.js'])
+    @vite(['resources/js/libs/lightgalery.js'])
 @endpush
 
 @section('content')
     @include('accounts.supplier_accounts.modals.mdl_pagar')
     @include('accounts.supplier_accounts.modals.mdl_ver')
+    @include('accounts.supplier_accounts.modals.mdl_historial')
 
 
     <div class="card">
@@ -109,6 +111,7 @@
 
         function events() {
             eventsMdlPagar();
+            eventsMdlHistorialProv();
         }
 
         function loadDtAccounts() {
@@ -236,9 +239,9 @@
                             <li>
                                 <a class="dropdown-item d-flex align-items-center gap-2"
                                 href="javascript:void(0);"
-                                onclick="openMdlVerCobranza(${data.id})">
-                                    <i class="fas fa-eye text-info"></i>
-                                    <span>Ver</span>
+                                onclick="openMdlHistorialProv(${data.id})">
+                                    <i class="fas fa-history text-primary"></i>
+                                    <span>Historial</span>
                                 </a>
                             </li>
 

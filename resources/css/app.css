@@ -47,3 +47,64 @@
 #toast-container {
     z-index: 99999992 !important;
 }
+
+/* ── TomSelect — Dark Mode ────────────────────────────────── */
+[data-theme="dark"] .ts-wrapper .ts-control {
+    background-color: #1e2235;
+    border-color: #3a3f5a;
+    color: #cdd2e8;
+}
+
+[data-theme="dark"] .ts-wrapper .ts-control input {
+    color: #cdd2e8 !important;
+}
+
+[data-theme="dark"] .ts-wrapper .ts-control input::placeholder {
+    color: #6b7499;
+}
+
+[data-theme="dark"] .ts-wrapper.single .ts-control .item,
+[data-theme="dark"] .ts-wrapper.multi .ts-control .item {
+    color: #cdd2e8;
+    background-color: #2a2f4a;
+    border-color: #3a3f5a;
+}
+
+[data-theme="dark"] .ts-dropdown {
+    background-color: #1e2235;
+    border-color: #3a3f5a;
+    color: #cdd2e8;
+}
+
+[data-theme="dark"] .ts-dropdown .option {
+    color: #cdd2e8;
+}
+
+[data-theme="dark"] .ts-dropdown .option:hover,
+[data-theme="dark"] .ts-dropdown .option.active {
+    background-color: #2e3560;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .ts-dropdown .option.selected,
+[data-theme="dark"] .ts-dropdown .option.selected.active {
+    background-color: #1a4a8a;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .ts-dropdown .optgroup-header {
+    background-color: #16192b;
+    color: #7a82aa;
+}
+
+[data-theme="dark"] .ts-dropdown .no-results {
+    color: #7a82aa;
+    background-color: #1e2235;
+}
+
+[data-theme="dark"] .ts-wrapper .ts-control .clear-button {
+    color: #7a82aa;
+}
+[data-theme="dark"] .ts-wrapper .ts-control .clear-button:hover {
+    color: #cdd2e8;
+}

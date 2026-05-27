@@ -14,13 +14,17 @@ class CustomerAccount extends Model
 
     protected $fillable = [
         'sale_id',
-        'document_number',
+        'document_serie',
         'document_date',
         'amount',
-        'agreement',
+        'paid',
         'balance',
         'status',
         'work_order_id',
+
+        'instance_id',
+        'instance_serie',
+        'type_instance',
 
         'creator_user_id',
         'editor_user_id',

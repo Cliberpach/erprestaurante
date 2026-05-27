@@ -55,4 +55,19 @@ export function enableDiscount(configDiscount) {
     }
 }
 
+export function renderDueDate(nroDays) {
+    const col = document.getElementById('due-date-col');
+    if (!nroDays || nroDays <= 0) {
+        col.classList.add('d-none');
+        return;
+    }
+    col.classList.remove('d-none');
+    const date = new Date();
+    date.setDate(date.getDate() + nroDays);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    document.getElementById('due-date-input').value = `${yyyy}-${mm}-${dd}`;
+}
+
 window.paintTblDetail = paintTblDetail;

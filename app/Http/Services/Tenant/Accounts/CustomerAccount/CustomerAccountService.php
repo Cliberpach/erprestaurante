@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Landlord\Customer;
 use App\Models\Tenant\Accounts\CustomerAccount;
 use App\Models\Tenant\Accounts\CustomerAccountDetail;
+use App\Models\Tenant\Sales\Sale\Sale;
 use App\Models\Tenant\WorkShop\WorkOrder\WorkOrder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\UploadedFile;
@@ -27,8 +28,8 @@ class CustomerAccountService
 
     public function store(array $data): CustomerAccount
     {
-        $dto   =    $this->s_dto->getDtoFromWorkOrder($data);
-        $customer_account   =   $this->s_repository->insertCustomerAccount($dto);
+        $dto                =       $this->s_dto->getDtoStore($data);
+        $customer_account   =       $this->s_repository->store($dto);
 
         return $customer_account;
     }
@@ -43,9 +44,14 @@ class CustomerAccountService
         $new_balance        =   $balance - $amount_pay;
         $new_status         =   $new_balance == 0 ? 'PAGADO' : 'PENDIENTE';
 
-        $dto_account        =   ['balance' => $new_balance, 'status' => $new_status];
+        $new_paid           =   round(($customer_account->paid ?? 0) + $amount_pay, 2);
+        $dto_account        =   ['balance' => $new_balance, 'paid' => $new_paid, 'status' => $new_status];
         $this->s_repository->updateCustomerAccount($data['id'], $dto_account);
         $data['balance']    =   $new_balance;
+
+        if ($new_status === 'PAGADO' && $customer_account->sale_id) {
+            $this->s_repository->updateSalePayStatus($customer_account->sale_id, 'PAGADO');
+        }
 
         $dto    =   $this->s_dto->getDtoPay($data);
         $pay    =   $this->s_repository->insertPay($dto);
@@ -67,29 +73,31 @@ class CustomerAccountService
 
     public function pdfOne(int $id)
     {
-        $cuenta = CustomerAccount::findOrFail($id);
-        $documento =   null;
-        $cliente    =   null;
+        $cuenta    = CustomerAccount::findOrFail($id);
+        $documento = $cuenta->document_serie ?? '—';
+        $cliente   = null;
 
-        if ($cuenta->work_order_id) {
-            $work_order =   WorkOrder::findOrFail($cuenta->work_order_id);
-            $cliente    =   Customer::findOrFail($work_order->customer_id);
-            $documento  =   'OT-' . $work_order->id;
+        if ($cuenta->sale_id) {
+            $sale    = Sale::findOrFail($cuenta->sale_id);
+            $cliente = Customer::findOrFail($sale->customer_id);
+        } elseif ($cuenta->work_order_id) {
+            $work_order = WorkOrder::findOrFail($cuenta->work_order_id);
+            $cliente    = Customer::findOrFail($work_order->customer_id);
         }
 
-        $company            = Company::first();
-        $detalle    =   CustomerAccountDetail::where('customer_account_id', $id)
+        $company = Company::first();
+        $detalle = CustomerAccountDetail::where('customer_account_id', $id)
             ->orderByDesc('id')
             ->get();
 
         $pdf = Pdf::loadview('accounts.customer_accounts.reports.pdf-one', [
-            'cuenta' => $cuenta,
-            'detalles' => $cuenta->detalles,
-            'cliente' => $cliente,
-            'company' => $company,
+            'cuenta'    => $cuenta,
+            'cliente'   => $cliente,
+            'company'   => $company,
             'documento' => $documento,
-            'detalle'   => $detalle
+            'detalle'   => $detalle,
         ])->setPaper('a4');
+
         return $pdf->stream('CUENTA-' . $cuenta->id . '.pdf');
     }
 }

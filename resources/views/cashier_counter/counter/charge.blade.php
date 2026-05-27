@@ -109,6 +109,28 @@
                         <option value="ELIMINADO">Eliminado</option>
                     </select>
                 </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                    <label for="payment_condition">
+                        <i class="fas fa-money-check-alt text-primary me-1"></i> Condición
+                    </label>
+                    <select name="payment_condition" id="payment_condition" name="payment_condition"
+                        data-placeholder="Seleccionar">
+                        <option value=""></option>
+                        @foreach ($payment_conditions as $condition)
+                            <option @if ($condition->id == 1) selected @endif value="{{ $condition->id }}"
+                                data-nro-days="{{ $condition->nro_days }}">
+                                {{ $condition->name . ' - ' . $condition->nro_days . ' DÍAS' }}</option>
+                        @endforeach
+                    </select>
+                    <span class="payment_condition_error msgError"></span>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12 d-none" id="due-date-col">
+                    <label>
+                        <i class="fas fa-calendar-alt text-warning me-1"></i>
+                        Vencimiento
+                    </label>
+                    <input type="date" id="due-date-input" class="form-control" disabled>
+                </div>
             </div>
             <div class="row">
                 <div class="col-12">
@@ -178,7 +200,7 @@
             lstDetailCanceled: @json($lst_canceled),
             customerFormatted: @json($customer_formatted),
             payrefImgUrl: @json(asset('storage')) + '/' + @json($order->payref_img_url),
-            configDiscount:@json($config_discount),
+            configDiscount: @json($config_discount),
             eventsAdd: function() {
                 eventsMdlCreateCustomer();
             }

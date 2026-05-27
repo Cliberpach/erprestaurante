@@ -13,6 +13,8 @@ Route::group(["prefix" => "cuentas"], function () {
         Route::get('getCustomerAccount/{id}', [CustomerAccountController::class, 'getCustomerAccount'])->name('tenant.cuentas.cliente.getCustomerAccount');
         Route::post('store-pago', [CustomerAccountController::class, 'storePago'])->name('tenant.cuentas.cliente.storePago');
         Route::get('pdf-one/{id}', [CustomerAccountController::class, 'pdfOne'])->name('tenant.cuentas.cliente.pdfOne');
+        Route::get('pdf-all', [CustomerAccountController::class, 'pdfAll'])->name('tenant.cuentas.cliente.pdfAll');
+        Route::get('excel-all', [CustomerAccountController::class, 'excelAll'])->name('tenant.cuentas.cliente.excelAll');
     });
 
     Route::group(["prefix" => "proveedor"], function () {

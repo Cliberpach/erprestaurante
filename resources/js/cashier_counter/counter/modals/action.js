@@ -1,15 +1,29 @@
+import { config } from "../../../components/mdl_password/state";
 import { lstAlertsSelected } from "../../../utils/datatables/alerts/state";
 import { customerSelect } from "../../../utils/selects/customers/state";
 import { amounts } from "../charge/state";
 import { CASH_ID, configMdlCharge, infoAmounts, invoiceId, lstPays, paymentMethodSelect, setInvoiceId } from "./state";
-import { desactiveBtnsInvoice, disabledInputsPayment, enabledInputsPayment, renderSummary, setDataFormCharge } from "./ui";
+import { desactiveBtnsInvoice, disabledInputsPayment, enabledInputsPayment, renderModalInfo, renderPaymentMetods, renderSummary, setDataFormCharge } from "./ui";
 import { validatePayments } from "./validation";
 
 export function openMdlCharge() {
     setState();
     setConfigDefault();
     setDataFormCharge();
+    renderPaymentMetods(configMdlCharge.getPaymentConditionSelect().getValue());
+    renderModalInfo(getConditionText(), infoAmounts.total);
     $('#mdl_charge').modal('show');
+}
+
+function getConditionText() {
+    const val = configMdlCharge.getPaymentConditionSelect().getValue();
+    const option = document.querySelector(`#payment_condition option[value="${val}"]`);
+    return option ? option.text.trim() : '-';
+}
+
+function getClientText() {
+    const val = customerSelect.getValue();
+    return customerSelect.options[val]?.full_name || '-';
 }
 
 export function actionPaymentMethod(value) {
@@ -156,20 +170,30 @@ export async function actionFormCharge(e) {
     e.preventDefault();
 
     toastr.clear();
-    const isValid = validatePayments(lstPays, infoAmounts);
-    if (!isValid.ok) return;
+    const paymentConditionId = configMdlCharge.getPaymentConditionSelect().getValue();
+    if (Number(paymentConditionId) === 1) {
+        const isValid = validatePayments(lstPays, infoAmounts);
+        if (!isValid.ok) return;
+    }
 
     const result = await Swal.fire({
-        title: '¿Desea generar el comprobante de venta?',
-        text: "Confirmar",
+        title: 'Generar Documento de Venta?',
+        html: `
+            <div class="text-center" style="font-size:.9rem;line-height:2.2">
+                <div><i class="fas fa-user me-2 text-primary"></i><strong>Cliente:</strong> ${getClientText()}</div>
+                <div><i class="fas fa-money-check-alt me-2 text-info"></i><strong>Condición:</strong> ${getConditionText()}</div>
+                <div><i class="fas fa-receipt me-2 text-success"></i><strong>Total:</strong> ${formatSoles(infoAmounts.total)}</div>
+            </div>
+        `,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'SI',
         cancelButtonText: 'NO',
         reverseButtons: true,
         customClass: {
-            confirmButton: 'btn btn-primary',
-            cancelButton: 'btn btn-secondary'
+            confirmButton: 'btn btn-primary px-4',
+            cancelButton: 'btn btn-secondary px-4',
+            actions: 'gap-3'
         },
         buttonsStyling: false
     });
@@ -192,10 +216,15 @@ export async function actionFormCharge(e) {
 
             const lsyPaysPrepared = lstPays.filter(i => Number(i.amount) > 0);
             const formData = new FormData(e.target);
-            formData.append('lst_pays', JSON.stringify(lsyPaysPrepared));
             formData.append('order_id', app.order.order_id);
             formData.append('lstAlertsSelected', JSON.stringify(lstAlertsSelected));
+            formData.append('payment_condition', configMdlCharge.getPaymentConditionSelect().getValue());
             formData.append('lst_amounts', JSON.stringify(configMdlCharge.getAmounts()));
+
+            if (configMdlCharge.getPaymentConditionSelect().getValue() == 1) {
+                formData.append('lst_pays', JSON.stringify(lsyPaysPrepared));
+            }
+
             if (invoiceId) {
                 formData.append('invoice_id', invoiceId);
             }

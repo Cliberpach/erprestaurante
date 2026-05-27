@@ -158,12 +158,14 @@ class SaleDto
         $dto['expiration_date']             = Carbon::now();
         $dto['registration_date']           = Carbon::now();
 
-        $dto['payment_condition_id']        = 1;
-        $dto['payment_condition_name']      = "CONTADO";
-        $dto['payment_condition_days']      = 0;
+        $dto['payment_condition_id']        = $data['payment_condition']->id;
+        $dto['payment_condition_name']      = $data['payment_condition']->name;
+        $dto['payment_condition_days']      = $data['payment_condition']->nro_days;
 
         $dto['payment_status']              = "PAGADO";
         $dto['pending_print']               = "SI";
+
+        $dto['expiration_date']             = $data['expiration_date'];
 
         return $dto;
     }

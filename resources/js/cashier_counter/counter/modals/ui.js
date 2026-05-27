@@ -28,7 +28,6 @@ export function desactiveBtnsInvoice() {
 
 
 export function renderSummary(infoAmounts) {
-    console.log(infoAmounts,'infoAmounts');
     document.getElementById('summary-total').textContent = formatSoles(infoAmounts.total);
     document.getElementById('summary-paid').textContent = formatSoles(infoAmounts.paid);
     document.getElementById('summary-pending').textContent = formatSoles(infoAmounts.pending);
@@ -42,4 +41,20 @@ export function renderSummary(infoAmounts) {
     // Vuelto: solo visible si hay vuelto
     const changeBox = document.getElementById('summary-change-box');
     changeBox.classList.toggle('d-none', infoAmounts.change <= 0);
+}
+
+export function renderModalInfo(conditionText, total) {
+    document.getElementById('info-condition-text').textContent = conditionText;
+    document.getElementById('info-total-text').textContent = formatSoles(total);
+}
+
+export function renderPaymentMetods(paymentConditionId) {
+    const isContado = Number(paymentConditionId) === 1;
+
+    document.querySelector('.col-payments')?.classList.toggle('d-none', !isContado);
+    document.getElementById('charge-summary')?.classList.toggle('d-none', !isContado);
+
+    const colRight = document.getElementById('col-invoice-customer');
+    colRight?.classList.toggle('col-lg-8', isContado);
+    colRight?.classList.toggle('col-md-6', isContado);
 }

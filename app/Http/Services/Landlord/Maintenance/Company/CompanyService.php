@@ -6,10 +6,8 @@ use App\Http\Controllers\UtilController;
 use App\Models\Landlord\Company;
 use App\Models\Landlord\Maintenance\Company\CompanyInvoice;
 use App\Models\Tenant;
-use App\Services\TenantPermissionCloner;
 use App\Models\Tenant\Maintenance\Company\Company as TenantCompany;
 use App\Models\Tenant\Maintenance\Company\CompanyInvoice as TenantCompanyInvoice;
-use App\Services\TestService;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -120,10 +118,10 @@ class CompanyService
         $tenant->makeCurrent();
 
         $dto_tenant_company =   $this->s_dto->getDtoTenantCompany($data);
-        $tenant_company     =   $this->s_repository->updateCompanyTenant($dto_tenant_company,1);
+        $tenant_company     =   $this->s_repository->storeCompanyTenant($dto_tenant_company);
 
         $dto_tenant_company_invoice =   $this->s_dto->getDtoTenantCompanyInvoice($data, $tenant_company);
-        $tenant_company_invoice     =   $this->s_repository->updateCompanyInvoiceTenant($dto_tenant_company_invoice);
+        $tenant_company_invoice     =   $this->s_repository->storeCompanyInvoiceTenant($dto_tenant_company_invoice);
 
         // app(TenantPermissionCloner::class)->clone();
 

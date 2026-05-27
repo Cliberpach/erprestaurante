@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tenant\CashierCounter;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Tenant\SaleController;
 use App\Http\Requests\Tenant\CashierCounter\InvoiceStoreRequest;
 use App\Http\Services\Tenant\CCounter\Counter\CounterManager;
 use App\Models\Tenant\Reservation\Reservation;
@@ -60,7 +61,8 @@ class CCounterController extends Controller
                 'o.customer_id',
                 'o.code',
                 'o.cashier_name',
-                'o.payref_img_url'
+                'o.payref_img_url',
+                'o.sale_id'
             );
 
         if ($filter_status) {
@@ -93,12 +95,19 @@ array:5 [ // app\Http\Controllers\Tenant\CashierCounter\CCounterController.php:9
   "lstAlertsSelected" => "[{"id":2,"content":"Yape! COMERCIAL ANDINA EIRL te envió un pago por S/ 35.00","created_at":"2026-03-04 15:18:36"},{"id":31,"content":"Yape! COMERCIAL AMAZONAS EIRL te envió un pago por S/ 77.00","created_at":"2026-03-04 15:18:36"}]"
   "invoice_id" => "67"
    "lst_amounts" => "{"subTotal":"151.131222","tax":"15.868778","total":"167.000000","discount":67,"totalPay":100}"
+    "payment_condition" => "1"
 ]
 */
+    public function pdfVoucher(int $sale): mixed
+    {
+        return app(SaleController::class)->pdf_voucher($sale);
+    }
+
     public function storeInvoice(InvoiceStoreRequest $request)
-    {   
+    {
         DB::beginTransaction();
         try {
+
             $invoice    =   $this->s_manager->storeInvoice($request->toArray());
             //$pdf_url    =   route('tenant.ventas.comprobante_venta.pdf_voucher', ['id' => $invoice->id]);
 

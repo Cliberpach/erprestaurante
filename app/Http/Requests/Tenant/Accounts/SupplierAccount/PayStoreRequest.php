@@ -81,7 +81,7 @@ class PayStoreRequest extends FormRequest
                 'string',
                 'max:20',
             ],
-            'url_imagen' => [
+            'img_pago' => [
                 'nullable',
                 'file',
                 'mimes:jpg,jpeg,png',
@@ -120,9 +120,9 @@ class PayStoreRequest extends FormRequest
             'nro_operacion.required' => 'El número de operación es obligatorio para este modo de pago.',
             'nro_operacion.max' => 'El número de operación no debe exceder los 20 caracteres.',
 
-            'url_imagen.file' => 'La imagen debe ser un archivo.',
-            'url_imagen.mimes' => 'La imagen debe ser formato JPG, JPEG o PNG.',
-            'url_imagen.max' => 'La imagen no debe superar los 2MB.',
+            'img_pago.file' => 'La imagen debe ser un archivo.',
+            'img_pago.mimes' => 'La imagen debe ser formato JPG, JPEG o PNG.',
+            'img_pago.max' => 'La imagen no debe superar los 2MB.',
         ];
     }
 

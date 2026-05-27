@@ -18,22 +18,54 @@
             </div>
         </div>
         <div class="card-body p-0 pb-2">
-            <div class="d-flex justify-content-center align-items-center mb-3">
-                <div class="form-group me-3">
-                    <label for="date_start">Desde</label>
-                    <input type="date" name="date_start" id="date_start" class="form-control"
-                        value="{{ now()->toDateString() }}">
+            <div class="row g-2 align-items-end px-3 pt-3 pb-2">
+
+                {{-- Fecha inicio --}}
+                <div class="col-lg-2 col-md-3 col-6">
+                    <label class="form-label fw-bold mb-1">
+                        <i class="fas fa-calendar-alt text-success me-1"></i>Desde
+                    </label>
+                    <input type="date" id="date_start" class="form-control" value="{{ now()->toDateString() }}">
                 </div>
-                <div class="form-group">
-                    <label for="date_end">Hasta</label>
-                    <div class="d-flex align-items-center">
-                        <input type="date" name="date_end" id="date_end" class="form-control me-2"
-                            value="{{ now()->toDateString() }}">
-                        <button type="button" class="btn btn-rounded btn-primary btnFilter">
-                            <i class='fas fa-filter'></i>
-                        </button>
-                    </div>
+
+                {{-- Fecha fin --}}
+                <div class="col-lg-2 col-md-3 col-6">
+                    <label class="form-label fw-bold mb-1">
+                        <i class="fas fa-calendar-check text-danger me-1"></i>Hasta
+                    </label>
+                    <input type="date" id="date_end" class="form-control" value="{{ now()->toDateString() }}">
                 </div>
+
+                {{-- Centro de costos --}}
+                <div class="col-lg-3 col-md-4 col-12">
+                    <label class="form-label fw-bold mb-1">
+                        <i class="fas fa-tags text-warning me-1"></i>Centro de Costos
+                    </label>
+                    <select id="filter_cost_center" class="form-control">
+                        <option value="">Todos</option>
+                        @foreach($cost_centers as $cc)
+                            <option value="{{ $cc->id }}">{{ $cc->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Proveedor --}}
+                <div class="col-lg-3 col-md-4 col-12">
+                    <label class="form-label fw-bold mb-1">
+                        <i class="fas fa-truck text-primary me-1"></i>Proveedor
+                    </label>
+                    <select id="filter_supplier" class="form-control">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+
+                {{-- Botón filtrar --}}
+                <div class="col-lg-2 col-md-2 col-12">
+                    <button type="button" class="btn btn-primary w-100 btnFilter">
+                        <i class="fas fa-filter me-1"></i>Filtrar
+                    </button>
+                </div>
+
             </div>
 
             <div class="row">
@@ -62,15 +94,49 @@
         let dtExitMoneys = null;
 
         document.addEventListener('DOMContentLoaded', () => {
+            iniciarSelectsFiltros();
             iniciarDtExitMoneys();
             events();
         });
 
         function events() {
             document.addEventListener('click', (e) => {
-                if (e.target.closest('.btnFilter')) {
-                    filtrar();
-                }
+                if (e.target.closest('.btnFilter')) filtrar();
+            });
+        }
+
+        function iniciarSelectsFiltros() {
+            // Centro de costos — no server-side (opciones ya están en el HTML)
+            window.filterCostCenterSelect = new TomSelect('#filter_cost_center', {
+                placeholder: 'Todos los centros',
+                plugins:     ['clear_button'],
+                create:      false,
+            });
+
+            // Proveedor — server-side
+            window.filterSupplierSelect = new TomSelect('#filter_supplier', {
+                valueField:  'id',
+                labelField:  'full_name',
+                searchField: ['full_name'],
+                plugins:     ['clear_button'],
+                placeholder: 'Buscar proveedor...',
+                maxOptions:  20,
+                create:      false,
+                preload:     false,
+                load: async (query, callback) => {
+                    if (!query.length) return callback();
+                    try {
+                        const url = `{{ route('tenant.utils.searchSupplier') }}?q=${encodeURIComponent(query)}`;
+                        const res = await fetch(url);
+                        if (!res.ok) throw new Error();
+                        const data = await res.json();
+                        callback(data.data ?? []);
+                    } catch { callback(); }
+                },
+                render: {
+                    option: (item, escape) => `<div><strong>${escape(item.full_name)}</strong></div>`,
+                    item:   (item, escape) => `<div>${escape(item.full_name)}</div>`,
+                },
             });
         }
 
@@ -83,8 +149,10 @@
                     url: url,
                     type: 'GET',
                     data: function(d) {
-                        d.date_start = document.querySelector('#date_start').value;
-                        d.date_end = document.querySelector('#date_end').value;
+                        d.date_start      = document.querySelector('#date_start').value;
+                        d.date_end        = document.querySelector('#date_end').value;
+                        d.cost_center_id  = document.querySelector('#filter_cost_center').value;
+                        d.supplier_id     = document.querySelector('#filter_supplier').value;
                     }
                 },
                 columns: [{
@@ -257,6 +325,13 @@
                 order: [
                     [0, "desc"]
                 ],
+                initComplete: function () {
+                    $(this.api().table().container())
+                        .find('.dt-search, .dataTables_filter')
+                        .append('<small class="text-muted d-block mt-1" style="font-size:.7rem;">' +
+                            'Busca por: <strong>Caja</strong>, <strong>Fecha</strong>, <strong>Centro Costos</strong>, <strong>Proveedor</strong>, <strong>N° Doc</strong>, <strong>Método Pago</strong>' +
+                        '</small>');
+                }
             });
         }
 
@@ -346,32 +421,21 @@
             });
         }
 
+        function getFilterParams() {
+            return new URLSearchParams({
+                date_start:     document.querySelector('#date_start').value,
+                date_end:       document.querySelector('#date_end').value,
+                cost_center_id: document.querySelector('#filter_cost_center').value,
+                supplier_id:    document.querySelector('#filter_supplier').value,
+            }).toString();
+        }
+
         function downloadExcel() {
-            const url = @json(route('tenant.cajas.egresos.excelAll'));
-
-            const params = {
-                date_start: document.querySelector('#date_start').value,
-                date_end: document.querySelector('#date_end').value,
-            };
-
-            const queryString = new URLSearchParams(params).toString();
-
-            const finalUrl = `${url}?${queryString}`;
-            window.location.href = finalUrl;
+            window.location.href = `@json(route('tenant.cajas.egresos.excelAll'))?${getFilterParams()}`;
         }
 
         function downloadPdf() {
-            const url = @json(route('tenant.cajas.egresos.pdfAll'));
-
-            const params = {
-                date_start: document.querySelector('#date_start').value,
-                date_end: document.querySelector('#date_end').value,
-            };
-
-            const queryString = new URLSearchParams(params).toString();
-
-            const finalUrl = `${url}?${queryString}`;
-            window.open(finalUrl, '_blank');
+            window.open(`@json(route('tenant.cajas.egresos.pdfAll'))?${getFilterParams()}`, '_blank');
         }
 
 

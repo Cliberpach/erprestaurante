@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sale_id');
             $table->foreign('sale_id')->references('id')->on('sales');
 
-            $table->string('document_number')->nullable();
+            $table->string('document_serie')->nullable();
             $table->date('document_date')->nullable();
 
             $table->unsignedDecimal('amount', 16, 6);
@@ -35,8 +35,12 @@ return new class extends Migration
             $table->unsignedBigInteger('delete_user_id')->nullable();
             $table->string('delete_user_name')->nullable();
 
-            $table->unsignedBigInteger('work_order_id');
+            $table->unsignedBigInteger('work_order_id')->nullable();
             $table->foreign('work_order_id')->references('id')->on('work_orders');
+
+            $table->unsignedBigInteger('instance_id')->nullable();
+            $table->string('instance_serie', 160)->nullable();
+            $table->enum('type_instance', ['PEDIDO', 'ORDEN_DE_TRABAJO'])->nullable();
 
             $table->timestamps();
         });

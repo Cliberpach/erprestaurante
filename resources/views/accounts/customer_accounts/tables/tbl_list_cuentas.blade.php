@@ -1,15 +1,15 @@
-    <table class="table dataTables-cajas table-striped table-bordered table-hover" style="text-transform:uppercase">
-        <thead>
-            <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">CLIENTE</th>
-                <th class="text-center">NUMERO</th>
-                <th class="text-center">FECHADOC</th>
-                <th class="text-center">MONTO</th>
-                <th class="text-center">ACTA</th>
-                <th class="text-center">SALDO</th>
-                <th class="text-center">ESTADO</th>
-                <th class="text-center">ACCIONES</th>
-            </tr>
-        </thead>
-    </table>
+<table class="dataTables-cajas table-striped table-bordered table-hover table" style="text-transform:uppercase">
+    <thead class="table-light">
+        <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">CLIENTE</th>
+            <th class="text-center">DOCUMENTO</th>
+            <th class="text-center">FECHA DOC</th>
+            <th class="text-center">MONTO</th>
+            <th class="text-center">PAGADO</th>
+            <th class="text-center">SALDO</th>
+            <th class="text-center">ESTADO</th>
+            <th class="text-center">ACCIÓN</th>
+        </tr>
+    </thead>
+</table>

@@ -10,7 +10,6 @@ use App\Models\Tenant\Accounts\SupplierAccount\SupplierAccount;
 use App\Models\Tenant\Accounts\SupplierAccount\SupplierAccountDetail;
 use App\Models\Tenant\WorkShop\WorkOrder\WorkOrder;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 

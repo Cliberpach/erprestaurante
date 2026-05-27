@@ -44,6 +44,7 @@ class CounterValidation
         $lst_detail_canceled    =   $this->s_order->getOrderDetailCanceled($order_id);
 
         $payment_methods    =   UtilController::getPaymentMethods();
+        $payment_conditions =   UtilController::getPaymentConditions();
         $invoice_types      =   UtilController::getInvoiceTypes()->whereIn('id', [65, 66, 67]);
         $customer_formatted =   FormatController::getFormatInitialCustomer($order->customer_id);
         $config_discount    =   Configuration::findOrFail(3)->property;
@@ -51,13 +52,14 @@ class CounterValidation
         $vars_mdl_customer  =   UtilController::getVarsMdlCustomer();
 
         $vars   =   [
-            'order'             =>  $order,
-            'lst_detail'        =>  $lst_detail_active,
-            'lst_canceled'      =>  $lst_detail_canceled,
-            'payment_methods'   =>  $payment_methods,
-            'customer_formatted' => $customer_formatted,
-            'invoice_types'     =>  $invoice_types,
-            'config_discount'   =>  $config_discount
+            'order'                 =>  $order,
+            'lst_detail'            =>  $lst_detail_active,
+            'lst_canceled'          =>  $lst_detail_canceled,
+            'payment_methods'       =>  $payment_methods,
+            'customer_formatted'    =>  $customer_formatted,
+            'invoice_types'         =>  $invoice_types,
+            'config_discount'       =>  $config_discount,
+            'payment_conditions'    =>  $payment_conditions
         ];
 
         $vars = array_merge($vars, $vars_mdl_customer);

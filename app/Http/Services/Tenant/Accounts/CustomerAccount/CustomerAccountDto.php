@@ -3,6 +3,7 @@
 namespace App\Http\Services\Tenant\Accounts\CustomerAccount;
 
 use App\Models\Company;
+use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\WorkShop\WorkOrder\WorkOrder;
 use Illuminate\Http\UploadedFile;
 
@@ -15,17 +16,36 @@ class CustomerAccountDto
         $this->s_repository =   $_s_repository;
     }
 
-    public function getDtoFromWorkOrder($data): array
+    public function getDtoStore($data): array
     {
         $dto    =   [];
+        $from   =   $data['from'];
 
-        $work_order  =   WorkOrder::findOrFail($data['work_order_id']);
+        $dto['paid'] = 0;
 
-        $dto['work_order_id']   =   $work_order->id;
-        $dto['document_number'] =   'OT-' . $work_order->id;
-        $dto['document_date']   =   $work_order->created_at;
-        $dto['amount']          =   $work_order->total;
-        $dto['balance']         =   $work_order->total;
+        if ($from === 'SALE') {
+            $dto['sale_id']         =   $data['sale']->id;
+            $dto['document_serie']  =   $data['sale']->serie . '-' . $data['sale']->correlative;
+            $dto['document_date']   =   $data['sale']->created_at;
+            $dto['amount']          =   $data['sale']->total_pay;
+            $dto['balance']         =   $data['sale']->total_pay;
+
+            $order = Order::find($data['sale']->order_id);
+            if ($order) {
+                $dto['instance_id']    = $order->id;
+                $dto['instance_serie'] = $order->code;
+                $dto['type_instance']  = 'PEDIDO';
+            }
+        } elseif ($from === 'WORK_ORDER') {
+            $work_order             =   WorkOrder::findOrFail($data['work_order_id']);
+            $dto['work_order_id']   =   $work_order->id;
+            $dto['document_serie']  =   'OT-' . $work_order->id;
+            $dto['document_date']   =   $work_order->created_at;
+            $dto['amount']          =   $work_order->total;
+            $dto['balance']         =   $work_order->total;
+        }
+
+
 
         return $dto;
     }
@@ -45,7 +65,7 @@ class CustomerAccountDto
         $dto['amount']              =   $data['importe_venta'];
         $dto['balance']             =   $data['balance'];
 
-        $file   =   $data['imagen']??null;
+        $file   =   $data['imagen'] ?? null;
         if ($file instanceof UploadedFile && $file->isValid()) {
             $extension = $file->getClientOriginalExtension();
             $next_id_pay                =   $this->s_repository->getNexIdPay($dto['customer_account_id']);

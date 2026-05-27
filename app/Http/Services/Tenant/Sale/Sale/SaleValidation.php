@@ -11,6 +11,7 @@ use App\Models\Landlord\GeneralTable\GeneralTableDetail;
 use App\Models\Tenant\Orders\Order;
 use App\Models\Tenant\Sales\PaymentCondition\PaymentCondition;
 use App\Models\Tenant\Sales\Sale\Sale;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -192,13 +193,22 @@ class SaleValidation
 
     public function vStoreFromCOrder(array $data): array
     {
+        $payment_condition  =   PaymentCondition::findOrFail($data['payment_condition']);
+        $expiration_date    =   Carbon::now()->addDays($payment_condition->nro_days);
+
         $customer           =   Customer::findOrFail($data['customer_id']);
         $invoice            =   GeneralTableDetail::findOrFail($data['invoice_id']);
         $order              =   Order::findOrFail($data['order_id']);
         $user               =   Auth::user();
         $cash_book          =   $this->s_cash->getCashBookUser($user->id);
-        $lst_pays           =   json_decode($data['lst_pays']);
         $amounts            =   json_decode($data['lst_amounts']);
+
+        if ($payment_condition->id == 1) {
+            $lst_pays           =   json_decode($data['lst_pays']);
+        } else {
+            $lst_pays           =   [];
+        }
+
         $data['amounts']    =   $amounts;
         $data['order']      =   $order;
         $data['lst_pays']   =   $lst_pays;
@@ -241,6 +251,7 @@ class SaleValidation
         //======== PAGO =========
         $data_amounts           =   $this->validationCLstPays($data);
 
+
         $order_dishes           =   $this->s_order->getOrderDishes($data['order_id']);
         $order_products         =   $this->s_order->getOrderProducts($data['order_id']);
 
@@ -254,42 +265,50 @@ class SaleValidation
         $data['change']         =   $data_amounts->change;
         $data['igv_percentage'] =   $order->igv_percentage;
         $data['order']          =   $order;
+        $data['expiration_date'] =   $expiration_date;
+        $data['payment_condition']  =   $payment_condition;
         return $data;
     }
 
     public function validationCLstPays($data)
     {
-        $lst_pays       =   $data['lst_pays'];
+        $lst_pays       =   $data['lst_pays'] ?? [];
         $amounts        =   $data['amounts'];
         $order          =   $data['order'];
 
-        $c_pays         =   collect($lst_pays)->where('amount', '>', 0);
-        $payTotal       =   $c_pays->sum('amount');
-        $has_negative   =   $c_pays->where('amount', '<', 0)->first();
-        $has_repeats    =   $c_pays->groupBy('paymentId')->filter(fn($items) => $items->count() > 1)->isNotEmpty();
         $new_total      =   $amounts->discount && (float)$amounts->discount > 0 ? (float)$order->total - (float)$amounts->discount : $order->total;
+        $change         =   0;
 
-        if ($payTotal == 0) {
-            throw new Exception('NO INGRESASTE NINGÚN PAGO');
-        }
-        if ($payTotal < 0) {
-            throw new Exception("NO SE ACEPTAN PAGOS NEGATIVOS");
-        }
-        if ((float)$payTotal < (float)$new_total) {
-            throw new Exception("EL PAGO ES MENOR AL TOTAL DEL PEDIDO");
-        }
-        if ($has_negative) {
-            throw new Exception("NO SE ADMITEN MONTOS MENORES A 0");
-        }
-        if ($has_repeats) {
-            throw new Exception("SE DETECTARON MÉTODOS DE PAGO REPETIDOS");
+        if ($data['payment_condition'] == 1) {
+            $c_pays         =   collect($lst_pays)->where('amount', '>', 0);
+            $payTotal       =   $c_pays->sum('amount');
+            $has_negative   =   $c_pays->where('amount', '<', 0)->first();
+            $has_repeats    =   $c_pays->groupBy('paymentId')->filter(fn($items) => $items->count() > 1)->isNotEmpty();
+
+            if ($payTotal == 0) {
+                throw new Exception('NO INGRESASTE NINGÚN PAGO');
+            }
+            if ($payTotal < 0) {
+                throw new Exception("NO SE ACEPTAN PAGOS NEGATIVOS");
+            }
+            if ((float)$payTotal < (float)$new_total) {
+                throw new Exception("EL PAGO ES MENOR AL TOTAL DEL PEDIDO");
+            }
+            if ($has_negative) {
+                throw new Exception("NO SE ADMITEN MONTOS MENORES A 0");
+            }
+            if ($has_repeats) {
+                throw new Exception("SE DETECTARON MÉTODOS DE PAGO REPETIDOS");
+            }
+
+            //========= VUELTO ========
+            $change =   (float)$payTotal - (float)$new_total;
+            if ($change < 0) {
+                throw new Exception("EL VUELTO NO PUEDE SER NEGATIVO");
+            }
         }
 
-        //========= VUELTO ========
-        $change =   (float)$payTotal - (float)$new_total;
-        if ($change < 0) {
-            throw new Exception("EL VUELTO NO PUEDE SER NEGATIVO");
-        }
+
         return (object)[
             'change'    =>  $change,
             'total_pay' =>  $new_total

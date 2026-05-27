@@ -1,5 +1,5 @@
-import { actionBtnDiscount, actionChangeStatus, actionChargeCreate, actionInputDiscount } from "./action";
-import { filterStatusSelect } from "./state";
+import { actionBtnDiscount, actionChangePaymentCondition, actionChangeStatus, actionChargeCreate, actionInputDiscount } from "./action";
+import { filterStatusSelect, paymentConditionSelect } from "./state";
 
 export function eventsCCounter() {
     eventsClick();
@@ -17,8 +17,9 @@ function eventsChange() {
     filterStatusSelect.on('change', function (value) {
         actionChangeStatus(value);
     });
+    paymentConditionSelect.on('change', actionChangePaymentCondition);
 }
 
-function eventsInput(){
-    document.querySelector('#discount').addEventListener('input',actionInputDiscount)
+function eventsInput() {
+    document.querySelector('#discount').addEventListener('input', actionInputDiscount)
 }

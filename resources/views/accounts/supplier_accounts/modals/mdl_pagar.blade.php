@@ -33,9 +33,6 @@
             loadSelectsMdlPagar();
             eventsSelectsMdlPagar();
 
-            dtPagos = loadDataTableSimple('tbl_detalle_pago');
-            $('#metodo_pago').val(1).trigger('change');
-
             document.querySelector('#formPagar').addEventListener('submit', (e) => {
                 e.preventDefault();
                 registrarPago(e.target);
@@ -91,24 +88,9 @@
             window.metodoPagoSelect.on('change', function(value) {
                 changePaymentMethod(value);
             });
-        }
 
-        async function getCuentasPorMetodoPago(metodoPagoId) {
-            try {
-                const res = await axios.get(route('tenant.utils.getListBankAccounts', {
-                    payment_method_id: metodoPagoId
-                }));
-
-                if (!res.data.success) {
-                    toastr.error(res.data.message, 'ERROR EN EL SERVIDOR');
-                    return null;
-                }
-                toastr.info(res.data.message, 'OPERACIÓN COMPLETADA');
-                return res.data.bank_accounts;
-            } catch (error) {
-                toastr.error(error, 'ERROR EN LA PETICIÓN OBTENER CUENTAS POR MÉTODO DE PAGO');
-                return null;
-            }
+            // Cargar cuentas del método por defecto al inicializar
+            window.metodoPagoSelect.setValue(1);
         }
 
         function loadFilePound() {
@@ -185,16 +167,15 @@
         }
 
         function pintarCobranza(cobranza) {
-            document.querySelector('#cliente').textContent = cobranza.supplier_name;
+            document.querySelector('#cliente').textContent   = cobranza.supplier_name;
             document.querySelector('#documento').textContent = cobranza.document_number;
-            document.querySelector('#monto').textContent = formatSoles(cobranza.amount);
-            document.querySelector('#saldo').textContent = formatSoles(cobranza.balance);
+            document.querySelector('#monto').textContent     = formatSoles(cobranza.amount);
+            document.querySelector('#saldo').textContent     = formatSoles(cobranza.balance);
+            document.querySelector('#balance_raw').value     = cobranza.balance ?? 0;
 
             const estado = document.querySelector('#estado');
             estado.textContent = cobranza.status;
-
             estado.classList.remove('text-success', 'text-danger', 'text-warning');
-
             if (cobranza.status === 'PAGADO') {
                 estado.classList.add('text-success');
             } else if (cobranza.status === 'PENDIENTE') {
@@ -228,18 +209,22 @@
         }
 
         async function changePaymentMethod(paymentMethodId) {
+            const esEfectivo = paymentMethodId == 1;
 
-            //======= EFECTIVO ========
-            if (paymentMethodId == 1) {
-                $("#efectivo_venta").attr('readonly', false)
-                $("#importe_venta").attr('readonly', true)
-                $("#importe_venta").val(0.00)
-                changeEfectivo()
-            } else { //======= OTRO MÉT PAGO ========
-                $("#efectivo_venta").attr('readonly', false)
-                $("#importe_venta").attr('readonly', false)
-                $("#efectivo_venta").val(0.00)
+            if (esEfectivo) {
+                document.querySelector('#efectivo_venta').removeAttribute('readonly');
+                document.querySelector('#importe_venta').setAttribute('readonly', true);
+                document.querySelector('#importe_venta').value = '0.00';
+                changeEfectivo();
+            } else {
+                document.querySelector('#efectivo_venta').setAttribute('readonly', true);
+                document.querySelector('#efectivo_venta').value = '0.00';
+                document.querySelector('#importe_venta').removeAttribute('readonly');
             }
+
+            // Asteriscos dinámicos
+            document.querySelector('#lbl-prov-cuenta-req').style.display  = esEfectivo ? 'none' : '';
+            document.querySelector('#lbl-prov-nroope-req').style.display  = esEfectivo ? 'none' : '';
 
             mostrarAnimacion1();
             toastr.clear();
@@ -247,7 +232,26 @@
             if (!cuentas) return;
             pintarCuentas(cuentas);
             ocultarAnimacion1();
+        }
 
+        function tipoPagoProveedor(select) {
+            const tipo       = select.value;
+            const balanceRaw = parseFloat(document.querySelector('#balance_raw').value) || 0;
+            const esEfectivo = document.querySelector('#metodo_pago').value == 1;
+
+            if (tipo === 'TODO') {
+                if (esEfectivo) {
+                    document.querySelector('#efectivo_venta').value = balanceRaw.toFixed(2);
+                    document.querySelector('#importe_venta').value  = '0.00';
+                } else {
+                    document.querySelector('#importe_venta').value  = balanceRaw.toFixed(2);
+                    document.querySelector('#efectivo_venta').value = '0.00';
+                }
+            } else {
+                document.querySelector('#efectivo_venta').value = '0.00';
+                document.querySelector('#importe_venta').value  = '0.00';
+            }
+            changeEfectivo();
         }
 
         function pintarCuentas(cuentas) {
@@ -278,18 +282,14 @@
             }
         }
 
-        function changeEfectivo(b) {
-            const efectivo = parseFloat($('#efectivo_venta').val());
-            const importe = parseFloat($('#importe_venta').val());
-            const suma = efectivo + importe;
-            $('#cantidad').val(suma.toFixed(2))
+        function changeEfectivo() {
+            const efectivo = parseFloat(document.querySelector('#efectivo_venta').value) || 0;
+            const importe  = parseFloat(document.querySelector('#importe_venta').value)  || 0;
+            document.querySelector('#cantidad').value = (efectivo + importe).toFixed(2);
         }
 
-        function changeImporte(b) {
-            const efectivo = parseFloat($('#efectivo_venta').val());
-            const importe = parseFloat($('#importe_venta').val());
-            const suma = efectivo + importe;
-            $('#cantidad').val(suma.toFixed(2))
+        function changeImporte() {
+            changeEfectivo();
         }
 
         function registrarPago(formPago) {

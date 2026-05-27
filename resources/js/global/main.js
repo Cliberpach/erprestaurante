@@ -41,18 +41,32 @@ document.addEventListener('DOMContentLoaded', function () {
     showSessionMessages();
     eventsMenu();
 
-    /*if (savedTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        //document.getElementById('theme-text').textContent = 'Modo Claro';
-    }*/
+    // Restaurar tema guardado sincronizando ambos atributos
+    if (savedTheme === 'dark') {
+        applyTheme(true);
+    }
 
     // Iniciar rotación de mensajes si el loader está activo
     if (document.querySelector('.loader-overlay').classList.contains('active')) {
         startMessageRotation();
     }
 
-    const btnToggleTheme = document.getElementById('ld-theme');
-    btnToggleTheme.addEventListener('click', toggleTheme);
+    // Sincronizar data-theme cuando Bootstrap cambia data-bs-theme via [data-bs-theme-value]
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-bs-theme-value]');
+        if (!btn) return;
+
+        const value = btn.getAttribute('data-bs-theme-value');
+        if (value === 'dark') {
+            applyTheme(true);
+        } else if (value === 'light') {
+            applyTheme(false);
+        } else {
+            // auto: seguir preferencia del sistema
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(prefersDark);
+        }
+    });
 });
 
 // Función para cambiar mensaje aleatorio
@@ -88,20 +102,27 @@ function stopMessageRotation() {
     }
 }
 
-// Función para cambiar el tema
-function toggleTheme() {
+// Aplica ambos atributos de tema de forma sincronizada
+function applyTheme(isDark) {
     const html = document.documentElement;
-    const themeText = document.getElementById('theme-text');
-    const currentTheme = html.getAttribute('data-theme');
-
-    if (currentTheme === 'dark') {
-        html.removeAttribute('data-theme');
-        themeText.textContent = 'Modo Oscuro';
-        localStorage.setItem('theme', 'light');
-    } else {
+    if (isDark) {
         html.setAttribute('data-theme', 'dark');
-        themeText.textContent = 'Modo Claro';
+        html.setAttribute('data-bs-theme', 'dark');
         localStorage.setItem('theme', 'dark');
+    } else {
+        html.removeAttribute('data-theme');
+        html.removeAttribute('data-bs-theme');
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+// Función para cambiar el tema (botón toggle simple)
+function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    applyTheme(!isDark);
+    const themeText = document.getElementById('theme-text');
+    if (themeText) {
+        themeText.textContent = !isDark ? 'Modo Claro' : 'Modo Oscuro';
     }
 }
 

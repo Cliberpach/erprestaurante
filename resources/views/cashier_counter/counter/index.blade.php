@@ -4,6 +4,10 @@
     Mostrador Cajero
 @endsection
 
+@push('js-head')
+    @vite(['resources/js/libs/lightgalery.js'])
+@endpush
+
 @section('content')
     @include('workshop.quotes.modals.mdl_show_quote')
 
@@ -70,6 +74,7 @@
 @section('js')
     <script>
         let dtList = null;
+        let lgCounter = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadDtList();
@@ -226,22 +231,15 @@
                         orderable: false,
                         className: "text-center",
                         render: function(data, type, row) {
-
                             if (data && data !== '') {
                                 let url = '/storage/' + data;
-
                                 return `
-                                        <a href="${url}" target="_blank">
-                                            <img src="${url}"
-                                                class="img-thumbnail"
-                                                style="width:50px;height:50px;object-fit:cover;">
-                                        </a>
-                                    `;
-                                                    }
-
-                                                    return `
-                                    <span class="text-muted small">Sin imagen</span>
-                                `;
+                                    <a href="${url}" class="lg-item" style="display:inline-block;cursor:pointer;">
+                                        <img src="${url}" class="img-thumbnail"
+                                             style="width:50px;height:50px;object-fit:cover;">
+                                    </a>`;
+                            }
+                            return `<span class="text-muted small">Sin imagen</span>`;
                         }
                     },
                     {
@@ -258,13 +256,24 @@
 
                             if (data.status === 'OCUPADO') {
                                 actions += `<li>
-                                            <a class="dropdown-item generarPDF"
+                                            <a class="dropdown-item"
                                                 href="${route('tenant.mostrador_cajero.mostrador.cobrar', data.order_id)}"
-                                                title="PDF" role="button" aria-label="Cobrar">
+                                                role="button" aria-label="Cobrar">
                                                 <i class="fas fa-cash-register me-2 text-danger"></i> Cobrar
                                             </a>
                                         </li>`;
                             }
+
+                            if (data.status === 'FINALIZADO' && data.sale_id) {
+                                actions += `<li>
+                                            <a class="dropdown-item"
+                                                href="${route('tenant.mostrador_cajero.mostrador.pdfVoucher', data.sale_id)}"
+                                                target="_blank" role="button" aria-label="Ver Comprobante">
+                                                <i class="far fa-file-pdf me-2 text-danger"></i> Ver Comprobante
+                                            </a>
+                                        </li>`;
+                            }
+
                             actions += `</ul></div>`;
                             return actions;
                         }
@@ -306,6 +315,17 @@
                 ],
             });
 
+            dtList.on('draw.dt', function () {
+                if (lgCounter) { lgCounter.destroy(); lgCounter = null; }
+                const container = document.querySelector('#counter-table-container');
+                if (container && container.querySelector('.lg-item')) {
+                    lgCounter = lightGallery(container, {
+                        selector: '.lg-item',
+                        plugins:  [lgThumbnail, lgZoom],
+                        mobileSettings: { controls: true, showCloseIcon: true },
+                    });
+                }
+            });
         }
 
         function eliminar(id) {

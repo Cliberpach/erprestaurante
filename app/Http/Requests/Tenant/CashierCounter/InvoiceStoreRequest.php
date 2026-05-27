@@ -26,6 +26,11 @@ class InvoiceStoreRequest extends FormRequest
                 'required',
                 Rule::exists('landlord.general_table_details', 'id')
                     ->where('status', 'ACTIVO'),
+            ],
+            'payment_condition' =>  [
+                'required',
+                Rule::exists('payment_conditions', 'id')
+                    ->where('status', 'ACTIVO')
             ]
         ];
     }
@@ -38,6 +43,9 @@ class InvoiceStoreRequest extends FormRequest
 
             'invoice_id.required' => 'El tipo de comprobante es obligatorio.',
             'invoice_id.exists'   => 'El tipo de comprobante no existe o no está activo.',
+
+            'payment_condition.required'    =>  'La condición de pago es obligatoria.',
+            'payment_condition.exists'      =>  'La condición de pago no existe o no está activa.'
         ];
     }
 

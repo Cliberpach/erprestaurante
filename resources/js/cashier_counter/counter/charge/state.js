@@ -11,6 +11,7 @@ export const amounts = {
 }
 
 export let filterStatusSelect = null;
+export let paymentConditionSelect = null;
 
 export function setLstDetail(instance) {
     lstDetail = instance;
@@ -28,4 +29,12 @@ export function setFilterStatusSelect(instance) {
 
 export function getAmounts() {
     return amounts;
+}
+
+export function setPaymentConditionSelect(instance) {
+    paymentConditionSelect = instance;
+}
+
+export function getPaymentConditionSelect() {
+    return paymentConditionSelect;
 }
