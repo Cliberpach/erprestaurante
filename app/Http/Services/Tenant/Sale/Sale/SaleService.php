@@ -140,8 +140,8 @@ class SaleService
 
         $this->s_repository->storeSaleDish($dto_sdishes);
         $this->s_repository->storeSaleProduct($dto_s_products);
-
-        if ($sale->payment_condition == 1) {
+       
+        if ($sale->payment_condition_id == 1) {
             $dto_pays       =   $this->s_dto->getDtoPays($data['lst_pays'], $sale);
             $this->s_repository->storeSalePay($dto_pays);
         }
@@ -152,7 +152,7 @@ class SaleService
             $s_account      =   new CustomerAccountService();
             $s_account->store($dto_account);
         }
-       
+
         return $sale;
     }
 
