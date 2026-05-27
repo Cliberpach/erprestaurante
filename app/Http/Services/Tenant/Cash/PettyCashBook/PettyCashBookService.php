@@ -73,7 +73,7 @@ class PettyCashBookService
             ->leftJoin('sales as sd', 'sd.id', '=', 'ca.sale_id')
             ->where('cad.petty_cash_book_id', $id)
             ->select(
-                'ca.document_number',
+                'ca.document_serie',
                 DB::raw("
                     CASE
                         WHEN ca.work_order_id IS NOT NULL THEN wo.customer_name
