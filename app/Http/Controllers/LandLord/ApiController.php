@@ -241,6 +241,14 @@ success: true
         //     if ($CodPedido == -1) $CodPedido = $dd->order_id;
         // }
 
+        $pagos = [];
+        foreach ($recibo->pays as $pay) {
+            $pagos[] = [
+                'metodo' => $pay->payment_method_name,
+                'monto'  => $pay->total
+            ];
+        }
+
         $arrayRecibo = array();
         $fila = [
             'nombrecomercial' => $empresa,
@@ -251,7 +259,7 @@ success: true
 
             'idrecibo' => $recibo->id,
             'fecha' => $recibo->created_at->format('d/m/Y h:i:s a'),
-            'tipo' => trim(str_replace('ELECTRÓNICA', '', $recibo->type_sale_name)),
+            'tipo' => $recibo->type_sale_name,
             'serie' => $recibo->serie,
             'correlativo' => $recibo->correlative,
             'nrodoc' => $recibo->customer_document_number,
@@ -263,7 +271,9 @@ success: true
             'total' => $recibo->total,
             'descuento' => $recibo->discount,
             'hash' => $recibo->serie . '-' . $recibo->correlative,
-            'im_nombre' => $nombreImp
+            'im_nombre' => $nombreImp,
+            'pagos' => $pagos,
+            'vuelto' => $recibo->change_pay ?? 0,
         ];
         array_push($arrayRecibo, $fila);
 
