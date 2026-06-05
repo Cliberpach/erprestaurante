@@ -176,10 +176,11 @@ class Sale extends Model
             ->select(
                 'sale_id',
                 'payment_method_id',
+                'payment_method_name',
                 DB::raw('SUM(amount) as total')
             )
             ->where('status', 'ACTIVO')
-            ->groupBy('sale_id', 'payment_method_id');
+            ->groupBy('sale_id', 'payment_method_id', 'payment_method_name');
     }
 
     public function paidByMethod(int $paymentMethodId): float
