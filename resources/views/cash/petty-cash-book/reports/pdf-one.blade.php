@@ -199,19 +199,22 @@
                     {{ $petty_cash_book->initial_amount }}</td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">FECHA
-                    APERTURA:</td>
+                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">
+                    FECHA APERTURA:
+                </td>
                 <td style="width: 50%; padding: 2px; text-align: left; border: 1px solid #ddd;">
-                    {{ \Carbon\Carbon::parse($petty_cash_book->initial_date)->format('d/m/Y H:i') }}</td>
+                    {{ \Carbon\Carbon::parse($petty_cash_book->initial_date)->format('d/m/Y H:i:s') }}
+                </td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">FECHA
-                    CIERRE:</td>
+                <td style="width: 50%; padding: 2px; font-weight: bold; text-align: left; border: 1px solid #ddd;">
+                    FECHA CIERRE:
+                </td>
                 <td style="width: 50%; padding: 2px; text-align: left; border: 1px solid #ddd;">
-                    {{ \Carbon\Carbon::parse($petty_cash_book->close_date)->format('d/m/Y H:i') }}</td>
+                    {{ \Carbon\Carbon::parse($petty_cash_book->close_date)->format('d/m/Y H:i:s') }}
+                </td>
             </tr>
         </table>
-
 
         <h5 style="font-size:9px;margin-bottom:6px;">VENTAS DEL DÍA</h5>
         <table class="table-info">
@@ -506,7 +509,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($consolidated_items->where('item_type', 'PRODUCTO') as $item)
+                @foreach ($consolidated_items->items_in_sale->where('item_type', 'PRODUCTO') as $item)
                     <tr>
                         <td>{{ $item->code }}</td>
                         <td>{{ $item->creator_user_name }}</td>
@@ -514,7 +517,9 @@
                         <td style="text-align:right;">{{ $item->item_quantity }}</td>
                         <td style="text-align:right;">S/ {{ number_format($item->item_sale_price, 2) }}</td>
                         <td style="text-align:right;">S/ {{ number_format($item->item_total, 2) }}</td>
-                        <td>{{ $item->cancellation_date }}</td>
+                        <td>
+                            {{ \Carbon\Carbon::parse($item->cancellation_date)->format('d/m/Y h:i:s A') }}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -534,7 +539,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($consolidated_items->where('item_type', 'PLATO') as $item)
+                @foreach ($consolidated_items->items_in_sale->where('item_type', 'PLATO') as $item)
                     <tr>
                         <td>{{ $item->code }}</td>
                         <td>{{ $item->creator_user_name }}</td>
@@ -542,7 +547,69 @@
                         <td style="text-align:right;">{{ $item->item_quantity }}</td>
                         <td style="text-align:right;">S/ {{ number_format($item->item_sale_price, 2) }}</td>
                         <td style="text-align:right;">S/ {{ number_format($item->item_total, 2) }}</td>
-                        <td>{{ $item->cancellation_date }}</td>
+                        <td>
+                            {{ \Carbon\Carbon::parse($item->cancellation_date)->format('d/m/Y h:i:s A') }}
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <h5 style="font-size:10px; margin-top:25px;">Productos anulados en pedidos no cobrados</h5>
+        <table class="table-info" style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background:#f4f8fc;">
+                    <th>Pedido</th>
+                    <th>Mozo</th>
+                    <th>Producto</th>
+                    <th style="text-align:right;">Cant.</th>
+                    <th style="text-align:right;">P. Venta</th>
+                    <th style="text-align:right;">Total</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($consolidated_items->items_not_sale->where('item_type', 'PRODUCTO') as $item)
+                    <tr>
+                        <td>{{ $item->code }}</td>
+                        <td>{{ $item->creator_user_name }}</td>
+                        <td>{{ $item->item_name }}</td>
+                        <td style="text-align:right;">{{ $item->item_quantity }}</td>
+                        <td style="text-align:right;">S/ {{ number_format($item->item_sale_price, 2) }}</td>
+                        <td style="text-align:right;">S/ {{ number_format($item->item_total, 2) }}</td>
+                        <td>
+                            {{ \Carbon\Carbon::parse($item->cancellation_date)->format('d/m/Y h:i:s A') }}
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <h5 style="font-size:10px; margin-top:15px;">Platos anulados en pedidos no cobrados</h5>
+        <table class="table-info" style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background:#f4f8fc;">
+                    <th>Pedido</th>
+                    <th>Mozo</th>
+                    <th>Plato</th>
+                    <th style="text-align:right;">Cant.</th>
+                    <th style="text-align:right;">P. Venta</th>
+                    <th style="text-align:right;">Total</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($consolidated_items->items_not_sale->where('item_type', 'PLATO') as $item)
+                    <tr>
+                        <td>{{ $item->code }}</td>
+                        <td>{{ $item->creator_user_name }}</td>
+                        <td>{{ $item->item_name }}</td>
+                        <td style="text-align:right;">{{ $item->item_quantity }}</td>
+                        <td style="text-align:right;">S/ {{ number_format($item->item_sale_price, 2) }}</td>
+                        <td style="text-align:right;">S/ {{ number_format($item->item_total, 2) }}</td>
+                        <td>
+                            {{ \Carbon\Carbon::parse($item->cancellation_date)->format('d/m/Y h:i:s A') }}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

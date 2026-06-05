@@ -69,6 +69,18 @@ class PettyCashBookController extends Controller
             ->where('c.status', '<>', 'ANULADO')
             ->where('c.type', '<>', 'FICTICIO');
 
+        if ($request->filled('start_date')) {
+            $cashes->whereDate('c.initial_date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $cashes->whereDate('c.initial_date', '<=', $request->end_date);
+        }
+
+        if ($request->filled('filter_status')) {
+            $cashes->where('c.status', $request->filter_status);
+        }
+
         return DataTables::of($cashes)
             ->filterColumn('code', function ($query, $keyword) {
                 $query->whereRaw("CONCAT('CM-', LPAD(c.id, 8, '0')) LIKE ?", ["%{$keyword}%"]);

@@ -215,7 +215,7 @@ class PettyCashBookService
 
     public function getConsolidatedItems(int $petty_cash_book_id)
     {
-        $items_canceled  =   $this->s_repository->getProductsCanceled($petty_cash_book_id);
+        $items_canceled             =   $this->s_repository->getProductsCanceled($petty_cash_book_id);
         return $items_canceled;
     }
 

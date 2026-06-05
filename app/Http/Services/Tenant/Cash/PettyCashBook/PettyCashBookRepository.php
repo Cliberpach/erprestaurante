@@ -228,11 +228,12 @@ class PettyCashBookRepository
     {
         $products   =   DB::table('orders_products as op')
             ->join('orders as o', 'o.id', 'op.order_id')
-            ->join('sales as s', 's.id', 'o.sale_id')
-            ->where('s.petty_cash_book_id', $id)
+            ->leftJoin('sales as s', 's.id', 'o.sale_id')
+            ->where('o.petty_cash_book_id', $id)
             ->whereNull('s.converted_from_id')
             ->where('op.status', 'ANULADO')
             ->select(
+                's.id as sale_id',
                 'o.code',
                 'o.creator_user_name',
                 'op.cancellation_date',
@@ -245,11 +246,12 @@ class PettyCashBookRepository
 
         $dishes = DB::table('orders_dishes as od')
             ->join('orders as o', 'o.id', 'od.order_id')
-            ->join('sales as s', 's.id', 'o.sale_id')
-            ->where('s.petty_cash_book_id', $id)
+            ->leftJoin('sales as s', 's.id', 'o.sale_id')
+            ->where('o.petty_cash_book_id', $id)
             ->whereNull('s.converted_from_id')
             ->where('od.status', 'ANULADO')
             ->select(
+                's.id as sale_id',
                 'o.code',
                 'o.creator_user_name',
                 'od.cancellation_date',
@@ -261,8 +263,14 @@ class PettyCashBookRepository
             );
 
         $items_canceled =   $products->unionAll($dishes)->orderBy('cancellation_date', 'desc')->get();
-        return $items_canceled;
+        $items_not_sale =   $items_canceled->whereNull('sale_id');
+        $items_in_sale  =   $items_canceled->whereNotNull('sale_id');
+
+        $items  =   (object)[
+            'items_not_sale'    =>  $items_not_sale,
+            'items_in_sale'     =>  $items_in_sale
+        ];
+
+        return $items;
     }
-
-
 }

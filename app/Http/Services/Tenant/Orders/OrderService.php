@@ -360,6 +360,9 @@ class OrderService
         $this->s_pct->increaseLstStock($products);
         $this->s_programming->increaseLstStock($dishes);
 
+        $s_kardex   =   new KardexService();
+        $s_kardex->updateFromOrder($order);
+
         return $order;
     }
 

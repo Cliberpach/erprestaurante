@@ -17,12 +17,44 @@
     @include('cash.petty-cash-book.modals.mdl_close_cash')
     @include('cash.petty-cash-book.modals.mdl_edit_book')
     <div class="card overflow-hidden">
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <h6 class="card-title mb-0">MOVIMIENTOS DE CAJA</h6>
-            <div class="d-flex flex-wrap gap-2">
-                <a onclick="openMdlOpenCash()" class="btn btn-primary text-white">
-                    <i class="fas fa-plus-circle"></i> NUEVO
-                </a>
+        <div class="card-header">
+            <div class="row mb-2 justify-content-between align-items-center">
+                <div class="col-6">
+                    <h6 class="card-title mb-0">MOVIMIENTOS DE CAJA</h6>
+                </div>
+                <div class="col-6 text-end">
+                    <a onclick="openMdlOpenCash()" class="btn btn-primary text-white">
+                        <i class="fas fa-plus-circle"></i> NUEVO
+                    </a>
+                    <button type="button" class="btn btn-warning" onclick="filterData()">
+                        <i class="fas fa-filter me-1"></i> Filtrar
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-2">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-calendar-alt text-success me-1"></i> Fecha inicio:
+                    </label>
+                    <input type="date" class="form-control" id="start_date" name="start_date">
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-2">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-calendar-check text-danger me-1"></i> Fecha fin:
+                    </label>
+                    <input type="date" class="form-control" id="end_date" name="end_date">
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6 col-12 mb-2">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-circle-check text-primary me-1"></i> Estado:
+                    </label>
+                    <select class="form-control" id="filter_status" name="filter_status">
+                        <option value="">TODOS</option>
+                        <option value="ABIERTO">ABIERTO</option>
+                        <option value="CERRADO">CERRADO</option>
+                    </select>
+                </div>
             </div>
         </div>
         <div class="card-body p-0 pb-2">
@@ -49,7 +81,16 @@
         function iniciarDtCash() {
             dtCash = new DataTable('#dt-cash-books', {
                 "processing": true,
-                "ajax": '{{ route('tenant.cajas.apertura_cierre.getCashBooks') }}',
+                "serverSide": true,
+                "ajax": {
+                    url: '{{ route('tenant.cajas.apertura_cierre.getCashBooks') }}',
+                    type: 'GET',
+                    data: function(d) {
+                        d.start_date    = $('#start_date').val();
+                        d.end_date      = $('#end_date').val();
+                        d.filter_status = $('#filter_status').val();
+                    }
+                },
                 "columns": [{
                         data: 'id',
                         className: "text-center",
@@ -221,6 +262,18 @@
                 ],
             });
 
+        }
+
+        function filterData() {
+            const startDate = document.getElementById('start_date')?.value;
+            const endDate   = document.getElementById('end_date')?.value;
+
+            if (startDate && endDate && startDate > endDate) {
+                toastr.error('La fecha inicio no puede ser mayor que la fecha fin', 'Fechas inválidas');
+                return;
+            }
+
+            dtCash.ajax.reload();
         }
 
         function programmingAuto(id) {

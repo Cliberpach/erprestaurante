@@ -103,6 +103,7 @@ class OrderRepository
         OrderProduct::where('order_id', $order_id)->update([
             'status' => 'ANULADO',
             'delete_status' => true,
+            'cancellation_date' =>  now(),
         ]);
     }
 
@@ -111,6 +112,7 @@ class OrderRepository
         OrderDish::where('order_id', $order_id)->update([
             'status' => 'ANULADO',
             'delete_status' => true,
+            'cancellation_date' =>  now(),
         ]);
     }
 
