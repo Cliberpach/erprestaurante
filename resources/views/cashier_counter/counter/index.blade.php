@@ -334,6 +334,14 @@
                         mobileSettings: { controls: true, showCloseIcon: true },
                     });
                 }
+
+                document.querySelectorAll('#dt-list [data-bs-toggle="dropdown"]').forEach(function(el) {
+                    const existing = bootstrap.Dropdown.getInstance(el);
+                    if (existing) existing.dispose();
+                    new bootstrap.Dropdown(el, {
+                        popperConfig: { strategy: 'fixed' }
+                    });
+                });
             });
         }
 
