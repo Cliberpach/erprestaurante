@@ -11,8 +11,6 @@
             "Segoe UI Emoji",
             "Segoe UI Symbol",
             sans-serif;
-        background: var(--highcharts-background-color);
-        color: var(--highcharts-neutral-color-100);
     }
 
     #container-payment-methods-month {
