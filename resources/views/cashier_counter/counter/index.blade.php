@@ -10,6 +10,7 @@
 
 @section('content')
     @include('workshop.quotes.modals.mdl_show_quote')
+    @include('cashier_counter.counter.modals.mdl_change_waiter')
 
     <div class="card overflow-hidden">
         <div class="card-header">
@@ -82,7 +83,9 @@
             events();
         })
 
-        function events() {}
+        function events() {
+            eventsMdlChangeWaiter();
+        }
 
         function loadTomSelect() {
             window.clientSelect = new TomSelect('#customer_id', {
@@ -260,6 +263,12 @@
                                                 href="${route('tenant.mostrador_cajero.mostrador.cobrar', data.order_id)}"
                                                 role="button" aria-label="Cobrar">
                                                 <i class="fas fa-cash-register me-2 text-danger"></i> Cobrar
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" role="button"
+                                                onclick="openMdlChangeWaiter(${data.order_id}, ${data.creator_user_id})">
+                                                <i class="fas fa-user-edit me-2 text-warning"></i> Cambiar Mesero
                                             </a>
                                         </li>`;
                             }

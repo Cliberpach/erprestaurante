@@ -153,7 +153,13 @@ export function actionDeleteItem(btn) {
     toastr.clear();
 
     const index = btn.getAttribute('data-index');
-    console.log('index',index);
+    const item  = lstDetail[index];
+
+    if (item && !item.order_detail_id) {
+        flowDeleteItem(index);
+        return;
+    }
+
     if (configDelete) {
         openMdlDeleteItem(index);
     } else {

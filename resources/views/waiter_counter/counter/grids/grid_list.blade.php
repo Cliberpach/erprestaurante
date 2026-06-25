@@ -1,9 +1,16 @@
-<div class="row mb-3">
-    <div class="quick-table-access">
-        <input type="text" id="table-number-jump" class="form-control input-fill" placeholder="Mesa #">
-    </div>
-    <div class="col-12">
+<div class="row g-2 mb-3">
 
+    <div class="col-12">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text border-end-0 bg-white">
+                <i class="fas fa-search text-muted" style="font-size:.75rem;"></i>
+            </span>
+            <input type="text" id="table-number-jump" class="form-control border-start-0 ps-0"
+                placeholder="Buscar mesa..." style="font-weight:600;">
+        </div>
+    </div>
+
+    <div class="col-12">
         <div class="btn-group w-100" role="group" id="table-filters">
 
             <button type="button" class="btn btn-light active filter-btn" data-filter="all">
@@ -19,8 +26,8 @@
             </button>
 
         </div>
-
     </div>
+
 </div>
 
 <div class="container-fluid" id="circles-container">
@@ -120,6 +127,17 @@
         margin-bottom: 6px;
         opacity: .9;
     }
+
+    .table-waiter {
+        font-size: .68rem;
+        margin-top: 4px;
+        opacity: .75;
+        font-style: italic;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80%;
+    }
 </style>
 
 
@@ -199,15 +217,6 @@
     }
 </style>
 <style>
-    .quick-table-access {
-        position: fixed;
-        top: 140px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 110px;
-        z-index: 9999;
-    }
-
     .mostrador-container {
         position: relative;
     }
@@ -215,9 +224,7 @@
 <style>
     #table-number-jump {
         height: 38px;
-        font-size: 16px;
-        text-align: center;
-        font-weight: 600;
+        font-size: 15px;
     }
 
     .table-card.table-highlight {
@@ -296,6 +303,13 @@
                 actionIputTableSearch(e);
             }, 1000);
         });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') requestWakeLock();
+        });
+
+        startAutoRefresh();
+        requestWakeLock();
     }
 
     function filterTables(filter) {
@@ -317,9 +331,9 @@
 
     }
 
-    async function loadTablesAsCircles() {
+    async function loadTablesAsCircles(silent = false) {
         try {
-            mostrarAnimacion1();
+            if (!silent) mostrarAnimacion1();
             const activeFilter = document.querySelector('#table-filters .active');
             const status = activeFilter.dataset.filter;
 
@@ -331,13 +345,14 @@
                 }
             });
 
-            ocultarAnimacion1();
+            if (!silent) ocultarAnimacion1();
 
             if (res.data.success) {
                 circlesTables = res.data;
                 paintCirclesTables(circlesTables.data);
                 updatePageInfo();
                 updateButtons();
+                if (res.data.counts) updateTabCounts(res.data.counts);
 
             } else {
                 toastr.error(res.data.message);
@@ -345,7 +360,7 @@
 
         } catch (error) {
             console.error(error);
-            toastr.error('Error al cargar las mesas');
+            if (!silent) toastr.error('Error al cargar las mesas');
         }
     }
 
@@ -390,6 +405,12 @@
                                                         S/ ${formatSoles(item.total)}
                                                     </div>
                                                     ` : ''}
+
+                                ${item.status === 'OCUPADO' && item.creator_user_name ? `
+                                                    <div class="table-waiter">
+                                                        ${item.creator_user_name.substring(0, 12)}
+                                                    </div>
+                                                    ` : ''}
                             </div>
                         </div>
                     `;
@@ -398,6 +419,8 @@
                 grid.addEventListener('click', (e) => {
                     const card = e.target.closest('.table-card');
                     if (!card || !grid.contains(card)) return;
+
+                    if (navigator.vibrate) navigator.vibrate(30);
 
                     const tableId = card.getAttribute('data-table');
                     const status = (card.getAttribute('data-status') || '').toString()
@@ -451,7 +474,6 @@
             prevPage();
         }
     }
-
 
     function nextPage() {
 
@@ -539,6 +561,35 @@
         const tableIdSearched = circlesTables.data[index].table_id;
         console.log('id searched', tableIdSearched);
         highlightTable(tableIdSearched);
+    }
+
+    function updateTabCounts(counts) {
+        document.querySelector('[data-filter="all"]').innerHTML =
+            `Todas <span class="badge rounded-pill bg-secondary ms-1">${counts.all}</span>`;
+        document.querySelector('[data-filter="LIBRE"]').innerHTML =
+            `🔵 Libres <span class="badge rounded-pill bg-secondary ms-1">${counts.libre}</span>`;
+        document.querySelector('[data-filter="OCUPADO"]').innerHTML =
+            `🔴 Ocupadas <span class="badge rounded-pill bg-secondary ms-1">${counts.ocupado}</span>`;
+    }
+
+    let autoRefreshTimer = null;
+
+    function startAutoRefresh() {
+        if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+        autoRefreshTimer = setInterval(() => {
+            if (document.hidden) return;
+            if (document.querySelector('.modal.show')) return;
+            loadTablesAsCircles(true);
+        }, 30000);
+    }
+
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+        if (!('wakeLock' in navigator)) return;
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+        } catch (e) {}
     }
 
     function highlightTable(tableIdSearched) {

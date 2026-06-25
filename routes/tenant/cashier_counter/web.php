@@ -14,5 +14,7 @@ Route::group(["prefix" => "mostrador_cajero"], function () {
         Route::put('update/{id}', [CCounterController::class, 'update'])->name('tenant.mostrador_cajero.mostrador.update');
         Route::get('edit/{id}', [CCounterController::class, 'edit'])->name('tenant.mostrador_cajero.mostrador.edit');
         Route::get('pdf-voucher/{sale}', [CCounterController::class, 'pdfVoucher'])->name('tenant.mostrador_cajero.mostrador.pdfVoucher');
+        Route::get('getWaiters', [CCounterController::class, 'getWaiters'])->name('tenant.mostrador_cajero.mostrador.getWaiters');
+        Route::put('changeWaiter/{order}', [CCounterController::class, 'changeWaiter'])->name('tenant.mostrador_cajero.mostrador.changeWaiter');
     });
 });

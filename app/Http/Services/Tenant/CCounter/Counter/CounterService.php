@@ -38,6 +38,17 @@ class CounterService
         return $invoice;
     }
 
+    public function getWaiters(): array
+    {
+        return $this->s_repository->getWaitersByCashier(auth()->id())->toArray();
+    }
+
+    public function changeWaiter(int $order_id, array $data): void
+    {
+        $this->s_validation->validationChangeWaiter($order_id);
+        $this->s_repository->changeWaiter($order_id, (int) $data['waiter_id']);
+    }
+
     public function alertSale(array $data, $invoice)
     {
         $lstAlerts  =   json_decode($data['lstAlertsSelected']);

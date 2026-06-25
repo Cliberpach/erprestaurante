@@ -67,8 +67,37 @@ class WCounterController extends Controller
                 $tables->whereNull('r.status');
             }
 
+            if ($request->get('status') === 'all' || !$request->get('status')) {
+                $tables->orderByRaw("
+                    CASE
+                        WHEN r.status = 'OCUPADO' AND o.creator_user_id = ? THEN 0
+                        WHEN r.status = 'OCUPADO' THEN 1
+                        ELSE 2
+                    END ASC
+                ", [auth()->id()]);
+            }
+
+            $counts = DB::table('tables as t')
+                ->leftJoin('reservations as r', function ($join) {
+                    $join->on('r.table_id', '=', 't.id')->where('r.status', '=', 'OCUPADO');
+                })
+                ->where('t.status', '<>', 'ANULADO')
+                ->selectRaw("
+                    COUNT(*) as total,
+                    SUM(CASE WHEN r.status = 'OCUPADO' THEN 1 ELSE 0 END) as ocupado,
+                    SUM(CASE WHEN r.status IS NULL THEN 1 ELSE 0 END) as libre
+                ")
+                ->first();
+
             return DataTables::of($tables)
-                ->with(['success' => true])
+                ->with([
+                    'success' => true,
+                    'counts'  => [
+                        'all'     => (int) $counts->total,
+                        'libre'   => (int) $counts->libre,
+                        'ocupado' => (int) $counts->ocupado,
+                    ]
+                ])
                 ->make(true);
         } catch (Throwable $th) {
             return response()->json(['success' => false, 'message' => $th->getMessage()]);

@@ -20,6 +20,15 @@ class CounterValidation
         $this->s_order      =   $_s_order;
     }
 
+    public function validationChangeWaiter(int $order_id): void
+    {
+        $status = $this->s_repository->getReservationStatusByOrder($order_id);
+
+        if ($status !== 'OCUPADO') {
+            throw new Exception('El pedido no está activo. No se puede cambiar el mesero.');
+        }
+    }
+
     public function validationChargeCreate(int $order_id): array
     {
         $order  =   $this->s_repository->getOrder($order_id);

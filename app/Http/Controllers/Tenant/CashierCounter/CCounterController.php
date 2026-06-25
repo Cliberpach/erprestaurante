@@ -55,6 +55,7 @@ class CCounterController extends Controller
                 'o.code as order_code',
                 'o.created_at',
                 'o.creator_user_name',
+                'o.creator_user_id',
                 'o.customer_name',
                 'r.status',
                 'o.total',
@@ -101,6 +102,34 @@ array:5 [ // app\Http\Controllers\Tenant\CashierCounter\CCounterController.php:9
     public function pdfVoucher(int $sale): mixed
     {
         return app(SaleController::class)->pdf_voucher($sale);
+    }
+
+    public function getWaiters()
+    {
+        try {
+            $waiters = $this->s_manager->getWaiters();
+            return response()->json(['success' => true, 'data' => $waiters]);
+        } catch (Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    public function changeWaiter(Request $request, int $order)
+    {
+        DB::beginTransaction();
+        try {
+            $this->s_manager->changeWaiter($order, $request->toArray());
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Mesero cambiado con éxito']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line'    => $th->getLine(),
+                'file'    => $th->getFile(),
+            ]);
+        }
     }
 
     public function storeInvoice(InvoiceStoreRequest $request)

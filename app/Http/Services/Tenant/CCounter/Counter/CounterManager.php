@@ -22,4 +22,14 @@ class CounterManager
     {
         return $this->s_service->storeInvoice($data);
     }
+
+    public function getWaiters(): array
+    {
+        return $this->s_service->getWaiters();
+    }
+
+    public function changeWaiter(int $order_id, array $data): void
+    {
+        $this->s_service->changeWaiter($order_id, $data);
+    }
 }
