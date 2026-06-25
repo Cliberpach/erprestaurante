@@ -1,5 +1,6 @@
 <style>
-    * {
+    #container-payment-methods-month,
+    #sliders-payment-methods-month {
         font-family:
             -apple-system,
             BlinkMacSystemFont,
@@ -11,8 +12,6 @@
             "Segoe UI Emoji",
             "Segoe UI Symbol",
             sans-serif;
-        background: var(--highcharts-background-color);
-        color: var(--highcharts-neutral-color-100);
     }
 
     #container-payment-methods-month {

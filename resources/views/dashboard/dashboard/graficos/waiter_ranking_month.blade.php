@@ -1,5 +1,5 @@
 <style>
-    * {
+    #waiter_ranking_month {
         font-family:
             -apple-system,
             BlinkMacSystemFont,
@@ -11,8 +11,6 @@
             "Segoe UI Emoji",
             "Segoe UI Symbol",
             sans-serif;
-        background: var(--highcharts-background-color);
-        color: var(--highcharts-neutral-color-100);
     }
 
     .highcharts-figure,

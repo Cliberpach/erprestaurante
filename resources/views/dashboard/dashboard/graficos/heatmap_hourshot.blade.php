@@ -1,7 +1,7 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
-    .card-header {
+    .heatmap-section .heatmap-card-header {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
@@ -10,9 +10,7 @@
         gap: 16px;
     }
 
-    .title-block {}
-
-    .label {
+    .heatmap-section .heatmap-label {
         font-size: 11px;
         font-weight: 600;
         letter-spacing: 2px;
@@ -21,7 +19,7 @@
         margin-bottom: 6px;
     }
 
-    h2 {
+    .heatmap-section .heatmap-title {
         font-family: 'Syne', sans-serif;
         font-size: 26px;
         font-weight: 800;
@@ -29,50 +27,50 @@
         line-height: 1.2;
     }
 
-    .subtitle {
+    .heatmap-section .heatmap-subtitle {
         font-size: 13px;
         color: #8a93b0;
         margin-top: 5px;
     }
 
-    .stats {
+    .heatmap-section .heatmap-stats {
         display: flex;
         gap: 24px;
     }
 
-    .stat {
+    .heatmap-section .heatmap-stat {
         text-align: right;
     }
 
-    .stat-value {
+    .heatmap-section .heatmap-stat-value {
         font-family: 'Syne', sans-serif;
         font-size: 22px;
         font-weight: 700;
         color: #1a1f2e;
     }
 
-    .stat-label {
+    .heatmap-section .heatmap-stat-label {
         font-size: 11px;
         color: #8a93b0;
         margin-top: 2px;
     }
 
-    .stat-value.hot {
+    .heatmap-section .heatmap-stat-value.hot {
         color: #ff6b35;
     }
 
-    .stat-value.cool {
+    .heatmap-section .heatmap-stat-value.cool {
         color: #38bdf8;
     }
 
-    .filters {
+    .heatmap-section .heatmap-filters {
         display: flex;
         gap: 8px;
         margin-bottom: 20px;
         flex-wrap: wrap;
     }
 
-    .filter-btn {
+    .heatmap-section .heatmap-filter-btn {
         background: #f4f6fa;
         border: 1px solid #e5e9f2;
         color: #8a93b0;
@@ -85,8 +83,8 @@
         transition: all 0.2s;
     }
 
-    .filter-btn:hover,
-    .filter-btn.active {
+    .heatmap-section .heatmap-filter-btn:hover,
+    .heatmap-section .heatmap-filter-btn.active {
         background: #ff6b35;
         border-color: #ff6b35;
         color: #fff;
@@ -107,20 +105,20 @@
     }
 </style>
 
-<div class="card">
-    <div class="card-header">
+<div class="heatmap-section">
+    <div class="heatmap-card-header">
         <div class="title-block">
-            <div class="label">Análisis de Tráfico</div>
-            <h2>Horas Pico del Restaurante</h2>
+            <div class="heatmap-label">Análisis de Tráfico</div>
+            <div class="heatmap-title">Horas Pico del Restaurante</div>
         </div>
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value hot" id="stat-peak">—</div>
-                <div class="stat-label">Hora más activa</div>
+        <div class="heatmap-stats">
+            <div class="heatmap-stat">
+                <div class="heatmap-stat-value hot" id="stat-peak">—</div>
+                <div class="heatmap-stat-label">Hora más activa</div>
             </div>
-            <div class="stat">
-                <div class="stat-value cool" id="stat-quiet">—</div>
-                <div class="stat-label">Hora más tranquila</div>
+            <div class="heatmap-stat">
+                <div class="heatmap-stat-value cool" id="stat-quiet">—</div>
+                <div class="heatmap-stat-label">Hora más tranquila</div>
             </div>
         </div>
     </div>
@@ -138,10 +136,10 @@
         </div>
     </div>
 
-    <div class="filters">
-        <button class="filter-btn active" onclick="setFilter(this, 'pedidos')">Pedidos</button>
-        <button class="filter-btn" onclick="setFilter(this, 'ventas')">Ventas (S/)</button>
-        <button class="filter-btn" onclick="setFilter(this, 'mesas')">Mesas Ocupadas</button>
+    <div class="heatmap-filters">
+        <button class="heatmap-filter-btn active" onclick="setHeatmapFilter(this, 'pedidos')">Pedidos</button>
+        <button class="heatmap-filter-btn" onclick="setHeatmapFilter(this, 'ventas')">Ventas (S/)</button>
+        <button class="heatmap-filter-btn" onclick="setHeatmapFilter(this, 'mesas')">Mesas Ocupadas</button>
     </div>
 
     <div id="heatmap-container"></div>
@@ -388,8 +386,8 @@
         });
     }
 
-    function setFilter(btn, filter) {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    function setHeatmapFilter(btn, filter) {
+        document.querySelectorAll('.heatmap-filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentFilter = filter;
         renderChart(filter);
