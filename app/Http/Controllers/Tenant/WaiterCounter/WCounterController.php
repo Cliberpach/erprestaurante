@@ -73,8 +73,12 @@ class WCounterController extends Controller
                         WHEN r.status = 'OCUPADO' AND o.creator_user_id = ? THEN 0
                         WHEN r.status = 'OCUPADO' THEN 1
                         ELSE 2
-                    END ASC
+                    END ASC,
+                    LENGTH(t.name) ASC,
+                    t.name ASC
                 ", [auth()->id()]);
+            } else {
+                $tables->orderByRaw("LENGTH(t.name) ASC, t.name ASC");
             }
 
             $counts = DB::table('tables as t')
