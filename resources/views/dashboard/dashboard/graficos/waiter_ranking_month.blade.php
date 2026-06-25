@@ -1,5 +1,5 @@
 <style>
-    #waiter_ranking_month {
+    * {
         font-family:
             -apple-system,
             BlinkMacSystemFont,

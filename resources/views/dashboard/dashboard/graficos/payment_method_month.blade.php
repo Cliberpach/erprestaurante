@@ -1,6 +1,5 @@
 <style>
-    #container-payment-methods-month,
-    #sliders-payment-methods-month {
+    * {
         font-family:
             -apple-system,
             BlinkMacSystemFont,
