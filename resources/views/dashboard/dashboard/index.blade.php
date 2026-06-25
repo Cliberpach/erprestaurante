@@ -208,11 +208,11 @@
     </div>
 @endsection
 
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/highcharts-3d.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/11.3.0/highcharts.js"></script>
+<script src="https://code.highcharts.com/11.3.0/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/11.3.0/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/11.3.0/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/11.3.0/modules/accessibility.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

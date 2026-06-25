@@ -145,7 +145,7 @@
     <div id="heatmap-container"></div>
 </div>
 
-<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/11.3.0/modules/heatmap.js"></script>
 <script>
     const datasets = {
         pedidos: [],
