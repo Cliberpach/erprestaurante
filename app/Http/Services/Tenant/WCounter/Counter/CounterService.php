@@ -64,4 +64,16 @@ class CounterService
     {
         return $this->s_order->addPay($data, $id);
     }
+
+    public function mergeTables(array $data): void
+    {
+        $s_fusion = new TableFusionService();
+        $s_fusion->merge($data);
+    }
+
+    public function unmergeTable(int $fusion_id): void
+    {
+        $s_fusion = new TableFusionService();
+        $s_fusion->unmerge($fusion_id);
+    }
 }

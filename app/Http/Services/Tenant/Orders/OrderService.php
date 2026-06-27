@@ -8,6 +8,7 @@ use App\Http\Services\Tenant\Inventory\Kardex\KardexService;
 use App\Http\Services\Tenant\Inventory\WarehouseProduct\WarehouseProductService;
 use App\Http\Services\Tenant\Reservation\ReservationService;
 use App\Http\Services\Tenant\Supply\Programming\ProgrammingService;
+use App\Http\Services\Tenant\WCounter\Counter\TableFusionService;
 use App\Models\Tenant\Orders\Order;
 use Illuminate\Contracts\View\View;
 
@@ -314,6 +315,7 @@ class OrderService
     {
         $this->s_repository->setStatusInvoice($id, $status, $invoice);
         $this->s_reservation->setStatusByOrder($id, 'FINALIZADO');
+        (new TableFusionService())->closeFusionsByOrder($id, 'FINALIZADO');
     }
 
     public function getDetails(int $id)
@@ -337,6 +339,9 @@ class OrderService
         $table_old      =   $order->table_id;
         $order          =   $this->s_repository->changeTable($order_id, $table_selected);
         $this->s_reservation->changeTable($order_id, $table_selected, $table_old);
+
+        (new TableFusionService())->updateMasterTable($order_id, (int) $table_selected);
+
         return $order;
     }
 
@@ -356,6 +361,7 @@ class OrderService
 
         $this->s_repository->deleteOrder($id);
         $this->s_reservation->deleteFromOrder($id, $order->table_id);
+        (new TableFusionService())->closeFusionsByOrder($id, 'ANULADO');
 
         $this->s_pct->increaseLstStock($products);
         $this->s_programming->increaseLstStock($dishes);

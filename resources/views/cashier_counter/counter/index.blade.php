@@ -153,7 +153,16 @@
                         data: 'table_name',
                         name: 't.name',
                         "searchable": true,
-                        "orderable": true
+                        "orderable": true,
+                        render: function(data, type, row) {
+                            if (row.slave_table_names) {
+                                const slaves = row.slave_table_names.split(', ')
+                                    .map(n => `<span style="display:inline-block;background:#f59e0b;color:#fff;font-size:.7rem;font-weight:700;border-radius:6px;padding:1px 7px;margin:1px 2px 1px 0;">${n}</span>`)
+                                    .join('');
+                                return `<span class="fw-bold">${data}</span><br><span style="line-height:1.8;">${slaves}</span>`;
+                            }
+                            return data;
+                        }
                     },
                     {
                         data: 'code',

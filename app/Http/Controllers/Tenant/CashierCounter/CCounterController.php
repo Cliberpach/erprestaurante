@@ -49,6 +49,7 @@ class CCounterController extends Controller
         $items =    Reservation::from('reservations as r')
             ->join('orders as o', 'o.id', 'r.order_id')
             ->join('tables as t', 't.id', 'o.table_id')
+            ->whereColumn('r.table_id', 'o.table_id')
             ->select(
                 'o.id as order_id',
                 't.name as table_name',
@@ -63,7 +64,13 @@ class CCounterController extends Controller
                 'o.code',
                 'o.cashier_name',
                 'o.payref_img_url',
-                'o.sale_id'
+                'o.sale_id',
+                DB::raw("(
+                    SELECT GROUP_CONCAT(t2.name ORDER BY t2.name SEPARATOR ', ')
+                    FROM table_fusions tf
+                    JOIN tables t2 ON t2.id = tf.slave_table_id
+                    WHERE tf.order_id = o.id AND tf.status != 'ANULADO'
+                ) AS slave_table_names")
             );
 
         if ($filter_status) {

@@ -121,6 +121,19 @@
         background: linear-gradient(135deg, #dc3545, #a71d2a);
     }
 
+    .bg-fusionada {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .table-fusion-badge {
+        font-size: .68rem;
+        margin-top: 4px;
+        background: rgba(255, 255, 255, .25);
+        border-radius: 10px;
+        padding: 1px 8px;
+        font-weight: 700;
+    }
+
     /* Ícono */
     .table-icon {
         font-size: 1.4rem;
@@ -369,27 +382,40 @@
         grid.innerHTML = '';
         data.forEach(item => {
 
-            let bgClass = 'bg-libre';
+            const isSlave    = item.fusion_master_table_id != null;
+            const slaveCount = parseInt(item.fusion_slave_count) || 0;
+
+            let bgClass    = 'bg-libre';
             let statusText = 'LIBRE';
 
-            if (item.status === 'OCUPADO') {
-                bgClass = 'bg-ocupada';
+            if (isSlave) {
+                bgClass    = 'bg-fusionada';
+                statusText = 'UNIDA';
+            } else if (item.status === 'OCUPADO') {
+                bgClass    = 'bg-ocupada';
                 statusText = 'OCUPADO';
             } else if (!item.status) {
-                bgClass = 'bg-cerrada';
+                bgClass    = 'bg-cerrada';
                 statusText = 'LIBRE';
             }
+
+            const fusionBadge = slaveCount > 0
+                ? `<div class="table-fusion-badge">🔗 +${slaveCount}</div>`
+                : '';
 
             grid.innerHTML += `
                         <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                             <div class="table-card ${bgClass}"
                                 data-table="${item.table_id}"
-                                data-order = "${item.order_id}"
+                                data-order="${item.order_id ?? ''}"
                                 data-status="${item.status ?? ''}"
+                                data-is-slave="${isSlave ? '1' : '0'}"
+                                data-master-table="${item.fusion_master_table_id ?? ''}"
+                                data-fusion-order="${item.fusion_order_id ?? ''}"
                                 style="cursor:pointer">
 
                                 <div class="table-icon">
-                                    <i class="fas fa-utensils"></i>
+                                    <i class="fas ${isSlave ? 'fa-link' : 'fa-utensils'}"></i>
                                 </div>
 
                                 <div class="table-number">
@@ -400,17 +426,17 @@
                                     ${statusText}
                                 </div>
 
-                                ${item.total ? `
-                                                    <div class="table-total">
-                                                        S/ ${formatSoles(item.total)}
-                                                    </div>
-                                                    ` : ''}
+                                ${fusionBadge}
 
-                                ${item.status === 'OCUPADO' && item.creator_user_name ? `
-                                                    <div class="table-waiter">
-                                                        ${item.creator_user_name.substring(0, 12)}
-                                                    </div>
-                                                    ` : ''}
+                                ${item.total && !isSlave ? `
+                                    <div class="table-total">
+                                        S/ ${formatSoles(item.total)}
+                                    </div>` : ''}
+
+                                ${item.status === 'OCUPADO' && item.creator_user_name && !isSlave ? `
+                                    <div class="table-waiter">
+                                        ${item.creator_user_name.substring(0, 12)}
+                                    </div>` : ''}
                             </div>
                         </div>
                     `;
@@ -422,10 +448,17 @@
 
                     if (navigator.vibrate) navigator.vibrate(30);
 
-                    const tableId = card.getAttribute('data-table');
-                    const status = (card.getAttribute('data-status') || '').toString()
-                        .toUpperCase();
-                    const orderId = card.getAttribute('data-order');
+                    const isSlave      = card.getAttribute('data-is-slave') === '1';
+                    const tableId      = card.getAttribute('data-table');
+                    const status       = (card.getAttribute('data-status') || '').toUpperCase();
+                    const orderId      = card.getAttribute('data-order');
+                    const masterTable  = card.getAttribute('data-master-table');
+                    const fusionOrder  = card.getAttribute('data-fusion-order');
+
+                    if (isSlave) {
+                        openMdlShowOrder(masterTable, fusionOrder);
+                        return;
+                    }
 
                     if (status === 'LIBRE' || !status) {
                         toOrderCreate(tableId);

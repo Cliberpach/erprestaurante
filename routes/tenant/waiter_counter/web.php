@@ -17,5 +17,10 @@ Route::group(["prefix" => "mostrador_mesero"], function () {
         Route::post('change-table', [WCounterController::class, 'changeTable'])->name('tenant.mostrador_mesero.mostrador.changeTable');
         Route::put('delete-order/{id}', [WCounterController::class, 'destroy'])->name('tenant.mostrador_mesero.mostrador.destroy');
         Route::put('add-pay/{id}', [WCounterController::class, 'addPay'])->name('tenant.mostrador_mesero.mostrador.addPay');
+        Route::post('merge-tables', [WCounterController::class, 'mergeTables'])->name('tenant.mostrador_mesero.mostrador.mergeTables');
+        Route::delete('unmerge-table/{fusion_id}', [WCounterController::class, 'unmergeTable'])->name('tenant.mostrador_mesero.mostrador.unmergeTable');
+        Route::get('get-fusion-config', [WCounterController::class, 'getFusionConfig'])->name('tenant.mostrador_mesero.mostrador.getFusionConfig');
+        Route::get('get-active-fusions', [WCounterController::class, 'getActiveFusions'])->name('tenant.mostrador_mesero.mostrador.getActiveFusions');
+        Route::get('get-fusions-by-order/{order_id}', [WCounterController::class, 'getActiveFusionsByOrder'])->name('tenant.mostrador_mesero.mostrador.getActiveFusionsByOrder');
     });
 });

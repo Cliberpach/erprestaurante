@@ -7,9 +7,12 @@ use App\Http\Requests\Tenant\WaiterCounter\WaiterCounterAddPayRequest;
 use App\Http\Requests\Tenant\WaiterCounter\WaiterCounterStoreRequest;
 use App\Http\Services\Tenant\Supply\Table\TableService;
 use App\Http\Services\Tenant\WCounter\Counter\CounterManager;
+use App\Models\Tenant\Configuration;
 use App\Models\Tenant\PaymentMethod;
 use App\Models\Tenant\Supply\Table\Table;
+use App\Models\Tenant\Supply\Table\TableFusion;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -58,6 +61,23 @@ class WCounterController extends Controller
                     'o.total',
                     'o.creator_user_name',
                     't.id as table_id',
+                    DB::raw("(
+                        SELECT tf1.master_table_id
+                        FROM table_fusions tf1
+                        WHERE tf1.slave_table_id = t.id AND tf1.status = 'ACTIVO'
+                        LIMIT 1
+                    ) AS fusion_master_table_id"),
+                    DB::raw("(
+                        SELECT tf2.order_id
+                        FROM table_fusions tf2
+                        WHERE tf2.slave_table_id = t.id AND tf2.status = 'ACTIVO'
+                        LIMIT 1
+                    ) AS fusion_order_id"),
+                    DB::raw("(
+                        SELECT COUNT(*)
+                        FROM table_fusions tf3
+                        WHERE tf3.master_table_id = t.id AND tf3.status = 'ACTIVO'
+                    ) AS fusion_slave_count"),
                 )->where('t.status', '<>', 'ANULADO');
 
             if ($request->get('status') === 'OCUPADO') {
@@ -330,6 +350,86 @@ array:3 [ // app\Http\Controllers\Tenant\WaiterCounter\WCounterController.php:28
                 'line' => $th->getLine(),
                 'file' => $th->getFile()
             ]);
+        }
+    }
+
+    /*
+    array:3 [
+      "order_id"        => "5"
+      "master_table_id" => "1"
+      "slave_table_ids" => [3, 7, 9]
+    ]
+    */
+    public function mergeTables(Request $request): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $this->s_manager->mergeTables($request->toArray());
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'MESAS FUSIONADAS CON ÉXITO']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line'    => $th->getLine(),
+                'file'    => $th->getFile()
+            ]);
+        }
+    }
+
+    public function unmergeTable(int $fusion_id): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $this->s_manager->unmergeTable($fusion_id);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'MESA DESVINCULADA CON ÉXITO']);
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+                'line'    => $th->getLine(),
+                'file'    => $th->getFile()
+            ]);
+        }
+    }
+
+    public function getFusionConfig(): JsonResponse
+    {
+        try {
+            $config     =   Configuration::find(5);
+            $max_tables =   (int) ($config->property ?? 4);
+            return response()->json(['success' => true, 'max_tables' => $max_tables]);
+        } catch (Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    public function getActiveFusions(): JsonResponse
+    {
+        try {
+            $fusions = TableFusion::where('status', 'ACTIVO')
+                ->select('id', 'order_id', 'master_table_id', 'slave_table_id')
+                ->get();
+            return response()->json(['success' => true, 'data' => $fusions]);
+        } catch (Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
+        }
+    }
+
+    public function getActiveFusionsByOrder(int $order_id): JsonResponse
+    {
+        try {
+            $fusions = TableFusion::where('table_fusions.order_id', $order_id)
+                ->where('table_fusions.status', 'ACTIVO')
+                ->join('tables', 'tables.id', '=', 'table_fusions.slave_table_id')
+                ->select('table_fusions.id as fusion_id', 'table_fusions.slave_table_id', 'tables.name as table_name')
+                ->get();
+            return response()->json(['success' => true, 'data' => $fusions]);
+        } catch (Throwable $th) {
+            return response()->json(['success' => false, 'message' => $th->getMessage()]);
         }
     }
 }

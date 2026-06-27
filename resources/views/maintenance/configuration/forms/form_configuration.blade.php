@@ -76,6 +76,22 @@
                 <p class="configuration_{{ $item->id }}_error msgError"></p>
             @endif
 
+            @if ($item->id == 5)
+                <div class="col-lg-6 col-md-6 col-sm-6 d-flex align-items-center">
+                    <label for="configuration_{{ $item->id }}" style="font-weight: bold;">
+                        {{ $item->description }}
+                    </label>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <input value="{{ $item->property }}" type="number" min="2" max="20"
+                        class="form-control input-fill" style="max-width: 120px;"
+                        id="configuration_{{ $item->id }}" name="configuration_{{ $item->id }}"
+                        placeholder="Ej: 4">
+                    <p class="configuration_{{ $item->id }}_error msgError"></p>
+                </div>
+            @endif
+
 
         </div>
     @endforeach

@@ -19,9 +19,23 @@ class ConfigurationSeeder extends Seeder
         $configuration->save();
 
         $configuration              =   new Configuration();
-        $configuration->description =   'Contraseña eliminar';
+        $configuration->description =   'Solicitar contraseña para eliminar items en pedidos';
+        $configuration->property    =   '1';
+        $configuration->save();
+
+        $configuration              =   new Configuration();
+        $configuration->description =   'Habilitar descuentos en pedidos';
+        $configuration->property    =   '1';
+        $configuration->save();
+
+        $configuration              =   new Configuration();
+        $configuration->description =   'Contraseña acciones';
         $configuration->property    =   '123456789';
         $configuration->save();
 
+        $configuration              =   new Configuration();
+        $configuration->description =   'Máximo de mesas a fusionar';
+        $configuration->property    =   '4';
+        $configuration->save();
     }
 }

@@ -14,54 +14,114 @@
             <!-- BODY -->
             <div class="modal-body">
 
-                <div class="row g-3 justify-content-center text-center">
+                <div class="action-grid">
 
                     <!-- EDITAR -->
-                    <div class="col-2">
-                        <button type="button" id="btnEditOrder"
-                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
-                            <i class="fas fa-edit fs-2 text-primary mb-1"></i>
-                            <span class="fw-semibold text-primary small">Editar</span>
-                        </button>
-                    </div>
+                    <button type="button" id="btnEditOrder" class="action-btn">
+                        <div class="action-icon" style="background:#dbeafe;">
+                            <i class="fas fa-edit" style="color:#1d4ed8;"></i>
+                        </div>
+                        <span style="color:#1d4ed8;">Editar</span>
+                    </button>
 
                     <!-- PRECUENTA -->
-                    <div class="col-2">
-                        <button type="button" id="btnPreCuenta"
-                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
-                            <i class="fas fa-receipt fs-2 text-warning mb-1"></i>
-                            <span class="fw-semibold text-warning small">Precuenta</span>
-                        </button>
-                    </div>
+                    <button type="button" id="btnPreCuenta" class="action-btn">
+                        <div class="action-icon" style="background:#fef9c3;">
+                            <i class="fas fa-receipt" style="color:#b45309;"></i>
+                        </div>
+                        <span style="color:#b45309;">Precuenta</span>
+                    </button>
 
                     <!-- CAMBIAR MESA -->
-                    <div class="col-2">
-                        <button type="button" id="btnChangeTable"
-                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
-                            <i class="fas fa-chair fs-2 text-info mb-1"></i>
-                            <span class="fw-semibold text-info small">Cambio Mesa</span>
-                        </button>
-                    </div>
+                    <button type="button" id="btnChangeTable" class="action-btn">
+                        <div class="action-icon" style="background:#cffafe;">
+                            <i class="fas fa-chair" style="color:#0e7490;"></i>
+                        </div>
+                        <span style="color:#0e7490;">Cambio Mesa</span>
+                    </button>
 
                     <!-- ELIMINAR -->
-                    <div class="col-2">
-                        <button type="button" id="btnDeleteOrder"
-                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
-                            <i class="fas fa-trash-alt fs-2 text-danger mb-1"></i>
-                            <span class="fw-semibold text-danger small">Eliminar</span>
-                        </button>
-                    </div>
+                    <button type="button" id="btnDeleteOrder" class="action-btn">
+                        <div class="action-icon" style="background:#fee2e2;">
+                            <i class="fas fa-trash-alt" style="color:#dc2626;"></i>
+                        </div>
+                        <span style="color:#dc2626;">Eliminar</span>
+                    </button>
 
                     <!-- COBRAR -->
-                    <div class="col-2">
-                        <button type="button" id="btnChargeOrder"
-                            class="btn w-100 d-flex flex-column align-items-center justify-content-center border-0 bg-transparent py-3">
-                            <i class="fas fa-cash-register fs-2 text-success mb-1"></i>
-                            <span class="fw-semibold text-success small">Cobrar</span>
-                        </button>
-                    </div>
+                    <button type="button" id="btnChargeOrder" class="action-btn">
+                        <div class="action-icon" style="background:#dcfce7;">
+                            <i class="fas fa-cash-register" style="color:#16a34a;"></i>
+                        </div>
+                        <span style="color:#16a34a;">Cobrar</span>
+                    </button>
+
+                    <!-- UNIR MESAS -->
+                    <button type="button" id="btnMergeTables" class="action-btn">
+                        <div class="action-icon" style="background:#ede9fe;">
+                            <i class="fas fa-object-group" style="color:#7c3aed;"></i>
+                        </div>
+                        <span style="color:#7c3aed;">Unir Mesas</span>
+                    </button>
 
                 </div>
+
+                <style>
+                    .action-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 10px;
+                        margin-bottom: 16px;
+                    }
+
+                    .action-btn {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 6px;
+                        padding: 12px 6px;
+                        border: none;
+                        background: #f8f9fa;
+                        border-radius: 14px;
+                        cursor: pointer;
+                        transition: transform .15s ease, box-shadow .15s ease;
+                        font-size: .75rem;
+                        font-weight: 700;
+                        line-height: 1.2;
+                        text-align: center;
+                    }
+
+                    .action-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(0,0,0,.1);
+                    }
+
+                    .action-btn:active {
+                        transform: scale(.96);
+                    }
+
+                    .action-icon {
+                        width: 48px;
+                        height: 48px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.25rem;
+                    }
+
+                    @media (max-width: 400px) {
+                        .action-icon {
+                            width: 40px;
+                            height: 40px;
+                            font-size: 1.05rem;
+                        }
+                        .action-btn {
+                            font-size: .68rem;
+                            padding: 10px 4px;
+                        }
+                    }
+                </style>
 
 
                 <!-- CARD COLAPSABLE -->
@@ -230,6 +290,14 @@
 
             document.querySelector('#btnChargeOrder').addEventListener('click', (e) => {
                 openOfFCharge(paramsMdlShow.order);
+            })
+
+            document.querySelector('#btnMergeTables').addEventListener('click', () => {
+                openMdlMergeTables(
+                    paramsMdlShow.orderId,
+                    paramsMdlShow.tableId,
+                    paramsMdlShow.order.table_name
+                );
             })
         }
 

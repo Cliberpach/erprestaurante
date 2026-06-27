@@ -58,4 +58,14 @@ class CounterManager
     {
         return $this->s_service->addPay($data, $id);
     }
+
+    public function mergeTables(array $data): void
+    {
+        $this->s_service->mergeTables($data);
+    }
+
+    public function unmergeTable(int $fusion_id): void
+    {
+        $this->s_service->unmergeTable($fusion_id);
+    }
 }
