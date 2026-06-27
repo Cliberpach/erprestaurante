@@ -382,6 +382,7 @@
                     if (res.data.success) {
                         toastr.clear();
                         toastr.success(res.data.message, 'OPERACIÓN COMPLETADA');
+                        loadTablesAsCircles();
                         await openMdlMergeTables(
                             paramsMdlMerge.orderId,
                             paramsMdlMerge.masterTableId,
