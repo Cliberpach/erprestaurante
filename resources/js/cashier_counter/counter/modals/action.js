@@ -171,6 +171,19 @@ export async function actionFormCharge(e) {
 
     toastr.clear();
     const paymentConditionId = configMdlCharge.getPaymentConditionSelect().getValue();
+
+    // Venta al crédito no permite CLIENTE VARIOS (id = 1)
+    if (Number(paymentConditionId) !== 1) {
+        const customerId = customerSelect.getValue();
+        if (!customerId || Number(customerId) === 1) {
+            toastr.error(
+                'Las ventas al crédito requieren un cliente identificado. No se permite "CLIENTE VARIOS".',
+                'CLIENTE INVÁLIDO'
+            );
+            return;
+        }
+    }
+
     if (Number(paymentConditionId) === 1) {
         const isValid = validatePayments(lstPays, infoAmounts);
         if (!isValid.ok) return;
