@@ -217,33 +217,42 @@
                         name: 'payments',
                         searchable: false,
                         orderable: false,
-                        render: function(data) {
-                            if (!data) {
-                                return '<span class="badge bg-danger">SIN PAGO</span>';
-                            }
+                        render: function(data, type, row) {
+                            // Venta contado: mostrar métodos de pago
+                            if (data) {
+                                try {
+                                    let decoded = new DOMParser()
+                                        .parseFromString(data, 'text/html')
+                                        .documentElement.textContent;
 
-                            try {
-                                let decoded = new DOMParser()
-                                    .parseFromString(data, 'text/html')
-                                    .documentElement.textContent;
+                                    let payments = JSON.parse(decoded);
 
-                                let payments = JSON.parse(decoded);
-
-                                if (!payments || payments.length === 0) {
-                                    return '<span class="badge bg-danger">SIN PAGO</span>';
+                                    if (payments && payments.length > 0) {
+                                        return payments.map(p => {
+                                            return `<span class="badge bg-dark me-1">${p.name}: ${parseFloat(p.amount).toFixed(2)}</span>`;
+                                        }).join('');
+                                    }
+                                } catch (e) {
+                                    return '<span class="badge bg-danger">ERROR</span>';
                                 }
-
-                                return payments.map(p => {
-                                    return `
-                                        <span class="badge bg-dark me-1">
-                                            ${p.name}: ${parseFloat(p.amount).toFixed(2)}
-                                        </span>
-                                    `;
-                                }).join('');
-
-                            } catch (e) {
-                                return '<span class="badge bg-danger">ERROR</span>';
                             }
+
+                            // Venta al crédito: mostrar estado de cuenta cliente
+                            if (row.credit_status) {
+                                let cls = row.credit_status === 'PAGADO'
+                                    ? 'bg-success'
+                                    : (row.credit_status === 'PENDIENTE' ? 'bg-warning text-dark' : 'bg-secondary');
+                                let html = `<span class="badge ${cls} me-1">CRÉDITO: ${row.credit_status}</span>`;
+                                if (row.credit_paid && parseFloat(row.credit_paid) > 0) {
+                                    html += `<span class="badge bg-success me-1">Pag: S/.${parseFloat(row.credit_paid).toFixed(2)}</span>`;
+                                }
+                                if (row.credit_balance && parseFloat(row.credit_balance) > 0) {
+                                    html += `<span class="badge bg-danger">Saldo: S/.${parseFloat(row.credit_balance).toFixed(2)}</span>`;
+                                }
+                                return html;
+                            }
+
+                            return '<span class="badge bg-danger">SIN PAGO</span>';
                         }
                     },
                     {

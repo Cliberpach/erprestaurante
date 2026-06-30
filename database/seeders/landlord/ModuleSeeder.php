@@ -139,10 +139,10 @@ class ModuleSeeder extends Seeder
     {
         $module = $this->createModule('Cuentas', 4, 'credit-card-svgrepo-com.svg');
 
-        /*$this->createChild($module, [
+        $this->createChild($module, [
             'description' => 'Cuentas Cliente',
             'route_name' => 'cuentas.cliente.index',
-        ]);*/
+        ]);
 
         $this->createChild($module, [
             'description' => 'Cuentas Proveedor',

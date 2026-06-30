@@ -216,7 +216,7 @@
             </tr>
         </table>
 
-        <h5 style="font-size:9px;margin-bottom:6px;">VENTAS DEL DÍA</h5>
+        <h5 style="font-size:9px;margin-bottom:6px;">VENTAS DEL DÍA AL CONTADO</h5>
         <table class="table-info">
             <thead>
                 <tr>
@@ -229,7 +229,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($consolidated['report_sales']['sales']->whereNull('converted_from_id') as $sale)
+                @foreach ($consolidated['report_sales']['sales']->whereNull('converted_from_id')->whereNotIn('id', $credit_sale_ids) as $sale)
                     <tr>
                         <td>{{ $sale->serie . '-' . $sale->correlative }}</td>
                         <td>{{ $sale->customer_name }}</td>
@@ -260,7 +260,7 @@
                 <tr style="font-weight:bold; background:#e0e0e0;">
                     <td colspan="2" class="text-end">TOTAL</td>
                     <td style="text-align: right;">
-                        {{ number_format($consolidated['report_sales']['total'], 2, '.', ',') }}
+                        {{ number_format($cash_sales_total, 2, '.', ',') }}
                     </td>
                     @foreach ($consolidated['report_sales']['report'] as $item)
                         <td style="text-align: right;">{{ number_format($item['amount'], 2, '.', ',') }}</td>
@@ -289,6 +289,51 @@
                     </tr>
                 @endforeach
             </tbody>
+        </table>
+
+        <h5 style="font-size:9px;margin-bottom:6px;">VENTAS AL CRÉDITO</h5>
+        <table class="table-info">
+            <thead>
+                <tr>
+                    <th>COMPROBANTE</th>
+                    <th>CLIENTE</th>
+                    <th style="text-align:right;">MONTO</th>
+                    <th style="text-align:right;">PAGADO</th>
+                    <th style="text-align:right;">SALDO</th>
+                    <th>ESTADO</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($credit_accounts as $ca)
+                    <tr>
+                        <td>{{ $ca->documento }}</td>
+                        <td>{{ $ca->customer_name }}</td>
+                        <td style="text-align:right;">{{ number_format($ca->amount, 2, '.', ',') }}</td>
+                        <td style="text-align:right; color:#2e7d32;">{{ number_format($ca->paid ?? 0, 2, '.', ',') }}</td>
+                        <td style="text-align:right; color:#c62828;">{{ number_format($ca->balance, 2, '.', ',') }}</td>
+                        <td style="text-align:center;">
+                            @php
+                                $colors = ['PENDIENTE' => '#c62828', 'PAGADO' => '#2e7d32', 'ANULADO' => '#333'];
+                                $color  = $colors[$ca->status] ?? '#555';
+                            @endphp
+                            <span style="color:{{ $color }}; font-weight:bold;">{{ $ca->status }}</span>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="6" style="text-align:center;">Sin ventas al crédito</td></tr>
+                @endforelse
+            </tbody>
+            @if($credit_accounts->isNotEmpty())
+            <tfoot>
+                <tr style="font-weight:bold; background:#e0e0e0;">
+                    <td colspan="2" style="text-align:right;">TOTAL</td>
+                    <td style="text-align:right;">{{ number_format($credit_accounts->sum('amount'), 2, '.', ',') }}</td>
+                    <td style="text-align:right;">{{ number_format($credit_accounts->sum('paid'), 2, '.', ',') }}</td>
+                    <td style="text-align:right;">{{ number_format($credit_accounts->sum('balance'), 2, '.', ',') }}</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+            @endif
         </table>
 
         <h5 style="font-size:9px;margin-bottom:6px;">EGRESOS</h5>
@@ -436,20 +481,20 @@
                 </td>
             </tr>
             <tr>
-                <th> TOTAL VENTAS</th>
+                <th>TOTAL VENTAS CONTADO</th>
                 <td style="text-align:right;">
                     {{ number_format($consolidated_cash->sales_amount, 2, '.', ',') }}
                 </td>
             </tr>
             <tr>
-                <th> TOTAL EGRESOS</th>
+                <th>TOTAL EGRESOS</th>
                 <td style="text-align:right;">
                     {{ number_format($consolidated_cash->expenses_amount, 2, '.', ',') }}
                 </td>
             </tr>
 
             <tr style="background:#e0f7fa;">
-                <th>TOTAL</th>
+                <th>TOTAL EFECTIVO</th>
                 <td style="text-align:right; font-weight:bold;">
                     {{ number_format($consolidated_cash->total, 2, '.', ',') }}
                 </td>
@@ -465,31 +510,29 @@
                 </td>
             </tr>
             <tr>
-                <th> TOTAL VENTAS</th>
+                <th>TOTAL VENTAS CONTADO</th>
                 <td style="text-align:right;">
-                    {{ number_format($consolidated['report_sales']['total'], 2, '.', ',') }}
+                    {{ number_format($cash_sales_total, 2, '.', ',') }}
                 </td>
             </tr>
             <tr>
-                <th> TOTAL EGRESOS</th>
+                <th>TOTAL EGRESOS</th>
                 <td style="text-align:right;">
                     {{ number_format($consolidated['report_expenses']['total'], 2, '.', ',') }}
                 </td>
             </tr>
 
-            @if ($have_module_customer_accounts)
-                <tr>
-                    <th> TOTAL COBRANZA CLIENTES</th>
-                    <td style="text-align:right;">
-                        {{ number_format($consolidated['report_customer_accounts']['total'], 2, '.', ',') }}
-                    </td>
-                </tr>
-            @endif
+            <tr>
+                <th>TOTAL COBRANZA CLIENTES</th>
+                <td style="text-align:right;">
+                    {{ number_format($consolidated['report_customer_accounts']['total'], 2, '.', ',') }}
+                </td>
+            </tr>
 
             <tr style="background:#e0f7fa;">
-                <th> MONTO CIERRE</th>
+                <th>MONTO CIERRE</th>
                 <td style="text-align:right; font-weight:bold;">
-                    {{ number_format($consolidated['amount_close'], 2, '.', ',') }}
+                    {{ number_format($amount_close_corrected, 2, '.', ',') }}
                 </td>
             </tr>
         </table>

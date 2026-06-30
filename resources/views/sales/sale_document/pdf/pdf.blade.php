@@ -266,6 +266,53 @@
         <br>
         <p class="text-uppercase text-cuerpo m-0 p-0">SON: <b>{{ $sale->legend }}</b></p>
         <br>
+        @if ($credit_account ?? null)
+            <div style="border: 1px solid #555; padding: 3px; margin-top: 4px;">
+                <table style="width:100%; font-size:6px; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#e8e8e8;">
+                            <th colspan="4" style="text-align:left; padding:2px;">HISTORIAL DE PAGOS AL CRÉDITO</th>
+                        </tr>
+                        <tr style="background:#f4f4f4; border-bottom:1px solid #ccc;">
+                            <td style="padding:2px;"><b>Monto total</b></td>
+                            <td style="padding:2px;"><b>Pagado</b></td>
+                            <td style="padding:2px;"><b>Saldo</b></td>
+                            <td style="padding:2px;"><b>Estado</b></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:2px;">S/. {{ number_format($credit_account->amount, 2) }}</td>
+                            <td style="padding:2px;">S/. {{ number_format($credit_account->paid, 2) }}</td>
+                            <td style="padding:2px;">S/. {{ number_format($credit_account->balance, 2) }}</td>
+                            <td style="padding:2px;">{{ $credit_account->status }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                @if ($credit_account_details->isNotEmpty())
+                    <table style="width:100%; font-size:6px; border-collapse:collapse; margin-top:3px; border-top:1px solid #ccc;">
+                        <thead>
+                            <tr style="background:#f4f4f4;">
+                                <th style="text-align:left; padding:2px;">Fecha</th>
+                                <th style="text-align:left; padding:2px;">Método</th>
+                                <th style="text-align:right; padding:2px;">Monto</th>
+                                <th style="text-align:right; padding:2px;">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($credit_account_details as $detail)
+                                <tr>
+                                    <td style="padding:2px;">{{ \Carbon\Carbon::parse($detail->date)->format('d/m/Y') }}</td>
+                                    <td style="padding:2px;">{{ $detail->payment_method_name }}</td>
+                                    <td style="text-align:right; padding:2px;">S/. {{ number_format($detail->amount, 2) }}</td>
+                                    <td style="text-align:right; padding:2px;">S/. {{ number_format($detail->balance, 2) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+            </div>
+        @endif
         {{-- @if ($mostrar_cuentas === 'SI')
                 <table class="tbl-qr">
                     <tr>

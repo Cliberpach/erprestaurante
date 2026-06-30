@@ -119,13 +119,6 @@
             eventsMdlPagar();
             eventsMdlHistory();
             iniciarSelectsMdlPagar();
-
-            // Popper fixed strategy so dropdown escapes table-responsive overflow clipping
-            document.addEventListener('show.bs.dropdown', function (e) {
-                const toggle = e.relatedTarget ?? e.target;
-                if (!toggle || bootstrap.Dropdown.getInstance(toggle)) return;
-                new bootstrap.Dropdown(toggle, { popperConfig: { strategy: 'fixed' } });
-            });
         }
 
         // ── TomSelect filtro cliente ──────────────────────────────────────
@@ -284,6 +277,13 @@
                     paginate: { first: 'Primero', last: 'Último', next: 'Siguiente', previous: 'Anterior' },
                 },
                 order: [[0, 'desc']],
+                drawCallback: function () {
+                    document.querySelectorAll('.dataTables-cajas [data-bs-toggle="dropdown"]').forEach(function (el) {
+                        const existing = bootstrap.Dropdown.getInstance(el);
+                        if (existing) existing.dispose();
+                        new bootstrap.Dropdown(el, { popperConfig: { strategy: 'fixed' } });
+                    });
+                },
                 initComplete: function () {
                     $(this.api().table().container())
                         .find('.dt-search, .dataTables_filter')

@@ -265,6 +265,13 @@
                     }
 
                 ],
+                drawCallback: function () {
+                    document.querySelectorAll('#tbl_cobranza_list [data-bs-toggle="dropdown"]').forEach(function (el) {
+                        const existing = bootstrap.Dropdown.getInstance(el);
+                        if (existing) existing.dispose();
+                        new bootstrap.Dropdown(el, { popperConfig: { strategy: 'fixed' } });
+                    });
+                },
                 language: {
                     "lengthMenu": "Mostrar _MENU_ registros por página",
                     "zeroRecords": "No se encontraron resultados",

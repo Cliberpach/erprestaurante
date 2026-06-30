@@ -91,19 +91,49 @@ class PettyCashBookService
         $have_module_customer_accounts      =   $consolidated['have_module_customer_accounts'];
         $consolidated_cash                  =   $this->s_calculator->consolidatedCash($petty_cash_book, $consolidated);
 
+        $credit_accounts = DB::table('customer_accounts as ca')
+            ->join('sales as s', 's.id', '=', 'ca.sale_id')
+            ->where('s.petty_cash_book_id', $id)
+            ->select(
+                'ca.id',
+                's.id as sale_id',
+                'ca.document_serie',
+                DB::raw("CONCAT(s.serie, '-', s.correlative) as documento"),
+                's.customer_name',
+                'ca.amount',
+                'ca.paid',
+                'ca.balance',
+                'ca.status',
+            )
+            ->get();
+
+        // Totales corregidos: ventas al crédito no ingresan a caja
+        $credit_sale_ids        =   $credit_accounts->pluck('sale_id');
+        $credit_total           =   $credit_accounts->sum('amount');
+        $cash_sales_total       =   $consolidated['report_sales']['total'] - $credit_total;
+        $expenses_total         =   $consolidated['report_expenses']['total'];
+        $cobranza_total         =   $consolidated['report_customer_accounts']['total'];
+        $initial_amount         =   $consolidated['petty_cash_book']->initial_amount;
+        $amount_close_corrected =   $initial_amount + $cash_sales_total - $expenses_total + $cobranza_total;
+
         //====== VISTA PDF ==========
         $pdf = Pdf::loadView(
             'cash.petty-cash-book.reports.pdf-one',
             [
-                'petty_cash_book'   =>  $petty_cash_book,
-                'company'           =>  $company,
-                'payment_methods'   =>  $payment_methods,
-                'cajero'            =>  $cajero,
-                'consolidated'      =>  $consolidated,
-                'customer_pays'     =>  $customer_pays,
-                'consolidated_items' =>  $consolidated_items,
+                'petty_cash_book'               =>  $petty_cash_book,
+                'company'                       =>  $company,
+                'payment_methods'               =>  $payment_methods,
+                'cajero'                        =>  $cajero,
+                'consolidated'                  =>  $consolidated,
+                'customer_pays'                 =>  $customer_pays,
+                'consolidated_items'            =>  $consolidated_items,
                 'have_module_customer_accounts' =>  $have_module_customer_accounts,
                 'consolidated_cash'             =>  $consolidated_cash,
+                'credit_accounts'               =>  $credit_accounts,
+                'credit_sale_ids'               =>  $credit_sale_ids,
+                'credit_total'                  =>  $credit_total,
+                'cash_sales_total'              =>  $cash_sales_total,
+                'amount_close_corrected'        =>  $amount_close_corrected,
             ]
         );
 

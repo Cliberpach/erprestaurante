@@ -105,7 +105,10 @@ class SaleController extends Controller
                     FROM sales_pays sp
                     WHERE sp.sale_id = s.id
                     AND sp.status = 'ACTIVO'
-                ) as payments")
+                ) as payments"),
+                DB::raw("(SELECT ca.status FROM customer_accounts ca WHERE ca.sale_id = s.id LIMIT 1) as credit_status"),
+                DB::raw("(SELECT ca.paid   FROM customer_accounts ca WHERE ca.sale_id = s.id LIMIT 1) as credit_paid"),
+                DB::raw("(SELECT ca.balance FROM customer_accounts ca WHERE ca.sale_id = s.id LIMIT 1) as credit_balance")
             );
 
         if ($filter_customer) {

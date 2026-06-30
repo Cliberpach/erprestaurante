@@ -18,6 +18,7 @@ use App\Models\Tenant\Sales\CreditNote\CreditNote;
 use App\Models\Tenant\Sales\Sale\Sale;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class SaleService
 {
@@ -261,12 +262,31 @@ class SaleService
             $route_view =   'sales.sale_document.pdf.pdf-a4';
         }
 
+        $credit_account         =   DB::table('customer_accounts')->where('sale_id', $sale_id)->first();
+        $credit_account_details =   collect();
+        if ($credit_account) {
+            $credit_account_details = DB::table('customer_accounts_details as cad')
+                ->join('payment_methods as pm', 'pm.id', '=', 'cad.payment_method_id')
+                ->where('cad.customer_account_id', $credit_account->id)
+                ->select(
+                    'cad.date',
+                    'pm.description as payment_method_name',
+                    DB::raw('COALESCE(NULLIF(cad.cash, 0), cad.amount) as amount'),
+                    'cad.balance',
+                    'cad.total'
+                )
+                ->orderBy('cad.created_at')
+                ->get();
+        }
+
         $pdf = Pdf::loadview($route_view, [
-            'company'               =>  $company,
-            'sale'                  =>  $sale,
-            'customer'              =>  $customer,
-            'sale_products'         =>  $sale_products,
-            'sale_dishes'           =>  $sale_dishes
+            'company'                   =>  $company,
+            'sale'                      =>  $sale,
+            'customer'                  =>  $customer,
+            'sale_products'             =>  $sale_products,
+            'sale_dishes'               =>  $sale_dishes,
+            'credit_account'            =>  $credit_account,
+            'credit_account_details'    =>  $credit_account_details,
         ]);
 
         $pdf->setPaper($pdf_size);
