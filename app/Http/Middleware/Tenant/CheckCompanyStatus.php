@@ -17,10 +17,14 @@ class CheckCompanyStatus
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $tenantId = \Spatie\Multitenancy\Models\Tenant::current()?->id ?? 'landlord';
+        $tenant = \Spatie\Multitenancy\Models\Tenant::current();
+
+        if (! $tenant) {
+            return $next($request);
+        }
 
         $company = Cache::remember(
-            "company_status_{$tenantId}",
+            "company_status_{$tenant->id}",
             now()->addHour(6),
             fn() => Company::findOrFail(1)
         );

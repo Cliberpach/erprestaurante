@@ -47,6 +47,8 @@ class RebuildTenantTemplate extends Command
         DocumentTypeSeeder::class,
         PettyCashSeeder::class,
         ShiftSeeder::class,
+        // Modules must seed before PermissionSeeder so module_children has data
+        TenantModuleSeeder::class,
         PermissionSeeder::class,
         RoleSeeder::class,
         SupplierSeeder::class,
@@ -54,8 +56,6 @@ class RebuildTenantTemplate extends Command
         TypeFieldSeeder::class,
         PaymentConditionSeeder::class,
         CostCenterSeeder::class,
-        // Modules and demo users — must run after roles/permissions are seeded
-        TenantModuleSeeder::class,
         TenantUserSeeder::class,
     ];
 

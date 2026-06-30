@@ -22,7 +22,7 @@ class TenantModuleSeeder extends Seeder
                     'order'        => $m->order,
                     'icon'         => $m->icon ?? null,
                     'render_order' => $m->render_order,
-                    'show'         => $m->show ?? 'tenant',
+                    'show'         => 'tenant',
                     'created_at'   => $now,
                     'updated_at'   => $now,
                 ])->toArray()
@@ -37,7 +37,7 @@ class TenantModuleSeeder extends Seeder
                     'description' => $c->description,
                     'route_name'  => $c->route_name,
                     'order'       => $c->order,
-                    'show'        => $c->show ?? 'tenant',
+                    'show'        => 'tenant',
                     'created_at'  => $now,
                     'updated_at'  => $now,
                 ])->toArray()
