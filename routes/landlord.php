@@ -16,8 +16,6 @@ Route::middleware(['auth:web', 'verified'])->group(function () {
         return redirect()->route('landlord.mantenimiento.empresas.index');
     });
 
-    Route::get("/logout", [ModuleController::class, 'logout'])->name('module.logout');
-
     //Route::get('/dashboard', [ModuleController::class, 'home'])->name('landlord.home');
 
     Route::group(["prefix" => "mantenimiento"], function () {
