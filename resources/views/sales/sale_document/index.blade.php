@@ -198,7 +198,18 @@
                         data: 'doc',
                         name: 'doc',
                         searchable: true,
-                        orderable: true
+                        orderable: true,
+                        render: function(data, type, row) {
+                            const esc = (v) => $('<div>').text(v).html();
+                            let html = `<div>${esc(data)}</div>`;
+                            if (row.order_code) {
+                                html += `<div><small class="text-muted">PED: ${esc(row.order_code)}</small></div>`;
+                            }
+                            if (row.table_name) {
+                                html += `<div><small class="text-muted">MESA: ${esc(row.table_name)}</small></div>`;
+                            }
+                            return html;
+                        }
                     },
                     {
                         data: 'converted_to_serie',

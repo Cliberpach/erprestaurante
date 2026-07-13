@@ -70,6 +70,8 @@ class SaleController extends Controller
                 's.serie',
                 's.correlative',
                 DB::raw("CONCAT(s.serie, '-', s.correlative) AS doc"),
+                'o.code as order_code',
+                't.name as table_name',
                 's.type_sale_name',
                 's.type_sale_code',
                 DB::raw("FORMAT(s.igv_percentage, 2) AS igv_percentage"),
@@ -109,7 +111,9 @@ class SaleController extends Controller
                 DB::raw("(SELECT ca.status FROM customer_accounts ca WHERE ca.sale_id = s.id LIMIT 1) as credit_status"),
                 DB::raw("(SELECT ca.paid   FROM customer_accounts ca WHERE ca.sale_id = s.id LIMIT 1) as credit_paid"),
                 DB::raw("(SELECT ca.balance FROM customer_accounts ca WHERE ca.sale_id = s.id LIMIT 1) as credit_balance")
-            );
+            )
+            ->leftJoin('orders as o', 'o.id', '=', 's.order_id')
+            ->leftJoin('tables as t', 't.id', '=', 'o.table_id');
 
         if ($filter_customer) {
             $sales->where('customer_id', $filter_customer);
@@ -141,7 +145,9 @@ class SaleController extends Controller
                 $query->whereRaw("
                     CONCAT(
                             s.serie,'-',
-                            s.correlative
+                            s.correlative,' ',
+                            IFNULL(o.code, ''),' ',
+                            IFNULL(t.name, '')
                         ) LIKE ?
                     ", ["%{$keyword}%"]);
             })
