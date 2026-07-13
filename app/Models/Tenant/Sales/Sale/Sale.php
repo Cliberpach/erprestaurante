@@ -3,6 +3,7 @@
 namespace App\Models\Tenant\Sales\Sale;
 
 use App\Http\Services\Tenant\Sale\Sale\SaleService;
+use App\Models\Tenant\Orders\Order;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -169,6 +170,11 @@ class Sale extends Model
     protected $casts = [
         'expires_at' => 'datetime',
     ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
 
     public function pays()
     {

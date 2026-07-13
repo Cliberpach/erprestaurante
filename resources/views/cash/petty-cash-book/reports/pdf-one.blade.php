@@ -231,7 +231,15 @@
             <tbody>
                 @foreach ($consolidated['report_sales']['sales']->whereNull('converted_from_id')->whereNotIn('id', $credit_sale_ids) as $sale)
                     <tr>
-                        <td>{{ $sale->serie . '-' . $sale->correlative }}</td>
+                        <td>
+                            {{ $sale->serie . '-' . $sale->correlative }}
+                            @if ($sale->order)
+                                <br><span style="font-size:7px;">{{ $sale->order->code }}</span>
+                                @if ($sale->order->table)
+                                    <br><span style="font-size:7px;">{{ $sale->order->table->name }}</span>
+                                @endif
+                            @endif
+                        </td>
                         <td>{{ $sale->customer_name }}</td>
                         <td style="text-align: right;">{{ number_format($sale->total, 2) }}</td>
 

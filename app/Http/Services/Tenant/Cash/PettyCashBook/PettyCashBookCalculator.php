@@ -61,7 +61,7 @@ class PettyCashBookCalculator
 
     public function getReportSales($payment_methods, int $id)
     {
-        $_sales =   Sale::with('pays')->where('petty_cash_book_id', $id)->where('status', '<>', 'ANULADO')->get();
+        $_sales =   Sale::with(['pays', 'order.table'])->where('petty_cash_book_id', $id)->where('status', '<>', 'ANULADO')->get();
         $sales  =   $_sales->whereNull('converted_from_id');
 
         $change =   $sales->sum('change_pay');
