@@ -93,6 +93,8 @@ class PettyCashBookService
 
         $credit_accounts = DB::table('customer_accounts as ca')
             ->join('sales as s', 's.id', '=', 'ca.sale_id')
+            ->leftJoin('orders as o', 'o.id', '=', 's.order_id')
+            ->leftJoin('tables as t', 't.id', '=', 'o.table_id')
             ->where('s.petty_cash_book_id', $id)
             ->select(
                 'ca.id',
@@ -100,6 +102,8 @@ class PettyCashBookService
                 'ca.document_serie',
                 DB::raw("CONCAT(s.serie, '-', s.correlative) as documento"),
                 's.customer_name',
+                'o.code as order_code',
+                't.name as table_name',
                 'ca.amount',
                 'ca.paid',
                 'ca.balance',

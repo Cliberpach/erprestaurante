@@ -314,7 +314,15 @@
             <tbody>
                 @forelse ($credit_accounts as $ca)
                     <tr>
-                        <td>{{ $ca->documento }}</td>
+                        <td>
+                            {{ $ca->documento }}
+                            @if ($ca->order_code)
+                                <br><span style="font-size:7px;">{{ $ca->order_code }}</span>
+                                @if ($ca->table_name)
+                                    <br><span style="font-size:7px;">{{ $ca->table_name }}</span>
+                                @endif
+                            @endif
+                        </td>
                         <td>{{ $ca->customer_name }}</td>
                         <td style="text-align:right;">{{ number_format($ca->amount, 2, '.', ',') }}</td>
                         <td style="text-align:right; color:#2e7d32;">{{ number_format($ca->paid ?? 0, 2, '.', ',') }}</td>
